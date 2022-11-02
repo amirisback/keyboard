@@ -1,0 +1,16 @@
+name: 'Android-Research-Tech'
+description: 'Full and Clear Documentation'
+author: 'Muhammad Faisal Amir'
+branding:
+  icon: archive
+  color: green
+inputs:
+  myInput:
+    description: 'Input to use'
+    required: false
+    default: 'world'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.myInput }}

@@ -1,6 +1,16 @@
 ## Android Research Tech
 - Template repository for doing research on Android Technologies
 
+## Documentation
+- https://github.com/anssih/finqwerty
+    - keymap app for phones with physical keyboards
+- https://github.com/shiftrot/caps2ctrl
+    - provides almost all keymaps we need usually
+- https://android.googlesource.com/platform/frameworks/base/+/master/data/keyboards/Generic.kl
+- https://android.googlesource.com/platform/frameworks/base/+/master/data/keyboards/Generic.kcm
+- https://developer.android.com/reference/kotlin/android/hardware/input/InputManager
+- https://source.android.com/devices/input/key-character-map-files
+
 ## Colaborator
 Very open to anyone, I'll write your name under this, please contribute by sending an email to me
 

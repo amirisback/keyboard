@@ -84,6 +84,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     private fun initView() {
         binding?.keyboardNews?.setInputConnection(currentInputConnection)
+        binding?.keyboardMoview?.setInputConnection(currentInputConnection)
 
         binding?.containerAutoText?.setOnClickListener {
             Log.d("FrogoKeyboard", "keyboardHeaderNews on Clicked")
@@ -93,6 +94,16 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding?.keyboardNews?.binding?.toolbarBack?.setOnClickListener {
             Log.d("FrogoKeyboard", "Toolbar on Clicked")
             binding?.keyboardNews?.setVisibilityExt(View.GONE)
+        }
+
+        binding?.containerCheckOngkir?.setOnClickListener {
+            Log.d("FrogoKeyboard", "keyboardHeaderMoview on Clicked")
+            binding?.keyboardMoview?.setVisibilityExt(View.VISIBLE)
+        }
+
+        binding?.keyboardMoview?.binding?.toolbarBack?.setOnClickListener {
+            Log.d("FrogoKeyboard", "Toolbar on Clicked")
+            binding?.keyboardMoview?.setVisibilityExt(View.GONE)
         }
 
     }

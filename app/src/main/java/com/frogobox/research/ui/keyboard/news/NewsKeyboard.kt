@@ -2,6 +2,7 @@ package com.frogobox.research.ui.keyboard.news
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.frogobox.api.news.ConsumeNewsApi
@@ -16,7 +17,9 @@ import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.research.core.BaseKeyboard
 import com.frogobox.research.databinding.ItemKeyboardNewsBinding
-import com.frogobox.research.databinding.KeyboardNewsBinding
+import com.frogobox.research.databinding.KeyboardListBinding
+import com.frogobox.sdk.ext.gone
+import com.frogobox.sdk.ext.visible
 
 /**
  * Created by Faisal Amir on 07/11/22
@@ -31,14 +34,21 @@ import com.frogobox.research.databinding.KeyboardNewsBinding
 class NewsKeyboard(
     context: Context,
     attrs: AttributeSet?,
-) : BaseKeyboard<KeyboardNewsBinding>(context, attrs) {
+) : BaseKeyboard<KeyboardListBinding>(context, attrs) {
 
-    override fun setupViewBinding(): KeyboardNewsBinding {
-        return KeyboardNewsBinding.inflate(LayoutInflater.from(context), this, true)
+    override fun setupViewBinding(): KeyboardListBinding {
+        return KeyboardListBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     override fun onCreate() {
         setupData()
+        initView()
+    }
+
+    private fun initView() {
+        binding?.apply {
+            tvToolbarTitle.text = "News Api"
+        }
     }
 
     private fun setupData() {
@@ -66,10 +76,12 @@ class NewsKeyboard(
 
                 override fun onShowProgress() {
                     // Your Progress Show
+                    binding?.progressBar?.visible()
                 }
 
                 override fun onHideProgress() {
                     // Your Progress Hide
+                    binding?.progressBar?.gone()
                 }
 
             })
@@ -87,6 +99,7 @@ class NewsKeyboard(
                     notifyListener: FrogoRecyclerNotifyListener<Article>,
                 ) {
                     // Your Clicked
+                    Log.d("NewsKeyboard", "onItemClicked: ${data.title}")
                     currentInputConnection.commitText(data.title, 1)
                 }
 

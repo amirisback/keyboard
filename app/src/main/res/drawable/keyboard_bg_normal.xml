@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/button_background_shape"
+        android:bottom="@dimen/dp6"
+        android:left="@dimen/dp3"
+        android:right="@dimen/dp3"
+        android:top="@dimen/dp6">
+        <shape android:shape="rectangle">
+            <stroke android:color="#EFEFEF"
+                android:width="1dp"/>
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+</layer-list>

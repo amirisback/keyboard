@@ -2,8 +2,10 @@ package com.frogobox.research.core
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputConnection
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.LinearLayout
 import androidx.viewbinding.ViewBinding
 
 /**
@@ -19,7 +21,7 @@ import androidx.viewbinding.ViewBinding
 abstract class BaseKeyboard<T : ViewBinding>(
     context: Context,
     attrs: AttributeSet?,
-) : ConstraintLayout(context, attrs) {
+) : LinearLayout(context, attrs) {
 
     var binding: T? = null
 
@@ -50,7 +52,13 @@ abstract class BaseKeyboard<T : ViewBinding>(
     }
 
     fun setInputConnection(inputConnection: InputConnection) {
+        Log.d("BaseKeyboard", "setInputConnection: $inputConnection")
         currentInputConnection = inputConnection
+    }
+
+    fun setVisibilityExt(visibility: Int) {
+        Log.d("BaseKeyboard", "setVisibilityExt: $visibility")
+        this.visibility = visibility
     }
 
 }

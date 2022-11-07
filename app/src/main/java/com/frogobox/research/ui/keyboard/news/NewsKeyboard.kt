@@ -1,4 +1,4 @@
-package com.frogobox.research.ui.keyboard
+package com.frogobox.research.ui.keyboard.news
 
 import android.content.Context
 import android.util.AttributeSet
@@ -15,8 +15,8 @@ import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.research.core.BaseKeyboard
-import com.frogobox.research.databinding.ItemKeyboardMainBinding
-import com.frogobox.research.databinding.KeyboardMainBinding
+import com.frogobox.research.databinding.ItemKeyboardNewsBinding
+import com.frogobox.research.databinding.KeyboardNewsBinding
 
 /**
  * Created by Faisal Amir on 07/11/22
@@ -28,13 +28,13 @@ import com.frogobox.research.databinding.KeyboardMainBinding
  * All rights reserved
  */
 
-class MainKeyboard(
+class NewsKeyboard(
     context: Context,
     attrs: AttributeSet?,
-) : BaseKeyboard<KeyboardMainBinding>(context, attrs) {
+) : BaseKeyboard<KeyboardNewsBinding>(context, attrs) {
 
-    override fun setupViewBinding(): KeyboardMainBinding {
-        return KeyboardMainBinding.inflate(LayoutInflater.from(context), this, true)
+    override fun setupViewBinding(): KeyboardNewsBinding {
+        return KeyboardNewsBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     override fun onCreate() {
@@ -79,9 +79,9 @@ class MainKeyboard(
     private fun setupRv(data: List<Article>) {
         binding?.apply {
 
-            val adapterCallback = object : IFrogoBindingAdapter<Article, ItemKeyboardMainBinding>{
+            val adapterCallback = object : IFrogoBindingAdapter<Article, ItemKeyboardNewsBinding> {
                 override fun onItemClicked(
-                    binding: ItemKeyboardMainBinding,
+                    binding: ItemKeyboardNewsBinding,
                     data: Article,
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<Article>,
@@ -91,18 +91,21 @@ class MainKeyboard(
                 }
 
                 override fun onItemLongClicked(
-                    binding: ItemKeyboardMainBinding,
+                    binding: ItemKeyboardNewsBinding,
                     data: Article,
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<Article>,
-                ) {}
+                ) {
+                }
 
-                override fun setViewBinding(parent: ViewGroup): ItemKeyboardMainBinding {
-                    return ItemKeyboardMainBinding.inflate(LayoutInflater.from(context), parent, false)
+                override fun setViewBinding(parent: ViewGroup): ItemKeyboardNewsBinding {
+                    return ItemKeyboardNewsBinding.inflate(LayoutInflater.from(context),
+                        parent,
+                        false)
                 }
 
                 override fun setupInitComponent(
-                    binding: ItemKeyboardMainBinding,
+                    binding: ItemKeyboardNewsBinding,
                     data: Article,
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<Article>,
@@ -113,7 +116,7 @@ class MainKeyboard(
                 }
             }
 
-            rvKeyboardMain.injectorBinding<Article, ItemKeyboardMainBinding>()
+            rvKeyboardMain.injectorBinding<Article, ItemKeyboardNewsBinding>()
                 .addData(data)
                 .createLayoutLinearVertical(false)
                 .addCallback(adapterCallback)

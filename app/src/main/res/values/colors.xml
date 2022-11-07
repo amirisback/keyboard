@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +8,27 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="color_primary">#FFF57C00</color>
+    <color name="color_primary_dark">#FFD76D00</color>
+    <color name="color_accent">@color/color_primary</color>
+
+    <color name="md_grey_800">#424242</color>
+    <color name="md_grey_600">#757575</color>
+    <color name="divider_grey">#88808080</color>
+
+    <color name="theme_dark_background_color">@color/md_grey_800</color>
+    <color name="default_background_color">@color/theme_dark_background_color</color>
+
+    <color name="you_background_color">#F0F0F3</color>
+    <color name="you_contextual_status_bar_color">#219BCC</color>
+    <color name="you_dialog_background_color">#007FAC</color>
+    <color name="you_neutral_text_color">#001E2C</color>
+    <color name="you_primary_color">#219BCC</color>
+    <color name="you_primary_dark_color">#00668B</color>
+    <color name="you_status_bar_color">#E0F3FF</color>
+
+    <color name="you_keyboard_background_color">@color/you_background_color</color>
+    <color name="you_keyboard_toolbar_color">@color/you_background_color</color>
+
 </resources>

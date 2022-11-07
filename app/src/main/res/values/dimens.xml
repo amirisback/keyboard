@@ -1,0 +1,52 @@
+<resources>
+
+    <dimen name="dp1">1dp</dimen>
+    <dimen name="dp2">2dp</dimen>
+    <dimen name="dp3">3dp</dimen>
+    <dimen name="dp4">4dp</dimen>
+    <dimen name="dp6">6dp</dimen>
+    <dimen name="dp8">8dp</dimen>
+    <dimen name="dp9">9dp</dimen>
+    <dimen name="dp10">10dp</dimen>
+    <dimen name="dp12">12dp</dimen>
+    <dimen name="dp16">16dp</dimen>
+    <dimen name="_dp16">-16dp</dimen>
+    <dimen name="dp18">18dp</dimen>
+    <dimen name="dp21">21dp</dimen>
+    <dimen name="dp24">24dp</dimen>
+    <dimen name="dp28">28dp</dimen>
+    <dimen name="dp32">32dp</dimen>
+    <dimen name="dp36">36dp</dimen>
+    <dimen name="dp48">48dp</dimen>
+    <dimen name="dp60">60dp</dimen>
+    <dimen name="dp64">64dp</dimen>
+    <dimen name="dp84">84dp</dimen>
+    <dimen name="dp0">0dp</dimen>
+
+    <dimen name="sp10">10sp</dimen>
+
+    <dimen name="popup_max_move_distance">60dp</dimen>
+    <dimen name="top_small_number_margin_width">12dp</dimen>
+    <dimen name="top_small_number_margin_height">18dp</dimen>
+    <dimen name="toolbar_height">46dp</dimen>
+    <dimen name="toolbar_icon_height">32dp</dimen>
+    <dimen name="clip_drag_icon_height">40dp</dimen>
+    <dimen name="key_height">60dp</dimen>
+    <dimen name="vertical_correction">-10dp</dimen>
+    <dimen name="clip_pin_size">28dp</dimen>
+    <dimen name="emoji_item_size">46dp</dimen>
+    <dimen name="emoji_palette_btn_size">42dp</dimen>
+    <dimen name="dragselect_hotspot_height">56dp</dimen>
+
+    <dimen name="normal_margin">12dp</dimen>
+    <dimen name="bigger_margin">20dp</dimen>
+    <dimen name="big_margin">24dp</dimen>
+    <dimen name="section_margin">32dp</dimen>
+
+    <dimen name="keyboard_text_size">22sp</dimen>
+    <dimen name="preview_text_size">26sp</dimen>
+    <dimen name="label_text_size">16sp</dimen>      <!-- text size used at keys with longer labels, like "123" -->
+    <dimen name="emoji_text_size">28sp</dimen>
+
+
+</resources>

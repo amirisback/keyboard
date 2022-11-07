@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Row>
+        <Key
+            app:keyEdgeFlags="left"
+            app:keyLabel="~" />
+        <Key app:keyLabel="±" />
+        <Key app:keyLabel="×" />
+        <Key app:keyLabel="÷" />
+        <Key app:keyLabel="•" />
+        <Key app:keyLabel="°" />
+        <Key app:keyLabel="`" />
+        <Key app:keyLabel="´" />
+        <Key app:keyLabel="{" />
+        <Key
+            app:keyEdgeFlags="right"
+            app:keyLabel="}" />
+    </Row>
+    <Row>
+        <Key
+            app:keyEdgeFlags="left"
+            app:keyLabel="©" />
+        <Key app:keyLabel="£" />
+        <Key app:keyLabel="€" />
+        <Key app:keyLabel="^" />
+        <Key app:keyLabel="®" />
+        <Key app:keyLabel="¥" />
+        <Key app:keyLabel="_" />
+        <Key app:keyLabel="+" />
+        <Key app:keyLabel="[" />
+        <Key
+            app:keyEdgeFlags="right"
+            app:keyLabel="]" />
+    </Row>
+    <Row>
+        <Key
+            app:code="-1"
+            app:keyEdgeFlags="left"
+            app:keyLabel="\?123"
+            app:keyWidth="15%p" />
+        <Key app:keyLabel="¡" />
+        <Key app:keyLabel="&lt;" />
+        <Key app:keyLabel="&gt;" />
+        <Key app:keyLabel="¢" />
+        <Key app:keyLabel="|" />
+        <Key app:keyLabel="\\" />
+        <Key app:keyLabel="¿" />
+        <Key
+            app:code="-5"
+            app:isRepeatable="true"
+            app:keyEdgeFlags="right"
+            app:keyIcon="@drawable/ic_keyboard_backspace"
+            app:keyWidth="15%p" />
+    </Row>
+    <Row>
+        <Key
+            app:code="-2"
+            app:keyEdgeFlags="left"
+            app:keyLabel="abc"
+            app:keyWidth="15%p" />
+        <Key
+            app:keyLabel=","
+            app:keyWidth="10%p" />
+        <Key
+            app:code="32"
+            app:isRepeatable="true"
+            app:keyWidth="48%p" />
+        <Key
+            app:keyLabel="."
+            app:keyWidth="10%p" />
+        <Key
+            app:code="-4"
+            app:keyEdgeFlags="right"
+            app:keyIcon="@drawable/ic_keyboard_enter"
+            app:keyWidth="15%p" />
+    </Row>
+</Keyboard>

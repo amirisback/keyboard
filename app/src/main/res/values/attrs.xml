@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="KeyboardViewPreviewState">
+        <attr name="state_long_pressable" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="KwKeyboardView">
+        <attr name="keyTextSize" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="KwKeyboard">
+        <attr name="keyWidth" format="fraction" />
+        <attr name="horizontalGap" format="fraction" />
+    </declare-styleable>
+
+    <declare-styleable name="KwKeyboard_Key">
+        <!-- The unicode value that this key outputs. -->
+        <attr name="code" format="integer" />
+        <!-- The XML keyboard layout of any popup keyboard. -->
+        <attr name="popupKeyboard" format="reference" />
+        <!-- The characters to display in the popup keyboard. -->
+        <attr name="popupCharacters" format="string" />
+        <!-- Key edge flags. -->
+        <attr name="keyEdgeFlags">
+            <!-- Key is anchored to the left of the keyboard. -->
+            <flag name="left" value="1" />
+            <!-- Key is anchored to the right of the keyboard. -->
+            <flag name="right" value="2" />
+        </attr>
+        <!-- Whether long-pressing on this key will make it repeat. -->
+        <attr name="isRepeatable" format="boolean" />
+        <!-- The label to display on the key. -->
+        <attr name="keyLabel" format="string" />
+        <!-- The icon to display on the key instead of the label. -->
+        <attr name="keyIcon" format="reference" />
+        <!-- Top small number shown above letters of the first row. -->
+        <attr name="topSmallNumber" format="string" />
+    </declare-styleable>
+</resources>

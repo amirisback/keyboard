@@ -100,7 +100,8 @@ class NewsKeyboard(
                 ) {
                     // Your Clicked
                     Log.d("NewsKeyboard", "onItemClicked: ${data.title}")
-                    currentInputConnection.commitText(data.title, 1)
+                    Log.d("FrogoKeyboard", "currentInputConnection: $currentInputConnection")
+                    currentInputConnection?.commitText(data.title, 1)
                 }
 
                 override fun onItemLongClicked(

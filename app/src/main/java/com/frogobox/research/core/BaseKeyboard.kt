@@ -25,7 +25,7 @@ abstract class BaseKeyboard<T : ViewBinding>(
 
     var binding: T? = null
 
-    protected lateinit var currentInputConnection : InputConnection
+    var currentInputConnection : InputConnection? = null
 
     abstract fun setupViewBinding(): T
 

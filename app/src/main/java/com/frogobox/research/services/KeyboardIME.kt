@@ -52,6 +52,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding = KeyboardImeBinding.inflate(LayoutInflater.from(this), null, false)
         binding!!.keyboardMain.setKeyboard(keyboard!!)
         binding!!.keyboardMain.mOnKeyboardActionListener = this
+        binding!!.keyboardNews.setInputConnection(currentInputConnection)
+        binding!!.keyboardMoview.setInputConnection(currentInputConnection)
         initView()
         return binding!!.root
     }
@@ -79,12 +81,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         }
         keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
         binding?.keyboardMain?.setKeyboard(keyboard!!)
+        binding?.keyboardNews?.setInputConnection(currentInputConnection)
+        binding?.keyboardMoview?.setInputConnection(currentInputConnection)
         updateShiftKeyState()
     }
 
     private fun initView() {
-        binding?.keyboardNews?.setInputConnection(currentInputConnection)
-        binding?.keyboardMoview?.setInputConnection(currentInputConnection)
 
         binding?.containerAutoText?.setOnClickListener {
             Log.d("FrogoKeyboard", "keyboardHeaderNews on Clicked")

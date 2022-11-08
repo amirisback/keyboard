@@ -58,7 +58,21 @@
                 android:focusable="true"
                 android:hint="Text" />
 
-            <Button
+            <EditText
+                android:id="@+id/et_text_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:hint="Text" />
+
+            <EditText
+                android:id="@+id/et_text_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:hint="Text" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

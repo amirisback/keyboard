@@ -101,7 +101,15 @@ class NewsKeyboard(
                     // Your Clicked
                     Log.d("NewsKeyboard", "onItemClicked: ${data.title}")
                     Log.d("FrogoKeyboard", "currentInputConnection: $currentInputConnection")
-                    currentInputConnection?.commitText(data.title, 1)
+                    val output = "${data.title}\n" +
+                            "${data.author}\n" +
+                            "\n" +
+                            "${data.description}\n" +
+                            "\n" +
+                            "Sumber : ${data.url}" +
+                            "\n" +
+                            "Terima Kasih"
+                    currentInputConnection?.commitText(output, 1)
                 }
 
                 override fun onItemLongClicked(

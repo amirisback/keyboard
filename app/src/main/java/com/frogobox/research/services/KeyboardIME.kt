@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo.IME_ACTION_NONE
 import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
 import android.view.inputmethod.EditorInfo.IME_MASK_ACTION
 import android.view.inputmethod.ExtractedTextRequest
+import android.view.inputmethod.InputConnection
 import com.frogobox.research.R
 import com.frogobox.research.databinding.KeyboardImeBinding
 import com.frogobox.research.ui.keyboard.main.ItemMainKeyboard
@@ -54,6 +55,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding!!.keyboardMain.mOnKeyboardActionListener = this
         binding!!.keyboardNews.setInputConnection(currentInputConnection)
         binding!!.keyboardMoview.setInputConnection(currentInputConnection)
+        binding!!.keyboardWebview.setInputConnection(currentInputConnection)
+        binding!!.keyboardForm.setInputConnection(currentInputConnection)
         initView()
         return binding!!.root
     }
@@ -83,6 +86,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding?.keyboardMain?.setKeyboard(keyboard!!)
         binding?.keyboardNews?.setInputConnection(currentInputConnection)
         binding?.keyboardMoview?.setInputConnection(currentInputConnection)
+        binding?.keyboardWebview?.setInputConnection(currentInputConnection)
+        binding?.keyboardForm?.setInputConnection(currentInputConnection)
         updateShiftKeyState()
     }
 
@@ -108,6 +113,27 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             binding?.keyboardMoview?.setVisibilityExt(View.GONE)
         }
 
+        binding?.containerWebSearch?.setOnClickListener {
+            Log.d("FrogoKeyboard", "keyboardHeaderWebview on Clicked")
+            binding?.keyboardWebview?.setVisibilityExt(View.VISIBLE)
+        }
+
+        binding?.keyboardWebview?.binding?.toolbarBack?.setOnClickListener {
+            Log.d("FrogoKeyboard", "Toolbar on Clicked")
+            binding?.keyboardWebview?.setVisibilityExt(View.GONE)
+        }
+
+        binding?.containerForm?.setOnClickListener {
+            Log.d("FrogoKeyboard", "keyboardHeaderForm on Clicked")
+            binding?.keyboardForm?.setVisibilityExt(View.VISIBLE)
+        }
+
+        binding?.keyboardForm?.binding?.toolbarBack?.setOnClickListener {
+            Log.d("FrogoKeyboard", "Toolbar on Clicked")
+            binding?.keyboardForm?.setVisibilityExt(View.GONE)
+        }
+
+
     }
 
     private fun updateShiftKeyState() {
@@ -122,8 +148,62 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         }
     }
 
+
     override fun onKey(code: Int) {
         val inputConnection = currentInputConnection
+        val inputConnectionForm = binding?.keyboardForm?.binding?.etText?.onCreateInputConnection(EditorInfo())
+
+        onKeyExt(code, inputConnection)
+        inputConnectionForm?.let { onKeyExt(code, it) }
+    }
+
+    override fun onActionUp() {
+        if (switchToLetters) {
+            keyboardMode = KEYBOARD_LETTERS
+            keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
+
+            val editorInfo = currentInputEditorInfo
+            if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
+                if (currentInputConnection.getCursorCapsMode(editorInfo.inputType) != 0) {
+                    keyboard?.setShifted(SHIFT_ON_ONE_CHAR)
+                }
+            }
+
+            binding?.keyboardMain?.setKeyboard(keyboard!!)
+            switchToLetters = false
+        }
+    }
+
+    override fun moveCursorLeft() {
+        moveCursor(false)
+    }
+
+    override fun moveCursorRight() {
+        moveCursor(true)
+    }
+
+    override fun onText(text: String) {
+        currentInputConnection?.commitText(text, 0)
+    }
+
+    override fun onUpdateSelection(
+        oldSelStart: Int,
+        oldSelEnd: Int,
+        newSelStart: Int,
+        newSelEnd: Int,
+        candidatesStart: Int,
+        candidatesEnd: Int,
+    ) {
+        super.onUpdateSelection(oldSelStart,
+            oldSelEnd,
+            newSelStart,
+            newSelEnd,
+            candidatesStart,
+            candidatesEnd)
+
+    }
+
+    private fun onKeyExt(code: Int, inputConnection: InputConnection) {
         if (keyboard == null || inputConnection == null) {
             return
         }
@@ -207,8 +287,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 // However, avoid doing that in cases when the EditText for example requires numbers as the input.
                 // We can detect that by the text not changing on pressing Space.
                 if (keyboardMode != KEYBOARD_LETTERS && code == ItemMainKeyboard.KEYCODE_SPACE) {
-                    val originalText =
-                        inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text ?: return
+                    val originalText = inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text ?: return
                     inputConnection.commitText(codeChar.toString(), 1)
                     val newText = inputConnection.getExtractedText(ExtractedTextRequest(), 0).text
                     switchToLetters = originalText != newText
@@ -226,52 +305,6 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         if (code != ItemMainKeyboard.KEYCODE_SHIFT) {
             updateShiftKeyState()
         }
-    }
-
-    override fun onActionUp() {
-        if (switchToLetters) {
-            keyboardMode = KEYBOARD_LETTERS
-            keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
-
-            val editorInfo = currentInputEditorInfo
-            if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
-                if (currentInputConnection.getCursorCapsMode(editorInfo.inputType) != 0) {
-                    keyboard?.setShifted(SHIFT_ON_ONE_CHAR)
-                }
-            }
-
-            binding?.keyboardMain?.setKeyboard(keyboard!!)
-            switchToLetters = false
-        }
-    }
-
-    override fun moveCursorLeft() {
-        moveCursor(false)
-    }
-
-    override fun moveCursorRight() {
-        moveCursor(true)
-    }
-
-    override fun onText(text: String) {
-        currentInputConnection?.commitText(text, 0)
-    }
-
-    override fun onUpdateSelection(
-        oldSelStart: Int,
-        oldSelEnd: Int,
-        newSelStart: Int,
-        newSelEnd: Int,
-        candidatesStart: Int,
-        candidatesEnd: Int,
-    ) {
-        super.onUpdateSelection(oldSelStart,
-            oldSelEnd,
-            newSelStart,
-            newSelEnd,
-            candidatesStart,
-            candidatesEnd)
-
     }
 
     private fun moveCursor(moveRight: Boolean) {

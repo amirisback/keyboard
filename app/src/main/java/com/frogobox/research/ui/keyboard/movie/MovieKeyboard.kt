@@ -90,7 +90,13 @@ class MovieKeyboard(
                         // Your Clicked
                         Log.d("FrogoKeyboard", "onItemClicked: ${data.title}")
                         Log.d("FrogoKeyboard", "currentInputConnection: $currentInputConnection")
-                        currentInputConnection?.commitText(data.title, 1)
+                        val output = "Movie: ${data.title} - ${data.release_date} \n " +
+                                "Overview: ${data.overview} \n " +
+                                "Vote: ${data.vote_average} \n " +
+                                "${MovieUrl.BASE_URL_IMAGE_ORIGNAL}${data.poster_path}" +
+                                "\n" +
+                                "Terima Kasih"
+                        currentInputConnection?.commitText(output, 1)
                     }
 
                     override fun onItemLongClicked(

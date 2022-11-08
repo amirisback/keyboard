@@ -1,7 +1,10 @@
 package com.frogobox.research.ui.main
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import com.frogobox.research.core.BaseBindActivity
 import com.frogobox.research.databinding.ActivityMainBinding
@@ -31,9 +34,21 @@ class MainActivity : BaseBindActivity<ActivityMainBinding>() {
     override fun initView() {
         super.initView()
         binding.apply {
+            btnChangeKeyboard.setOnClickListener {
+                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+            }
+
+            btnGoToSetting.setOnClickListener {
+                Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(this)
+                }
+            }
 
         }
     }
+
+
 
     override fun initObserver() {
         super.initObserver()

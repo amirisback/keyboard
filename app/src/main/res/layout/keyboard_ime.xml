@@ -4,21 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <com.frogobox.research.ui.keyboard.webview.WebiewKeyboard
+        android:id="@+id/keyboard_webview"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main" />
+
+    <com.frogobox.research.ui.keyboard.form.FormKeyboard
+        android:id="@+id/keyboard_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main" />
+
     <LinearLayout
         android:id="@+id/container_keyboard_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/you_background_color"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/keyboard_main"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/container_auto_text"
@@ -63,6 +79,54 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Moview Api"
+                    android:textColor="#2B486D"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/container_web_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_keyboard_search" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search Website"
+                    android:textColor="#2B486D"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/container_form"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_launcher_monochrome" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Form"
                     android:textColor="#2B486D"
                     android:textSize="10sp" />
 

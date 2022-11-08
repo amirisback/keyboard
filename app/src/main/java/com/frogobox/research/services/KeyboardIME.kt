@@ -172,6 +172,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 inputConnection = et3Connection
             }
 
+        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
+            inputConnection = binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
         } else {
             inputConnection = currentInputConnection
         }
@@ -238,10 +240,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 if (keyboard!!.mShiftState == SHIFT_ON_ONE_CHAR) {
                     keyboard!!.mShiftState = SHIFT_OFF
                 }
-                
+
                 val selectedText = inputConnection.getSelectedText(0)
                 if (TextUtils.isEmpty(selectedText)) {
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN,
+                        KeyEvent.KEYCODE_DEL))
                     inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
                 } else {
                     inputConnection.commitText("", 1)
@@ -285,8 +288,10 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 if (imeOptionsActionId != IME_ACTION_NONE) {
                     inputConnection.performEditorAction(imeOptionsActionId)
                 } else {
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER))
+                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN,
+                        KeyEvent.KEYCODE_ENTER))
+                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP,
+                        KeyEvent.KEYCODE_ENTER))
                 }
 
                 if (inputConnection != currentInputConnection) {

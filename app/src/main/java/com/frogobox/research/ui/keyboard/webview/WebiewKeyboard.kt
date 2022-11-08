@@ -23,6 +23,7 @@ class WebiewKeyboard(
     context: Context,
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardWebviewBinding>(context, attrs) {
+
     override fun setupViewBinding(): KeyboardWebviewBinding {
         return KeyboardWebviewBinding.inflate(LayoutInflater.from(context), this, true)
     }
@@ -33,11 +34,6 @@ class WebiewKeyboard(
 
     private fun initView() {
         binding?.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                webview.focusable = View.FOCUSABLE
-            }
-            webview.isFocusableInTouchMode = true
-            webview.requestFocus()
             webview.loadUrlExt("https://www.google.com")
         }
     }

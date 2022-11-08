@@ -49,11 +49,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <WebView
+            <com.frogobox.research.ui.keyboard.webview.MiniWebviewKeyboard
                 android:id="@+id/webview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

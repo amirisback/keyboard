@@ -238,15 +238,19 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 if (keyboard!!.mShiftState == SHIFT_ON_ONE_CHAR) {
                     keyboard!!.mShiftState = SHIFT_OFF
                 }
-
+                
                 val selectedText = inputConnection.getSelectedText(0)
                 if (TextUtils.isEmpty(selectedText)) {
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_DEL))
+                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
                     inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
                 } else {
                     inputConnection.commitText("", 1)
                 }
+
+                if (inputConnection != currentInputConnection) {
+                    inputConnection.deleteSurroundingText(1, 0)
+                }
+
                 binding?.keyboardMain?.invalidateAllKeys()
             }
             ItemMainKeyboard.KEYCODE_SHIFT -> {
@@ -281,11 +285,14 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 if (imeOptionsActionId != IME_ACTION_NONE) {
                     inputConnection.performEditorAction(imeOptionsActionId)
                 } else {
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_ENTER))
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP,
-                        KeyEvent.KEYCODE_ENTER))
+                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
+                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER))
                 }
+
+                if (inputConnection != currentInputConnection) {
+                    inputConnection.commitText("\n", 1)
+                }
+
             }
             ItemMainKeyboard.KEYCODE_MODE_CHANGE -> {
                 val keyboardXml = if (keyboardMode == KEYBOARD_LETTERS) {
@@ -308,7 +315,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 // However, avoid doing that in cases when the EditText for example requires numbers as the input.
                 // We can detect that by the text not changing on pressing Space.
                 if (keyboardMode != KEYBOARD_LETTERS && code == ItemMainKeyboard.KEYCODE_SPACE) {
-                    val originalText = inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text ?: return
+                    val originalText =
+                        inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text ?: return
                     inputConnection.commitText(codeChar.toString(), 1)
                     val newText = inputConnection.getExtractedText(ExtractedTextRequest(), 0).text
                     switchToLetters = originalText != newText

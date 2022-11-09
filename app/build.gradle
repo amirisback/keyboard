@@ -5,11 +5,11 @@ plugins {
 
 android {
 
-    namespace 'com.frogobox.research'
+    namespace 'com.frogobox.keyboard'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.frogobox.research"
+        applicationId "com.frogobox.keyboard"
         minSdk 21
         targetSdk 33
         versionCode 1

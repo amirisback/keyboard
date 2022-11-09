@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Research</string>
+    <string name="app_name">Frogobox Keyboard</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="redirection_note">Please enable Simple Keyboard on the next screen, to make it an available keyboard. Press \'Back\' once enabled.</string>
     <string name="change_keyboard">Change Keyboard</string>
@@ -36,4 +36,11 @@
     <!-- Emojis -->
     <string name="emojis">Emojis</string>
     <string name="settings">Settings</string>
+
+    <string name="welcome">Welcome to Frogobox Keyboard</string>
+    <string name="enable_and_set_for_default">For using this Frogobox Keyboard you need to go to your settings and enable the Frogobox Keyboard. After that, when you want to use this Frogobox Keyboard, you neet to set it for default keyboard.</string>
+    <string name="description_for_sharing">After that go to any chat application and share content :)</string>
+    <string name="animals">Animals</string>
+    <string name="network_problem">Network error occurred while downloading.</string>
+    <string name="download_problem">IO error occurred while downloading</string>
 </resources>

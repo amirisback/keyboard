@@ -4,24 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.frogobox.research.ui.keyboard.webview.WebiewKeyboard
-        android:id="@+id/keyboard_webview"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main" />
-
-    <com.frogobox.research.ui.keyboard.form.FormKeyboard
-        android:id="@+id/keyboard_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main" />
-
     <LinearLayout
         android:id="@+id/container_keyboard_main"
         android:layout_width="match_parent"
@@ -33,10 +15,32 @@
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/you_background_color"/>
+            android:background="@color/you_background_color" />
 
         <com.frogobox.research.ui.keyboard.main.MainKeyboard
             android:id="@+id/keyboard_main"
+            style="@style/KwKeyboardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/theme_dark_background_color" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mock_measure_height_keyboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main">
+
+        <com.frogobox.research.ui.keyboard.main.MainHeaderKeyboard
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/you_background_color" />
+
+        <com.frogobox.research.ui.keyboard.main.MainKeyboard
+            android:id="@+id/mock_measure_height_keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,10 +55,10 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
     <com.frogobox.research.ui.keyboard.movie.MovieKeyboard
         android:id="@+id/keyboard_moview"
@@ -63,9 +67,33 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.research.ui.keyboard.webview.WebiewKeyboard
+        android:id="@+id/keyboard_webview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.research.ui.keyboard.form.FormKeyboard
+        android:id="@+id/keyboard_form"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

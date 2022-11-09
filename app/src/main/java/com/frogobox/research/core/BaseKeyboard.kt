@@ -56,9 +56,4 @@ abstract class BaseKeyboard<T : ViewBinding>(
         currentInputConnection = inputConnection
     }
 
-    fun setVisibilityExt(visibility: Int) {
-        Log.d("BaseKeyboard", "setVisibilityExt: $visibility")
-        this.visibility = visibility
-    }
-
 }

@@ -44,41 +44,50 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:id="@+id/rv_keyboard_main"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="@dimen/frogo_dimen_16dp">
+            android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/et_text"
+            <LinearLayout
+                android:id="@+id/rv_keyboard_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="true"
-                android:hint="Text" />
+                android:orientation="vertical"
+                android:padding="@dimen/frogo_dimen_16dp">
 
-            <EditText
-                android:id="@+id/et_text_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:hint="Text" />
+                <EditText
+                    android:id="@+id/et_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:hint="Text" />
 
-            <EditText
-                android:id="@+id/et_text_3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:hint="Text" />
+                <EditText
+                    android:id="@+id/et_text_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:hint="Text" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_submit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="submit" />
+                <EditText
+                    android:id="@+id/et_text_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:hint="Text" />
 
-        </LinearLayout>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp16"
+                    android:background="@drawable/frogo_bg_deep_purple_16dp"
+                    android:text="Submit"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+        </ScrollView>
 
     </LinearLayout>
 

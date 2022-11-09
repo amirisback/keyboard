@@ -7,7 +7,7 @@
     android:layout_marginBottom="16dp"
     android:background="@drawable/frogo_bg_card_8dp"
     android:elevation="@dimen/frogo_dimen_4dp"
-    android:padding="@dimen/dp16">
+    android:padding="@dimen/frogo_dimen_16dp">
 
     <EditText
         android:id="@+id/et_item_keyboard_multi_form"

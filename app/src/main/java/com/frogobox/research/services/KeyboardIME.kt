@@ -93,7 +93,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     private fun initView() {
 
-        binding?.containerAutoText?.setOnClickListener {
+        binding?.keyboardHeader?.binding?.containerAutoText?.setOnClickListener {
             Log.d("FrogoKeyboard", "keyboardHeaderNews on Clicked")
             binding?.keyboardNews?.setVisibilityExt(View.VISIBLE)
         }
@@ -103,7 +103,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             binding?.keyboardNews?.setVisibilityExt(View.GONE)
         }
 
-        binding?.containerCheckOngkir?.setOnClickListener {
+        binding?.keyboardHeader?.binding?.containerCheckOngkir?.setOnClickListener {
             Log.d("FrogoKeyboard", "keyboardHeaderMoview on Clicked")
             binding?.keyboardMoview?.setVisibilityExt(View.VISIBLE)
         }
@@ -113,7 +113,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             binding?.keyboardMoview?.setVisibilityExt(View.GONE)
         }
 
-        binding?.containerWebSearch?.setOnClickListener {
+        binding?.keyboardHeader?.binding?.containerWebSearch?.setOnClickListener {
             Log.d("FrogoKeyboard", "keyboardHeaderWebview on Clicked")
             binding?.keyboardWebview?.setVisibilityExt(View.VISIBLE)
         }
@@ -123,7 +123,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             binding?.keyboardWebview?.setVisibilityExt(View.GONE)
         }
 
-        binding?.containerForm?.setOnClickListener {
+        binding?.keyboardHeader?.binding?.containerForm?.setOnClickListener {
             Log.d("FrogoKeyboard", "keyboardHeaderForm on Clicked")
             binding?.keyboardForm?.setVisibilityExt(View.VISIBLE)
         }

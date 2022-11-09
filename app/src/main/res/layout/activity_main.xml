@@ -29,7 +29,7 @@
             android:id="@+id/btn_go_to_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp16"
+            android:layout_marginTop="@dimen/frogo_dimen_16dp"
             android:text="Go to Setting" />
 
         <Button

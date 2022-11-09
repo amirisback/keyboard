@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="rectangle">
             <solid android:color="#FFFFFF" />
-            <corners android:radius="@dimen/dp8" />
+            <corners android:radius="@dimen/frogo_dimen_8dp" />
         </shape>
     </item>
 </layer-list>

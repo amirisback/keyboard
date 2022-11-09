@@ -80,8 +80,9 @@
                     android:id="@+id/btn_submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp16"
+                    android:layout_marginTop="@dimen/frogo_dimen_16dp"
                     android:background="@drawable/frogo_bg_deep_purple_16dp"
+                    android:padding="@dimen/frogo_dimen_16dp"
                     android:text="Submit"
                     android:textColor="@color/white" />
 

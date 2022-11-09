@@ -2,10 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/button_background_shape"
-        android:bottom="@dimen/dp6"
-        android:left="@dimen/dp3"
-        android:right="@dimen/dp3"
-        android:top="@dimen/dp6">
+        android:bottom="@dimen/frogo_dimen_6dp"
+        android:left="3dp"
+        android:right="3dp"
+        android:top="@dimen/frogo_dimen_6dp">
         <shape android:shape="rectangle">
             <solid android:color="#76D1FF" />
             <corners android:radius="21dp" />

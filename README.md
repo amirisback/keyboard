@@ -1,7 +1,9 @@
-## Android Research Tech
-- Template repository for doing research on Android Technologies
+## Frogo Keyboard
+- Simple research keyboard for Android
 
 ## Documentation
+- https://github.com/SimpleMobileTools/Simple-Keyboard
+- https://github.com/kolegad/custom-keyboard
 - https://github.com/anssih/finqwerty
     - keymap app for phones with physical keyboards
 - https://github.com/shiftrot/caps2ctrl

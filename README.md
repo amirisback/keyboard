@@ -1,4 +1,4 @@
-## Frogo Keyboard
+![Banner](/docs/image/banner-frogo-keyboard.png)
 - Simple research keyboard for Android
 
 ## Documentation

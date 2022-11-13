@@ -1,4 +1,4 @@
-package com.koinworks.app.ui.keyboard.extensions
+package com.frogobox.keyboard.ext
 
 import android.text.SpannableString
 import android.text.TextPaint

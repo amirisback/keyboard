@@ -18,6 +18,8 @@ import android.view.accessibility.AccessibilityManager
 import android.widget.*
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
+import com.frogobox.keyboard.ext.adjustAlpha
+import com.frogobox.keyboard.ext.getContrastColor
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
@@ -28,8 +30,6 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.MAX_KEY
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
-import com.koinworks.app.ui.keyboard.extensions.adjustAlpha
-import com.koinworks.app.ui.keyboard.extensions.getContrastColor
 import java.util.*
 
 @SuppressLint("UseCompatLoadingForDrawables", "ClickableViewAccessibility")

@@ -1,5 +1,6 @@
 package com.frogobox.keyboard.services
 
+import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.text.InputType
 import android.text.InputType.TYPE_CLASS_DATETIME
@@ -17,6 +18,7 @@ import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
 import android.view.inputmethod.EditorInfo.IME_MASK_ACTION
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
+import android.view.inputmethod.InputMethodSubtype
 import android.widget.EditText
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
@@ -25,6 +27,8 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
+import com.frogobox.log.FLog
+import com.frogobox.sdk.ext.showLogD
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -34,6 +38,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private val KEYBOARD_LETTERS = 0
     private val KEYBOARD_SYMBOLS = 1
     private val KEYBOARD_SYMBOLS_SHIFT = 2
+    private val KEYBOARD_NUMBER = 3
 
     private var keyboard: ItemMainKeyboard? = null
 
@@ -44,7 +49,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private var switchToLetters = false
 
     private var binding: KeyboardImeBinding? = null
-
+    
     override fun onInitializeInterface() {
         super.onInitializeInterface()
         keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
@@ -75,7 +80,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         enterKeyType = attribute.imeOptions and (IME_MASK_ACTION or IME_FLAG_NO_ENTER_ACTION)
 
         val keyboardXml = when (inputTypeClass) {
-            TYPE_CLASS_NUMBER, TYPE_CLASS_DATETIME, TYPE_CLASS_PHONE -> {
+            TYPE_CLASS_NUMBER -> {
+                keyboardMode = KEYBOARD_NUMBER
+                R.xml.keys_number
+            }
+
+            TYPE_CLASS_DATETIME, TYPE_CLASS_PHONE -> {
                 keyboardMode = KEYBOARD_SYMBOLS
                 R.xml.keys_symbols
             }

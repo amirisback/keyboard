@@ -19,6 +19,7 @@ import android.view.inputmethod.EditorInfo.IME_MASK_ACTION
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodSubtype
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
@@ -49,7 +50,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private var switchToLetters = false
 
     private var binding: KeyboardImeBinding? = null
-    
+
+    override fun onCreate() {
+        setTheme(R.style.AppTheme)
+        super.onCreate()
+    }
+
     override fun onInitializeInterface() {
         super.onInitializeInterface()
         keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)

@@ -11,7 +11,7 @@
             app:keyLabel="3"
             app:keyWidth="25%p" />
         <Key
-            app:keyLabel="+"
+            app:keyLabel="*"
             app:keyWidth="25%p" />
     </Row>
     <Row>
@@ -25,7 +25,7 @@
             app:keyLabel="6"
             app:keyWidth="25%p" />
         <Key
-            app:keyLabel="-"
+            app:keyLabel="#"
             app:keyWidth="25%p" />
     </Row>
     <Row>

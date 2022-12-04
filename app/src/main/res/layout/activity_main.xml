@@ -89,6 +89,24 @@
                 android:hint="Test Keyboard Input"
                 android:textColor="@color/frogoColorBlack" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/et_text_auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:hint="Test Keyboard Input"
+                    android:completionThreshold="1"
+                    android:minHeight="@dimen/frogo_dimen_72dp"
+                    android:paddingStart="@dimen/frogo_dimen_16dp"
+                    android:paddingEnd="@dimen/frogo_dimen_16dp"
+                    android:textColor="@color/frogoColorBlack" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <EditText
                 android:id="@+id/et_text_number"
                 android:layout_width="match_parent"

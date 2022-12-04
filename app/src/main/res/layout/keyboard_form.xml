@@ -55,12 +55,23 @@
                 android:orientation="vertical"
                 android:padding="@dimen/frogo_dimen_16dp">
 
-                <EditText
-                    android:id="@+id/et_text"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:hint="Text" />
+                    android:hint="Text">
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/et_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/frogo_dimen_60dp"
+                        android:focusable="true"
+                        android:completionThreshold="1"
+                        android:paddingStart="@dimen/frogo_dimen_16dp"
+                        android:paddingEnd="@dimen/frogo_dimen_16dp">
+
+                    </androidx.appcompat.widget.AppCompatAutoCompleteTextView>
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <EditText
                     android:id="@+id/et_text_2"

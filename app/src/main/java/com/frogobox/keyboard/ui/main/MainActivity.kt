@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import androidx.activity.viewModels
+import com.frogobox.keyboard.R
 import com.frogobox.keyboard.core.BaseBindActivity
 import com.frogobox.keyboard.databinding.ActivityMainBinding
 
@@ -45,9 +47,21 @@ class MainActivity : BaseBindActivity<ActivityMainBinding>() {
                 }
             }
 
+            val dummy = listOf("Kuningan",
+                "Menteng",
+                "Menten213g",
+                "Men123teng",
+                "Mw23423",
+                "Me123nteng",
+                "Mente234234234ng",
+                "Pegangsaan"
+            )
+            val adapterS =
+                ArrayAdapter(this@MainActivity, R.layout.item_spinner, R.id.tv_text, dummy)
+            etTextAuto.setAdapter(adapterS)
+
         }
     }
-
 
 
     override fun initObserver() {

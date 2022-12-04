@@ -1,6 +1,5 @@
 package com.frogobox.keyboard.services
 
-import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.text.InputType
 import android.text.InputType.TYPE_CLASS_DATETIME
@@ -18,8 +17,6 @@ import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
 import android.view.inputmethod.EditorInfo.IME_MASK_ACTION
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
-import android.view.inputmethod.InputMethodSubtype
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
@@ -28,8 +25,6 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
-import com.frogobox.log.FLog
-import com.frogobox.sdk.ext.showLogD
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -233,6 +228,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
             if (et1?.isFocused == true) {
                 inputConnection = et1Connection
+
             } else if (et2?.isFocused == true) {
                 inputConnection = et2Connection
             } else if (et3?.isFocused == true) {

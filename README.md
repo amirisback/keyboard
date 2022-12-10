@@ -88,6 +88,19 @@
 
 </table>
 
+#### Emojis
+<table>
+
+<tr>
+    <th>Emojis</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="360px" src="docs/image/ss/ss_15.png"></td>
+</tr>
+
+</table>
+
 ### Open To Other App
 <table>
 

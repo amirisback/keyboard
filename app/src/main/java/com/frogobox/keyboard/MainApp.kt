@@ -3,6 +3,8 @@ package com.frogobox.keyboard
 import android.app.Application
 import android.content.Context
 import android.os.Build
+import androidx.emoji2.bundled.BundledEmojiCompatConfig
+import androidx.emoji2.text.EmojiCompat
 import java.util.*
 
 /**
@@ -37,6 +39,12 @@ class MainApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        setupEmojiCompat()
+    }
+
+    private fun setupEmojiCompat() {
+        val config = BundledEmojiCompatConfig(this)
+        EmojiCompat.init(config)
     }
 
 }

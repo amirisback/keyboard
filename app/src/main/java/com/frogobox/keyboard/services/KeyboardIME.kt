@@ -1,6 +1,7 @@
 package com.frogobox.keyboard.services
 
 import android.inputmethodservice.InputMethodService
+import android.os.Build
 import android.text.InputType
 import android.text.InputType.TYPE_CLASS_DATETIME
 import android.text.InputType.TYPE_CLASS_NUMBER
@@ -18,8 +19,12 @@ import android.view.inputmethod.EditorInfo.IME_MASK_ACTION
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.widget.EditText
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
+import com.frogobox.keyboard.ext.getProperBackgroundColor
+import com.frogobox.keyboard.ext.getProperTextColor
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
@@ -35,6 +40,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private val KEYBOARD_SYMBOLS = 1
     private val KEYBOARD_SYMBOLS_SHIFT = 2
     private val KEYBOARD_NUMBER = 3
+    private val KEYCODE_EMOJI = -6
 
     private var keyboard: ItemMainKeyboard? = null
 
@@ -61,10 +67,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding!!.keyboardMain.setKeyboard(keyboard!!)
         binding!!.mockMeasureHeightKeyboardMain.setKeyboard(keyboard!!)
         binding!!.keyboardMain.mOnKeyboardActionListener = this
+        binding!!.keyboardEmoji.mOnKeyboardActionListener = this
         binding!!.keyboardNews.setInputConnection(currentInputConnection)
         binding!!.keyboardMoview.setInputConnection(currentInputConnection)
         binding!!.keyboardWebview.setInputConnection(currentInputConnection)
         binding!!.keyboardForm.setInputConnection(currentInputConnection)
+        binding!!.keyboardEmoji.setInputConnection(currentInputConnection)
         initView()
         return binding!!.root
     }
@@ -102,6 +110,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding?.keyboardMoview?.setInputConnection(currentInputConnection)
         binding?.keyboardWebview?.setInputConnection(currentInputConnection)
         binding?.keyboardForm?.setInputConnection(currentInputConnection)
+        binding?.keyboardEmoji?.setInputConnection(currentInputConnection)
         updateShiftKeyState()
     }
 
@@ -172,6 +181,13 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding?.keyboardEmoji?.setupEmojiPalette(
+                toolbarColor = ContextCompat.getColor(binding?.keyboardEmoji?.context!!, R.color.you_keyboard_toolbar_color),
+                backgroundColor = binding?.keyboardEmoji?.context!!.getProperBackgroundColor(),
+                textColor = binding?.keyboardEmoji?.context!!.getProperTextColor())
+        }
+
         binding?.keyboardNews?.binding?.toolbarBack?.setOnClickListener {
             Log.d("FrogoKeyboard", "Toolbar on Clicked")
             binding?.keyboardNews?.visibility = View.GONE
@@ -196,6 +212,13 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             showMainKeyboard()
         }
 
+        binding?.keyboardEmoji?.binding?.emojiPaletteClose?.setOnClickListener {
+            Log.d("FrogoKeyboard", "Toolbar on Clicked")
+            binding?.keyboardEmoji?.visibility = View.GONE
+            binding?.keyboardEmoji?.binding?.emojisList?.scrollToPosition(0)
+            showMainKeyboard()
+        }
+
     }
 
     private fun updateShiftKeyState() {
@@ -211,6 +234,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onKey(code: Int) {
 
         val formView = binding?.keyboardForm
@@ -290,6 +314,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun onKeyExt(code: Int, inputConnection: InputConnection) {
         if (keyboard == null || inputConnection == null) {
             return
@@ -373,6 +398,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 }
                 keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
                 binding?.keyboardMain?.setKeyboard(keyboard!!)
+            }
+            ItemMainKeyboard.KEYCODE_EMOJI -> {
+                binding?.keyboardEmoji?.visibility = View.VISIBLE
+                hideMainKeyboard()
+                binding?.keyboardEmoji?.openEmojiPalette()
             }
             else -> {
                 var codeChar = code.toChar()

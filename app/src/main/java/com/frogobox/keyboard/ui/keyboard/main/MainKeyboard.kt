@@ -7,8 +7,8 @@ import android.graphics.Paint.Align
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
+import android.os.Build
 import android.os.Handler
-import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -16,10 +16,10 @@ import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.ext.adjustAlpha
-import com.frogobox.keyboard.ext.getContrastColor
+import com.frogobox.keyboard.ext.*
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
@@ -100,11 +100,6 @@ class MainKeyboard @JvmOverloads constructor(
 
     private var mKeyBackground: Drawable? = null
 
-    private var mToolbarHolder: View? = null
-    private var mClipboardManagerHolder: View? = null
-    private var mEmojiPaletteHolder: View? = null
-    private var emojiCompatMetadataVersion = 0
-
     // For multi-tap
     private var mLastTapTime = 0L
 
@@ -142,12 +137,6 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     // handle system default theme (Material You) specially as the color is taken from the system, not hardcoded by us
-    private fun Context.getProperTextColor() = ContextCompat.getColor(this, R.color.you_neutral_text_color)
-    private fun Context.getProperBackgroundColor() = ContextCompat.getColor(this, R.color.you_background_color)
-    private fun Context.getProperPrimaryColor() = ContextCompat.getColor(this, R.color.you_primary_color)
-    private fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.md_grey_800)
-    private fun Drawable.applyColorFilter(color: Int) = mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
-
 
     init {
         val attributes =
@@ -221,6 +210,7 @@ class MainKeyboard @JvmOverloads constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
 
@@ -231,7 +221,7 @@ class MainKeyboard @JvmOverloads constructor(
             val strokeColor = context.getStrokeColor()
 
             val darkerColor = ContextCompat.getColor(context, R.color.you_keyboard_background_color)
-
+            val toolbarColor = ContextCompat.getColor(context, R.color.you_keyboard_toolbar_color)
             val miniKeyboardBackgroundColor = ContextCompat.getColor(context, R.color.you_keyboard_background_color)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
@@ -247,7 +237,6 @@ class MainKeyboard @JvmOverloads constructor(
 
             val rippleBg = resources.getDrawable(R.drawable.keyboard_bg_clipboard,
                 context.theme) as RippleDrawable
-
 
         }
     }
@@ -1128,17 +1117,6 @@ class MainKeyboard @JvmOverloads constructor(
             detectAndSendKey(mCurrentKey, key.x, key.y, mLastTapTime)
         }
         return true
-    }
-
-
-    private fun ensureBackgroundThread(callback: () -> Unit) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            Thread {
-                callback()
-            }.start()
-        } else {
-            callback()
-        }
     }
 
     private fun closing() {

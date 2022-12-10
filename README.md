@@ -1,5 +1,9 @@
 ![Banner](/docs/image/banner-frogo-keyboard.png)
 - Simple research keyboard for Android
+- Custom Keyboard
+- Emoji Custom Keyboard
+- Call API inside Keyboard
+- Open Form inside Keyboard
 
 ## Screen Shoot
 
@@ -119,16 +123,51 @@
 </table>
 
 ## Documentation
-- https://github.com/SimpleMobileTools/Simple-Keyboard
+- https://github.com/SimpleMobileTools/Simple-Keyboard 
+    - Clone From This
+- https://github.com/anssih/finqwerty 
+    - Keymap app for phones with physical keyboards
+- https://github.com/shiftrot/caps2ctrl 
+    - Provides almost all keymaps we need usually
 - https://github.com/kolegad/custom-keyboard
-- https://github.com/anssih/finqwerty
-    - keymap app for phones with physical keyboards
-- https://github.com/shiftrot/caps2ctrl
-    - provides almost all keymaps we need usually
 - https://android.googlesource.com/platform/frameworks/base/+/master/data/keyboards/Generic.kl
 - https://android.googlesource.com/platform/frameworks/base/+/master/data/keyboards/Generic.kcm
 - https://developer.android.com/reference/kotlin/android/hardware/input/InputManager
 - https://source.android.com/devices/input/key-character-map-files
+
+## Frogo Library
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Github Name / Organization</th>
+        <th>Github Project</th>
+    </tr>
+    <tr>
+        <td>1.</td>
+        <td><a href="https://github.com/amirisback">Muhammad Faisal Amir</a></td>
+        <td><a href="https://github.com/amirisback/frogo-admob">frogo-admob</a></td>
+    </tr>
+    <tr>
+        <td>2.</td>
+        <td><a href="https://github.com/amirisback">Muhammad Faisal Amir</a></td>
+        <td><a href="https://github.com/amirisback/frogo-recycler-view">frogo-recycler-view</a></td>
+    </tr>
+    <tr>
+        <td>3.</td>
+        <td><a href="https://github.com/frogobox">Frogobox</a></td>
+        <td><a href="https://github.com/frogobox/frogo-sdk">frogo-sdk</a></td>
+    </tr>
+    <tr>
+        <td>4.</td>
+        <td><a href="https://github.com/frogobox">Frogobox</a></td>
+        <td><a href="https://github.com/frogobox/frogo-ui">frogo-ui</a></td>
+    </tr>
+    <tr>
+        <td>5.</td>
+        <td><a href="https://github.com/frogobox">Frogobox</a></td>
+        <td><a href="https://github.com/frogobox/frogo-consume-api">frogo-consume-api</a></td>
+    </tr>
+</table>
 
 ## Colaborator
 Very open to anyone, I'll write your name under this, please contribute by sending an email to me

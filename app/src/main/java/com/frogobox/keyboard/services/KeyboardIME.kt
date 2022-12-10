@@ -65,7 +65,6 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     override fun onCreateInputView(): View {
         binding = KeyboardImeBinding.inflate(LayoutInflater.from(this), null, false)
         binding!!.keyboardMain.setKeyboard(keyboard!!)
-        binding!!.keyboardMain.setKeyboardHolder(binding!!)
         binding!!.mockMeasureHeightKeyboardMain.setKeyboard(keyboard!!)
         binding!!.keyboardMain.mOnKeyboardActionListener = this
         binding!!.keyboardEmoji.mOnKeyboardActionListener = this
@@ -106,7 +105,6 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         }
         keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
         binding?.keyboardMain?.setKeyboard(keyboard!!)
-        binding?.keyboardMain?.setKeyboardHolder(binding!!)
         binding?.mockMeasureHeightKeyboardMain?.setKeyboard(keyboard!!)
         binding?.keyboardNews?.setInputConnection(currentInputConnection)
         binding?.keyboardMoview?.setInputConnection(currentInputConnection)

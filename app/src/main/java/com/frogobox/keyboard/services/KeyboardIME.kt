@@ -35,6 +35,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private val KEYBOARD_SYMBOLS = 1
     private val KEYBOARD_SYMBOLS_SHIFT = 2
     private val KEYBOARD_NUMBER = 3
+    private val KEYCODE_EMOJI = -6
 
     private var keyboard: ItemMainKeyboard? = null
 
@@ -373,6 +374,9 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 }
                 keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
                 binding?.keyboardMain?.setKeyboard(keyboard!!)
+            }
+            ItemMainKeyboard.KEYCODE_EMOJI -> {
+                binding?.keyboardMain?.openEmojiPalette()
             }
             else -> {
                 var codeChar = code.toChar()

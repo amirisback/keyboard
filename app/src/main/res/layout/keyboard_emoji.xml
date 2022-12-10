@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/emoji_palette_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/emoji_palette_top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/emoji_palette_close"
+                android:layout_width="@dimen/toolbar_icon_height"
+                android:layout_height="@dimen/toolbar_icon_height"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/emojis"
+                android:padding="4dp"
+                android:src="@drawable/ic_keyboard_arrow_left" />
+
+            <TextView
+                android:id="@+id/emoji_palette_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/emoji_palette_close"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@string/emojis"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/emoji_content_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/emoji_palette_bottom_bar"
+            android:layout_below="@+id/emoji_palette_top_bar">
+
+            <com.frogobox.keyboard.ui.keyboard.emoji.EmojiKeyboardRecyclerView
+                android:id="@+id/emojis_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="4dp"
+                android:scrollbars="vertical" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/emoji_palette_bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/emoji_palette_mode_change"
+                android:layout_width="@dimen/emoji_palette_btn_size"
+                android:layout_height="@dimen/emoji_palette_btn_size"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/keyboard_key_selector"
+                android:gravity="center"
+                android:text="@string/abc"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/emoji_palette_backspace"
+                android:layout_width="@dimen/emoji_palette_btn_size"
+                android:layout_height="@dimen/emoji_palette_btn_size"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/keyboard_key_selector"
+                android:src="@drawable/ic_keyboard_backspace" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

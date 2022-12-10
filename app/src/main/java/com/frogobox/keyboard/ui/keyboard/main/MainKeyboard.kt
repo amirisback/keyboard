@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.Paint.Align
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
@@ -17,9 +18,17 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.emoji2.text.EmojiCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.ext.adjustAlpha
+import com.frogobox.keyboard.ext.darkenColor
 import com.frogobox.keyboard.ext.getContrastColor
+import com.frogobox.keyboard.ext.onScroll
+import com.frogobox.keyboard.ui.keyboard.emoji.EmojiKeyboardRecyclerView
+import com.frogobox.keyboard.ui.keyboard.emoji.adapter.AutoGridLayoutManager
+import com.frogobox.keyboard.ui.keyboard.emoji.adapter.EmojisAdapter
+import com.frogobox.keyboard.ui.keyboard.emoji.adapter.parseRawEmojiSpecsFile
+import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.EMOJI_SPEC_FILE_PATH
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
@@ -147,7 +156,7 @@ class MainKeyboard @JvmOverloads constructor(
     private fun Context.getProperPrimaryColor() = ContextCompat.getColor(this, R.color.you_primary_color)
     private fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.md_grey_800)
     private fun Drawable.applyColorFilter(color: Int) = mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
-
+    private fun ImageView.applyColorFilter(color: Int) = setColorFilter(color, PorterDuff.Mode.SRC_IN)
 
     init {
         val attributes =
@@ -1130,6 +1139,102 @@ class MainKeyboard @JvmOverloads constructor(
         return true
     }
 
+    private fun setupEmojiPalette(toolbarColor: Int, backgroundColor: Int, textColor: Int) {
+        mEmojiPaletteHolder?.apply {
+            findViewById<RelativeLayout>(R.id.emoji_palette_top_bar).background =
+                ColorDrawable(toolbarColor)
+            findViewById<RelativeLayout>(R.id.emoji_palette_holder).background =
+                ColorDrawable(backgroundColor)
+            findViewById<ImageView>(R.id.emoji_palette_close).applyColorFilter(textColor)
+            findViewById<TextView>(R.id.emoji_palette_label).setTextColor(textColor)
+
+            findViewById<RelativeLayout>(R.id.emoji_palette_bottom_bar).background =
+                ColorDrawable(backgroundColor)
+            val bottomTextColor = textColor.darkenColor()
+            findViewById<TextView>(R.id.emoji_palette_mode_change).apply {
+                setTextColor(bottomTextColor)
+                setOnClickListener {
+                    vibrateIfNeeded()
+                    closeEmojiPalette()
+                }
+            }
+            findViewById<ImageButton>(R.id.emoji_palette_backspace).apply {
+                applyColorFilter(bottomTextColor)
+                setOnTouchListener { _, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            isPressed = true
+                            mRepeatKeyIndex = mKeys.indexOfFirst { it.code == KEYCODE_DELETE }
+                            mCurrentKey = mRepeatKeyIndex
+                            vibrateIfNeeded()
+                            mOnKeyboardActionListener!!.onKey(KEYCODE_DELETE)
+                            // setup repeating backspace
+                            val msg = mHandler!!.obtainMessage(MSG_REPEAT)
+                            mHandler!!.sendMessageDelayed(msg, REPEAT_START_DELAY.toLong())
+                            true
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            mHandler!!.removeMessages(MSG_REPEAT)
+                            mRepeatKeyIndex = NOT_A_KEY
+                            isPressed = false
+                            false
+                        }
+                        else -> false
+                    }
+                }
+            }
+        }
+        setupEmojis()
+    }
+
+    fun openEmojiPalette() {
+        mEmojiPaletteHolder!!.findViewById<RelativeLayout>(R.id.emoji_palette_holder).visibility = View.VISIBLE
+        setupEmojis()
+    }
+
+    private fun closeEmojiPalette() {
+        mEmojiPaletteHolder?.apply {
+            findViewById<RelativeLayout>(R.id.emoji_palette_holder)?.visibility = View.GONE
+            mEmojiPaletteHolder?.findViewById<EmojiKeyboardRecyclerView>(R.id.emojis_list)?.scrollToPosition(0)
+        }
+    }
+
+    private fun setupEmojis() {
+        ensureBackgroundThread {
+            val fullEmojiList = parseRawEmojiSpecsFile(context, EMOJI_SPEC_FILE_PATH)
+            val systemFontPaint = Paint().apply {
+                typeface = Typeface.DEFAULT
+            }
+
+            val emojis = fullEmojiList.filter { emoji ->
+                systemFontPaint.hasGlyph(emoji) || (EmojiCompat.get().loadState == EmojiCompat.LOAD_STATE_SUCCEEDED && EmojiCompat.get()
+                    .getEmojiMatch(emoji, emojiCompatMetadataVersion) == EmojiCompat.EMOJI_SUPPORTED)
+            }
+
+            Handler(Looper.getMainLooper()).post {
+                setupEmojiAdapter(emojis)
+            }
+        }
+    }
+
+    private fun setupEmojiAdapter(emojis: List<String>) {
+        mEmojiPaletteHolder?.findViewById<EmojiKeyboardRecyclerView>(R.id.emojis_list)?.apply {
+            val emojiItemWidth = context.resources.getDimensionPixelSize(R.dimen.emoji_item_size)
+            val emojiTopBarElevation =
+                context.resources.getDimensionPixelSize(R.dimen.dp4).toFloat()
+
+            layoutManager = AutoGridLayoutManager(context, emojiItemWidth)
+            adapter = EmojisAdapter(context = context, items = emojis) { emoji ->
+                mOnKeyboardActionListener!!.onText(emoji)
+                vibrateIfNeeded()
+            }
+
+            onScroll {
+                mEmojiPaletteHolder!!.findViewById<RelativeLayout>(R.id.emoji_palette_top_bar).elevation =
+                    if (it > 4) emojiTopBarElevation else 0f
+            }
+        }
+    }
 
     private fun ensureBackgroundThread(callback: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {

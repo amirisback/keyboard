@@ -9,18 +9,38 @@
 
 ### How To Activated
 
+#### Activated Keyboard
+
 <table>
 
 <tr>
     <th>Welcome Page</th>
     <th>Activated Keyboard</th>
-    <th>Change Keyboard</th>
+    <th>After Activated</th>
 </tr>
 
 <tr>
     <td><img width="200px" height="360px" src="docs/image/ss/ss_1.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_2.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_3.png"></td>
+    <td><img width="200px" height="360px" src="docs/image/ss/ss_2-1.png"></td>
+    <td><img width="200px" height="360px" src="docs/image/ss/ss_2-2.png"></td>
+</tr>
+
+</table>
+
+#### Change Keyboard
+
+<table>
+
+<tr>
+    <th>Before Change Keyboard</th>
+    <th>Change Keyboard</th>
+    <th>After Change Keyboard</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="360px" src="docs/image/ss/ss_2-2.png"></td>
+    <td><img width="200px" height="360px" src="docs/image/ss/ss_3-1.png"></td>
+    <td><img width="200px" height="360px" src="docs/image/ss/ss_3-2.png"></td>
 </tr>
 
 </table>

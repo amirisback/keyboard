@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
+import com.frogobox.sdk.FrogoApplication
+import org.koin.core.KoinApplication
 import java.util.*
 
 /**
@@ -17,7 +19,7 @@ import java.util.*
  * All rights reserved
  */
 
-class MainApp : Application() {
+class MainApp : FrogoApplication() {
 
     companion object {
         val TAG: String = MainApp::class.java.simpleName
@@ -40,6 +42,10 @@ class MainApp : Application() {
         super.onCreate()
         instance = this
         setupEmojiCompat()
+    }
+
+    override fun setupKoinModule(koinApplication: KoinApplication) {
+        koinApplication.modules(listOf())
     }
 
     private fun setupEmojiCompat() {

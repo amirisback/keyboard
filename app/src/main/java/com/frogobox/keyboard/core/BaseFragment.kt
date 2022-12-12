@@ -1,6 +1,6 @@
 package com.frogobox.keyboard.core
 
-import androidx.fragment.app.Fragment
+import com.frogobox.sdk.view.FrogoFragment
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -12,6 +12,6 @@ import androidx.fragment.app.Fragment
  * All rights reserved
  */
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : FrogoFragment() {
 
 }

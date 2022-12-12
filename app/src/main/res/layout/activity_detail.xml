@@ -6,4 +6,72 @@
     android:layout_height="match_parent"
     tools:context=".ui.detail.DetailActivity">
 
+    <LinearLayout
+        android:id="@+id/container_test"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/frogo_dimen_30dp"
+        android:paddingTop="@dimen/frogo_dimen_16dp"
+        android:paddingEnd="@dimen/frogo_dimen_30dp"
+        android:paddingBottom="@dimen/frogo_dimen_16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Let's Do Some Test"
+            android:textStyle="bold"
+            android:textColor="@color/frogoColorBlack"
+            android:textSize="@dimen/frogo_dimen_font_20sp" />
+
+        <View
+            android:id="@+id/view_line"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/frogo_dimen_2dp"
+            android:layout_marginTop="@dimen/frogo_dimen_16dp"
+            android:layout_marginBottom="@dimen/frogo_dimen_16dp"
+            android:background="@color/default_background_color" />
+
+        <EditText
+            android:id="@+id/et_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:hint="Test Keyboard Input"
+            android:textColor="@color/frogoColorBlack" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/et_text_auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:completionThreshold="1"
+                android:focusable="true"
+                android:hint="Test Keyboard Input"
+                android:minHeight="@dimen/frogo_dimen_72dp"
+                android:paddingStart="@dimen/frogo_dimen_16dp"
+                android:paddingEnd="@dimen/frogo_dimen_16dp"
+                android:textColor="@color/frogoColorBlack" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <EditText
+            android:id="@+id/et_text_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:hint="Test Keyboard Input"
+            android:inputType="number"
+            android:textColor="@color/frogoColorBlack" />
+
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

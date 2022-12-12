@@ -58,10 +58,37 @@
             android:layout_marginTop="@dimen/frogo_dimen_16dp"
             android:layout_marginEnd="@dimen/frogo_dimen_16dp"
             android:background="@color/default_background_color"
-            app:layout_constraintBottom_toTopOf="@id/container_test"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/paragraph2" />
+
+        <TextView
+            android:id="@+id/title_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/frogo_dimen_30dp"
+            android:layout_marginTop="@dimen/frogo_dimen_16dp"
+            android:layout_marginEnd="@dimen/frogo_dimen_30dp"
+            android:gravity="center"
+            android:text="@string/welcome"
+            android:textColor="@color/frogoColorBlack"
+            android:textSize="@dimen/frogo_dimen_font_16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_line" />
+
+        <View
+            android:id="@+id/view_line2"
+            android:layout_width="@dimen/frogo_dimen_0dp"
+            android:layout_height="@dimen/frogo_dimen_2dp"
+            android:layout_marginStart="@dimen/frogo_dimen_16dp"
+            android:layout_marginTop="@dimen/frogo_dimen_16dp"
+            android:layout_marginEnd="@dimen/frogo_dimen_16dp"
+            android:background="@color/default_background_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_state" />
 
         <LinearLayout
             android:id="@+id/container_test"
@@ -72,55 +99,12 @@
             android:paddingTop="@dimen/frogo_dimen_16dp"
             android:paddingEnd="@dimen/frogo_dimen_30dp"
             android:paddingBottom="@dimen/frogo_dimen_16dp"
-            app:layout_constraintTop_toBottomOf="@id/view_line">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Let's Do Some Test"
-                android:textColor="@color/frogoColorBlack"
-                android:textSize="@dimen/frogo_dimen_font_20sp" />
-
-            <EditText
-                android:id="@+id/et_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:hint="Test Keyboard Input"
-                android:textColor="@color/frogoColorBlack" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/et_text_auto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:hint="Test Keyboard Input"
-                    android:completionThreshold="1"
-                    android:minHeight="@dimen/frogo_dimen_72dp"
-                    android:paddingStart="@dimen/frogo_dimen_16dp"
-                    android:paddingEnd="@dimen/frogo_dimen_16dp"
-                    android:textColor="@color/frogoColorBlack" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <EditText
-                android:id="@+id/et_text_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:hint="Test Keyboard Input"
-                android:inputType="number"
-                android:textColor="@color/frogoColorBlack" />
+            app:layout_constraintTop_toBottomOf="@id/view_line2">
 
             <Button
                 android:id="@+id/btn_go_to_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/frogo_dimen_16dp"
                 android:text="Activated Keyboard (Go to Setting)" />
 
             <Button
@@ -128,6 +112,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/change_keyboard" />
+
+            <Button
+                android:id="@+id/btn_do_some_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do Some Test" />
 
         </LinearLayout>
 

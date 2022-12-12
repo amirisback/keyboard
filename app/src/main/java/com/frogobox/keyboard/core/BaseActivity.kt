@@ -1,6 +1,6 @@
 package com.frogobox.keyboard.core
 
-import androidx.appcompat.app.AppCompatActivity
+import com.frogobox.sdk.view.FrogoActivity
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -12,6 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
  * All rights reserved
  */
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : FrogoActivity() {
 
 }

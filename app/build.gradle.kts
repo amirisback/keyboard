@@ -120,10 +120,10 @@ dependencies {
 
     implementation("com.google.android.material:material:1.7.0")
 
-    implementation("com.github.frogobox:frogo-sdk:2.1.0")
-    implementation("com.github.frogobox:frogo-ui:1.1.1")
-    implementation("com.github.amirisback:frogo-recycler-view:4.3.2")
-    implementation("com.github.frogobox:frogo-consume-api:2.4.2")
+    implementation(Frogo.sdk)
+    implementation(Frogo.ui)
+    implementation(Frogo.recyclerView)
+    implementation(Frogo.consumeApi)
 
     implementation("com.mikepenz:fastadapter:5.7.0")
     implementation("com.mikepenz:fastadapter-extensions-binding:5.7.0") // view binding helpers

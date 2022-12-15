@@ -8,7 +8,7 @@
 ## Play Store
 
 <a href="https://play.google.com/store/apps/details?id=com.frogobox.frogokeyboard">
-  <img width="150px" height="75px" src="https://amirisback.github.io/amirisback/docs/image/google-play-badge.png">
+  <img width="200px" height="75px" src="https://amirisback.github.io/amirisback/docs/image/google-play-badge.png">
 </a>
 
 ## Screen Shoot

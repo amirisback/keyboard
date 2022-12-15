@@ -220,8 +220,12 @@ class MainKeyboard @JvmOverloads constructor(
             mPrimaryColor = context.getProperPrimaryColor()
             val strokeColor = context.getStrokeColor()
 
-            val darkerColor = ContextCompat.getColor(context, R.color.you_keyboard_background_color)
-            val toolbarColor = ContextCompat.getColor(context, R.color.you_keyboard_toolbar_color)
+            val darkerColor = if (context.isDarkThemeOn()) {
+                ContextCompat.getColor(context, R.color.system_neutral1_900)
+            } else {
+                ContextCompat.getColor(context, R.color.system_neutral1_10)
+            }
+
             val miniKeyboardBackgroundColor = ContextCompat.getColor(context, R.color.you_keyboard_background_color)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
@@ -234,9 +238,6 @@ class MainKeyboard @JvmOverloads constructor(
             } else {
                 background.applyColorFilter(darkerColor)
             }
-
-            val rippleBg = resources.getDrawable(R.drawable.keyboard_bg_clipboard,
-                context.theme) as RippleDrawable
 
         }
     }

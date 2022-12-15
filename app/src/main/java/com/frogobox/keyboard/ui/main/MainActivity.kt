@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.core.BaseBindActivity
 import com.frogobox.keyboard.databinding.ActivityMainBinding
+import com.frogobox.keyboard.ext.isDarkThemeOn
 import com.frogobox.keyboard.ui.detail.DetailActivity
 import com.frogobox.sdk.ext.showLogDebug
 import com.frogobox.sdk.ext.startActivityExt
@@ -39,6 +40,8 @@ class MainActivity : BaseBindActivity<ActivityMainBinding>() {
             Log.d(TAG, "View Model : ${viewModel::class.java.simpleName}")
         }
         // TODO : Add your code here
+
+        Log.d(TAG, "isDarkThemeOn : ${isDarkThemeOn()}")
 
     }
 

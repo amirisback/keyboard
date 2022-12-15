@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="keyboard_bg_normal_color">@color/white</color>
+    <color name="keyboard_bg_normal_stroke_color">#EFEFEF</color>
+
+    <color name="keyboard_bg_action_color">#76D1FF</color>
+    <color name="keyboard_bg_attribute_color">#D1E5F4</color>
+    <color name="keyboard_bg_change_color">#B5CAD7</color>
+</resources>

@@ -53,6 +53,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private var binding: KeyboardImeBinding? = null
 
     override fun onCreate() {
+        setTheme(R.style.Theme_Research)
         super.onCreate()
     }
 

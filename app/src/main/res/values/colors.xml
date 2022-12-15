@@ -45,5 +45,11 @@
     <color name="you_keyboard_background_color">@color/system_neutral1_10</color>
     <color name="you_keyboard_toolbar_color">@color/system_neutral1_50</color>
 
+    <color name="keyboard_bg_normal_color">@color/white</color>
+    <color name="keyboard_bg_normal_stroke_color">#EFEFEF</color>
+
+    <color name="keyboard_bg_action_color">#76D1FF</color>
+    <color name="keyboard_bg_attribute_color">#D1E5F4</color>
+    <color name="keyboard_bg_change_color">#B5CAD7</color>
 
 </resources>

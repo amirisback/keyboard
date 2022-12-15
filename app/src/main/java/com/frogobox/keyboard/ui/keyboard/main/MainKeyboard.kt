@@ -409,6 +409,9 @@ class MainKeyboard @JvmOverloads constructor(
                 KEYCODE_SHIFT -> {
                     keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
                 }
+                KEYCODE_EMOJI -> {
+                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                }
 
             }
 

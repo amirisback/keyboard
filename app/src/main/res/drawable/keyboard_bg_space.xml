@@ -14,9 +14,9 @@
         <layer-list>
             <item android:id="@+id/space_normal" android:bottom="@dimen/frogo_dimen_6dp" android:left="@dimen/frogo_dimen_6dp" android:right="@dimen/frogo_dimen_6dp" android:state_pressed="true" android:top="@dimen/frogo_dimen_6dp">
                 <shape android:shape="rectangle">
-                    <stroke android:color="#EFEFEF"
+                    <stroke android:color="@color/keyboard_bg_normal_stroke_color"
                         android:width="1dp"/>
-                    <solid android:color="#FFFFFF" />
+                    <solid android:color="@color/keyboard_bg_normal_color" />
                     <corners android:radius="@dimen/frogo_dimen_8dp" />
                 </shape>
             </item>

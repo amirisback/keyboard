@@ -30,7 +30,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreateExt(savedInstanceState)
         setupDetailActivity("Test Area")
         if (savedInstanceState == null) {
             // Call View Model Here

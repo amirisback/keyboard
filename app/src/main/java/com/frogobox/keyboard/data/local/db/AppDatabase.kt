@@ -31,7 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
-        private const val DATABASE_NAME = "app.db"
+        private const val DATABASE_NAME = BuildConfig.DATABASE_NAME
 
         fun newInstance(context: Context): AppDatabase {
             return buildDatabase(context)

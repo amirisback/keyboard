@@ -8,14 +8,14 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.core.BaseBindActivity
+import com.frogobox.keyboard.core.BaseActivity
 import com.frogobox.keyboard.databinding.ActivityMainBinding
 import com.frogobox.keyboard.ext.isDarkThemeOn
 import com.frogobox.keyboard.ui.detail.DetailActivity
 import com.frogobox.sdk.ext.showLogDebug
 import com.frogobox.sdk.ext.startActivityExt
 
-class MainActivity : BaseBindActivity<ActivityMainBinding>() {
+class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private val NONE = 0
     private val PICKING = 1
@@ -29,12 +29,19 @@ class MainActivity : BaseBindActivity<ActivityMainBinding>() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    override fun initBinding(): ActivityMainBinding {
+    override fun setupViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun setupViewModel() {
+        super.setupViewModel()
+        viewModel.apply {
+
+        }
+    }
+
+    override fun onCreateExt(savedInstanceState: Bundle?) {
+        super.onCreateExt(savedInstanceState)
         if (savedInstanceState == null) {
             // Call View Model Here
             Log.d(TAG, "View Model : ${viewModel::class.java.simpleName}")
@@ -42,7 +49,7 @@ class MainActivity : BaseBindActivity<ActivityMainBinding>() {
         // TODO : Add your code here
 
         Log.d(TAG, "isDarkThemeOn : ${isDarkThemeOn()}")
-
+        initView()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -78,13 +85,6 @@ class MainActivity : BaseBindActivity<ActivityMainBinding>() {
             btnDoSomeTest.setOnClickListener {
                 startActivityExt<DetailActivity>()
             }
-
-        }
-    }
-
-    override fun initObserver() {
-        super.initObserver()
-        viewModel.apply {
 
         }
     }

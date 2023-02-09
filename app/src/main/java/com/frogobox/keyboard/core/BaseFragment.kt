@@ -1,6 +1,9 @@
 package com.frogobox.keyboard.core
 
-import com.frogobox.sdk.view.FrogoFragment
+import android.os.Bundle
+import android.view.View
+import androidx.viewbinding.ViewBinding
+import com.frogobox.sdk.view.FrogoBindFragment
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -12,6 +15,13 @@ import com.frogobox.sdk.view.FrogoFragment
  * All rights reserved
  */
 
-abstract class BaseFragment : FrogoFragment() {
+abstract class BaseFragment<VB: ViewBinding> : FrogoBindFragment<VB>() {
+
+    open fun initView() {}
+
+    override fun onViewCreatedExt(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreatedExt(view, savedInstanceState)
+        initView()
+    }
 
 }

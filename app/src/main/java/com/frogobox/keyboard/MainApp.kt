@@ -1,12 +1,10 @@
 package com.frogobox.keyboard
 
-import android.app.Application
 import android.content.Context
 import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.sdk.FrogoApplication
-import org.koin.core.KoinApplication
 import java.util.*
 
 /**
@@ -42,10 +40,6 @@ class MainApp : FrogoApplication() {
         super.onCreate()
         instance = this
         setupEmojiCompat()
-    }
-
-    override fun setupKoinModule(koinApplication: KoinApplication) {
-        koinApplication.modules(listOf())
     }
 
     private fun setupEmojiCompat() {

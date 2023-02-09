@@ -5,10 +5,10 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.core.BaseBindActivity
+import com.frogobox.keyboard.core.BaseActivity
 import com.frogobox.keyboard.databinding.ActivityDetailBinding
 
-class DetailActivity : BaseBindActivity<ActivityDetailBinding>() {
+class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     companion object {
         private val TAG: String = DetailActivity::class.java.simpleName
@@ -16,11 +16,18 @@ class DetailActivity : BaseBindActivity<ActivityDetailBinding>() {
 
     private val viewModel: DetailViewModel by viewModels()
 
-    override fun initBinding(): ActivityDetailBinding {
+    override fun setupViewBinding(): ActivityDetailBinding {
         return ActivityDetailBinding.inflate(layoutInflater)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun setupViewModel() {
+        super.setupViewModel()
+        viewModel.apply {
+
+        }
+    }
+
+    override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupDetailActivity("Test Area")
         if (savedInstanceState == null) {
@@ -45,13 +52,6 @@ class DetailActivity : BaseBindActivity<ActivityDetailBinding>() {
             )
             val adapterS = ArrayAdapter(this@DetailActivity, R.layout.item_spinner, R.id.tv_text, dummy)
             etTextAuto.setAdapter(adapterS)
-        }
-    }
-
-    override fun initObserver() {
-        super.initObserver()
-        viewModel.apply {
-
         }
     }
 

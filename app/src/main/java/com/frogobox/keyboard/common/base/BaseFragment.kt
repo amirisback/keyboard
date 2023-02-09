@@ -1,8 +1,9 @@
-package com.frogobox.keyboard.core
+package com.frogobox.keyboard.common.base
 
 import android.os.Bundle
+import android.view.View
 import androidx.viewbinding.ViewBinding
-import com.frogobox.sdk.view.FrogoBindActivity
+import com.frogobox.sdk.view.FrogoBindFragment
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -14,12 +15,12 @@ import com.frogobox.sdk.view.FrogoBindActivity
  * All rights reserved
  */
 
-abstract class BaseActivity<VB: ViewBinding> : FrogoBindActivity<VB>() {
+abstract class BaseFragment<VB: ViewBinding> : FrogoBindFragment<VB>() {
 
     open fun initView() {}
 
-    override fun onCreateExt(savedInstanceState: Bundle?) {
-        super.onCreateExt(savedInstanceState)
+    override fun onViewCreatedExt(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreatedExt(view, savedInstanceState)
         initView()
     }
 

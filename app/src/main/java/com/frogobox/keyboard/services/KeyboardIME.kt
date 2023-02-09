@@ -23,8 +23,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
-import com.frogobox.keyboard.ext.getProperBackgroundColor
-import com.frogobox.keyboard.ext.getProperTextColor
+import com.frogobox.keyboard.common.ext.getProperBackgroundColor
+import com.frogobox.keyboard.common.ext.getProperTextColor
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR

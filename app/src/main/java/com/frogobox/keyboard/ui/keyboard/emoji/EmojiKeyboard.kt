@@ -12,10 +12,10 @@ import android.view.LayoutInflater
 import androidx.annotation.RequiresApi
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.core.BaseKeyboard
+import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.KeyboardEmojiBinding
-import com.frogobox.keyboard.ext.applyColorFilter
-import com.frogobox.keyboard.ext.onScroll
+import com.frogobox.keyboard.common.ext.applyColorFilter
+import com.frogobox.keyboard.common.ext.onScroll
 import com.frogobox.keyboard.ui.keyboard.emoji.adapter.AutoGridLayoutManager
 import com.frogobox.keyboard.ui.keyboard.emoji.adapter.EmojisAdapter
 import com.frogobox.keyboard.ui.keyboard.emoji.adapter.parseRawEmojiSpecsFile

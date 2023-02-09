@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.core
+package com.frogobox.keyboard.common.base
 
 import android.content.Context
 import android.util.AttributeSet

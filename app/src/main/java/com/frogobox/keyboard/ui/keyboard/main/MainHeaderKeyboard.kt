@@ -3,7 +3,7 @@ package com.frogobox.keyboard.ui.keyboard.main
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import com.frogobox.keyboard.core.BaseKeyboard
+import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.KeyboardMainHeaderBinding
 
 /**

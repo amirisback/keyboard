@@ -5,9 +5,11 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.core.BaseActivity
+import com.frogobox.keyboard.common.base.BaseActivity
 import com.frogobox.keyboard.databinding.ActivityDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     companion object {

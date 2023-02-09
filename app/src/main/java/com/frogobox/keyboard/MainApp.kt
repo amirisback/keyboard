@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.sdk.FrogoApplication
+import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 
 /**
@@ -17,6 +18,7 @@ import java.util.*
  * All rights reserved
  */
 
+@HiltAndroidApp
 class MainApp : FrogoApplication() {
 
     companion object {

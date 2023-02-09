@@ -1,6 +1,9 @@
 package com.frogobox.keyboard.ui.detail
 
-import androidx.lifecycle.ViewModel
+import com.frogobox.keyboard.common.base.BaseViewModel
+import com.frogobox.keyboard.repository.sample.SampleRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -12,7 +15,10 @@ import androidx.lifecycle.ViewModel
  * All rights reserved
  */
 
-class DetailViewModel : ViewModel() {
+@HiltViewModel
+class DetailViewModel @Inject constructor(
+    private val repository: SampleRepository
+): BaseViewModel() {
 
 
 }

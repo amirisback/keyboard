@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -109,21 +110,47 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
-    implementation("androidx.appcompat:appcompat:1.6.0")
-    implementation("androidx.activity:activity-ktx:1.6.1")
-    implementation("androidx.fragment:fragment-ktx:1.5.5")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(Androidx.Core.ktx)
+    implementation(Androidx.appCompat)
+    implementation(Androidx.activityKtx)
+    implementation(Androidx.fragmentKtx)
+    implementation(Androidx.constraintLayout)
+    implementation(Androidx.Work.runtimeKtx)
 
-    implementation("androidx.emoji2:emoji2-bundled:1.2.0")
+    implementation(Androidx.Lifecycle.livedataKtx)
+    implementation(Androidx.Lifecycle.viewmodelKtx)
+    implementation(Androidx.Lifecycle.runtimeKtx)
+    implementation(Androidx.Lifecycle.process)
 
-    implementation("com.google.android.material:material:1.8.0")
+    implementation(Androidx.Room.ktx)
+    implementation(Androidx.Room.runtime)
+    implementation(Androidx.Room.rxJava3)
+
+    implementation(Google.material)
+    implementation(Google.gson)
+
+    implementation(Google.Hilt.android)
+
+    implementation(Square.Retrofit2.retrofit)
+    implementation(Square.Retrofit2.adapterRxJava3)
+    implementation(Square.Retrofit2.converterGson)
+
+    implementation(Square.OkHttp.okhttp)
+    implementation(Square.OkHttp.loggingInterceptor)
+
+    implementation(Reactivex.rxJava3)
+    implementation(Reactivex.rxKotlin3)
+    implementation(Reactivex.rxAndroid3)
+
+    implementation(GitHub.glide)
+    implementation(GitHub.chucker)
 
     implementation(Frogo.sdk)
     implementation(Frogo.ui)
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
+
+    implementation("androidx.emoji2:emoji2-bundled:1.2.0")
 
     implementation("com.mikepenz:fastadapter:5.7.0")
     implementation("com.mikepenz:fastadapter-extensions-binding:5.7.0") // view binding helpers
@@ -135,6 +162,10 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-ui:5.7.0") // pre-defined ui components
     implementation("com.mikepenz:fastadapter-extensions-utils:5.7.0") // needs the `expandable`, `drag` and `scroll` extension.
 
+    kapt(GitHub.glideCompiler)
+    kapt(Google.Hilt.compiler)
+    kapt(Androidx.Room.compiler)
+    kapt(Androidx.Lifecycle.compiler)
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

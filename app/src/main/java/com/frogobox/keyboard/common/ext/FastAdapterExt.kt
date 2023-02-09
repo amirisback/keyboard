@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.ext
+package com.frogobox.keyboard.common.ext
 
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.FastItemAdapter

@@ -19,7 +19,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.ext.*
+import com.frogobox.keyboard.common.ext.*
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_ENTER

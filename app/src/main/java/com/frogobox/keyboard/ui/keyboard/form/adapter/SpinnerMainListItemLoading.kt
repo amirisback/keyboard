@@ -3,7 +3,7 @@ package com.frogobox.keyboard.ui.keyboard.form.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.frogobox.keyboard.databinding.ItemSpinnerBinding
-import com.frogobox.keyboard.ext.DiffableListItemType
+import com.frogobox.keyboard.common.ext.DiffableListItemType
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 
 /**

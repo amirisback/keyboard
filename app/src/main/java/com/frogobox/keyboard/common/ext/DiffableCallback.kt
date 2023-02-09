@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.ext
+package com.frogobox.keyboard.common.ext
 
 import android.util.Log
 import com.mikepenz.fastadapter.diff.DiffCallback

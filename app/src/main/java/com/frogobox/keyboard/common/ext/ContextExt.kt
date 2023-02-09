@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.ext
+package com.frogobox.keyboard.common.ext
 
 import android.content.Context
 import android.content.res.Configuration

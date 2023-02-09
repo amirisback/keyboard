@@ -13,7 +13,7 @@ import com.frogobox.coresdk.response.FrogoDataResponse
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
-import com.frogobox.keyboard.core.BaseKeyboard
+import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.KeyboardGridBinding
 import com.frogobox.sdk.ext.glideLoad
 import com.frogobox.sdk.ext.gone

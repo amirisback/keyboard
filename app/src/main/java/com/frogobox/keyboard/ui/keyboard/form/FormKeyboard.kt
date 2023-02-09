@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
-import com.frogobox.keyboard.core.BaseKeyboard
+import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.KeyboardFormBinding
 
 /**

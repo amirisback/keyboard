@@ -11,7 +11,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.frogobox.keyboard.ui.keyboard.main.MainHeaderKeyboard
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

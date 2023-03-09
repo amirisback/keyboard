@@ -4,8 +4,7 @@ import com.frogobox.keyboard.common.callback.DataResponseCallback
 import com.frogobox.keyboard.common.ext.disposedBy
 import com.frogobox.keyboard.data.remote.sample.SampleApi
 import com.frogobox.keyboard.data.remote.sample.SampleResponse
-import com.frogobox.research.repository.DataSourcesImpl
-import com.frogobox.research.repository.sample.SampleRemoteSources
+import com.frogobox.keyboard.repository.DataSourcesImpl
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject

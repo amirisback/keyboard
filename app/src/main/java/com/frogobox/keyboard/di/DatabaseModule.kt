@@ -1,4 +1,4 @@
-package com.frogobox.research.di
+package com.frogobox.keyboard.di
 
 import android.content.Context
 import com.frogobox.keyboard.data.local.db.AppDatabase

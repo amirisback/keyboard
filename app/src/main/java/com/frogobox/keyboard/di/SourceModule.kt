@@ -1,7 +1,9 @@
-package com.frogobox.research.di
+package com.frogobox.keyboard.di
 
+import com.frogobox.keyboard.repository.sample.SampleLocalSources
+import com.frogobox.keyboard.repository.sample.SampleLocalSourcesImpl
+import com.frogobox.keyboard.repository.sample.SampleRemoteSources
 import com.frogobox.keyboard.repository.sample.SampleRemoteSourcesImpl
-import com.frogobox.research.repository.sample.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

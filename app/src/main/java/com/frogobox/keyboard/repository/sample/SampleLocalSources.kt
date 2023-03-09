@@ -1,4 +1,4 @@
-package com.frogobox.research.repository.sample
+package com.frogobox.keyboard.repository.sample
 
 /**
  * Created by Faisal Amir on 06/01/23

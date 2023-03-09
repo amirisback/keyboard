@@ -1,4 +1,4 @@
-package com.frogobox.research.repository.sample
+package com.frogobox.keyboard.repository.sample
 
 import com.frogobox.keyboard.common.callback.DataResponseCallback
 import com.frogobox.keyboard.data.remote.sample.SampleResponse

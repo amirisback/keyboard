@@ -1,5 +1,6 @@
-package com.frogobox.research.repository
+package com.frogobox.keyboard.repository
 
+import com.frogobox.keyboard.repository.DataSources
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 

@@ -1,4 +1,4 @@
-package com.frogobox.research.repository
+package com.frogobox.keyboard.repository
 
 import io.reactivex.rxjava3.disposables.Disposable
 

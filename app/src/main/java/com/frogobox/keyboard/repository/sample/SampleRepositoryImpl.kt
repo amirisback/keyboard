@@ -1,8 +1,9 @@
-package com.frogobox.research.repository.sample
+package com.frogobox.keyboard.repository.sample
 
 import com.frogobox.keyboard.repository.sample.SampleRepository
 import com.frogobox.keyboard.common.callback.DataResponseCallback
 import com.frogobox.keyboard.data.remote.sample.SampleResponse
+import com.frogobox.keyboard.repository.sample.SampleLocalSourcesImpl
 import com.frogobox.keyboard.repository.sample.SampleRemoteSourcesImpl
 import javax.inject.Inject
 

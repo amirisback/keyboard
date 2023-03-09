@@ -1,7 +1,8 @@
-package com.frogobox.research.repository.sample
+package com.frogobox.keyboard.repository.sample
 
 import com.frogobox.keyboard.data.local.sample.SampleDao
-import com.frogobox.research.repository.DataSourcesImpl
+import com.frogobox.keyboard.repository.sample.SampleLocalSources
+import com.frogobox.keyboard.repository.DataSourcesImpl
 import javax.inject.Inject
 
 /**

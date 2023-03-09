@@ -1,4 +1,4 @@
-package com.frogobox.research.model
+package com.frogobox.keyboard.model
 
 /**
  * Created by Faisal Amir on 06/01/23

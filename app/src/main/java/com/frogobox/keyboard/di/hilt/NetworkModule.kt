@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.di
+package com.frogobox.keyboard.di.hilt
 
 import dagger.Module
 import dagger.hilt.InstallIn

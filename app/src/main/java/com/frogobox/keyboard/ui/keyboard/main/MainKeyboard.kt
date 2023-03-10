@@ -6,7 +6,6 @@ import android.graphics.*
 import android.graphics.Paint.Align
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
-import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Message

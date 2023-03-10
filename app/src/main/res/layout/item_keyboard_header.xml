@@ -18,6 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="News API"
+        android:maxLines="1"
+        android:gravity="center"
         android:textColor="#2B486D"
         android:textSize="@dimen/frogo_dimen_font_10sp" />
 

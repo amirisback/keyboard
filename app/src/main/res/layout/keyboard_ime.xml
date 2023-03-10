@@ -49,6 +49,18 @@
 
     </LinearLayout>
 
+    <com.frogobox.keyboard.ui.keyboard.autotext.AutoTextKeyboard
+        android:id="@+id/keyboard_autotext"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
     <com.frogobox.keyboard.ui.keyboard.news.NewsKeyboard
         android:id="@+id/keyboard_news"
         android:layout_width="match_parent"

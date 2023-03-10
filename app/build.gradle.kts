@@ -151,6 +151,10 @@ dependencies {
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
 
+    implementation(Koin.core)
+    implementation(Koin.android)
+    implementation(Koin.androidCompat)
+
     implementation("androidx.emoji2:emoji2-bundled:1.2.0")
 
     implementation("com.mikepenz:fastadapter:5.7.0")

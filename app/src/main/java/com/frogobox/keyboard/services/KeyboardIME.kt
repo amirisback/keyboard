@@ -29,6 +29,7 @@ import com.frogobox.keyboard.common.ext.getProperTextColor
 import com.frogobox.keyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.keyboard.model.KeyboardHeaderData
 import com.frogobox.keyboard.model.KeyboardHeaderType
+import com.frogobox.keyboard.ui.autotext.AutoTextViewModel
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
@@ -37,6 +38,7 @@ import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
+import org.koin.java.KoinJavaComponent
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -59,6 +61,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     private var binding: KeyboardImeBinding? = null
 
+    private val viewModel: AutoTextViewModel by KoinJavaComponent.inject(AutoTextViewModel::class.java)
+
     override fun onCreate() {
         setTheme(R.style.Theme_Research)
         super.onCreate()
@@ -75,6 +79,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         binding!!.mockMeasureHeightKeyboardMain.setKeyboard(keyboard!!)
         binding!!.keyboardMain.mOnKeyboardActionListener = this
         binding!!.keyboardEmoji.mOnKeyboardActionListener = this
+        binding!!.keyboardAutotext.setInputConnection(currentInputConnection)
         binding!!.keyboardNews.setInputConnection(currentInputConnection)
         binding!!.keyboardMoview.setInputConnection(currentInputConnection)
         binding!!.keyboardWebview.setInputConnection(currentInputConnection)
@@ -152,32 +157,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         }
     }
 
-    private fun dataHeader(): List<KeyboardHeaderData> {
-        return listOf(
-            KeyboardHeaderData(
-                KeyboardHeaderType.NEWS,
-                R.drawable.ic_keyboard_news
-            ),
-            KeyboardHeaderData(
-                KeyboardHeaderType.MOVIE,
-                R.drawable.ic_keyboard_movie
-            ),
-            KeyboardHeaderData(
-                KeyboardHeaderType.WEB,
-                R.drawable.ic_search
-            ),
-            KeyboardHeaderData(
-                KeyboardHeaderType.FORM,
-                R.drawable.ic_keyboard
-            ),
-        )
-    }
-
     private fun initView() {
 
         binding?.apply {
             keyboardHeader.injectorBinding<KeyboardHeaderData, ItemKeyboardHeaderBinding>()
-                .addData(dataHeader())
+                .addData(KeyboardUtil.menuKeyboard())
                 .addCallback(object :
                     IFrogoBindingAdapter<KeyboardHeaderData, ItemKeyboardHeaderBinding> {
 
@@ -236,6 +220,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                     hideOnlyKeyboard()
                                 }
                             }
+                            KeyboardHeaderType.AUTOTEXT -> {
+                                Log.d("FrogoKeyboard", "keyboardHeaderAutotext on Clicked")
+                                hideMainKeyboard()
+                                keyboardAutotext.visibility = View.VISIBLE
+                            }
                         }
 
                     }
@@ -250,7 +239,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
 
                 })
-                .createLayoutGrid(dataHeader().size)
+                .createLayoutGrid(KeyboardUtil.menuKeyboard().size)
                 .build()
         }
 
@@ -263,6 +252,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 backgroundColor = binding?.keyboardEmoji?.context!!.getProperBackgroundColor(),
                 textColor = binding?.keyboardEmoji?.context!!.getProperTextColor()
             )
+        }
+
+        binding?.keyboardAutotext?.binding?.toolbarBack?.setOnClickListener {
+            Log.d("FrogoKeyboard", "Toolbar on Clicked")
+            binding?.keyboardAutotext?.visibility = View.GONE
+            showMainKeyboard()
         }
 
         binding?.keyboardNews?.binding?.toolbarBack?.setOnClickListener {

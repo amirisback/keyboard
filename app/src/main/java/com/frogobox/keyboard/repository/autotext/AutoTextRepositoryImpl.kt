@@ -2,9 +2,9 @@ package com.frogobox.keyboard.repository.autotext
 
 import com.frogobox.keyboard.common.callback.DataResponseCallback
 import com.frogobox.keyboard.common.callback.StateResponseCallback
-import com.frogobox.keyboard.data.local.AutoText.AutoTextDao
-import com.frogobox.keyboard.data.local.AutoText.AutoTextEntity
-import com.frogobox.keyboard.data.local.AutoText.AutoTextLabel
+import com.frogobox.keyboard.data.local.autotext.AutoTextDao
+import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
+import com.frogobox.keyboard.data.local.autotext.AutoTextLabel
 import com.frogobox.sdk.ext.executeRoomDB
 import com.frogobox.sdk.ext.fetchRoomDB
 import io.reactivex.rxjava3.disposables.CompositeDisposable

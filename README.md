@@ -9,6 +9,17 @@
   <img width="200px" height="75px" src="https://amirisback.github.io/amirisback/docs/image/google-play-badge.png">
 </a>
 
+## Version Release
+This Is Latest Release
+
+    $version_release = 1.0.3
+
+What's New??
+
+    * Enhance Performance *
+    * Update Build Gradle Style Latest Version *
+    * Add Auto Text *
+
 ## Screen Shoot
 
 ### How To Activated
@@ -139,9 +150,9 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-1.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-2.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-3.png"></td>
+    <td><img width="200px" height="400px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-1.png"></td>
+    <td><img width="200px" height="400px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-2.png"></td>
+    <td><img width="200px" height="400px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-3.png"></td>
 </tr>
 
 </table>

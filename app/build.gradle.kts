@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -149,6 +150,10 @@ dependencies {
     implementation(Frogo.ui)
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
+
+    implementation(Koin.core)
+    implementation(Koin.android)
+    implementation(Koin.androidCompat)
 
     implementation("androidx.emoji2:emoji2-bundled:1.2.0")
 

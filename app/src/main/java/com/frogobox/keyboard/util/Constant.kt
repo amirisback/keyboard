@@ -12,6 +12,8 @@ package com.frogobox.keyboard.util
 
 object Constant {
 
+    const val PREF_ROOT_NAME = "PREF_ROOT_NAME"
+
     object Extra {
         const val EXTRA_DATA = "EXTRA_DATA"
     }

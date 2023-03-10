@@ -1,10 +1,7 @@
 package com.frogobox.keyboard.ui.main
 
-import android.util.Log
 import com.frogobox.keyboard.common.base.BaseViewModel
-import com.frogobox.keyboard.common.callback.DataResponseCallback
-import com.frogobox.keyboard.data.remote.sample.SampleResponse
-import com.frogobox.keyboard.repository.sample.SampleRepository
+import com.frogobox.keyboard.repository.autotext.AutoTextRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,33 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: SampleRepository
+    private val repository: AutoTextRepository
 ): BaseViewModel() {
 
-    fun getData() {
-        repository.getSampleDataFromServer(object : DataResponseCallback<List<SampleResponse>> {
-
-            override fun onSuccess(data: List<SampleResponse>) {
-                Log.d("MainViewModel","onSuccess")
-            }
-
-            override fun onFailed(statusCode: Int, errorMessage: String) {
-                Log.d("MainViewModel","onFailed")
-            }
-
-            override fun onFinish() {
-                Log.d("MainViewModel","onFinish")
-            }
-
-            override fun onHideProgress() {
-                Log.d("MainViewModel","onHideProgress")
-            }
-
-            override fun onShowProgress() {
-                Log.d("MainViewModel","onShowProgress")
-            }
-        })
-
-    }
 
 }

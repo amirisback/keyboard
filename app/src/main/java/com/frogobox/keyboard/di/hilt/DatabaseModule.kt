@@ -1,6 +1,7 @@
-package com.frogobox.keyboard.di
+package com.frogobox.keyboard.di.hilt
 
 import android.content.Context
+import com.frogobox.keyboard.data.local.autotext.AutoTextDao
 import com.frogobox.keyboard.data.local.db.AppDatabase
 import com.frogobox.keyboard.data.local.sample.SampleDao
 import dagger.Module
@@ -34,6 +35,11 @@ object DatabaseModule {
     @Provides
     fun provideSampleDao(database: AppDatabase): SampleDao {
         return database.sampleDao()
+    }
+
+    @Provides
+    fun provideAutoTextDao(database: AppDatabase): AutoTextDao {
+        return database.autoTextDao()
     }
 
 }

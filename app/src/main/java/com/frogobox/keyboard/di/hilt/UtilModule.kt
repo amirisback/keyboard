@@ -1,7 +1,9 @@
-package com.frogobox.keyboard.di
+package com.frogobox.keyboard.di.hilt
 
 import android.content.Context
-import com.frogobox.keyboard.data.remote.sample.SampleApi
+import com.frogobox.keyboard.util.Constant.PREF_ROOT_NAME
+import com.frogobox.sdk.delegate.preference.PreferenceDelegates
+import com.frogobox.sdk.delegate.preference.PreferenceDelegatesImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,14 +21,14 @@ import javax.inject.Singleton
  * All rights reserved
  */
 
-@Module(includes = [NetworkModule::class])
+@Module
 @InstallIn(SingletonComponent::class)
-class ServiceModule {
+class UtilModule {
 
     @Provides
     @Singleton
-    fun provideMainApi(@ApplicationContext context: Context): SampleApi {
-        return SampleApi.Creator().newInstance(context, "https://armorycodes.github.io/android-research-tech-pro/")
+    fun providePreferenceDelegates(@ApplicationContext context: Context): PreferenceDelegates {
+        return PreferenceDelegatesImpl(context, PREF_ROOT_NAME)
     }
 
 }

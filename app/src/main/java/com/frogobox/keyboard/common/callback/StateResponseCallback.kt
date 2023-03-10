@@ -1,6 +1,6 @@
 package com.frogobox.keyboard.common.callback
 
-import com.frogobox.keyboard.common.base.BaseResponseCallback
+import com.frogobox.coresdk.response.FrogoStateResponse
 
 /**
  * Created by Faisal Amir on 06/01/23
@@ -13,6 +13,4 @@ import com.frogobox.keyboard.common.base.BaseResponseCallback
  */
 
 
-interface StateResponseCallback : BaseResponseCallback {
-    fun onSuccess()
-}
+interface StateResponseCallback : FrogoStateResponse

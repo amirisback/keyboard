@@ -1,4 +1,8 @@
-package com.frogobox.keyboard.common.base
+package com.frogobox.keyboard.di.hilt
+
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 /**
  * Created by Faisal Amir on 06/01/23
@@ -11,9 +15,8 @@ package com.frogobox.keyboard.common.base
  */
 
 
-interface BaseResponseCallback {
-    fun onFailed(statusCode: Int, errorMessage: String = "")
-    fun onFinish()
-    fun onHideProgress()
-    fun onShowProgress()
+@Module
+@InstallIn(SingletonComponent::class)
+class NetworkModule {
+
 }

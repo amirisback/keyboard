@@ -11,6 +11,7 @@ import com.frogobox.keyboard.R
 import com.frogobox.keyboard.common.base.BaseActivity
 import com.frogobox.keyboard.databinding.ActivityMainBinding
 import com.frogobox.keyboard.common.ext.isDarkThemeOn
+import com.frogobox.keyboard.ui.autotext.AutoTextActivity
 import com.frogobox.keyboard.ui.detail.DetailActivity
 import com.frogobox.sdk.ext.showLogDebug
 import com.frogobox.sdk.ext.startActivityExt
@@ -72,6 +73,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.initView()
         binding.apply {
             handlingState()
+
             btnChangeKeyboard.setOnClickListener {
                 (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
                 mState = PICKING
@@ -88,11 +90,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 startActivityExt<DetailActivity>()
             }
 
+            btnAutoText.setOnClickListener {
+                startActivityExt<AutoTextActivity>()
+            }
+
         }
     }
 
     private fun isUsingKeyboard(): Boolean {
-        val currentKeyboard = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+        val currentKeyboard =
+            Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val enabledKeyboards = inputMethodManager.enabledInputMethodList
         val check = enabledKeyboards.find {
@@ -114,7 +121,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun checkKeyboard() {
-        val currentKeyboard = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+        val currentKeyboard =
+            Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val enabledKeyboards = inputMethodManager.inputMethodList
         showLogDebug("Enabled Keyboards         : $currentKeyboard")

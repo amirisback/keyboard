@@ -4,8 +4,13 @@ import android.content.Context
 import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
-import com.frogobox.sdk.FrogoApplication
+import com.frogobox.keyboard.di.koin.databaseModule
+import com.frogobox.keyboard.di.koin.delegateModule
+import com.frogobox.keyboard.di.koin.repositoryModule
+import com.frogobox.keyboard.di.koin.viewModelModule
+import com.frogobox.sdk.FrogoKoinApplication
 import dagger.hilt.android.HiltAndroidApp
+import org.koin.core.KoinApplication
 import java.util.*
 
 /**
@@ -19,7 +24,7 @@ import java.util.*
  */
 
 @HiltAndroidApp
-class MainApp : FrogoApplication() {
+class MainApp : FrogoKoinApplication() {
 
     companion object {
         val TAG: String = MainApp::class.java.simpleName
@@ -36,6 +41,17 @@ class MainApp : FrogoApplication() {
             }
         }
 
+    }
+
+    override fun setupKoinModule(koinApplication: KoinApplication) {
+        koinApplication.modules(
+            listOf(
+                delegateModule,
+                repositoryModule,
+                databaseModule,
+                viewModelModule,
+            )
+        )
     }
 
     override fun onCreate() {

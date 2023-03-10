@@ -24,9 +24,9 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_1.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_2-1.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_2-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_2-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_2-2.png"></td>
 </tr>
 
 </table>
@@ -42,9 +42,9 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_2-2.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_3-1.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_3-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_2-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_3-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_3-2.png"></td>
 </tr>
 
 </table>
@@ -60,8 +60,8 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_4-1.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_4-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_4-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_4-2.png"></td>
 </tr>
 
 </table>
@@ -78,8 +78,8 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_5.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_6.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_5.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_6.png"></td>
 </tr>
 
 </table>
@@ -93,8 +93,8 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_7.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_8.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_7.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_8.png"></td>
 </tr>
 
 </table>
@@ -109,9 +109,9 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_9.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_10.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_11.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_9.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_10.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_11.png"></td>
 </tr>
 
 </table>
@@ -124,7 +124,7 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_15.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_15.png"></td>
 </tr>
 
 </table>
@@ -139,9 +139,9 @@
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_12.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_13.png"></td>
-    <td><img width="200px" height="360px" src="docs/image/ss/ss_14.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_12.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_13.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_14.png"></td>
 </tr>
 
 </table>

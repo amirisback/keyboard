@@ -1,5 +1,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keyboard_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -14,7 +15,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/frogo_dimen_64dp"
             android:background="@color/you_background_color" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
@@ -34,9 +35,9 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/container_keyboard_main">
 
-        <com.frogobox.keyboard.ui.keyboard.main.MainHeaderKeyboard
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/frogo_dimen_64dp"
             android:background="@color/you_background_color" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard

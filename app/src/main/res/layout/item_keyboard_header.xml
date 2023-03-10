@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/frogo_dimen_64dp"
     android:layout_weight="1"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/frogo_dimen_8dp">
+    android:paddingHorizontal="@dimen/frogo_dimen_8dp">
 
     <ImageView
+        android:id="@+id/iv_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_keyboard_news" />
 
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="News API"

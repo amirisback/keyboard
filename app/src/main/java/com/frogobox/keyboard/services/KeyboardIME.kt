@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.EditorInfo.IME_ACTION_NONE
 import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
@@ -25,11 +26,17 @@ import com.frogobox.keyboard.R
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
 import com.frogobox.keyboard.common.ext.getProperBackgroundColor
 import com.frogobox.keyboard.common.ext.getProperTextColor
+import com.frogobox.keyboard.databinding.ItemKeyboardHeaderBinding
+import com.frogobox.keyboard.model.KeyboardHeaderData
+import com.frogobox.keyboard.model.KeyboardHeaderType
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
+import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
+import com.frogobox.recycler.core.IFrogoBindingAdapter
+import com.frogobox.recycler.ext.injectorBinding
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -145,47 +152,117 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         }
     }
 
+    private fun dataHeader(): List<KeyboardHeaderData> {
+        return listOf(
+            KeyboardHeaderData(
+                KeyboardHeaderType.NEWS,
+                R.drawable.ic_keyboard_news
+            ),
+            KeyboardHeaderData(
+                KeyboardHeaderType.MOVIE,
+                R.drawable.ic_keyboard_movie
+            ),
+            KeyboardHeaderData(
+                KeyboardHeaderType.WEB,
+                R.drawable.ic_search
+            ),
+            KeyboardHeaderData(
+                KeyboardHeaderType.FORM,
+                R.drawable.ic_keyboard
+            ),
+        )
+    }
+
     private fun initView() {
 
-        binding?.keyboardHeader?.binding?.containerAutoText?.setOnClickListener {
-            Log.d("FrogoKeyboard", "keyboardHeaderNews on Clicked")
-            hideMainKeyboard()
-            binding?.keyboardNews?.visibility = View.VISIBLE
-        }
+        binding?.apply {
+            keyboardHeader.injectorBinding<KeyboardHeaderData, ItemKeyboardHeaderBinding>()
+                .addData(dataHeader())
+                .addCallback(object :
+                    IFrogoBindingAdapter<KeyboardHeaderData, ItemKeyboardHeaderBinding> {
 
-        binding?.keyboardHeader?.binding?.containerCheckOngkir?.setOnClickListener {
-            Log.d("FrogoKeyboard", "keyboardHeaderMoview on Clicked")
-            hideMainKeyboard()
-            binding?.keyboardMoview?.visibility = View.VISIBLE
-        }
+                    override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
+                        return ItemKeyboardHeaderBinding.inflate(
+                            LayoutInflater.from(parent.context),
+                            parent,
+                            false
+                        )
+                    }
 
-        binding?.keyboardHeader?.binding?.containerWebSearch?.setOnClickListener {
-            Log.d("FrogoKeyboard", "keyboardHeaderWebview on Clicked")
-            binding?.mockMeasureHeightKeyboard?.visibility = View.INVISIBLE
-            binding?.keyboardHeader?.visibility = View.GONE
-            binding?.keyboardWebview?.visibility = View.VISIBLE
-        }
+                    override fun setupInitComponent(
+                        binding: ItemKeyboardHeaderBinding,
+                        data: KeyboardHeaderData,
+                        position: Int,
+                        notifyListener: FrogoRecyclerNotifyListener<KeyboardHeaderData>,
+                    ) {
+                        binding.ivIcon.setImageResource(data.icon)
+                        binding.tvTitle.text = data.type.title
+                    }
 
-        binding?.keyboardHeader?.binding?.containerForm?.setOnClickListener {
-            Log.d("FrogoKeyboard", "keyboardHeaderForm on Clicked")
-            hideMainKeyboard()
+                    override fun onItemClicked(
+                        binding: ItemKeyboardHeaderBinding,
+                        data: KeyboardHeaderData,
+                        position: Int,
+                        notifyListener: FrogoRecyclerNotifyListener<KeyboardHeaderData>,
+                    ) {
 
-            binding?.keyboardForm?.visibility = View.VISIBLE
-            binding?.keyboardForm?.binding?.etText?.showKeyboardExt()
-            binding?.keyboardForm?.binding?.etText2?.showKeyboardExt()
-            binding?.keyboardForm?.binding?.etText3?.showKeyboardExt()
+                        when (data.type) {
+                            KeyboardHeaderType.NEWS -> {
+                                Log.d("FrogoKeyboard", "keyboardHeaderNews on Clicked")
+                                hideMainKeyboard()
+                                keyboardNews.visibility = View.VISIBLE
+                            }
+                            KeyboardHeaderType.MOVIE -> {
+                                Log.d("FrogoKeyboard", "keyboardHeaderMoview on Clicked")
+                                hideMainKeyboard()
+                                keyboardMoview.visibility = View.VISIBLE
+                            }
+                            KeyboardHeaderType.WEB -> {
+                                Log.d("FrogoKeyboard", "keyboardHeaderWebview on Clicked")
+                                mockMeasureHeightKeyboard.visibility = View.INVISIBLE
+                                keyboardHeader.visibility = View.GONE
+                                keyboardWebview.visibility = View.VISIBLE
+                            }
+                            KeyboardHeaderType.FORM -> {
+                                Log.d("FrogoKeyboard", "keyboardHeaderForm on Clicked")
+                                hideMainKeyboard()
 
-            binding?.keyboardForm?.setOnClickListener {
-                hideOnlyKeyboard()
-            }
+                                keyboardForm.visibility = View.VISIBLE
+                                keyboardForm.binding?.etText?.showKeyboardExt()
+                                keyboardForm.binding?.etText2?.showKeyboardExt()
+                                keyboardForm.binding?.etText3?.showKeyboardExt()
 
+                                keyboardForm.setOnClickListener {
+                                    hideOnlyKeyboard()
+                                }
+                            }
+                        }
+
+                    }
+
+                    override fun onItemLongClicked(
+                        binding: ItemKeyboardHeaderBinding,
+                        data: KeyboardHeaderData,
+                        position: Int,
+                        notifyListener: FrogoRecyclerNotifyListener<KeyboardHeaderData>,
+                    ) {
+                    }
+
+
+                })
+                .createLayoutLinearHorizontal(false)
+                .build()
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding?.keyboardEmoji?.setupEmojiPalette(
-                toolbarColor = ContextCompat.getColor(binding?.keyboardEmoji?.context!!, R.color.you_keyboard_toolbar_color),
+                toolbarColor = ContextCompat.getColor(
+                    binding?.keyboardEmoji?.context!!,
+                    R.color.you_keyboard_toolbar_color
+                ),
                 backgroundColor = binding?.keyboardEmoji?.context!!.getProperBackgroundColor(),
-                textColor = binding?.keyboardEmoji?.context!!.getProperTextColor())
+                textColor = binding?.keyboardEmoji?.context!!.getProperTextColor()
+            )
         }
 
         binding?.keyboardNews?.binding?.toolbarBack?.setOnClickListener {
@@ -305,12 +382,14 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         candidatesStart: Int,
         candidatesEnd: Int,
     ) {
-        super.onUpdateSelection(oldSelStart,
+        super.onUpdateSelection(
+            oldSelStart,
             oldSelEnd,
             newSelStart,
             newSelEnd,
             candidatesStart,
-            candidatesEnd)
+            candidatesEnd
+        )
 
     }
 
@@ -332,8 +411,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
                 val selectedText = inputConnection.getSelectedText(0)
                 if (TextUtils.isEmpty(selectedText)) {
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_DEL))
+                    inputConnection.sendKeyEvent(
+                        KeyEvent(
+                            KeyEvent.ACTION_DOWN,
+                            KeyEvent.KEYCODE_DEL
+                        )
+                    )
                     inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
                 } else {
                     inputConnection.commitText("", 1)
@@ -377,10 +460,18 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 if (imeOptionsActionId != IME_ACTION_NONE) {
                     inputConnection.performEditorAction(imeOptionsActionId)
                 } else {
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_ENTER))
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP,
-                        KeyEvent.KEYCODE_ENTER))
+                    inputConnection.sendKeyEvent(
+                        KeyEvent(
+                            KeyEvent.ACTION_DOWN,
+                            KeyEvent.KEYCODE_ENTER
+                        )
+                    )
+                    inputConnection.sendKeyEvent(
+                        KeyEvent(
+                            KeyEvent.ACTION_UP,
+                            KeyEvent.KEYCODE_ENTER
+                        )
+                    )
                 }
 
                 if (inputConnection != currentInputConnection) {

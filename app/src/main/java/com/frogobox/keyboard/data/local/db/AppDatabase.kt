@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import com.frogobox.keyboard.BuildConfig
 import com.frogobox.keyboard.data.local.sample.SampleDao
 import com.frogobox.keyboard.data.local.sample.SampleEntity
+import com.frogobox.keyboard.data.local.AutoText.AutoTextDao
+import com.frogobox.keyboard.data.local.AutoText.AutoTextEntity
 
 /**
  * Created by Faisal Amir on 06/01/23
@@ -21,13 +23,15 @@ import com.frogobox.keyboard.data.local.sample.SampleEntity
 
 @Database(
     entities = [
-        SampleEntity::class
+        SampleEntity::class,
+        AutoTextEntity::class
     ], version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun sampleDao(): SampleDao
+    abstract fun autoTextDao(): AutoTextDao
 
     companion object {
 

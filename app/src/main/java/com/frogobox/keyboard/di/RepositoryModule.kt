@@ -1,8 +1,8 @@
 package com.frogobox.keyboard.di
 
 import com.frogobox.keyboard.di.*
-import com.frogobox.keyboard.repository.sample.SampleRepository
-import com.frogobox.keyboard.repository.sample.SampleRepositoryImpl
+import com.frogobox.keyboard.repository.autotext.AutoTextRepository
+import com.frogobox.keyboard.repository.autotext.AutoTextRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -22,12 +22,11 @@ import dagger.hilt.components.SingletonComponent
     NetworkModule::class,
     ServiceModule::class,
     DatabaseModule::class,
-    UtilModule::class,
-    SourceModule::class])
+    UtilModule::class])
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun getSampleRepository(repository: SampleRepositoryImpl): SampleRepository
+    abstract fun getAutoTextRepository(repository: AutoTextRepositoryImpl): AutoTextRepository
 
 }

@@ -118,6 +118,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
         binding?.keyboardMain?.setKeyboard(keyboard!!)
         binding?.mockMeasureHeightKeyboardMain?.setKeyboard(keyboard!!)
+        binding?.keyboardAutotext?.setInputConnection(currentInputConnection)
         binding?.keyboardNews?.setInputConnection(currentInputConnection)
         binding?.keyboardMoview?.setInputConnection(currentInputConnection)
         binding?.keyboardWebview?.setInputConnection(currentInputConnection)

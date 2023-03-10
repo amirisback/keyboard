@@ -129,6 +129,23 @@
 
 </table>
 
+#### Auto Text
+<table>
+
+<tr>
+    <th>Menu Auto Text</th>
+    <th>Auto Text Inputed</th>
+    <th>Auto Text Dashboard</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-3.png"></td>
+</tr>
+
+</table>
+
 ### Open To Other App
 <table>
 

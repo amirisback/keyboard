@@ -119,6 +119,12 @@
                 android:layout_height="wrap_content"
                 android:text="Do Some Test" />
 
+            <Button
+                android:id="@+id/btn_auto_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Auto Text" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

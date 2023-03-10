@@ -250,7 +250,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
 
                 })
-                .createLayoutLinearHorizontal(false)
+                .createLayoutGrid(dataHeader().size)
                 .build()
         }
 

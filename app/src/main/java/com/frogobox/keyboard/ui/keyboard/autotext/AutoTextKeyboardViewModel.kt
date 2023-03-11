@@ -1,8 +1,13 @@
 package com.frogobox.keyboard.ui.keyboard.autotext
 
+import android.content.Context
 import com.frogobox.coresdk.util.FrogoDate
+import com.frogobox.keyboard.common.callback.DataResponseCallback
 import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
 import com.frogobox.keyboard.data.local.autotext.AutoTextLabel
+import com.frogobox.keyboard.data.local.db.AppDatabase
+import com.frogobox.keyboard.repository.autotext.AutoTextRepository
+import com.frogobox.keyboard.repository.autotext.AutoTextRepositoryImpl
 
 /**
  * Created by Faisal Amir on 11/03/23
@@ -10,23 +15,22 @@ import com.frogobox.keyboard.data.local.autotext.AutoTextLabel
  */
 
 
-class AutoTextKeyboardViewModel() {
+class AutoTextKeyboardViewModel(val context: Context) {
 
-    fun getAutoText(): List<AutoTextEntity> {
-        val data = mutableListOf<AutoTextEntity>()
-        for (i in 1..10) {
-            data.add(
-                AutoTextEntity(
-                    id = i,
-                    title = "Title $i",
-                    label = AutoTextLabel.DEFAULT,
-                    date = FrogoDate.getTimeNow(),
-                    body = "Body $i",
-                    isActive = true
-                )
-            )
-        }
-        return data
+    private fun getRepository() : AutoTextRepository {
+        return AutoTextRepositoryImpl(AppDatabase.newInstance(context).autoTextDao())
+    }
+
+    fun getAutoText(onSuccessData: (List<AutoTextEntity>) -> Unit) {
+        getRepository().getAutoText(object : DataResponseCallback<List<AutoTextEntity>> {
+            override fun onFailed(statusCode: Int, errorMessage: String) {}
+            override fun onFinish() {}
+            override fun onHideProgress() {}
+            override fun onShowProgress() {}
+            override fun onSuccess(data: List<AutoTextEntity>) {
+                onSuccessData(data)
+            }
+        })
     }
 
 }

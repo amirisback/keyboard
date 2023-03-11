@@ -19,6 +19,17 @@
         tools:itemCount="10"
         tools:listitem="@layout/item_autotext" />
 
+    <include
+        android:id="@+id/empty_view"
+        layout="@layout/frogo_empty_view"
+        android:layout_width="@dimen/frogo_dimen_0dp"
+        android:layout_height="@dimen/frogo_dimen_0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btn_add"
         android:layout_width="@dimen/frogo_dimen_0dp"

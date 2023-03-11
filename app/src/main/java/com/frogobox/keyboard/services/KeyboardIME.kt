@@ -8,7 +8,6 @@ import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.InputType.TYPE_CLASS_PHONE
 import android.text.InputType.TYPE_MASK_CLASS
 import android.text.TextUtils
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -23,13 +22,12 @@ import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.databinding.KeyboardImeBinding
 import com.frogobox.keyboard.common.ext.getProperBackgroundColor
 import com.frogobox.keyboard.common.ext.getProperTextColor
 import com.frogobox.keyboard.databinding.ItemKeyboardHeaderBinding
+import com.frogobox.keyboard.databinding.KeyboardImeBinding
 import com.frogobox.keyboard.model.KeyboardHeaderData
 import com.frogobox.keyboard.model.KeyboardHeaderType
-import com.frogobox.keyboard.ui.autotext.AutoTextViewModel
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
@@ -38,7 +36,6 @@ import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
-import org.koin.java.KoinJavaComponent
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -61,11 +58,20 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     private var binding: KeyboardImeBinding? = null
 
-    private val viewModel: AutoTextViewModel by KoinJavaComponent.inject(AutoTextViewModel::class.java)
-
     override fun onCreate() {
         setTheme(R.style.Theme_Research)
         super.onCreate()
+    }
+
+    override fun onWindowShown() {
+        super.onWindowShown()
+        binding?.keyboardAutotext?.setupData()
+        showMainKeyboard()
+    }
+
+    override fun onWindowHidden() {
+        super.onWindowHidden()
+        binding?.keyboardAutotext?.setupData()
     }
 
     override fun onInitializeInterface() {
@@ -73,18 +79,24 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
     }
 
+    private fun initCurrentInputConnection() {
+        binding?.apply {
+            keyboardAutotext.setInputConnection(currentInputConnection)
+            keyboardNews.setInputConnection(currentInputConnection)
+            keyboardMoview.setInputConnection(currentInputConnection)
+            keyboardWebview.setInputConnection(currentInputConnection)
+            keyboardForm.setInputConnection(currentInputConnection)
+            keyboardEmoji.setInputConnection(currentInputConnection)
+        }
+    }
+
     override fun onCreateInputView(): View {
         binding = KeyboardImeBinding.inflate(LayoutInflater.from(this), null, false)
-        binding!!.keyboardMain.setKeyboard(keyboard!!)
-        binding!!.mockMeasureHeightKeyboardMain.setKeyboard(keyboard!!)
-        binding!!.keyboardMain.mOnKeyboardActionListener = this
-        binding!!.keyboardEmoji.mOnKeyboardActionListener = this
-        binding!!.keyboardAutotext.setInputConnection(currentInputConnection)
-        binding!!.keyboardNews.setInputConnection(currentInputConnection)
-        binding!!.keyboardMoview.setInputConnection(currentInputConnection)
-        binding!!.keyboardWebview.setInputConnection(currentInputConnection)
-        binding!!.keyboardForm.setInputConnection(currentInputConnection)
-        binding!!.keyboardEmoji.setInputConnection(currentInputConnection)
+        binding?.keyboardMain?.setKeyboard(keyboard!!)
+        binding?.mockMeasureHeightKeyboardMain?.setKeyboard(keyboard!!)
+        binding?.keyboardMain?.mOnKeyboardActionListener = this
+        binding?.keyboardEmoji?.mOnKeyboardActionListener = this
+        initCurrentInputConnection()
         initView()
         return binding!!.root
     }
@@ -118,12 +130,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
         binding?.keyboardMain?.setKeyboard(keyboard!!)
         binding?.mockMeasureHeightKeyboardMain?.setKeyboard(keyboard!!)
-        binding?.keyboardAutotext?.setInputConnection(currentInputConnection)
-        binding?.keyboardNews?.setInputConnection(currentInputConnection)
-        binding?.keyboardMoview?.setInputConnection(currentInputConnection)
-        binding?.keyboardWebview?.setInputConnection(currentInputConnection)
-        binding?.keyboardForm?.setInputConnection(currentInputConnection)
-        binding?.keyboardEmoji?.setInputConnection(currentInputConnection)
+        initCurrentInputConnection()
         updateShiftKeyState()
     }
 
@@ -155,6 +162,42 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         }
         setOnClickListener {
             showOnlyKeyboard()
+        }
+    }
+
+    private fun initBackToMainKeyboard() {
+        binding?.apply {
+            keyboardAutotext.binding?.toolbarBack?.setOnClickListener {
+                keyboardAutotext.visibility = View.GONE
+                showMainKeyboard()
+            }
+
+            keyboardNews.binding?.toolbarBack?.setOnClickListener {
+                keyboardNews.visibility = View.GONE
+                showMainKeyboard()
+            }
+
+            keyboardMoview.binding?.toolbarBack?.setOnClickListener {
+                keyboardMoview.visibility = View.GONE
+                showMainKeyboard()
+            }
+
+            keyboardWebview.binding?.toolbarBack?.setOnClickListener {
+                keyboardWebview.visibility = View.GONE
+                showMainKeyboard()
+            }
+
+            keyboardForm.binding?.toolbarBack?.setOnClickListener {
+                keyboardForm.visibility = View.GONE
+                showMainKeyboard()
+            }
+
+            keyboardEmoji.binding?.emojiPaletteClose?.setOnClickListener {
+                keyboardEmoji.visibility = View.GONE
+                keyboardEmoji.binding?.emojisList?.scrollToPosition(0)
+                showMainKeyboard()
+            }
+
         }
     }
 
@@ -193,23 +236,22 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
                         when (data.type) {
                             KeyboardHeaderType.NEWS -> {
-                                Log.d("FrogoKeyboard", "keyboardHeaderNews on Clicked")
                                 hideMainKeyboard()
                                 keyboardNews.visibility = View.VISIBLE
                             }
+
                             KeyboardHeaderType.MOVIE -> {
-                                Log.d("FrogoKeyboard", "keyboardHeaderMoview on Clicked")
                                 hideMainKeyboard()
                                 keyboardMoview.visibility = View.VISIBLE
                             }
+
                             KeyboardHeaderType.WEB -> {
-                                Log.d("FrogoKeyboard", "keyboardHeaderWebview on Clicked")
                                 mockMeasureHeightKeyboard.visibility = View.INVISIBLE
                                 keyboardHeader.visibility = View.GONE
                                 keyboardWebview.visibility = View.VISIBLE
                             }
+
                             KeyboardHeaderType.FORM -> {
-                                Log.d("FrogoKeyboard", "keyboardHeaderForm on Clicked")
                                 hideMainKeyboard()
 
                                 keyboardForm.visibility = View.VISIBLE
@@ -221,8 +263,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                     hideOnlyKeyboard()
                                 }
                             }
+
                             KeyboardHeaderType.AUTOTEXT -> {
-                                Log.d("FrogoKeyboard", "keyboardHeaderAutotext on Clicked")
                                 hideMainKeyboard()
                                 keyboardAutotext.visibility = View.VISIBLE
                             }
@@ -255,42 +297,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             )
         }
 
-        binding?.keyboardAutotext?.binding?.toolbarBack?.setOnClickListener {
-            Log.d("FrogoKeyboard", "Toolbar on Clicked")
-            binding?.keyboardAutotext?.visibility = View.GONE
-            showMainKeyboard()
-        }
-
-        binding?.keyboardNews?.binding?.toolbarBack?.setOnClickListener {
-            Log.d("FrogoKeyboard", "Toolbar on Clicked")
-            binding?.keyboardNews?.visibility = View.GONE
-            showMainKeyboard()
-        }
-
-        binding?.keyboardMoview?.binding?.toolbarBack?.setOnClickListener {
-            Log.d("FrogoKeyboard", "Toolbar on Clicked")
-            binding?.keyboardMoview?.visibility = View.GONE
-            showMainKeyboard()
-        }
-
-        binding?.keyboardWebview?.binding?.toolbarBack?.setOnClickListener {
-            Log.d("FrogoKeyboard", "Toolbar on Clicked")
-            binding?.keyboardWebview?.visibility = View.GONE
-            showMainKeyboard()
-        }
-
-        binding?.keyboardForm?.binding?.toolbarBack?.setOnClickListener {
-            Log.d("FrogoKeyboard", "Toolbar on Clicked")
-            binding?.keyboardForm?.visibility = View.GONE
-            showMainKeyboard()
-        }
-
-        binding?.keyboardEmoji?.binding?.emojiPaletteClose?.setOnClickListener {
-            Log.d("FrogoKeyboard", "Toolbar on Clicked")
-            binding?.keyboardEmoji?.visibility = View.GONE
-            binding?.keyboardEmoji?.binding?.emojisList?.scrollToPosition(0)
-            showMainKeyboard()
-        }
+        initBackToMainKeyboard()
 
     }
 

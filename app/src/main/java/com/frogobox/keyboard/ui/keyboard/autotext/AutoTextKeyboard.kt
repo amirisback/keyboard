@@ -37,8 +37,11 @@ class AutoTextKeyboard(
         }
     }
 
-    private fun setupData() {
-        setupRv(AutoTextKeyboardViewModel().getAutoText())
+    fun setupData() {
+        val viewModel = AutoTextKeyboardViewModel(context)
+        viewModel.getAutoText {
+            setupRv(it)
+        }
     }
 
     private fun setupRv(data: List<AutoTextEntity>) {
@@ -52,7 +55,7 @@ class AutoTextKeyboard(
                     notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
                 ) {
                     // Your Clicked
-                    val output = "${data.title} ${data.body}"
+                    val output = data.body
                     currentInputConnection?.commitText(output, 1)
                 }
 

@@ -150,9 +150,21 @@ What's New??
 </tr>
 
 <tr>
-    <td><img width="200px" height="400px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-1.png"></td>
-    <td><img width="200px" height="400px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-2.png"></td>
-    <td><img width="200px" height="400px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-3.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-1.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-2.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-3.png"></td>
+</tr>
+
+<tr>
+    <th>Empty View Auto Text</th>
+    <th>Auto Text Editor</th>
+    <th>Auto Text Detail</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-4.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-5.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-6.png"></td>
 </tr>
 
 </table>

@@ -14,6 +14,7 @@ import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.sdk.ext.startActivityExt
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -91,9 +92,14 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
                 ) {
-                    startActivityExt<AutoTextDetailActivity, AutoTextEntity>(
-                        AutoTextDetailActivity.EXTRA_AUTO_TEXT,
-                        data
+                    val extra = Gson().toJson(data)
+                    startActivityResult.launch(
+                        Intent(
+                            this@AutoTextActivity,
+                            AutoTextDetailActivity::class.java
+                        ).apply {
+                            putExtra(AutoTextDetailActivity.EXTRA_AUTO_TEXT, extra)
+                        }
                     )
                 }
 

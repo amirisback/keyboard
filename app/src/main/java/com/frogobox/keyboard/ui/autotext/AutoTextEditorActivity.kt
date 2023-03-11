@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AutoTextEditorActivity : BaseActivity<ActivityAutotextEditorBinding>() {
 
     companion object {
+        const val EXTRA_AUTO_TEXT_EDIT = "EXTRA_AUTO_TEXT_EDIT"
         const val RESULT_CODE_EDIT = 100
     }
 

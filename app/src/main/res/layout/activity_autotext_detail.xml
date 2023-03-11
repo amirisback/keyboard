@@ -5,28 +5,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ScrollView
         android:id="@+id/rv_autotext"
         android:layout_width="@dimen/frogo_dimen_0dp"
         android:layout_height="@dimen/frogo_dimen_0dp"
+        android:layout_marginStart="@dimen/frogo_dimen_16dp"
+        android:layout_marginTop="@dimen/frogo_dimen_16dp"
+        android:layout_marginEnd="@dimen/frogo_dimen_16dp"
         android:layout_marginBottom="@dimen/frogo_dimen_16dp"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/frogo_dimen_16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_add"
+        android:background="@drawable/bg_border"
+        android:padding="@dimen/frogo_dimen_8dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:itemCount="10"
-        tools:listitem="@layout/item_autotext" />
+        tools:listitem="@layout/item_autotext">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/frogo_dimen_8dp">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/frogo_dimen_8dp"
+                android:textSize="@dimen/frogo_dimen_font_14sp"
+                tools:text="@tools:sample/lorem" />
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/frogo_dimen_font_20sp"
+                tools:text="@tools:sample/lorem/random" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <Button
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_edit"
         android:layout_width="@dimen/frogo_dimen_0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/frogo_dimen_16dp"
-        android:text="Add Auto Text"
+        android:text="Edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_delete"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="@dimen/frogo_dimen_0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/frogo_dimen_16dp"
+        android:text="Delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/btn_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

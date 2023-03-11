@@ -20,14 +20,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AutoTextViewModel @Inject constructor(
-    private val repository: AutoTextRepository
+    private val repository: AutoTextRepository,
 ) : BaseViewModel() {
 
     private var _autoText = MutableLiveData<List<AutoTextEntity>>()
-    var autoText : LiveData<List<AutoTextEntity>> = _autoText
-    
+    var autoText: LiveData<List<AutoTextEntity>> = _autoText
+
     fun getAutoText() {
-        repository.getAutoText(object : DataResponseCallback<List<AutoTextEntity>>{
+        repository.getAutoText(object : DataResponseCallback<List<AutoTextEntity>> {
             override fun onFailed(statusCode: Int, errorMessage: String) {
                 _eventFailed.postValue(errorMessage)
             }
@@ -62,30 +62,85 @@ class AutoTextViewModel @Inject constructor(
             isActive = true
         )
         repository.insertAutoText(data, object : StateResponseCallback {
-                override fun onFailed(statusCode: Int, errorMessage: String) {
-                    _eventFailed.postValue(errorMessage)
-                }
-
-                override fun onFinish() {
-                    _eventFinishState.postValue(true)
-                }
-
-                override fun onHideProgress() {
-                    _eventShowProgressState.postValue(false)
-                    
-                }
-
-                override fun onShowProgress() {
-                    _eventShowProgressState.postValue(true)
-                    
-                }
-
-                override fun onSuccess() {
-                    _eventSuccessState.postValue(true)
-                }
+            override fun onFailed(statusCode: Int, errorMessage: String) {
+                _eventFailed.postValue(errorMessage)
             }
+
+            override fun onFinish() {
+                _eventFinishState.postValue(true)
+            }
+
+            override fun onHideProgress() {
+                _eventShowProgressState.postValue(false)
+
+            }
+
+            override fun onShowProgress() {
+                _eventShowProgressState.postValue(true)
+
+            }
+
+            override fun onSuccess() {
+                _eventSuccessState.postValue(true)
+            }
+        }
         )
     }
 
+    fun deleteAutoText(data: AutoTextEntity) {
+        repository.deleteAutoText(data, object : StateResponseCallback {
+            override fun onFailed(statusCode: Int, errorMessage: String) {
+                _eventFailed.postValue(errorMessage)
+            }
+
+            override fun onFinish() {
+                _eventFinishState.postValue(true)
+            }
+
+            override fun onHideProgress() {
+                _eventShowProgressState.postValue(false)
+            }
+
+            override fun onShowProgress() {
+                _eventShowProgressState.postValue(true)
+            }
+
+            override fun onSuccess() {
+                _eventSuccessState.postValue(true)
+            }
+        })
+    }
+
+    fun updateAutoText(id: Int, title: String, body: String) {
+        val data = AutoTextEntity(
+            id = id,
+            title = title,
+            label = AutoTextLabel.DEFAULT,
+            date = FrogoDate.getTimeNow(),
+            body = body,
+            isActive = true
+        )
+        repository.updateAutoText(data, object : StateResponseCallback {
+            override fun onFailed(statusCode: Int, errorMessage: String) {
+                _eventFailed.postValue(errorMessage)
+            }
+
+            override fun onFinish() {
+                _eventFinishState.postValue(true)
+            }
+
+            override fun onHideProgress() {
+                _eventShowProgressState.postValue(false)
+            }
+
+            override fun onShowProgress() {
+                _eventShowProgressState.postValue(true)
+            }
+
+            override fun onSuccess() {
+                _eventSuccessState.postValue(true)
+            }
+        })
+    }
 
 }

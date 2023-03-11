@@ -24,9 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Let's Do Some Test"
-            android:textStyle="bold"
             android:textColor="@color/frogoColorBlack"
-            android:textSize="@dimen/frogo_dimen_font_20sp" />
+            android:textSize="@dimen/frogo_dimen_font_20sp"
+            android:textStyle="bold" />
 
         <View
             android:id="@+id/view_line"
@@ -40,8 +40,23 @@
             android:id="@+id/et_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/frogo_dimen_16dp"
+            android:background="@drawable/bg_border"
             android:focusable="true"
-            android:hint="Test Keyboard Input"
+            android:hint="Full Text"
+            android:padding="@dimen/frogo_dimen_16dp"
+            android:textColor="@color/frogoColorBlack" />
+
+        <EditText
+            android:id="@+id/et_text_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/frogo_dimen_16dp"
+            android:background="@drawable/bg_border"
+            android:focusable="true"
+            android:hint="Number"
+            android:inputType="number"
+            android:padding="@dimen/frogo_dimen_16dp"
             android:textColor="@color/frogoColorBlack" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -54,22 +69,13 @@
                 android:layout_height="wrap_content"
                 android:completionThreshold="1"
                 android:focusable="true"
-                android:hint="Test Keyboard Input"
+                android:hint="Full Text"
                 android:minHeight="@dimen/frogo_dimen_72dp"
                 android:paddingStart="@dimen/frogo_dimen_16dp"
                 android:paddingEnd="@dimen/frogo_dimen_16dp"
                 android:textColor="@color/frogoColorBlack" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <EditText
-            android:id="@+id/et_text_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:hint="Test Keyboard Input"
-            android:inputType="number"
-            android:textColor="@color/frogoColorBlack" />
 
     </LinearLayout>
 

@@ -38,7 +38,10 @@ class AutoTextKeyboard(
     }
 
     private fun setupData() {
-        setupRv(AutoTextKeyboardViewModel().getAutoText())
+        val viewModel = AutoTextKeyboardViewModel(context)
+        viewModel.getAutoText {
+            setupRv(it)
+        }
     }
 
     private fun setupRv(data: List<AutoTextEntity>) {

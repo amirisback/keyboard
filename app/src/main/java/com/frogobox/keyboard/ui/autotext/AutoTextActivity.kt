@@ -2,6 +2,7 @@ package com.frogobox.keyboard.ui.autotext
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.viewModels
@@ -35,7 +36,12 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
     override fun setupViewModel() {
         viewModel.apply {
             autoText.observe(this@AutoTextActivity) {
-                setupRvAutoText(it)
+                if (it.isEmpty()) {
+                    binding.emptyView.visibility = View.VISIBLE
+                } else {
+                    binding.emptyView.visibility = View.GONE
+                    setupRvAutoText(it)
+                }
             }
         }
     }

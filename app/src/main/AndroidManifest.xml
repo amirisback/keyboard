@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -7,12 +8,14 @@
         android:name=".MainApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_frogobox"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_frogobox"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Research">
+        android:theme="@style/Theme.Research"
+        tools:targetApi="tiramisu">
 
         <activity
             android:name=".ui.detail.DetailActivity"
@@ -43,7 +46,7 @@
         <service
             android:name=".services.KeyboardIME"
             android:exported="true"
-            android:label="Frogo Keyboard"
+            android:label="@string/app_name"
             android:permission="android.permission.BIND_INPUT_METHOD">
             <meta-data
                 android:name="android.view.im"

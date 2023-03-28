@@ -9,12 +9,10 @@ import androidx.activity.viewModels
 import com.frogobox.keyboard.common.base.BaseActivity
 import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
 import com.frogobox.keyboard.databinding.ActivityAutotextBinding
-import com.frogobox.keyboard.databinding.ActivityAutotextDetailBinding
 import com.frogobox.keyboard.databinding.ItemAutotextBinding
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
-import com.frogobox.sdk.ext.startActivityExt
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,9 +53,14 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
 
     override fun setupActivityResultExt(result: ActivityResult) {
         super.setupActivityResultExt(result)
-        if (result.resultCode == AutoTextEditorActivity.RESULT_CODE_EDIT) {
+        if (result.resultCode == AutoTextEditorActivity.RESULT_CODE_ADD) {
             viewModel.getAutoText()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAutoText()
     }
 
     private fun setupUI() {

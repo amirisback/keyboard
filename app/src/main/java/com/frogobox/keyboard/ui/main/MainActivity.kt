@@ -8,9 +8,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.common.base.BaseActivity
-import com.frogobox.keyboard.databinding.ActivityMainBinding
 import com.frogobox.keyboard.common.ext.isDarkThemeOn
+import com.frogobox.keyboard.databinding.ActivityMainBinding
 import com.frogobox.keyboard.ui.autotext.AutoTextActivity
 import com.frogobox.keyboard.ui.detail.DetailActivity
 import com.frogobox.sdk.ext.showLogDebug
@@ -18,7 +17,7 @@ import com.frogobox.sdk.ext.startActivityExt
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>() {
+class MainActivity : BaseMainActivity<ActivityMainBinding>() {
 
     private val NONE = 0
     private val PICKING = 1

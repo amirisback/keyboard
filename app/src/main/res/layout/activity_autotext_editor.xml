@@ -27,7 +27,7 @@
         android:background="@drawable/bg_border"
         android:gravity="start|top"
         android:hint="Enter text"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:padding="@dimen/frogo_dimen_16dp"
         app:layout_constraintBottom_toTopOf="@id/btn_save"
         app:layout_constraintEnd_toEndOf="parent"

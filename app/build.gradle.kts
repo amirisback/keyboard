@@ -33,7 +33,7 @@ android {
         setProperty("archivesBaseName", "${ProjectSetting.NAME_APK}(${versionName})")
 
         // Declaration apps name debug mode
-        val debugAttribute = "Development"
+        val debugAttribute = "Dev"
         val nameAppDebug = "${ProjectSetting.NAME_APP} $debugAttribute"
         resourceConfigurations += setOf("en", "id")
 
@@ -111,51 +111,18 @@ android {
 
 dependencies {
 
-    implementation(Androidx.Core.ktx)
-    implementation(Androidx.appCompat)
-    implementation(Androidx.activityKtx)
-    implementation(Androidx.fragmentKtx)
-    implementation(Androidx.constraintLayout)
     implementation(Androidx.Work.runtimeKtx)
 
-    implementation(Androidx.Lifecycle.livedataKtx)
-    implementation(Androidx.Lifecycle.viewmodelKtx)
-    implementation(Androidx.Lifecycle.runtimeKtx)
-    implementation(Androidx.Lifecycle.process)
-
-    implementation(Androidx.Room.ktx)
-    implementation(Androidx.Room.runtime)
-    implementation(Androidx.Room.rxJava3)
-
-    implementation(Google.material)
-    implementation(Google.gson)
-
     implementation(Google.Hilt.android)
-
-    implementation(Square.Retrofit2.retrofit)
-    implementation(Square.Retrofit2.adapterRxJava3)
-    implementation(Square.Retrofit2.converterGson)
-
-    implementation(Square.OkHttp.okhttp)
-    implementation(Square.OkHttp.loggingInterceptor)
-
-    implementation(Reactivex.rxJava3)
-    implementation(Reactivex.rxKotlin3)
-    implementation(Reactivex.rxAndroid3)
-
-    implementation(GitHub.glide)
-    implementation(GitHub.chucker)
 
     implementation(Frogo.sdk)
     implementation(Frogo.ui)
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
 
-    implementation(Koin.core)
-    implementation(Koin.android)
-    implementation(Koin.androidCompat)
+    implementation(Util.hdodenhofCircleImageView)
 
-    implementation("androidx.emoji2:emoji2-bundled:1.2.0")
+    implementation("androidx.emoji2:emoji2-bundled:1.3.0")
 
     implementation("com.mikepenz:fastadapter:5.7.0")
     implementation("com.mikepenz:fastadapter-extensions-binding:5.7.0") // view binding helpers
@@ -171,9 +138,5 @@ dependencies {
     kapt(Google.Hilt.compiler)
     kapt(Androidx.Room.compiler)
     kapt(Androidx.Lifecycle.compiler)
-
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
 }

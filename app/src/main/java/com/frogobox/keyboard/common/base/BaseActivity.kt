@@ -26,20 +26,6 @@ abstract class BaseActivity<VB: ViewBinding> : FrogoBindActivity<VB>() {
         return BuildConfig.DEBUG
     }
 
-    override fun setupPiracyMode() {
-        connectPiracyChecker(object : FrogoPiracyCallback {
-            override fun doOnPirated(message: PiracyMessage) {
-
-                showPiracedDialog(message, object : FrogoPiracyDialogCallback {
-                    override fun doOnPirated(message: PiracyMessage) {
-                        openPlaystore(packageName)
-                    }
-
-                })
-            }
-        })
-    }
-
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
         initView()

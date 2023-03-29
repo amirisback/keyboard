@@ -1,4 +1,7 @@
 ![Banner](/docs/image/banner-frogo-keyboard.png)
+
+[![Google Badge](https://img.shields.io/badge/Google%20Dev%20Library-keyboard-orange?style=flat-square)](https://devlibrary.withgoogle.com/products/android/repos/amirisback-keyboard)
+
 - Simple research keyboard for Android
 - Custom Keyboard
 - Emoji Custom Keyboard

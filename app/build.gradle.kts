@@ -10,8 +10,8 @@ plugins {
 
 android {
 
-    namespace = "com.frogobox.keyboard"
-    compileSdk = 33
+    namespace = ProjectSetting.PROJECT_NAME_SPACE
+    compileSdk = ProjectSetting.PROJECT_TARGET_SDK
 
     defaultConfig {
         applicationId = ProjectSetting.PROJECT_APP_ID
@@ -120,19 +120,18 @@ dependencies {
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
 
-    implementation(Util.hdodenhofCircleImageView)
+    implementation(Androidx.emoji2)
 
-    implementation("androidx.emoji2:emoji2-bundled:1.3.0")
-
-    implementation("com.mikepenz:fastadapter:5.7.0")
-    implementation("com.mikepenz:fastadapter-extensions-binding:5.7.0") // view binding helpers
-    implementation("com.mikepenz:fastadapter-extensions-diff:5.7.0") // diff util helpers
-    implementation("com.mikepenz:fastadapter-extensions-drag:5.7.0") // drag support
-    implementation("com.mikepenz:fastadapter-extensions-paged:5.7.0") // paging support
-    implementation("com.mikepenz:fastadapter-extensions-scroll:5.7.0") // scroll helpers
-    implementation("com.mikepenz:fastadapter-extensions-swipe:5.7.0") // swipe support
-    implementation("com.mikepenz:fastadapter-extensions-ui:5.7.0") // pre-defined ui components
-    implementation("com.mikepenz:fastadapter-extensions-utils:5.7.0") // needs the `expandable`, `drag` and `scroll` extension.
+    implementation(Util.FastAdapter.core)
+    implementation(Util.FastAdapter.expandable)
+    implementation(Util.FastAdapter.binding)
+    implementation(Util.FastAdapter.diff)
+    implementation(Util.FastAdapter.drag)
+    implementation(Util.FastAdapter.paged)
+    implementation(Util.FastAdapter.scroll)
+    implementation(Util.FastAdapter.swipe)
+    implementation(Util.FastAdapter.ui)
+    implementation(Util.FastAdapter.utils)
 
     kapt(GitHub.glideCompiler)
     kapt(Google.Hilt.compiler)

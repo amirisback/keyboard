@@ -87,6 +87,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             keyboardWebview.setInputConnection(currentInputConnection)
             keyboardForm.setInputConnection(currentInputConnection)
             keyboardEmoji.setInputConnection(currentInputConnection)
+            keyboardPlaystore.setInputConnection(currentInputConnection)
         }
     }
 
@@ -198,6 +199,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 showMainKeyboard()
             }
 
+            keyboardPlaystore.binding?.toolbarBack?.setOnClickListener {
+                keyboardPlaystore.visibility = View.GONE
+                showMainKeyboard()
+            }
+
         }
     }
 
@@ -267,6 +273,10 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                             KeyboardHeaderType.AUTOTEXT -> {
                                 hideMainKeyboard()
                                 keyboardAutotext.visibility = View.VISIBLE
+                            }
+                            KeyboardHeaderType.PLAY_STORE -> {
+                                hideMainKeyboard()
+                                keyboardPlaystore.visibility = View.VISIBLE
                             }
                         }
 

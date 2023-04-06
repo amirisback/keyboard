@@ -18,6 +18,10 @@ object KeyboardUtil {
                 R.drawable.ic_keyboard_mini_auto_text
             ),
             KeyboardHeaderData(
+                KeyboardHeaderType.PLAY_STORE,
+                R.drawable.ic_keyboard_mini_app
+            ),
+            KeyboardHeaderData(
                 KeyboardHeaderType.NEWS,
                 R.drawable.ic_keyboard_mini_news
             ),

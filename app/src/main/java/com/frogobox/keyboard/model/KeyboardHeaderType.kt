@@ -12,4 +12,5 @@ enum class KeyboardHeaderType(val title: String) {
     WEB("Search Website"),
     FORM("Form"),
     AUTOTEXT("Auto Text"),
+    PLAY_STORE("Play Store"),
 }

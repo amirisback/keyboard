@@ -87,7 +87,7 @@ class EmojiKeyboard(
         binding?.emojisList?.apply {
             val emojiItemWidth = context.resources.getDimensionPixelSize(R.dimen.emoji_item_size)
             val emojiTopBarElevation =
-                context.resources.getDimensionPixelSize(R.dimen.dp4).toFloat()
+                context.resources.getDimensionPixelSize(com.frogobox.ui.R.dimen.frogo_dimen_4dp).toFloat()
 
             layoutManager = AutoGridLayoutManager(context, emojiItemWidth)
             adapter = EmojisAdapter(context = context, items = emojis) { emoji ->

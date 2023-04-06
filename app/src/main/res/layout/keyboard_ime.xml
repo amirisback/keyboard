@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keyboard_holder"
     android:layout_width="match_parent"
+    android:background="@color/keyboard_bg_root"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -16,7 +17,7 @@
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_64dp"
-            android:background="@color/you_background_color" />
+            android:background="@color/keyboard_bg_root" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/keyboard_main"
@@ -38,7 +39,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_64dp"
-            android:background="@color/you_background_color" />
+            android:background="@color/keyboard_bg_root" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/mock_measure_height_keyboard_main"
@@ -51,6 +52,18 @@
 
     <com.frogobox.keyboard.ui.keyboard.autotext.AutoTextKeyboard
         android:id="@+id/keyboard_autotext"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.keyboard.ui.keyboard.playstore.PlayStoreAppKeyboard
+        android:id="@+id/keyboard_playstore"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clickable="true"

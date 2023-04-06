@@ -1,14 +1,5 @@
 <resources>
 
-    <style name="AppTheme.Base" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/color_accent</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
-    <style name="AppTheme" parent="AppTheme.Base" />
-
     <style name="KwKeyboard">
         <item name="itemTextAppearance">?attr/itemTextAppearance</item>
     </style>
@@ -20,4 +11,5 @@
     <style name="MyKeyboardViewPopup" parent="KwKeyboard">
         <item name="keyTextSize">@dimen/preview_text_size</item>
     </style>
+
 </resources>

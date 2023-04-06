@@ -15,6 +15,7 @@
         android:hint="Enter text"
         android:inputType="text"
         android:padding="@dimen/frogo_dimen_16dp"
+        android:textColor="@color/tv_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,6 +30,7 @@
         android:hint="Enter text"
         android:inputType="textMultiLine"
         android:padding="@dimen/frogo_dimen_16dp"
+        android:textColor="@color/tv_text_color"
         app:layout_constraintBottom_toTopOf="@id/btn_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

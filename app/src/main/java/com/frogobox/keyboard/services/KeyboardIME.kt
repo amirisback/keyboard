@@ -87,6 +87,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             keyboardWebview.setInputConnection(currentInputConnection)
             keyboardForm.setInputConnection(currentInputConnection)
             keyboardEmoji.setInputConnection(currentInputConnection)
+            keyboardPlaystore.setInputConnection(currentInputConnection)
         }
     }
 
@@ -198,6 +199,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 showMainKeyboard()
             }
 
+            keyboardPlaystore.binding?.toolbarBack?.setOnClickListener {
+                keyboardPlaystore.visibility = View.GONE
+                showMainKeyboard()
+            }
+
         }
     }
 
@@ -268,6 +274,10 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                 hideMainKeyboard()
                                 keyboardAutotext.visibility = View.VISIBLE
                             }
+                            KeyboardHeaderType.PLAY_STORE -> {
+                                hideMainKeyboard()
+                                keyboardPlaystore.visibility = View.VISIBLE
+                            }
                         }
 
                     }
@@ -290,7 +300,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             binding?.keyboardEmoji?.setupEmojiPalette(
                 toolbarColor = ContextCompat.getColor(
                     binding?.keyboardEmoji?.context!!,
-                    R.color.you_keyboard_toolbar_color
+                    R.color.keyboard_toolbar_emoji_color
                 ),
                 backgroundColor = binding?.keyboardEmoji?.context!!.getProperBackgroundColor(),
                 textColor = binding?.keyboardEmoji?.context!!.getProperTextColor()

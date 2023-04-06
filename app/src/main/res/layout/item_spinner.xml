@@ -11,6 +11,7 @@
         android:id="@+id/tv_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/tv_text_color"
         android:textSize="12sp"
         tools:text="Text" />
 

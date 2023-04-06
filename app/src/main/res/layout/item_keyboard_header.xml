@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/frogo_dimen_64dp"
     android:layout_weight="1"
@@ -11,16 +12,17 @@
         android:id="@+id/iv_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_keyboard_news" />
+        android:src="@drawable/ic_keyboard_mini_news"
+        app:tint="@color/tv_text_color" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="News API"
-        android:maxLines="1"
         android:gravity="center"
-        android:textColor="#2B486D"
+        android:maxLines="1"
+        android:text="News API"
+        android:textColor="@color/tv_text_color"
         android:textSize="@dimen/frogo_dimen_font_10sp" />
 
 </LinearLayout>

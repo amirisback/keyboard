@@ -67,7 +67,7 @@ class ItemMainKeyboard {
         const val KEYCODE_SPACE = 32
         const val KEYCODE_EMOJI = -6
 
-        const val VIBRATE_ON_KEYPRESS = true
+        const val VIBRATE_ON_KEYPRESS = false
         const val SHOW_POPUP_ON_KEYPRESS = true
 
         const val SHIFT_OFF = 0
@@ -389,7 +389,7 @@ class ItemMainKeyboard {
                             mKeys!!.add(key)
                             if (key.code == KEYCODE_ENTER) {
                                 val enterResourceId = when (mEnterKeyType) {
-                                    EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_keyboard_search
+                                    EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_keyboard_mini_search
                                     EditorInfo.IME_ACTION_NEXT, EditorInfo.IME_ACTION_GO -> R.drawable.ic_keyboard_arrow_right
                                     EditorInfo.IME_ACTION_SEND -> R.drawable.ic_keyboard_send
                                     else -> R.drawable.ic_keyboard_enter
@@ -424,17 +424,13 @@ class ItemMainKeyboard {
 
     private fun parseKeyboardAttributes(res: Resources, parser: XmlResourceParser) {
         val a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.KwKeyboard)
-        mDefaultWidth = getDimensionOrFraction(a,
-            R.styleable.KwKeyboard_keyWidth,
-            mDisplayWidth,
-            mDisplayWidth / 10)
+        mDefaultWidth = getDimensionOrFraction(a, R.styleable.KwKeyboard_keyWidth, mDisplayWidth, mDisplayWidth / 10)
         mDefaultHeight = res.getDimension(R.dimen.key_height).toInt()
-        mDefaultHorizontalGap =
-            getDimensionOrFraction(a, R.styleable.KwKeyboard_horizontalGap, mDisplayWidth, 0)
+        mDefaultHorizontalGap = getDimensionOrFraction(a, R.styleable.KwKeyboard_horizontalGap, mDisplayWidth, 0)
         a.recycle()
     }
 
     private fun getKeyboardHeightMultiplier(): Float {
-        return 1.0F
+        return 1F
     }
 }

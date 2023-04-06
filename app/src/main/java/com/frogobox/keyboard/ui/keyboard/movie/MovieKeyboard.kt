@@ -14,6 +14,7 @@ import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.keyboard.common.base.BaseKeyboard
+import com.frogobox.keyboard.databinding.ItemKeyboardMovieBinding
 import com.frogobox.keyboard.databinding.KeyboardGridBinding
 import com.frogobox.sdk.ext.glideLoad
 import com.frogobox.sdk.ext.gone
@@ -80,9 +81,9 @@ class MovieKeyboard(
         binding?.apply {
 
             val adapterCallback =
-                object : IFrogoBindingAdapter<TrendingMovie, FrogoRvGridType6Binding> {
+                object : IFrogoBindingAdapter<TrendingMovie, ItemKeyboardMovieBinding> {
                     override fun onItemClicked(
-                        binding: FrogoRvGridType6Binding,
+                        binding: ItemKeyboardMovieBinding,
                         data: TrendingMovie,
                         position: Int,
                         notifyListener: FrogoRecyclerNotifyListener<TrendingMovie>,
@@ -100,21 +101,21 @@ class MovieKeyboard(
                     }
 
                     override fun onItemLongClicked(
-                        binding: FrogoRvGridType6Binding,
+                        binding: ItemKeyboardMovieBinding,
                         data: TrendingMovie,
                         position: Int,
                         notifyListener: FrogoRecyclerNotifyListener<TrendingMovie>,
                     ) {
                     }
 
-                    override fun setViewBinding(parent: ViewGroup): FrogoRvGridType6Binding {
-                        return FrogoRvGridType6Binding.inflate(LayoutInflater.from(context),
+                    override fun setViewBinding(parent: ViewGroup): ItemKeyboardMovieBinding {
+                        return ItemKeyboardMovieBinding.inflate(LayoutInflater.from(context),
                             parent,
                             false)
                     }
 
                     override fun setupInitComponent(
-                        binding: FrogoRvGridType6Binding,
+                        binding: ItemKeyboardMovieBinding,
                         data: TrendingMovie,
                         position: Int,
                         notifyListener: FrogoRecyclerNotifyListener<TrendingMovie>,
@@ -128,7 +129,7 @@ class MovieKeyboard(
                     }
                 }
 
-            rvKeyboardMain.injectorBinding<TrendingMovie, FrogoRvGridType6Binding>()
+            rvKeyboardMain.injectorBinding<TrendingMovie, ItemKeyboardMovieBinding>()
                 .addData(data)
                 .createLayoutStaggeredGrid(2)
                 .addCallback(adapterCallback)

@@ -41,14 +41,8 @@ android {
         resValue("string", "app_name", nameAppDebug)
 
         // Inject admob id for debug
-        resValue("string", "admob_app_id", AdmobValue.debugAdmobAppId)
-        resValue("string", "admob_banner", AdmobValue.debugAdmobBanner)
-        resValue("string", "admob_interstitial", AdmobValue.debugAdmobInterstitial)
-        resValue("string", "admob_interstitial_video", AdmobValue.debugAdmobInterstitialVideo)
-        resValue("string", "admob_rewarded", AdmobValue.debugAdmobRewarded)
-        resValue("string", "admob_rewarded_interstitial", AdmobValue.debugAdmobRewardedInterstitial)
-        resValue("string", "admob_native_advanced", AdmobValue.debugAdmobNativeAdvanced)
-        resValue("string", "admob_native_advanced_video", AdmobValue.debugAdmobNativeAdvancedVideo)
+        resValue("string", "admob_app_id", AdmobValue.Debug.ADMOB_APP_ID)
+        resValue("string", "admob_interstitial", AdmobValue.Debug.ADMOB_INTERSTITIAL)
 
     }
 
@@ -81,14 +75,8 @@ android {
 
 
             // Inject admob id for release
-            resValue("string", "admob_app_id", AdmobValue.releaseAdmobAppId)
-            resValue("string", "admob_banner", AdmobValue.releaseAdmobBanner)
-            resValue("string", "admob_interstitial", AdmobValue.releaseAdmobInterstitial)
-            resValue("string", "admob_interstitial_video", AdmobValue.releaseAdmobInterstitialVideo)
-            resValue("string", "admob_rewarded", AdmobValue.releaseAdmobRewarded)
-            resValue("string", "admob_rewarded_interstitial", AdmobValue.releaseAdmobRewardedInterstitial)
-            resValue("string", "admob_native_advanced", AdmobValue.releaseAdmobNativeAdvanced)
-            resValue("string", "admob_native_advanced_video", AdmobValue.releaseAdmobNativeAdvancedVideo)
+            resValue("string", "admob_app_id", AdmobValue.ADMOB_APP_ID)
+            resValue("string", "admob_interstitial", AdmobValue.ADMOB_INTERSTITIAL)
 
         }
     }
@@ -102,11 +90,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_11.toString()
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of("11"))
         }
     }
+
 }
 
 dependencies {

@@ -1,9 +1,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="17dp"
     android:height="10dp"
+    android:tint="@color/keyboard_item_action_color"
     android:viewportWidth="17"
     android:viewportHeight="10">
     <path
-        android:fillColor="#FFFFFF"
+        android:fillColor="@color/keyboard_item_action_color"
         android:pathData="M14.724,1.381V3.998H3.03L5.587,1.485C5.934,1.145 5.934,0.595 5.587,0.255C5.241,-0.085 4.682,-0.085 4.335,0.255L0.26,4.26C-0.087,4.6 -0.087,5.15 0.26,5.49L4.335,9.495C4.682,9.835 5.241,9.835 5.587,9.495C5.934,9.155 5.934,8.605 5.587,8.265L3.03,5.743H15.612C16.1,5.743 16.5,5.351 16.5,4.871V1.381C16.5,0.901 16.1,0.508 15.612,0.508C15.124,0.508 14.724,0.901 14.724,1.381Z" />
 </vector>

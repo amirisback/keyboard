@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Let's Do Some Test"
-            android:textColor="@color/frogoColorBlack"
+            android:textColor="@color/tv_text_color"
             android:textSize="@dimen/frogo_dimen_font_20sp"
             android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
             android:layout_height="@dimen/frogo_dimen_2dp"
             android:layout_marginTop="@dimen/frogo_dimen_16dp"
             android:layout_marginBottom="@dimen/frogo_dimen_16dp"
-            android:background="@color/default_background_color" />
+            android:background="@color/theme_dark_background_color" />
 
         <EditText
             android:id="@+id/et_text"
@@ -45,7 +45,7 @@
             android:focusable="true"
             android:hint="Full Text"
             android:padding="@dimen/frogo_dimen_16dp"
-            android:textColor="@color/frogoColorBlack" />
+            android:textColor="@color/tv_text_color" />
 
         <EditText
             android:id="@+id/et_text_number"
@@ -57,7 +57,7 @@
             android:hint="Number"
             android:inputType="number"
             android:padding="@dimen/frogo_dimen_16dp"
-            android:textColor="@color/frogoColorBlack" />
+            android:textColor="@color/tv_text_color" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                 android:minHeight="@dimen/frogo_dimen_72dp"
                 android:paddingStart="@dimen/frogo_dimen_16dp"
                 android:paddingEnd="@dimen/frogo_dimen_16dp"
-                android:textColor="@color/frogoColorBlack" />
+                android:textColor="@color/tv_text_color" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

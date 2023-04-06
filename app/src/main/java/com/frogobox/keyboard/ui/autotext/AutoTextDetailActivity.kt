@@ -21,6 +21,7 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
 
     companion object {
         const val EXTRA_AUTO_TEXT = "EXTRA_AUTO_TEXT"
+        const val RESULT_CODE_DELETE = 109
     }
 
     private val viewModel: AutoTextViewModel by viewModels()
@@ -28,7 +29,7 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
     override fun setupViewModel() {
         super.setupViewModel()
         viewModel.eventSuccessState.observe(this) {
-            setResult(AutoTextEditorActivity.RESULT_CODE_ADD)
+            setResult(RESULT_CODE_DELETE)
             finish()
         }
     }

@@ -16,6 +16,8 @@ class PlayStoreAppKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardAutotextBinding>(context, attrs) {
 
+    var typePlayStore : PlayStoreType? = null
+
     override fun setupViewBinding(): KeyboardAutotextBinding {
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
     }
@@ -27,12 +29,41 @@ class PlayStoreAppKeyboard(
 
     private fun initView() {
         binding?.apply {
-            tvToolbarTitle.text = "Play Store App"
+            tvToolbarTitle.text = when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreType.GAME.name
+                PlayStoreType.APP -> PlayStoreType.APP.name
+                else -> {
+                    PlayStoreType.GAME.name
+                }
+            }
         }
     }
 
-    fun setupData() {
-       setupRv(PlayStoreUtils.getPlayStoreTextApp())
+    fun setupTypePlayStore(typePlayStore: PlayStoreType) {
+        this.typePlayStore = typePlayStore
+        binding?.apply {
+            tvToolbarTitle.text = when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreType.GAME.name
+                PlayStoreType.APP -> PlayStoreType.APP.name
+            }
+        }
+        setupRv(
+            when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreUtils.getPlayStoreTextGame()
+                PlayStoreType.APP -> PlayStoreUtils.getPlayStoreTextApp()
+            }
+        )
+    }
+
+    private fun setupData() {
+        setupRv(
+            when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreUtils.getPlayStoreTextGame()
+                PlayStoreType.APP -> PlayStoreUtils.getPlayStoreTextApp()
+                else -> {
+                    PlayStoreUtils.getPlayStoreTextGame()}
+            }
+        )
     }
 
     private fun setupRv(data: List<PlayStoreTextModel>) {
@@ -63,7 +94,8 @@ class PlayStoreAppKeyboard(
                     return ItemKeyboardNewsBinding.inflate(
                         LayoutInflater.from(context),
                         parent,
-                        false)
+                        false
+                    )
                 }
 
                 override fun setupInitComponent(

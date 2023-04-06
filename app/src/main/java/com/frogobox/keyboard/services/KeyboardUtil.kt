@@ -14,12 +14,16 @@ object KeyboardUtil {
     fun menuKeyboard(): List<KeyboardHeaderData> {
         return listOf(
             KeyboardHeaderData(
-                KeyboardHeaderType.AUTOTEXT,
+                KeyboardHeaderType.AUTO_TEXT,
                 R.drawable.ic_keyboard_mini_auto_text
             ),
             KeyboardHeaderData(
-                KeyboardHeaderType.PLAY_STORE,
-                R.drawable.ic_keyboard_mini_app
+                KeyboardHeaderType.PLAY_STORE_GAME,
+                R.drawable.ic_keyboard_mini_ps_game
+            ),
+            KeyboardHeaderData(
+                KeyboardHeaderType.PLAY_STORE_APP,
+                R.drawable.ic_keyboard_mini_ps_app
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.NEWS,

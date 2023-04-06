@@ -11,6 +11,7 @@ enum class KeyboardHeaderType(val title: String) {
     MOVIE("Movie API"),
     WEB("Search Website"),
     FORM("Form"),
-    AUTOTEXT("Auto Text"),
-    PLAY_STORE("Play Store"),
+    AUTO_TEXT("Auto Text"),
+    PLAY_STORE_APP("App Play Store"),
+    PLAY_STORE_GAME("Game Play Store"),
 }

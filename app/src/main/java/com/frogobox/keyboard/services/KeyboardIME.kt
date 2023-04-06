@@ -33,6 +33,7 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
+import com.frogobox.keyboard.ui.keyboard.playstore.PlayStoreType
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -270,12 +271,18 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                 }
                             }
 
-                            KeyboardHeaderType.AUTOTEXT -> {
+                            KeyboardHeaderType.AUTO_TEXT -> {
                                 hideMainKeyboard()
                                 keyboardAutotext.visibility = View.VISIBLE
                             }
-                            KeyboardHeaderType.PLAY_STORE -> {
+                            KeyboardHeaderType.PLAY_STORE_APP -> {
                                 hideMainKeyboard()
+                                keyboardPlaystore.setupTypePlayStore(PlayStoreType.APP)
+                                keyboardPlaystore.visibility = View.VISIBLE
+                            }
+                            KeyboardHeaderType.PLAY_STORE_GAME -> {
+                                hideMainKeyboard()
+                                keyboardPlaystore.setupTypePlayStore(PlayStoreType.GAME)
                                 keyboardPlaystore.visibility = View.VISIBLE
                             }
                         }

@@ -2,7 +2,6 @@ package com.frogobox.keyboard.ui.autotext
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.viewModels
@@ -13,6 +12,8 @@ import com.frogobox.keyboard.databinding.ItemAutotextBinding
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
+import com.frogobox.sdk.ext.gone
+import com.frogobox.sdk.ext.visible
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,9 +36,11 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
         viewModel.apply {
             autoText.observe(this@AutoTextActivity) {
                 if (it.isEmpty()) {
-                    binding.emptyView.visibility = View.VISIBLE
+                    binding.emptyView.root.visible()
+                    binding.rvAutotext.gone()
                 } else {
-                    binding.emptyView.visibility = View.GONE
+                    binding.emptyView.root.gone()
+                    binding.rvAutotext.visible()
                     setupRvAutoText(it)
                 }
             }
@@ -53,7 +56,7 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
 
     override fun setupActivityResultExt(result: ActivityResult) {
         super.setupActivityResultExt(result)
-        if (result.resultCode == AutoTextEditorActivity.RESULT_CODE_ADD) {
+        if (result.resultCode == AutoTextDetailActivity.RESULT_CODE_DELETE) {
             viewModel.getAutoText()
         }
     }
@@ -103,10 +106,7 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
                 ) {
                     val extra = Gson().toJson(data)
                     startActivityResult.launch(
-                        Intent(
-                            this@AutoTextActivity,
-                            AutoTextDetailActivity::class.java
-                        ).apply {
+                        Intent(this@AutoTextActivity, AutoTextDetailActivity::class.java).apply {
                             putExtra(AutoTextDetailActivity.EXTRA_AUTO_TEXT, extra)
                         }
                     )

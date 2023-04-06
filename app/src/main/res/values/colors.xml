@@ -8,27 +8,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#424242</color>
 
     <color name="color_failed">#C53741</color>
     <color name="color_success">#41AF60</color>
     <color name="color_warning">#FFF57C00</color>
 
-    <color name="md_grey_800">#424242</color>
-    <color name="md_grey_600">#757575</color>
-    <color name="divider_grey">#88808080</color>
-
-    <color name="theme_dark_background_color">@color/md_grey_800</color>
-    <color name="default_background_color">@color/theme_dark_background_color</color>
+    <color name="theme_dark_background_color">@color/grey</color>
 
     <color name="system_neutral1_10">#FCFCFF</color>
     <color name="system_accent1_400">#219BCC</color>
     <color name="system_neutral1_900">#191C1E</color>
     <color name="system_accent1_900">#001E2C</color>
     <color name="system_accent1_10">#F9FCFF</color>
-
-    <color name="background_color">#FCFCFF</color>
-    <color name="keyboard_background_color">#FCFCFF</color>
-
 
     <color name="keyboard_toolbar_emoji_color">#E0F3FF</color>
 
@@ -37,6 +29,8 @@
     <color name="tv_text_color">#000000</color>
     <color name="bg_card">#FFFFFF</color>
 
+    <color name="keyboard_bg_root">#FCFCFF</color>
+    <color name="keyboard_bg_item_grey">#757575</color>
     <color name="keyboard_bg_normal_color">#FFFFFF</color>
     <color name="keyboard_bg_normal_stroke_color">#EFEFEF</color>
 

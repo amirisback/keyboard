@@ -7,7 +7,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
 
@@ -47,7 +46,7 @@ fun Context.getProperPrimaryColor() = if (isDarkThemeOn()) {
     ContextCompat.getColor(this, R.color.system_accent1_400)
 }
 
-fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.md_grey_800)
+fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.keyboard_bg_item_grey)
 
 fun Drawable.applyColorFilter(color: Int) = mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
 

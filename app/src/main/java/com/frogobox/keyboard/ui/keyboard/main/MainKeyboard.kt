@@ -224,7 +224,7 @@ class MainKeyboard @JvmOverloads constructor(
                 ContextCompat.getColor(context, R.color.system_neutral1_10)
             }
 
-            val miniKeyboardBackgroundColor = ContextCompat.getColor(context, R.color.keyboard_background_color)
+            val miniKeyboardBackgroundColor = ContextCompat.getColor(context, R.color.keyboard_bg_normal_color)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
                 val previewBackground = background as LayerDrawable

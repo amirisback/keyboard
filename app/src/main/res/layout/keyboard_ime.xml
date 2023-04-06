@@ -16,7 +16,7 @@
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_64dp"
-            android:background="@color/background_color" />
+            android:background="@color/keyboard_bg_root" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/keyboard_main"
@@ -38,7 +38,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_64dp"
-            android:background="@color/background_color" />
+            android:background="@color/keyboard_bg_root" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/mock_measure_height_keyboard_main"

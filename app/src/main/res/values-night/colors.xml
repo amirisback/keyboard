@@ -7,8 +7,6 @@
     <color name="system_accent1_900">#001E2C</color>
     <color name="system_accent1_10">#F9FCFF</color>
 
-    <color name="background_color">#191C1E</color>
-    <color name="keyboard_background_color">#191C1E</color>
     <color name="keyboard_toolbar_emoji_color">#151515</color>
 
     <!--    -->
@@ -16,9 +14,9 @@
     <color name="tv_text_color">#FFFFFF</color>
     <color name="bg_card">#000000</color>
 
+    <color name="keyboard_bg_root">#191C1E</color>
     <color name="keyboard_bg_normal_color">#232427</color>
     <color name="keyboard_bg_normal_stroke_color">#232427</color>
-
 
     <color name="keyboard_item_action_color">#181921</color>
     <color name="keyboard_bg_action_color">#CADAFE</color>

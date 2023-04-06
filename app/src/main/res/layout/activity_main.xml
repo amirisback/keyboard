@@ -57,7 +57,7 @@
             android:layout_marginStart="@dimen/frogo_dimen_16dp"
             android:layout_marginTop="@dimen/frogo_dimen_16dp"
             android:layout_marginEnd="@dimen/frogo_dimen_16dp"
-            android:background="@color/default_background_color"
+            android:background="@color/theme_dark_background_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/paragraph2" />
@@ -85,7 +85,7 @@
             android:layout_marginStart="@dimen/frogo_dimen_16dp"
             android:layout_marginTop="@dimen/frogo_dimen_16dp"
             android:layout_marginEnd="@dimen/frogo_dimen_16dp"
-            android:background="@color/default_background_color"
+            android:background="@color/theme_dark_background_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_state" />

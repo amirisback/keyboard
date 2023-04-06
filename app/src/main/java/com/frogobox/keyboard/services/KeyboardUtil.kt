@@ -15,23 +15,23 @@ object KeyboardUtil {
         return listOf(
             KeyboardHeaderData(
                 KeyboardHeaderType.AUTOTEXT,
-                R.drawable.ic_keyboard_auto_text
+                R.drawable.ic_keyboard_mini_auto_text
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.NEWS,
-                R.drawable.ic_keyboard_news
+                R.drawable.ic_keyboard_mini_news
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.MOVIE,
-                R.drawable.ic_keyboard_movie
+                R.drawable.ic_keyboard_mini_movie
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.WEB,
-                R.drawable.ic_keyboard_search
+                R.drawable.ic_keyboard_mini_search
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.FORM,
-                R.drawable.ic_keyboard
+                R.drawable.ic_keyboard_mini_form
             ),
         )
     }

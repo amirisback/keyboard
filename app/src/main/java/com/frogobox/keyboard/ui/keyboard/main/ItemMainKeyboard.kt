@@ -389,7 +389,7 @@ class ItemMainKeyboard {
                             mKeys!!.add(key)
                             if (key.code == KEYCODE_ENTER) {
                                 val enterResourceId = when (mEnterKeyType) {
-                                    EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_keyboard_search
+                                    EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_keyboard_mini_search
                                     EditorInfo.IME_ACTION_NEXT, EditorInfo.IME_ACTION_GO -> R.drawable.ic_keyboard_arrow_right
                                     EditorInfo.IME_ACTION_SEND -> R.drawable.ic_keyboard_send
                                     else -> R.drawable.ic_keyboard_enter

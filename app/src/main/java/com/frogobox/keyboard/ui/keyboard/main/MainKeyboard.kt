@@ -157,7 +157,7 @@ class MainKeyboard @JvmOverloads constructor(
         }
 
         mPopupLayout = R.layout.keyboard_main_mini
-        mKeyBackground = resources.getDrawable(R.drawable.keyboard_key_selector, context.theme)
+        mKeyBackground = resources.getDrawable(R.drawable.keyboard_bg_mini_selector, context.theme)
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
@@ -182,8 +182,7 @@ class MainKeyboard @JvmOverloads constructor(
         mPaint.textAlign = Align.CENTER
         mPaint.alpha = 255
         mMiniKeyboardCache = HashMap()
-        mAccessibilityManager =
-            (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+        mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
         mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
         mTopSmallNumberMarginWidth = resources.getDimension(R.dimen.top_small_number_margin_width)

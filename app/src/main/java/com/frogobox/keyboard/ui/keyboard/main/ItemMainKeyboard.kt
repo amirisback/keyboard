@@ -424,17 +424,13 @@ class ItemMainKeyboard {
 
     private fun parseKeyboardAttributes(res: Resources, parser: XmlResourceParser) {
         val a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.KwKeyboard)
-        mDefaultWidth = getDimensionOrFraction(a,
-            R.styleable.KwKeyboard_keyWidth,
-            mDisplayWidth,
-            mDisplayWidth / 10)
+        mDefaultWidth = getDimensionOrFraction(a, R.styleable.KwKeyboard_keyWidth, mDisplayWidth, mDisplayWidth / 10)
         mDefaultHeight = res.getDimension(R.dimen.key_height).toInt()
-        mDefaultHorizontalGap =
-            getDimensionOrFraction(a, R.styleable.KwKeyboard_horizontalGap, mDisplayWidth, 0)
+        mDefaultHorizontalGap = getDimensionOrFraction(a, R.styleable.KwKeyboard_horizontalGap, mDisplayWidth, 0)
         a.recycle()
     }
 
     private fun getKeyboardHeightMultiplier(): Float {
-        return 1.0F
+        return 1F
     }
 }

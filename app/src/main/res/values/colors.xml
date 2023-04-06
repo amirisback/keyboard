@@ -34,14 +34,8 @@
     <color name="system_accent2_0000">#151515</color>
     <color name="system_neutral1_50">#F0F0F3</color>
 
-    <color name="background_color">@color/system_neutral1_10</color>
-    <color name="contextual_status_bar_color">@color/system_accent1_400</color>
-    <color name="dialog_background_color">@color/system_accent2_50</color>
-    <color name="neutral_text_color">@color/system_accent1_900</color>
-    <color name="primary_color">@color/system_accent1_400</color>
-    <color name="primary_dark_color">@color/system_accent1_600</color>
-    <color name="status_bar_color">@color/system_accent2_50</color>
 
+    <color name="background_color">@color/system_neutral1_10</color>
     <color name="keyboard_background_color">@color/system_neutral1_10</color>
     <color name="keyboard_toolbar_color">@color/system_neutral1_50</color>
 

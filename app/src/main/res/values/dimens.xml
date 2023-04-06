@@ -1,22 +1,23 @@
 <resources>
 
-    <dimen name="popup_max_move_distance">60dp</dimen>
+    <!-- Keyboard Dimen   -->
+    <dimen name="key_height">48dp</dimen>
+    <dimen name="key_margin">2dp</dimen>
+    <dimen name="key_normal_radius">8dp</dimen>
+    <dimen name="key_action_radius">16dp</dimen>
     <dimen name="top_small_number_margin_width">12dp</dimen>
-    <dimen name="top_small_number_margin_height">18dp</dimen>
+    <dimen name="top_small_number_margin_height">12dp</dimen>
+
+    <dimen name="popup_max_move_distance">60dp</dimen>
+    <dimen name="vertical_correction">-10dp</dimen>
+
+    <!-- Emoji -->
     <dimen name="toolbar_height">46dp</dimen>
     <dimen name="toolbar_icon_height">32dp</dimen>
-    <dimen name="clip_drag_icon_height">40dp</dimen>
-    <dimen name="key_height">60dp</dimen>
-    <dimen name="vertical_correction">-10dp</dimen>
-    <dimen name="clip_pin_size">28dp</dimen>
     <dimen name="emoji_item_size">46dp</dimen>
     <dimen name="emoji_palette_btn_size">42dp</dimen>
-    <dimen name="dragselect_hotspot_height">56dp</dimen>>
-
+    <dimen name="dragselect_hotspot_height">56dp</dimen>
     <dimen name="normal_margin">12dp</dimen>
-    <dimen name="bigger_margin">20dp</dimen>
-    <dimen name="big_margin">24dp</dimen>
-    <dimen name="section_margin">32dp</dimen>
 
 
     <!-- Text Size -->

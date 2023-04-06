@@ -67,7 +67,7 @@ class ItemMainKeyboard {
         const val KEYCODE_SPACE = 32
         const val KEYCODE_EMOJI = -6
 
-        const val VIBRATE_ON_KEYPRESS = true
+        const val VIBRATE_ON_KEYPRESS = false
         const val SHOW_POPUP_ON_KEYPRESS = true
 
         const val SHIFT_OFF = 0

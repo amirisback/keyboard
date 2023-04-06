@@ -9,11 +9,6 @@
 
     <color name="keyboard_toolbar_emoji_color">#151515</color>
 
-    <!--    -->
-
-    <color name="tv_text_color">#FFFFFF</color>
-    <color name="bg_card">#000000</color>
-
     <color name="keyboard_bg_root">#191C1E</color>
     <color name="keyboard_bg_normal_color">#232427</color>
     <color name="keyboard_bg_normal_stroke_color">#232427</color>
@@ -23,6 +18,7 @@
     <color name="keyboard_bg_attribute_color">#36373A</color>
     <color name="keyboard_bg_change_color">#909BB2</color>
 
-    <!--    -->
+    <color name="tv_text_color">#FFFFFF</color>
+    <color name="bg_card">#000000</color>
 
 </resources>

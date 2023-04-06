@@ -32,15 +32,27 @@ What's New??
 <table>
 
 <tr>
-    <th>Welcome Page</th>
-    <th>Activated Keyboard</th>
-    <th>After Activated</th>
+    <th>Welcome Page (Light)</th>
+    <th>Activated Keyboard (Light)</th>
+    <th>After Activated (Light) </th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_1.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_2-1.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_2-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-2.png"></td>
+</tr>
+
+<tr>
+    <th>Welcome Page (Dark) </th>
+    <th>Activated Keyboard (Dark)</th>
+    <th>After Activated (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-2.jpeg"></td>
 </tr>
 
 </table>

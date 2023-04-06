@@ -145,14 +145,14 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
         binding.titleState.apply {
             if (!isKeyboardEnabled()) {
                 text = "Frogo Keyboard Not Active"
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.redSecondary))
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_failed))
             } else {
                 if (isUsingKeyboard()) {
                     text = "Frogo Keyboard Active"
                     setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_success))
                 } else {
                     text = "Not Using Frogo Keyboard"
-                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_primary))
+                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_warning))
                 }
             }
         }

@@ -2,11 +2,11 @@
 
     <!-- Keyboard Dimen   -->
     <dimen name="key_height">48dp</dimen>
-    <dimen name="key_margin">2dp</dimen>
+    <dimen name="key_margin">3dp</dimen>
     <dimen name="key_normal_radius">8dp</dimen>
     <dimen name="key_action_radius">16dp</dimen>
     <dimen name="top_small_number_margin_width">12dp</dimen>
-    <dimen name="top_small_number_margin_height">12dp</dimen>
+    <dimen name="top_small_number_margin_height">16dp</dimen>
 
     <dimen name="popup_max_move_distance">60dp</dimen>
     <dimen name="vertical_correction">-10dp</dimen>

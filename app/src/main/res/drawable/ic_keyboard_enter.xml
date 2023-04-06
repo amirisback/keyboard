@@ -1,6 +1,7 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="17dp"
     android:height="10dp"
+    android:tint="@color/keyboard_item_action_color"
     android:viewportWidth="17"
     android:viewportHeight="10">
     <path

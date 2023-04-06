@@ -119,12 +119,12 @@
             app:keyLabel="\?123"
             app:keyWidth="15%p" />
         <Key
+            app:keyLabel=","
+            app:keyWidth="10%p" />
+        <Key
             app:code="-6"
             app:keyEdgeFlags="left"
             app:keyIcon="@drawable/ic_keyboard_emoji_emotions"
-            app:keyWidth="10%p" />
-        <Key
-            app:keyLabel=","
             app:keyWidth="10%p" />
         <Key
             app:code="32"

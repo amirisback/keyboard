@@ -5,10 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.frogobox.keyboard.common.base.BaseKeyboard
-import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
 import com.frogobox.keyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.keyboard.databinding.KeyboardAutotextBinding
-import com.frogobox.keyboard.ui.keyboard.autotext.AutoTextKeyboardViewModel
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -17,6 +15,8 @@ class PlayStoreAppKeyboard(
     context: Context,
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardAutotextBinding>(context, attrs) {
+
+    var typePlayStore : PlayStoreType? = null
 
     override fun setupViewBinding(): KeyboardAutotextBinding {
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
@@ -29,38 +29,64 @@ class PlayStoreAppKeyboard(
 
     private fun initView() {
         binding?.apply {
-            tvToolbarTitle.text = "Play Store App"
+            tvToolbarTitle.text = when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreType.GAME.name
+                PlayStoreType.APP -> PlayStoreType.APP.name
+                else -> {
+                    PlayStoreType.GAME.name
+                }
+            }
         }
     }
 
-    fun setupData() {
-        val viewModel = AutoTextKeyboardViewModel(context)
-        viewModel.getAutoText {
-            setupRv(it)
+    fun setupTypePlayStore(typePlayStore: PlayStoreType) {
+        this.typePlayStore = typePlayStore
+        binding?.apply {
+            tvToolbarTitle.text = when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreType.GAME.name
+                PlayStoreType.APP -> PlayStoreType.APP.name
+            }
         }
+        setupRv(
+            when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreUtils.getPlayStoreTextGame()
+                PlayStoreType.APP -> PlayStoreUtils.getPlayStoreTextApp()
+            }
+        )
     }
 
-    private fun setupRv(data: List<AutoTextEntity>) {
+    private fun setupData() {
+        setupRv(
+            when (typePlayStore) {
+                PlayStoreType.GAME -> PlayStoreUtils.getPlayStoreTextGame()
+                PlayStoreType.APP -> PlayStoreUtils.getPlayStoreTextApp()
+                else -> {
+                    PlayStoreUtils.getPlayStoreTextGame()}
+            }
+        )
+    }
+
+    private fun setupRv(data: List<PlayStoreTextModel>) {
         binding?.apply {
 
             val adapterCallback = object :
-                IFrogoBindingAdapter<AutoTextEntity, ItemKeyboardNewsBinding> {
+                IFrogoBindingAdapter<PlayStoreTextModel, ItemKeyboardNewsBinding> {
                 override fun onItemClicked(
                     binding: ItemKeyboardNewsBinding,
-                    data: AutoTextEntity,
+                    data: PlayStoreTextModel,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
+                    notifyListener: FrogoRecyclerNotifyListener<PlayStoreTextModel>,
                 ) {
                     // Your Clicked
-                    val output = data.body
+                    val output = data.text
                     currentInputConnection?.commitText(output, 1)
                 }
 
                 override fun onItemLongClicked(
                     binding: ItemKeyboardNewsBinding,
-                    data: AutoTextEntity,
+                    data: PlayStoreTextModel,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
+                    notifyListener: FrogoRecyclerNotifyListener<PlayStoreTextModel>,
                 ) {
                 }
 
@@ -68,22 +94,23 @@ class PlayStoreAppKeyboard(
                     return ItemKeyboardNewsBinding.inflate(
                         LayoutInflater.from(context),
                         parent,
-                        false)
+                        false
+                    )
                 }
 
                 override fun setupInitComponent(
                     binding: ItemKeyboardNewsBinding,
-                    data: AutoTextEntity,
+                    data: PlayStoreTextModel,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
+                    notifyListener: FrogoRecyclerNotifyListener<PlayStoreTextModel>,
                 ) {
                     binding.apply {
-                        tvItemKeyboardMain.text = data.title
+                        tvItemKeyboardMain.text = data.text
                     }
                 }
             }
 
-            rvKeyboardMain.injectorBinding<AutoTextEntity, ItemKeyboardNewsBinding>()
+            rvKeyboardMain.injectorBinding<PlayStoreTextModel, ItemKeyboardNewsBinding>()
                 .addData(data)
                 .createLayoutLinearVertical(false)
                 .addCallback(adapterCallback)

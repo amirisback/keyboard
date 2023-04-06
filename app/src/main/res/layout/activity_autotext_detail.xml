@@ -32,6 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/frogo_dimen_8dp"
+                android:textColor="@color/tv_text_color"
                 android:textSize="@dimen/frogo_dimen_font_14sp"
                 tools:text="@tools:sample/lorem" />
 
@@ -39,7 +40,7 @@
                 android:id="@+id/tv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="@color/tv_text_color"
                 android:textSize="@dimen/frogo_dimen_font_20sp"
                 tools:text="@tools:sample/lorem/random" />
 

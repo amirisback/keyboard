@@ -4,7 +4,7 @@
 
     <stroke
         android:width="2dp"
-        android:color="@color/black" />
+        android:color="@color/tv_text_color" />
 
     <corners android:radius="@dimen/frogo_dimen_16dp" />
 

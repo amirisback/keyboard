@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <LinearLayout
@@ -26,6 +25,7 @@
                 android:layout_height="@dimen/frogo_dimen_24dp"
                 android:layout_margin="@dimen/frogo_dimen_16dp"
                 android:src="@drawable/ic_keyboard_arrow_left"
+                android:tint="@color/tv_text_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/frogo_dimen_16dp"
                 android:text="Form"
-                android:textColor="@color/frogoColorBlack"
+                android:textColor="@color/tv_text_color"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/toolbar_back"
@@ -64,10 +64,11 @@
                         android:id="@+id/et_text"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/frogo_dimen_60dp"
-                        android:focusable="true"
                         android:completionThreshold="1"
+                        android:focusable="true"
                         android:paddingStart="@dimen/frogo_dimen_16dp"
-                        android:paddingEnd="@dimen/frogo_dimen_16dp">
+                        android:paddingEnd="@dimen/frogo_dimen_16dp"
+                        android:textColor="@color/tv_text_color">
 
                     </androidx.appcompat.widget.AppCompatAutoCompleteTextView>
 
@@ -76,31 +77,31 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_form"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
                 <EditText
                     android:id="@+id/et_text_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="true"
-                    android:hint="Text" />
+                    android:hint="Text"
+                    android:textColor="@color/tv_text_color" />
 
                 <EditText
                     android:id="@+id/et_text_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="true"
-                    android:hint="Text" />
+                    android:hint="Text"
+                    android:textColor="@color/tv_text_color" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/btn_submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/frogo_dimen_16dp"
-                    android:background="@drawable/frogo_bg_deep_purple_16dp"
                     android:padding="@dimen/frogo_dimen_16dp"
-                    android:text="Submit"
-                    android:textColor="@color/white" />
+                    android:text="Submit" />
 
             </LinearLayout>
 

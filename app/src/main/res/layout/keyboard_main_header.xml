@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -17,14 +18,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard_news" />
+            android:src="@drawable/ic_keyboard_news"
+            app:tint="@color/tv_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="News API"
-            android:textColor="#2B486D"
-            android:textSize="10sp" />
+            android:textColor="@color/tv_text_color"
+            android:textSize="@dimen/frogo_dimen_font_10sp" />
 
     </LinearLayout>
 
@@ -41,14 +43,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard_movie" />
+            android:src="@drawable/ic_keyboard_movie"
+            app:tint="@color/tv_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Moview Api"
-            android:textColor="#2B486D"
-            android:textSize="10sp" />
+            android:textColor="@color/tv_text_color"
+            android:textSize="@dimen/frogo_dimen_font_10sp" />
 
     </LinearLayout>
 
@@ -65,14 +68,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_search" />
+            android:src="@drawable/ic_keyboard_search"
+            app:tint="@color/tv_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Search Website"
-            android:textColor="#2B486D"
-            android:textSize="10sp" />
+            android:textColor="@color/tv_text_color"
+            android:textSize="@dimen/frogo_dimen_font_10sp" />
 
     </LinearLayout>
 
@@ -89,14 +93,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard" />
+            android:src="@drawable/ic_keyboard"
+            app:tint="@color/tv_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Form"
-            android:textColor="#2B486D"
-            android:textSize="10sp" />
+            android:textColor="@color/tv_text_color"
+            android:textSize="@dimen/frogo_dimen_font_10sp" />
 
     </LinearLayout>
 

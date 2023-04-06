@@ -15,7 +15,7 @@ object KeyboardUtil {
         return listOf(
             KeyboardHeaderData(
                 KeyboardHeaderType.AUTOTEXT,
-                R.drawable.ic_auto_text
+                R.drawable.ic_keyboard_auto_text
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.NEWS,
@@ -27,7 +27,7 @@ object KeyboardUtil {
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.WEB,
-                R.drawable.ic_search
+                R.drawable.ic_keyboard_search
             ),
             KeyboardHeaderData(
                 KeyboardHeaderType.FORM,

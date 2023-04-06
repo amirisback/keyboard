@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <LinearLayout
@@ -29,7 +28,8 @@
                 android:src="@drawable/ic_keyboard_arrow_left"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/tv_text_color" />
 
             <TextView
                 android:id="@+id/tv_toolbar_title"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/frogo_dimen_16dp"
                 android:text="Moview Api"
-                android:textColor="@color/frogoColorBlack"
+                android:textColor="@color/tv_text_color"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/toolbar_back"
@@ -57,7 +57,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container_toolbar"
             tools:itemCount="10"
-            tools:listitem="@layout/frogo_rv_grid_type_6" />
+            tools:listitem="@layout/item_keyboard_movie" />
 
     </LinearLayout>
 

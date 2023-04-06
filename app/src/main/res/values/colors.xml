@@ -34,16 +34,16 @@
     <color name="system_accent2_0000">#151515</color>
     <color name="system_neutral1_50">#F0F0F3</color>
 
-    <color name="you_background_color">@color/system_neutral1_10</color>
-    <color name="you_contextual_status_bar_color">@color/system_accent1_400</color>
-    <color name="you_dialog_background_color">@color/system_accent2_50</color>
-    <color name="you_neutral_text_color">@color/system_accent1_900</color>
-    <color name="you_primary_color">@color/system_accent1_400</color>
-    <color name="you_primary_dark_color">@color/system_accent1_600</color>
-    <color name="you_status_bar_color">@color/system_accent2_50</color>
+    <color name="background_color">@color/system_neutral1_10</color>
+    <color name="contextual_status_bar_color">@color/system_accent1_400</color>
+    <color name="dialog_background_color">@color/system_accent2_50</color>
+    <color name="neutral_text_color">@color/system_accent1_900</color>
+    <color name="primary_color">@color/system_accent1_400</color>
+    <color name="primary_dark_color">@color/system_accent1_600</color>
+    <color name="status_bar_color">@color/system_accent2_50</color>
 
-    <color name="you_keyboard_background_color">@color/system_neutral1_10</color>
-    <color name="you_keyboard_toolbar_color">@color/system_neutral1_50</color>
+    <color name="keyboard_background_color">@color/system_neutral1_10</color>
+    <color name="keyboard_toolbar_color">@color/system_neutral1_50</color>
 
     <color name="keyboard_bg_normal_color">@color/white</color>
     <color name="keyboard_bg_normal_stroke_color">#EFEFEF</color>
@@ -51,5 +51,14 @@
     <color name="keyboard_bg_action_color">#76D1FF</color>
     <color name="keyboard_bg_attribute_color">#D1E5F4</color>
     <color name="keyboard_bg_change_color">#B5CAD7</color>
+
+    <!--    -->
+
+    <color name="tv_text_color">#000000</color>
+    <color name="btn_text_color">#FFFFFF</color>
+
+    <color name="bg_card">#FFFFFF</color>
+
+    <!--    -->
 
 </resources>

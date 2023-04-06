@@ -32,7 +32,8 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/emojis"
                 android:padding="4dp"
-                android:src="@drawable/ic_keyboard_arrow_left" />
+                android:src="@drawable/ic_keyboard_arrow_left"
+                app:tint="@color/tv_text_color" />
 
             <TextView
                 android:id="@+id/emoji_palette_label"
@@ -44,6 +45,7 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@string/emojis"
+                android:textColor="@color/tv_text_color"
                 android:textSize="18sp" />
 
         </RelativeLayout>
@@ -52,9 +54,9 @@
             android:id="@+id/emojis_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/emoji_palette_top_bar"
             android:clipToPadding="false"
             android:padding="4dp"
-            android:layout_below="@+id/emoji_palette_top_bar"
             android:scrollbars="vertical" />
 
     </RelativeLayout>

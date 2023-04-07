@@ -71,7 +71,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
 
             // Inject app name for release
-            resValue("string", "app_name", ProjectSetting.APP_NAME)
+            resValue("string", "app_name", ProjectSetting.NAME_APP)
 
 
             // Inject admob id for release

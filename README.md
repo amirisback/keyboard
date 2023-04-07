@@ -17,10 +17,11 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.0.4
+    $version_release = 1.0.5
 
 What's New??
 
+    * Avaiable in dark mode *
     * Enhance Performance *
     * Update Build Gradle Style Latest Version *
     * Update CRUD Auto Text *

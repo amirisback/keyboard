@@ -68,9 +68,9 @@ What's New??
 </tr>
 
 <tr>
-    <td><center><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-2.png"></center></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-2.png"></td>
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-1.png"></td>
-    <td><center><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-2.png"></center></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-2.png"></td>
 </tr>
 
 <tr>
@@ -80,9 +80,9 @@ What's New??
 </tr>
 
 <tr>
-    <td><center><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-2.jpeg"></center></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-2.jpeg"></td>
     <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-1.jpeg"></td>
-    <td><center><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-2.jpeg"></center></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-2.jpeg"></td>
 </tr>
 
 </table>
@@ -146,8 +146,8 @@ What's New??
 <table>
 
 <tr>
-    <th>Show Webview (Light)</th>
-    <th>Input Webview (Light)</th>
+    <th>Show Webview</th>
+    <th>Input Webview</th>
 </tr>
 
 <tr>
@@ -172,6 +172,18 @@ What's New??
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/light/ss_11.png"></td>
 </tr>
 
+<tr>
+    <th>Show Form (Dark)</th>
+    <th>Input Form (Dark)</th>
+    <th>Hide Keyboard (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/dark/ss_9.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/dark/ss_10.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/dark/ss_11.jpeg"></td>
+</tr>
+
 </table>
 
 #### Emojis
@@ -183,6 +195,14 @@ What's New??
 
 <tr>
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_15.png"></td>
+</tr>
+
+<tr>
+    <th>Emojis (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/dark/ss_15.jpege"></td>
 </tr>
 
 </table>
@@ -214,6 +234,30 @@ What's New??
     <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-6.png"></td>
 </tr>
 
+<tr>
+    <th>Menu Auto Text (Dark)</th>
+    <th>Auto Text Inputed (Dark)</th>
+    <th>Auto Text Dashboard (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/dark/ss_16-1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/dark/ss_16-2.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/dark/ss_16-3.jpeg"></td>
+</tr>
+
+<tr>
+    <th>Empty View Auto Text (Dark)</th>
+    <th>Auto Text Editor (Dark)</th>
+    <th>Auto Text Detail (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/dark/ss_16-4.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/dark/ss_16-5.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/dark/ss_16-6.jpeg"></td>
+</tr>
+
 </table>
 
 ### Open To Other App
@@ -229,6 +273,18 @@ What's New??
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/light/ss_12.png"></td>
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/light/ss_13.png"></td>
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/light/ss_14.png"></td>
+</tr>
+
+<tr>
+    <th>Google Search (Dark)</th>
+    <th>Google Message (Dark)</th>
+    <th>Sign In Google (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/dark/ss_12.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/dark/ss_13.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/dark/ss_14.jpeg"></td>
 </tr>
 
 </table>

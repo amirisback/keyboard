@@ -34,7 +34,7 @@ What's New??
 <tr>
     <th>Welcome Page (Light)</th>
     <th>Activated Keyboard (Light)</th>
-    <th>After Activated (Light) </th>
+    <th>After Activated (Light)</th>
 </tr>
 
 <tr>
@@ -44,7 +44,7 @@ What's New??
 </tr>
 
 <tr>
-    <th>Welcome Page (Dark) </th>
+    <th>Welcome Page (Dark)</th>
     <th>Activated Keyboard (Dark)</th>
     <th>After Activated (Dark)</th>
 </tr>
@@ -62,15 +62,27 @@ What's New??
 <table>
 
 <tr>
-    <th>Before Change Keyboard</th>
-    <th>Change Keyboard</th>
-    <th>After Change Keyboard</th>
+    <th>Before Change Keyboard (Light)</th>
+    <th>Change Keyboard (Light)</th>
+    <th>After Change Keyboard (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_2-2.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_3-1.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_3-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-2.png"></td>
+</tr>
+
+<tr>
+    <th>Before Change Keyboard (Dark)</th>
+    <th>Change Keyboard (Dark)</th>
+    <th>After Change Keyboard (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-2.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-2.jpeg"></td>
 </tr>
 
 </table>

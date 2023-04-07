@@ -205,7 +205,7 @@ What's New??
 </tr>
 
 <tr>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/dark/ss_15.jpege"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/dark/ss_15.jpeg"></td>
 </tr>
 
 </table>

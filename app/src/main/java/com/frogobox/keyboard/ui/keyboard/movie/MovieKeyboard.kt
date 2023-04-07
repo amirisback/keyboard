@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.frogobox.api.movie.ConsumeMovieApi
 import com.frogobox.coreapi.movie.MovieUrl
 import com.frogobox.coreapi.movie.model.TrendingMovie
@@ -124,7 +125,7 @@ class MovieKeyboard(
                             frogoRvGridType6TvTitle.text = data.title
                             frogoRvGridType6TvSubtitle.text = data.release_date
                             frogoRvGridType6TvDesc.text = data.overview
-                            frogoRvGridType6CivPoster.glideLoad("${MovieUrl.BASE_URL_IMAGE_ORIGNAL}${data.poster_path}")
+                            Glide.with(context).load("${MovieUrl.BASE_URL_IMAGE_ORIGNAL}${data.poster_path}").into(frogoRvGridType6CivPoster)
                         }
                     }
                 }

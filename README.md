@@ -68,9 +68,9 @@ What's New??
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-2.png"></td>
+    <td><center><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/light/ss_2-2.png"></center></td>
     <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-1.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-2.png"></td>
+    <td><center><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/light/ss_3-2.png"></center></td>
 </tr>
 
 <tr>
@@ -80,9 +80,9 @@ What's New??
 </tr>
 
 <tr>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-2.jpeg"></td>
+    <td><center><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/activated-keyboard/dark/ss_2-2.jpeg"></center></td>
     <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-1.jpeg"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-2.jpeg"></td>
+    <td><center><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/change-keyboard/dark/ss_3-2.jpeg"></center></td>
 </tr>
 
 </table>
@@ -93,13 +93,23 @@ What's New??
 <table>
 
 <tr>
-    <th>Alphabet Keyboard</th>
-    <th>Numeric Keyboard</th>
+    <th>Alphabet Keyboard (Light)</th>
+    <th>Numeric Keyboard (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_4-1.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_4-2.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/normal-keyboard-state/light/ss_4-1.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/normal-keyboard-state/light/ss_4-2.png"></td>
+</tr>
+
+<tr>
+    <th>Alphabet Keyboard (Dark)</th>
+    <th>Numeric Keyboard (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/normal-keyboard-state/dark/ss_4-1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/normal-keyboard-state/dark/ss_4-2.jpeg"></td>
 </tr>
 
 </table>
@@ -111,13 +121,23 @@ What's New??
 <table>
 
 <tr>
-    <th>News API</th>
-    <th>Movie API</th>
+    <th>News API (Light)</th>
+    <th>Movie API (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_5.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_6.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/using-api/light/ss_5.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/using-api/light/ss_6.png"></td>
+</tr>
+
+<tr>
+    <th>News API (Dark)</th>
+    <th>Movie API (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/using-api/dark/ss_5.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/using-api/dark/ss_6.jpeg"></td>
 </tr>
 
 </table>
@@ -126,13 +146,13 @@ What's New??
 <table>
 
 <tr>
-    <th>Show Webview</th>
-    <th>Input Webview</th>
+    <th>Show Webview (Light)</th>
+    <th>Input Webview (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_7.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_8.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/webview/light/ss_7.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/webview/light/ss_8.png"></td>
 </tr>
 
 </table>
@@ -141,15 +161,15 @@ What's New??
 <table>
 
 <tr>
-    <th>Show Form</th>
-    <th>Input Form</th>
-    <th>Hide Keyboard</th>
+    <th>Show Form (Light)</th>
+    <th>Input Form (Light)</th>
+    <th>Hide Keyboard (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_9.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_10.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_11.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/light/ss_9.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/light/ss_10.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/form/light/ss_11.png"></td>
 </tr>
 
 </table>
@@ -158,11 +178,11 @@ What's New??
 <table>
 
 <tr>
-    <th>Emojis</th>
+    <th>Emojis (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_15.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_15.png"></td>
 </tr>
 
 </table>
@@ -171,27 +191,27 @@ What's New??
 <table>
 
 <tr>
-    <th>Menu Auto Text</th>
-    <th>Auto Text Inputed</th>
-    <th>Auto Text Dashboard</th>
+    <th>Menu Auto Text (Light)</th>
+    <th>Auto Text Inputed (Light)</th>
+    <th>Auto Text Dashboard (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-1.png"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-2.png"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-3.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-1.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-2.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-3.png"></td>
 </tr>
 
 <tr>
-    <th>Empty View Auto Text</th>
-    <th>Auto Text Editor</th>
-    <th>Auto Text Detail</th>
+    <th>Empty View Auto Text (Light)</th>
+    <th>Auto Text Editor (Light)</th>
+    <th>Auto Text Detail (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-4.png"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-5.png"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_16-6.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-4.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-5.png"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/auto-text/light/ss_16-6.png"></td>
 </tr>
 
 </table>
@@ -200,15 +220,15 @@ What's New??
 <table>
 
 <tr>
-    <th>Google Search</th>
-    <th>Google Message</th>
-    <th>Sign In Google</th>
+    <th>Google Search (Light)</th>
+    <th>Google Message (Light)</th>
+    <th>Sign In Google (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_12.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_13.png"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/ss_14.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/light/ss_12.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/light/ss_13.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/open-to-other-app/light/ss_14.png"></td>
 </tr>
 
 </table>

@@ -292,6 +292,41 @@ What's New??
 
 </table>
 
+
+### Toggle Feature
+<table>
+
+<tr>
+    <th>All Toggle Off (Light)</th>
+    <th>Keyboard No Feature (Light)</th>
+    <th>Some Toggle On (Light)</th>
+    <th>Keyboard With Feature (Light)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_light_1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_light_2.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_light_3.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_light_4.jpeg"></td>
+</tr>
+
+<tr>
+    <th>All Toggle Off (Dark)</th>
+    <th>Keyboard No Feature (Dark)</th>
+    <th>Some Toggle On (Dark)</th>
+    <th>Keyboard With Feature (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_dark_1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_dark_2.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_dark_3.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/toggle/ss_dark_4.jpeg"></td>
+</tr>
+
+</table>
+
+
 ## Documentation
 - https://github.com/SimpleMobileTools/Simple-Keyboard 
     - Clone From This

@@ -12,7 +12,7 @@
         android:id="@+id/iv_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_keyboard_mini_news"
+        android:src="@drawable/ic_menu_news"
         app:tint="@color/tv_text_color" />
 
     <TextView

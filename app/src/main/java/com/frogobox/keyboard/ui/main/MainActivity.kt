@@ -12,6 +12,7 @@ import com.frogobox.keyboard.common.ext.isDarkThemeOn
 import com.frogobox.keyboard.databinding.ActivityMainBinding
 import com.frogobox.keyboard.ui.autotext.AutoTextActivity
 import com.frogobox.keyboard.ui.detail.DetailActivity
+import com.frogobox.keyboard.ui.toggle.ToggleActivity
 import com.frogobox.sdk.ext.showLogDebug
 import com.frogobox.sdk.ext.startActivityExt
 import dagger.hilt.android.AndroidEntryPoint
@@ -91,6 +92,10 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
 
             btnAutoText.setOnClickListener {
                 startActivityExt<AutoTextActivity>()
+            }
+
+            btnToggle.setOnClickListener {
+                startActivityExt<ToggleActivity>()
             }
 
         }

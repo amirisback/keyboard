@@ -26,8 +26,8 @@ import com.frogobox.keyboard.common.ext.getProperBackgroundColor
 import com.frogobox.keyboard.common.ext.getProperTextColor
 import com.frogobox.keyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
-import com.frogobox.keyboard.model.KeyboardHeaderData
-import com.frogobox.keyboard.model.KeyboardHeaderType
+import com.frogobox.keyboard.model.KeyboardFeature
+import com.frogobox.keyboard.model.KeyboardFeatureType
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
@@ -37,6 +37,9 @@ import com.frogobox.keyboard.ui.keyboard.playstore.PlayStoreType
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
+import com.frogobox.sdk.ext.gone
+import com.frogobox.sdk.ext.invisible
+import com.frogobox.sdk.ext.visible
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -68,11 +71,13 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         super.onWindowShown()
         binding?.keyboardAutotext?.setupData()
         showMainKeyboard()
+        setupFeatureKeyboard()
     }
 
     override fun onWindowHidden() {
         super.onWindowHidden()
         binding?.keyboardAutotext?.setupData()
+        setupFeatureKeyboard()
     }
 
     override fun onInitializeInterface() {
@@ -137,23 +142,27 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     }
 
     private fun hideMainKeyboard() {
-        binding?.keyboardMain?.visibility = View.GONE
-        binding?.keyboardHeader?.visibility = View.GONE
-        binding?.mockMeasureHeightKeyboard?.visibility = View.INVISIBLE
+        binding?.keyboardMain?.gone()
+        binding?.keyboardHeader?.gone()
+        binding?.mockMeasureHeightKeyboard?.invisible()
     }
 
     private fun showMainKeyboard() {
-        binding?.keyboardMain?.visibility = View.VISIBLE
-        binding?.keyboardHeader?.visibility = View.VISIBLE
-        binding?.mockMeasureHeightKeyboard?.visibility = View.GONE
+        binding?.keyboardMain?.visible()
+        if (KeyboardUtil().menuKeyboard().isEmpty()) {
+            binding?.keyboardHeader?.gone()
+        } else {
+            binding?.keyboardHeader?.visible()
+        }
+        binding?.mockMeasureHeightKeyboard?.gone()
     }
 
     private fun showOnlyKeyboard() {
-        binding?.keyboardMain?.visibility = View.VISIBLE
+        binding?.keyboardMain?.visible()
     }
 
     private fun hideOnlyKeyboard() {
-        binding?.keyboardMain?.visibility = View.GONE
+        binding?.keyboardMain?.gone()
     }
 
     private fun EditText.showKeyboardExt() {
@@ -170,138 +179,154 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private fun initBackToMainKeyboard() {
         binding?.apply {
             keyboardAutotext.binding?.toolbarBack?.setOnClickListener {
-                keyboardAutotext.visibility = View.GONE
+                keyboardAutotext.gone()
                 showMainKeyboard()
             }
 
             keyboardNews.binding?.toolbarBack?.setOnClickListener {
-                keyboardNews.visibility = View.GONE
+                keyboardNews.gone()
                 showMainKeyboard()
             }
 
             keyboardMoview.binding?.toolbarBack?.setOnClickListener {
-                keyboardMoview.visibility = View.GONE
+                keyboardMoview.gone()
                 showMainKeyboard()
             }
 
             keyboardWebview.binding?.toolbarBack?.setOnClickListener {
-                keyboardWebview.visibility = View.GONE
+                keyboardWebview.gone()
                 showMainKeyboard()
             }
 
             keyboardForm.binding?.toolbarBack?.setOnClickListener {
-                keyboardForm.visibility = View.GONE
+                keyboardForm.gone()
                 showMainKeyboard()
             }
 
             keyboardEmoji.binding?.emojiPaletteClose?.setOnClickListener {
-                keyboardEmoji.visibility = View.GONE
+                keyboardEmoji.gone()
                 keyboardEmoji.binding?.emojisList?.scrollToPosition(0)
                 showMainKeyboard()
             }
 
             keyboardPlaystore.binding?.toolbarBack?.setOnClickListener {
-                keyboardPlaystore.visibility = View.GONE
+                keyboardPlaystore.gone()
                 showMainKeyboard()
             }
 
         }
     }
 
-    private fun initView() {
-
+    private fun setupFeatureKeyboard() {
         binding?.apply {
-            keyboardHeader.injectorBinding<KeyboardHeaderData, ItemKeyboardHeaderBinding>()
-                .addData(KeyboardUtil.menuKeyboard())
-                .addCallback(object :
-                    IFrogoBindingAdapter<KeyboardHeaderData, ItemKeyboardHeaderBinding> {
+            if (KeyboardUtil().menuKeyboard().isEmpty()) {
+                keyboardHeader.gone()
+                mockKeyboardHeader.gone()
+            } else {
+                keyboardHeader.visible()
+                mockKeyboardHeader.visible()
+                keyboardHeader.injectorBinding<KeyboardFeature, ItemKeyboardHeaderBinding>()
+                    .addData(KeyboardUtil().menuKeyboard())
+                    .addCallback(object :
+                        IFrogoBindingAdapter<KeyboardFeature, ItemKeyboardHeaderBinding> {
 
-                    override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
-                        return ItemKeyboardHeaderBinding.inflate(
-                            LayoutInflater.from(parent.context),
-                            parent,
-                            false
-                        )
-                    }
+                        override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
+                            return ItemKeyboardHeaderBinding.inflate(
+                                LayoutInflater.from(parent.context),
+                                parent,
+                                false
+                            )
+                        }
 
-                    override fun setupInitComponent(
-                        binding: ItemKeyboardHeaderBinding,
-                        data: KeyboardHeaderData,
-                        position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardHeaderData>,
-                    ) {
-                        binding.ivIcon.setImageResource(data.icon)
-                        binding.tvTitle.text = data.type.title
-                    }
+                        override fun setupInitComponent(
+                            binding: ItemKeyboardHeaderBinding,
+                            data: KeyboardFeature,
+                            position: Int,
+                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                        ) {
+                            binding.ivIcon.setImageResource(data.icon)
+                            binding.tvTitle.text = data.type.title
 
-                    override fun onItemClicked(
-                        binding: ItemKeyboardHeaderBinding,
-                        data: KeyboardHeaderData,
-                        position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardHeaderData>,
-                    ) {
-
-                        when (data.type) {
-                            KeyboardHeaderType.NEWS -> {
-                                hideMainKeyboard()
-                                keyboardNews.visibility = View.VISIBLE
+                            if (data.state) {
+                                binding.root.visible()
+                            } else {
+                                binding.root.gone()
                             }
 
-                            KeyboardHeaderType.MOVIE -> {
-                                hideMainKeyboard()
-                                keyboardMoview.visibility = View.VISIBLE
-                            }
+                        }
 
-                            KeyboardHeaderType.WEB -> {
-                                mockMeasureHeightKeyboard.visibility = View.INVISIBLE
-                                keyboardHeader.visibility = View.GONE
-                                keyboardWebview.visibility = View.VISIBLE
-                            }
+                        override fun onItemClicked(
+                            binding: ItemKeyboardHeaderBinding,
+                            data: KeyboardFeature,
+                            position: Int,
+                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                        ) {
 
-                            KeyboardHeaderType.FORM -> {
-                                hideMainKeyboard()
+                            when (data.type) {
+                                KeyboardFeatureType.NEWS -> {
+                                    hideMainKeyboard()
+                                    keyboardNews.visible()
+                                }
 
-                                keyboardForm.visibility = View.VISIBLE
-                                keyboardForm.binding?.etText?.showKeyboardExt()
-                                keyboardForm.binding?.etText2?.showKeyboardExt()
-                                keyboardForm.binding?.etText3?.showKeyboardExt()
+                                KeyboardFeatureType.MOVIE -> {
+                                    hideMainKeyboard()
+                                    keyboardMoview.visible()
+                                }
 
-                                keyboardForm.setOnClickListener {
-                                    hideOnlyKeyboard()
+                                KeyboardFeatureType.WEB -> {
+                                    mockMeasureHeightKeyboard.invisible()
+                                    keyboardHeader.gone()
+                                    keyboardWebview.visible()
+                                }
+
+                                KeyboardFeatureType.FORM -> {
+                                    hideMainKeyboard()
+
+                                    keyboardForm.visible()
+                                    keyboardForm.binding?.etText?.showKeyboardExt()
+                                    keyboardForm.binding?.etText2?.showKeyboardExt()
+                                    keyboardForm.binding?.etText3?.showKeyboardExt()
+
+                                    keyboardForm.setOnClickListener {
+                                        hideOnlyKeyboard()
+                                    }
+                                }
+
+                                KeyboardFeatureType.AUTO_TEXT -> {
+                                    hideMainKeyboard()
+                                    keyboardAutotext.visible()
+                                }
+                                KeyboardFeatureType.PLAY_STORE_APP -> {
+                                    hideMainKeyboard()
+                                    keyboardPlaystore.setupTypePlayStore(PlayStoreType.APP)
+                                    keyboardPlaystore.visible()
+                                }
+                                KeyboardFeatureType.PLAY_STORE_GAME -> {
+                                    hideMainKeyboard()
+                                    keyboardPlaystore.setupTypePlayStore(PlayStoreType.GAME)
+                                    keyboardPlaystore.visible()
                                 }
                             }
 
-                            KeyboardHeaderType.AUTO_TEXT -> {
-                                hideMainKeyboard()
-                                keyboardAutotext.visibility = View.VISIBLE
-                            }
-                            KeyboardHeaderType.PLAY_STORE_APP -> {
-                                hideMainKeyboard()
-                                keyboardPlaystore.setupTypePlayStore(PlayStoreType.APP)
-                                keyboardPlaystore.visibility = View.VISIBLE
-                            }
-                            KeyboardHeaderType.PLAY_STORE_GAME -> {
-                                hideMainKeyboard()
-                                keyboardPlaystore.setupTypePlayStore(PlayStoreType.GAME)
-                                keyboardPlaystore.visibility = View.VISIBLE
-                            }
                         }
 
-                    }
-
-                    override fun onItemLongClicked(
-                        binding: ItemKeyboardHeaderBinding,
-                        data: KeyboardHeaderData,
-                        position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardHeaderData>,
-                    ) {
-                    }
+                        override fun onItemLongClicked(
+                            binding: ItemKeyboardHeaderBinding,
+                            data: KeyboardFeature,
+                            position: Int,
+                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                        ) {
+                        }
 
 
-                })
-                .createLayoutGrid(KeyboardUtil.menuKeyboard().size)
-                .build()
+                    })
+                    .createLayoutGrid(KeyboardUtil().menuKeyboard().size)
+                    .build()
+            }
         }
+    }
+
+    private fun initView() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding?.keyboardEmoji?.setupEmojiPalette(
@@ -511,7 +536,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 binding?.keyboardMain?.setKeyboard(keyboard!!)
             }
             ItemMainKeyboard.KEYCODE_EMOJI -> {
-                binding?.keyboardEmoji?.visibility = View.VISIBLE
+                binding?.keyboardEmoji?.visible()
                 hideMainKeyboard()
                 binding?.keyboardEmoji?.openEmojiPalette()
             }

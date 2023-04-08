@@ -4,7 +4,7 @@
     android:id="@+id/emoji_value"
     android:layout_width="@dimen/emoji_item_size"
     android:layout_height="@dimen/emoji_item_size"
-    android:background="@drawable/ripple_all_corners_medium"
+    android:background="@drawable/keyboard_bg_emoji"
     android:gravity="center"
     android:textAppearance="@style/TextAppearance.AppCompat.Button"
     android:textSize="@dimen/emoji_text_size"

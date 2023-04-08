@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/frogo_dimen_16dp"
+    android:layout_marginTop="@dimen/frogo_dimen_16dp"
+    android:background="@drawable/bg_card_16dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/frogo_dimen_16dp">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/frogo_dimen_64dp"
+        app:tint="@color/tv_text_color" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/frogo_dimen_8dp"
+        android:gravity="center"
+        android:text="Toggle"
+        android:textColor="@color/tv_text_color"
+        android:textSize="@dimen/frogo_dimen_font_16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/sw_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false" />
+
+
+</LinearLayout>

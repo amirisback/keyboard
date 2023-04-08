@@ -125,6 +125,12 @@
                 android:layout_height="wrap_content"
                 android:text="Auto Text" />
 
+            <Button
+                android:id="@+id/btn_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Toggle Function" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,6 +37,7 @@
         app:layout_constraintBottom_toTopOf="@id/container_keyboard_main">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mock_keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_64dp"
             android:background="@color/keyboard_bg_root" />

@@ -8,7 +8,9 @@ import androidx.annotation.Keep
  */
 
 @Keep
-data class KeyboardHeaderData(
-    val type: KeyboardHeaderType,
-    val icon: Int
+data class KeyboardFeature(
+    var id: String,
+    var type: KeyboardFeatureType,
+    var icon: Int,
+    var state: Boolean = false
 )

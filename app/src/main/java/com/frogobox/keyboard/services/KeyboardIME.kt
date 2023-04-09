@@ -40,6 +40,7 @@ import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.invisible
 import com.frogobox.sdk.ext.visible
+import java.io.InputStream
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -69,32 +70,18 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     override fun onWindowShown() {
         super.onWindowShown()
-        binding?.keyboardAutotext?.setupData()
+        invalidateKeyboard()
         showMainKeyboard()
-        setupFeatureKeyboard()
     }
 
     override fun onWindowHidden() {
         super.onWindowHidden()
-        binding?.keyboardAutotext?.setupData()
-        setupFeatureKeyboard()
+        invalidateKeyboard()
     }
 
     override fun onInitializeInterface() {
         super.onInitializeInterface()
         keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
-    }
-
-    private fun initCurrentInputConnection() {
-        binding?.apply {
-            keyboardAutotext.setInputConnection(currentInputConnection)
-            keyboardNews.setInputConnection(currentInputConnection)
-            keyboardMoview.setInputConnection(currentInputConnection)
-            keyboardWebview.setInputConnection(currentInputConnection)
-            keyboardForm.setInputConnection(currentInputConnection)
-            keyboardEmoji.setInputConnection(currentInputConnection)
-            keyboardPlaystore.setInputConnection(currentInputConnection)
-        }
     }
 
     override fun onCreateInputView(): View {
@@ -141,20 +128,111 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         updateShiftKeyState()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onKey(code: Int) {
+
+        val formView = binding?.keyboardForm
+        var inputConnection = currentInputConnection
+
+        if (formView?.visibility == View.VISIBLE) {
+            val et1 = formView.binding?.etText
+            val et1Connection = et1?.onCreateInputConnection(EditorInfo())
+
+            val et2 = formView.binding?.etText2
+            val et2Connection = et2?.onCreateInputConnection(EditorInfo())
+
+            val et3 = formView.binding?.etText3
+            val et3Connection = et3?.onCreateInputConnection(EditorInfo())
+
+            if (et1?.isFocused == true) {
+                inputConnection = et1Connection
+
+            } else if (et2?.isFocused == true) {
+                inputConnection = et2Connection
+            } else if (et3?.isFocused == true) {
+                inputConnection = et3Connection
+            }
+
+        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
+            inputConnection =
+                binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
+        } else {
+            inputConnection = currentInputConnection
+        }
+        onKeyExt(code, inputConnection)
+    }
+
+    override fun onActionUp() {
+        if (switchToLetters) {
+            keyboardMode = KEYBOARD_LETTERS
+            keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
+
+            val editorInfo = currentInputEditorInfo
+            if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
+                if (currentInputConnection.getCursorCapsMode(editorInfo.inputType) != 0) {
+                    keyboard?.setShifted(SHIFT_ON_ONE_CHAR)
+                }
+            }
+
+            binding?.keyboardMain?.setKeyboard(keyboard!!)
+            switchToLetters = false
+        }
+    }
+
+    override fun moveCursorLeft() {
+        moveCursor(false)
+    }
+
+    override fun moveCursorRight() {
+        moveCursor(true)
+    }
+
+    override fun onText(text: String) {
+        currentInputConnection?.commitText(text, 0)
+    }
+
+    private fun invalidateKeyboard() {
+        binding?.keyboardAutotext?.setupData()
+        setupFeatureKeyboard()
+    }
+
+    private fun initCurrentInputConnection() {
+        binding?.apply {
+            keyboardAutotext.setInputConnection(currentInputConnection)
+            keyboardNews.setInputConnection(currentInputConnection)
+            keyboardMoview.setInputConnection(currentInputConnection)
+            keyboardWebview.setInputConnection(currentInputConnection)
+            keyboardForm.setInputConnection(currentInputConnection)
+            keyboardEmoji.setInputConnection(currentInputConnection)
+            keyboardPlaystore.setInputConnection(currentInputConnection)
+        }
+    }
+
     private fun hideMainKeyboard() {
-        binding?.keyboardMain?.gone()
-        binding?.keyboardHeader?.gone()
-        binding?.mockMeasureHeightKeyboard?.invisible()
+        binding?.apply {
+            keyboardMain.gone()
+            keyboardHeader.gone()
+            mockMeasureHeightKeyboard.invisible()
+        }
     }
 
     private fun showMainKeyboard() {
-        binding?.keyboardMain?.visible()
-        if (KeyboardUtil().menuKeyboard().isEmpty()) {
-            binding?.keyboardHeader?.gone()
-        } else {
-            binding?.keyboardHeader?.visible()
+        binding?.apply {
+            keyboardMain.visible()
+            mockMeasureHeightKeyboard.gone()
+            if (KeyboardUtil().menuKeyboard().isEmpty()) {
+                keyboardHeader.gone()
+            } else {
+                keyboardHeader.visible()
+            }
+            keyboardAutotext.gone()
+            keyboardNews.gone()
+            keyboardMoview.gone()
+            keyboardWebview.gone()
+            keyboardForm.gone()
+            keyboardEmoji.gone()
+            keyboardEmoji.binding?.emojisList?.scrollToPosition(0)
         }
-        binding?.mockMeasureHeightKeyboard?.gone()
     }
 
     private fun showOnlyKeyboard() {
@@ -328,6 +406,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     private fun initView() {
 
+        setupFeatureKeyboard()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding?.keyboardEmoji?.setupEmojiPalette(
                 toolbarColor = ContextCompat.getColor(
@@ -353,89 +433,6 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 }
             }
         }
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun onKey(code: Int) {
-
-        val formView = binding?.keyboardForm
-        var inputConnection = currentInputConnection
-
-        if (formView?.visibility == View.VISIBLE) {
-            val et1 = formView.binding?.etText
-            val et1Connection = et1?.onCreateInputConnection(EditorInfo())
-
-            val et2 = formView.binding?.etText2
-            val et2Connection = et2?.onCreateInputConnection(EditorInfo())
-
-            val et3 = formView.binding?.etText3
-            val et3Connection = et3?.onCreateInputConnection(EditorInfo())
-
-            if (et1?.isFocused == true) {
-                inputConnection = et1Connection
-
-            } else if (et2?.isFocused == true) {
-                inputConnection = et2Connection
-            } else if (et3?.isFocused == true) {
-                inputConnection = et3Connection
-            }
-
-        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
-            inputConnection =
-                binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
-        } else {
-            inputConnection = currentInputConnection
-        }
-        onKeyExt(code, inputConnection)
-    }
-
-    override fun onActionUp() {
-        if (switchToLetters) {
-            keyboardMode = KEYBOARD_LETTERS
-            keyboard = ItemMainKeyboard(this, getKeyboardLayoutXML(), enterKeyType)
-
-            val editorInfo = currentInputEditorInfo
-            if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
-                if (currentInputConnection.getCursorCapsMode(editorInfo.inputType) != 0) {
-                    keyboard?.setShifted(SHIFT_ON_ONE_CHAR)
-                }
-            }
-
-            binding?.keyboardMain?.setKeyboard(keyboard!!)
-            switchToLetters = false
-        }
-    }
-
-    override fun moveCursorLeft() {
-        moveCursor(false)
-    }
-
-    override fun moveCursorRight() {
-        moveCursor(true)
-    }
-
-    override fun onText(text: String) {
-        currentInputConnection?.commitText(text, 0)
-    }
-
-    override fun onUpdateSelection(
-        oldSelStart: Int,
-        oldSelEnd: Int,
-        newSelStart: Int,
-        newSelEnd: Int,
-        candidatesStart: Int,
-        candidatesEnd: Int,
-    ) {
-        super.onUpdateSelection(
-            oldSelStart,
-            oldSelEnd,
-            newSelStart,
-            newSelEnd,
-            candidatesStart,
-            candidatesEnd
-        )
-
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

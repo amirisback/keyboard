@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.ui.keyboard.playstore
+package com.frogobox.keyboard.ui.keyboard.templatetext
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.keyboard.databinding.KeyboardAutotextBinding
+import com.frogobox.keyboard.ui.keyboard.templatetext.TemplateTextType.*
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 
-class PlayStoreAppKeyboard(
+class TemplateTextKeyboard(
     context: Context,
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardAutotextBinding>(context, attrs) {
 
-    var typePlayStore : PlayStoreType? = null
+    var typePlayStore : TemplateTextType? = null
 
     override fun setupViewBinding(): KeyboardAutotextBinding {
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
@@ -30,27 +31,30 @@ class PlayStoreAppKeyboard(
     private fun initView() {
         binding?.apply {
             tvToolbarTitle.text = when (typePlayStore) {
-                PlayStoreType.GAME -> PlayStoreType.GAME.name
-                PlayStoreType.APP -> PlayStoreType.APP.name
+                GAME -> GAME.name
+                APP -> APP.name
+                SALE -> SALE.name
                 else -> {
-                    PlayStoreType.GAME.name
+                    GAME.name
                 }
             }
         }
     }
 
-    fun setupTypePlayStore(typePlayStore: PlayStoreType) {
-        this.typePlayStore = typePlayStore
+    fun setupTemplateTextType(templateTextType: TemplateTextType) {
+        this.typePlayStore = templateTextType
         binding?.apply {
-            tvToolbarTitle.text = when (typePlayStore) {
-                PlayStoreType.GAME -> PlayStoreType.GAME.name
-                PlayStoreType.APP -> PlayStoreType.APP.name
+            tvToolbarTitle.text = when (templateTextType) {
+                GAME -> GAME.name
+                APP -> APP.name
+                SALE -> SALE.name
             }
         }
         setupRv(
-            when (typePlayStore) {
-                PlayStoreType.GAME -> PlayStoreUtils.getPlayStoreTextGame()
-                PlayStoreType.APP -> PlayStoreUtils.getPlayStoreTextApp()
+            when (templateTextType) {
+                GAME -> TemplateTextUtils.getTextGame()
+                APP -> TemplateTextUtils.getTextApp()
+                SALE -> TemplateTextUtils.getTextSales()
             }
         )
     }
@@ -58,24 +62,24 @@ class PlayStoreAppKeyboard(
     private fun setupData() {
         setupRv(
             when (typePlayStore) {
-                PlayStoreType.GAME -> PlayStoreUtils.getPlayStoreTextGame()
-                PlayStoreType.APP -> PlayStoreUtils.getPlayStoreTextApp()
+                GAME -> TemplateTextUtils.getTextGame()
+                APP -> TemplateTextUtils.getTextApp()
                 else -> {
-                    PlayStoreUtils.getPlayStoreTextGame()}
+                    TemplateTextUtils.getTextGame()}
             }
         )
     }
 
-    private fun setupRv(data: List<PlayStoreTextModel>) {
+    private fun setupRv(data: List<TemplateTextModel>) {
         binding?.apply {
 
             val adapterCallback = object :
-                IFrogoBindingAdapter<PlayStoreTextModel, ItemKeyboardNewsBinding> {
+                IFrogoBindingAdapter<TemplateTextModel, ItemKeyboardNewsBinding> {
                 override fun onItemClicked(
                     binding: ItemKeyboardNewsBinding,
-                    data: PlayStoreTextModel,
+                    data: TemplateTextModel,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<PlayStoreTextModel>,
+                    notifyListener: FrogoRecyclerNotifyListener<TemplateTextModel>,
                 ) {
                     // Your Clicked
                     val output = data.text
@@ -84,9 +88,9 @@ class PlayStoreAppKeyboard(
 
                 override fun onItemLongClicked(
                     binding: ItemKeyboardNewsBinding,
-                    data: PlayStoreTextModel,
+                    data: TemplateTextModel,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<PlayStoreTextModel>,
+                    notifyListener: FrogoRecyclerNotifyListener<TemplateTextModel>,
                 ) {
                 }
 
@@ -100,9 +104,9 @@ class PlayStoreAppKeyboard(
 
                 override fun setupInitComponent(
                     binding: ItemKeyboardNewsBinding,
-                    data: PlayStoreTextModel,
+                    data: TemplateTextModel,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<PlayStoreTextModel>,
+                    notifyListener: FrogoRecyclerNotifyListener<TemplateTextModel>,
                 ) {
                     binding.apply {
                         tvItemKeyboardMain.text = data.text
@@ -110,7 +114,7 @@ class PlayStoreAppKeyboard(
                 }
             }
 
-            rvKeyboardMain.injectorBinding<PlayStoreTextModel, ItemKeyboardNewsBinding>()
+            rvKeyboardMain.injectorBinding<TemplateTextModel, ItemKeyboardNewsBinding>()
                 .addData(data)
                 .createLayoutLinearVertical(false)
                 .addCallback(adapterCallback)

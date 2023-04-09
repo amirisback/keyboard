@@ -33,14 +33,13 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
-import com.frogobox.keyboard.ui.keyboard.playstore.PlayStoreType
+import com.frogobox.keyboard.ui.keyboard.templatetext.TemplateTextType
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.invisible
 import com.frogobox.sdk.ext.visible
-import java.io.InputStream
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
@@ -204,7 +203,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             keyboardWebview.setInputConnection(currentInputConnection)
             keyboardForm.setInputConnection(currentInputConnection)
             keyboardEmoji.setInputConnection(currentInputConnection)
-            keyboardPlaystore.setInputConnection(currentInputConnection)
+            keyboardTemplateText.setInputConnection(currentInputConnection)
         }
     }
 
@@ -287,8 +286,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 showMainKeyboard()
             }
 
-            keyboardPlaystore.binding?.toolbarBack?.setOnClickListener {
-                keyboardPlaystore.gone()
+            keyboardTemplateText.binding?.toolbarBack?.setOnClickListener {
+                keyboardTemplateText.gone()
                 showMainKeyboard()
             }
 
@@ -296,6 +295,13 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     }
 
     private fun setupFeatureKeyboard() {
+        val maxMenu = 4
+        val gridSize = if (KeyboardUtil().menuKeyboard().size.mod(maxMenu) == 0) {
+            maxMenu
+        } else {
+            KeyboardUtil().menuKeyboard().size
+        }
+        
         binding?.apply {
             if (KeyboardUtil().menuKeyboard().isEmpty()) {
                 keyboardHeader.gone()
@@ -374,15 +380,20 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                     hideMainKeyboard()
                                     keyboardAutotext.visible()
                                 }
-                                KeyboardFeatureType.PLAY_STORE_APP -> {
+                                KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
                                     hideMainKeyboard()
-                                    keyboardPlaystore.setupTypePlayStore(PlayStoreType.APP)
-                                    keyboardPlaystore.visible()
+                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.APP)
+                                    keyboardTemplateText.visible()
                                 }
-                                KeyboardFeatureType.PLAY_STORE_GAME -> {
+                                KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
                                     hideMainKeyboard()
-                                    keyboardPlaystore.setupTypePlayStore(PlayStoreType.GAME)
-                                    keyboardPlaystore.visible()
+                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.GAME)
+                                    keyboardTemplateText.visible()
+                                }
+                                KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
+                                    hideMainKeyboard()
+                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.SALE)
+                                    keyboardTemplateText.visible()
                                 }
                             }
 
@@ -398,7 +409,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
 
                     })
-                    .createLayoutGrid(KeyboardUtil().menuKeyboard().size)
+                    .createLayoutGrid(gridSize)
                     .build()
             }
         }

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keyboard_holder"
     android:layout_width="match_parent"
-    android:background="@color/keyboard_bg_root"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/keyboard_bg_root">
 
     <LinearLayout
         android:id="@+id/container_keyboard_main"
@@ -16,8 +16,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/frogo_dimen_64dp"
-            android:background="@color/keyboard_bg_root" />
+            android:layout_height="wrap_content"
+            android:background="@color/keyboard_bg_root"
+            android:minHeight="@dimen/frogo_dimen_64dp" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/keyboard_main"
@@ -39,8 +40,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mock_keyboard_header"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/frogo_dimen_64dp"
-            android:background="@color/keyboard_bg_root" />
+            android:layout_height="wrap_content"
+            android:background="@color/keyboard_bg_root"
+            android:minHeight="@dimen/frogo_dimen_64dp" />
 
         <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/mock_measure_height_keyboard_main"
@@ -63,8 +65,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.playstore.PlayStoreAppKeyboard
-        android:id="@+id/keyboard_playstore"
+    <com.frogobox.keyboard.ui.keyboard.templatetext.TemplateTextKeyboard
+        android:id="@+id/keyboard_template_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clickable="true"

@@ -18,7 +18,7 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.0.5
+    $version_release = 1.0.6
 
 What's New??
 
@@ -26,6 +26,7 @@ What's New??
     * Enhance Performance *
     * Update Build Gradle Style Latest Version *
     * Update CRUD Auto Text *
+    * Add Toggle Feature *
 
 ## Screen Shoot
 

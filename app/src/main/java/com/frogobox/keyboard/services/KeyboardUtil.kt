@@ -25,16 +25,22 @@ class KeyboardUtil {
                 pref.loadPrefBoolean(KeyboardFeatureType.AUTO_TEXT.id, true)
             ),
             KeyboardFeature(
-                KeyboardFeatureType.PLAY_STORE_GAME.id,
-                KeyboardFeatureType.PLAY_STORE_GAME,
+                KeyboardFeatureType.TEMPLATE_TEXT_APP.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_APP,
                 R.drawable.ic_menu_ps_game,
-                pref.loadPrefBoolean(KeyboardFeatureType.PLAY_STORE_GAME.id, true)
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_APP.id, true)
             ),
             KeyboardFeature(
-                KeyboardFeatureType.PLAY_STORE_APP.id,
-                KeyboardFeatureType.PLAY_STORE_APP,
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME,
                 R.drawable.ic_menu_ps_app,
-                pref.loadPrefBoolean(KeyboardFeatureType.PLAY_STORE_APP.id, true)
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GAME.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE,
+                R.drawable.ic_menu_ps_sale,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.NEWS.id,

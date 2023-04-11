@@ -1,10 +1,8 @@
 package com.frogobox.keyboard.ui.keyboard.autotext
 
 import android.content.Context
-import com.frogobox.coresdk.util.FrogoDate
 import com.frogobox.keyboard.common.callback.DataResponseCallback
-import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
-import com.frogobox.keyboard.data.local.autotext.AutoTextLabel
+import com.frogobox.keyboard.model.AutoTextEntity
 import com.frogobox.keyboard.data.local.db.AppDatabase
 import com.frogobox.keyboard.repository.autotext.AutoTextRepository
 import com.frogobox.keyboard.repository.autotext.AutoTextRepositoryImpl

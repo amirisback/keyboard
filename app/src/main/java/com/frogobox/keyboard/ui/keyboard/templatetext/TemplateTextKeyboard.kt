@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.keyboard.databinding.KeyboardAutotextBinding
-import com.frogobox.keyboard.ui.keyboard.templatetext.TemplateTextType.*
+import com.frogobox.keyboard.model.TemplateText
+import com.frogobox.keyboard.model.TemplateTextType
+import com.frogobox.keyboard.model.TemplateTextType.*
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -52,9 +54,9 @@ class TemplateTextKeyboard(
         }
         setupRv(
             when (templateTextType) {
-                GAME -> TemplateTextUtils.getTextGame()
-                APP -> TemplateTextUtils.getTextApp()
-                SALE -> TemplateTextUtils.getTextSales()
+                GAME -> TemplateTextUtils.getTextGame(context)
+                APP -> TemplateTextUtils.getTextApp(context)
+                SALE -> TemplateTextUtils.getTextSales(context)
             }
         )
     }
@@ -62,24 +64,24 @@ class TemplateTextKeyboard(
     private fun setupData() {
         setupRv(
             when (typePlayStore) {
-                GAME -> TemplateTextUtils.getTextGame()
-                APP -> TemplateTextUtils.getTextApp()
+                GAME -> TemplateTextUtils.getTextGame(context)
+                APP -> TemplateTextUtils.getTextApp(context)
                 else -> {
-                    TemplateTextUtils.getTextGame()}
+                    TemplateTextUtils.getTextGame(context)}
             }
         )
     }
 
-    private fun setupRv(data: List<TemplateTextModel>) {
+    private fun setupRv(data: List<TemplateText>) {
         binding?.apply {
 
             val adapterCallback = object :
-                IFrogoBindingAdapter<TemplateTextModel, ItemKeyboardNewsBinding> {
+                IFrogoBindingAdapter<TemplateText, ItemKeyboardNewsBinding> {
                 override fun onItemClicked(
                     binding: ItemKeyboardNewsBinding,
-                    data: TemplateTextModel,
+                    data: TemplateText,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<TemplateTextModel>,
+                    notifyListener: FrogoRecyclerNotifyListener<TemplateText>,
                 ) {
                     // Your Clicked
                     val output = data.text
@@ -88,9 +90,9 @@ class TemplateTextKeyboard(
 
                 override fun onItemLongClicked(
                     binding: ItemKeyboardNewsBinding,
-                    data: TemplateTextModel,
+                    data: TemplateText,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<TemplateTextModel>,
+                    notifyListener: FrogoRecyclerNotifyListener<TemplateText>,
                 ) {
                 }
 
@@ -104,9 +106,9 @@ class TemplateTextKeyboard(
 
                 override fun setupInitComponent(
                     binding: ItemKeyboardNewsBinding,
-                    data: TemplateTextModel,
+                    data: TemplateText,
                     position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<TemplateTextModel>,
+                    notifyListener: FrogoRecyclerNotifyListener<TemplateText>,
                 ) {
                     binding.apply {
                         tvItemKeyboardMain.text = data.text
@@ -114,7 +116,7 @@ class TemplateTextKeyboard(
                 }
             }
 
-            rvKeyboardMain.injectorBinding<TemplateTextModel, ItemKeyboardNewsBinding>()
+            rvKeyboardMain.injectorBinding<TemplateText, ItemKeyboardNewsBinding>()
                 .addData(data)
                 .createLayoutLinearVertical(false)
                 .addCallback(adapterCallback)

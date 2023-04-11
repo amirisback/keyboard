@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.frogobox.keyboard.common.base.BaseKeyboard
-import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
+import com.frogobox.keyboard.model.AutoTextEntity
 import com.frogobox.keyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.keyboard.databinding.KeyboardAutotextBinding
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener

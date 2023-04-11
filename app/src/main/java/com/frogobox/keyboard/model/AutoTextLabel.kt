@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.data.local.autotext
+package com.frogobox.keyboard.model
 
 /**
  * Created by Faisal Amir on 10/03/23

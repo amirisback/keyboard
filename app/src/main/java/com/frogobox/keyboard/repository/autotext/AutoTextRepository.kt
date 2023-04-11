@@ -2,8 +2,8 @@ package com.frogobox.keyboard.repository.autotext
 
 import com.frogobox.keyboard.common.callback.DataResponseCallback
 import com.frogobox.keyboard.common.callback.StateResponseCallback
-import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
-import com.frogobox.keyboard.data.local.autotext.AutoTextLabel
+import com.frogobox.keyboard.model.AutoTextEntity
+import com.frogobox.keyboard.model.AutoTextLabel
 
 
 /**

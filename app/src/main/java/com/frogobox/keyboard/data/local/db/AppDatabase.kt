@@ -8,7 +8,7 @@ import com.frogobox.keyboard.BuildConfig
 import com.frogobox.keyboard.data.local.sample.SampleDao
 import com.frogobox.keyboard.data.local.sample.SampleEntity
 import com.frogobox.keyboard.data.local.autotext.AutoTextDao
-import com.frogobox.keyboard.data.local.autotext.AutoTextEntity
+import com.frogobox.keyboard.model.AutoTextEntity
 
 /**
  * Created by Faisal Amir on 06/01/23

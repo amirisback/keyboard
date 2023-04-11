@@ -6,6 +6,8 @@ package com.frogobox.keyboard.data.local.autotext
  */
 
 import androidx.room.*
+import com.frogobox.keyboard.model.AutoTextEntity
+import com.frogobox.keyboard.model.AutoTextLabel
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 

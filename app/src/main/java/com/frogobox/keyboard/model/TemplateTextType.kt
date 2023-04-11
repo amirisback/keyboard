@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.ui.keyboard.templatetext
+package com.frogobox.keyboard.model
 
 enum class TemplateTextType {
     APP,

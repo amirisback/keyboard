@@ -29,6 +29,9 @@ What's New??
     * Add Toggle Feature *
     * Add Toggle Feature in Setting *
 
+## Video Play
+https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-9db1-24544f5593e0.mp4
+
 ## Screen Shoot
 
 ### How To Activated

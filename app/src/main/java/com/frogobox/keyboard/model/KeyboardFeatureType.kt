@@ -15,4 +15,5 @@ enum class KeyboardFeatureType(val id: String, val title: String) {
     TEMPLATE_TEXT_APP("menu_play_store_app","Game Review"),
     TEMPLATE_TEXT_GAME("menu_play_store_game","App Review"),
     TEMPLATE_TEXT_SALE("menu_template_text_sale","Sale Admin"),
+    TEMPLATE_TEXT_GREETING("menu_template_text_greeting", "Greeting")
 }

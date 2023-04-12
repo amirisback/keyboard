@@ -395,6 +395,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                     keyboardTemplateText.setupTemplateTextType(TemplateTextType.SALE)
                                     keyboardTemplateText.visible()
                                 }
+                                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
+                                    hideMainKeyboard()
+                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.GREETING)
+                                    keyboardTemplateText.visible()
+                                }
                             }
 
                         }

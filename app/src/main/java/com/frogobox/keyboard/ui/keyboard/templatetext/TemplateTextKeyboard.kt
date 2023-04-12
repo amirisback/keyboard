@@ -50,6 +50,7 @@ class TemplateTextKeyboard(
                 GAME -> GAME.name
                 APP -> APP.name
                 SALE -> SALE.name
+                GREETING -> GREETING.name
             }
         }
         setupRv(
@@ -57,6 +58,7 @@ class TemplateTextKeyboard(
                 GAME -> TemplateTextUtils.getTextGame(context)
                 APP -> TemplateTextUtils.getTextApp(context)
                 SALE -> TemplateTextUtils.getTextSales(context)
+                GREETING -> TemplateTextUtils.getTextGreeting(context)
             }
         )
     }
@@ -66,6 +68,8 @@ class TemplateTextKeyboard(
             when (typePlayStore) {
                 GAME -> TemplateTextUtils.getTextGame(context)
                 APP -> TemplateTextUtils.getTextApp(context)
+                SALE -> TemplateTextUtils.getTextSales(context)
+                GREETING -> TemplateTextUtils.getTextGreeting(context)
                 else -> {
                     TemplateTextUtils.getTextGame(context)}
             }

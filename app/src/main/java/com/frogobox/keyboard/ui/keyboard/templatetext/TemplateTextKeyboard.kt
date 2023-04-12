@@ -36,6 +36,7 @@ class TemplateTextKeyboard(
                 GAME -> GAME.name
                 APP -> APP.name
                 SALE -> SALE.name
+                GREETING -> GREETING.name
                 else -> {
                     GAME.name
                 }

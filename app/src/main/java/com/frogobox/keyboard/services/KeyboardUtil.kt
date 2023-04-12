@@ -37,6 +37,12 @@ class KeyboardUtil {
                 pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GAME.id, true)
             ),
             KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE,
+                R.drawable.ic_menu_ps_love,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id, true)
+            ),
+            KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_SALE.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_SALE,
                 R.drawable.ic_menu_ps_sale,

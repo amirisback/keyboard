@@ -33,7 +33,6 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
-import com.frogobox.keyboard.model.TemplateTextType
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -299,7 +298,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         val gridSize = if (KeyboardUtil().menuKeyboard().size.mod(maxMenu) == 0) {
             maxMenu
         } else {
-            KeyboardUtil().menuKeyboard().size
+            maxMenu + 1
         }
         
         binding?.apply {
@@ -382,27 +381,27 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                 }
                                 KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
                                     hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.APP)
+                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
                                     keyboardTemplateText.visible()
                                 }
                                 KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
                                     hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.GAME)
+                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
                                     keyboardTemplateText.visible()
                                 }
                                 KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
                                     hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.SALE)
+                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
                                     keyboardTemplateText.visible()
                                 }
                                 KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
                                     hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.LOVE)
+                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
                                     keyboardTemplateText.visible()
                                 }
                                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
                                     hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.GREETING)
+                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
                                     keyboardTemplateText.visible()
                                 }
                             }

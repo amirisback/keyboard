@@ -1,8 +1,8 @@
 package com.frogobox.keyboard.ui.keyboard.templatetext
 
 import android.content.Context
+import com.frogobox.keyboard.model.KeyboardFeatureType
 import com.frogobox.keyboard.model.TemplateText
-import com.frogobox.keyboard.model.TemplateTextType
 import com.frogobox.sdk.util.FrogoFunc
 
 /**
@@ -24,31 +24,31 @@ object TemplateTextUtils {
 
     fun getTextApp(context: Context): List<TemplateText> {
         return getDataAsset(context, "text/text_app.json").mapIndexed { index, s ->
-            TemplateText(index, s, TemplateTextType.APP)
+            TemplateText(index, s, KeyboardFeatureType.TEMPLATE_TEXT_APP)
         }.shuffled()
     }
 
     fun getTextGame(context: Context): List<TemplateText> {
         return getDataAsset(context, "text/text_game.json").mapIndexed { index, s ->
-            TemplateText(index, s, TemplateTextType.GAME)
+            TemplateText(index, s, KeyboardFeatureType.TEMPLATE_TEXT_GAME)
         }.shuffled()
     }
 
     fun getTextSale(context: Context): List<TemplateText> {
         return getDataAsset(context, "text/text_sale.json").mapIndexed { index, s ->
-            TemplateText(index, s, TemplateTextType.SALE)
+            TemplateText(index, s, KeyboardFeatureType.TEMPLATE_TEXT_SALE)
         }.shuffled()
     }
 
     fun getTextLove(context: Context): List<TemplateText> {
         return getDataAsset(context, "text/text_love.json").mapIndexed { index, s ->
-            TemplateText(index, s, TemplateTextType.LOVE)
+            TemplateText(index, s, KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
         }.shuffled()
     }
 
     fun getTextGreeting(context: Context): List<TemplateText> {
         return getDataAsset(context, "text/text_greeting.json").mapIndexed { index, s ->
-            TemplateText(index, s, TemplateTextType.GREETING)
+            TemplateText(index, s, KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
         }.shuffled()
     }
 

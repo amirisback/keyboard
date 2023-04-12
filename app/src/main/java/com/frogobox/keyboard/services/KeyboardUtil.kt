@@ -13,10 +13,9 @@ import org.koin.java.KoinJavaComponent.inject
 
 class KeyboardUtil {
 
-    private val pref : PreferenceDelegatesImpl by inject(PreferenceDelegatesImpl::class.java)
-    
-    fun menuToggle(): List<KeyboardFeature> {
+    private val pref: PreferenceDelegatesImpl by inject(PreferenceDelegatesImpl::class.java)
 
+    fun menuToggle(): List<KeyboardFeature> {
         return listOf(
             KeyboardFeature(
                 KeyboardFeatureType.AUTO_TEXT.id,
@@ -27,13 +26,13 @@ class KeyboardUtil {
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_APP.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_APP,
-                R.drawable.ic_menu_ps_game,
+                R.drawable.ic_menu_ps_app,
                 pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_APP.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_GAME.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_GAME,
-                R.drawable.ic_menu_ps_app,
+                R.drawable.ic_menu_ps_game,
                 pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GAME.id, true)
             ),
             KeyboardFeature(
@@ -43,16 +42,16 @@ class KeyboardUtil {
                 pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id, true)
             ),
             KeyboardFeature(
-                KeyboardFeatureType.TEMPLATE_TEXT_SALE.id,
-                KeyboardFeatureType.TEMPLATE_TEXT_SALE,
-                R.drawable.ic_menu_ps_sale,
-                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
-            ),
-            KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING,
                 R.drawable.ic_menu_ps_greeting,
                 pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE,
+                R.drawable.ic_menu_ps_sale,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.NEWS.id,

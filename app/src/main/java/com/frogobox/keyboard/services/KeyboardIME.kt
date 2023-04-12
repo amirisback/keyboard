@@ -295,7 +295,9 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
 
     private fun setupFeatureKeyboard() {
         val maxMenu = 4
-        val gridSize = if (KeyboardUtil().menuKeyboard().size.mod(maxMenu) == 0) {
+        val gridSize = if (KeyboardUtil().menuKeyboard().size <= maxMenu) {
+            KeyboardUtil().menuKeyboard().size
+        } else if (KeyboardUtil().menuKeyboard().size.mod(maxMenu) == 0) {
             maxMenu
         } else {
             maxMenu + 1

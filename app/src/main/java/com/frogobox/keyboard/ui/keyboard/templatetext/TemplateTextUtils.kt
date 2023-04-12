@@ -34,9 +34,21 @@ object TemplateTextUtils {
         }.shuffled()
     }
 
-    fun getTextSales(context: Context): List<TemplateText> {
-        return getDataAsset(context, "text/text_sales.json").mapIndexed { index, s ->
+    fun getTextSale(context: Context): List<TemplateText> {
+        return getDataAsset(context, "text/text_sale.json").mapIndexed { index, s ->
             TemplateText(index, s, TemplateTextType.SALE)
+        }.shuffled()
+    }
+
+    fun getTextLove(context: Context): List<TemplateText> {
+        return getDataAsset(context, "text/text_love.json").mapIndexed { index, s ->
+            TemplateText(index, s, TemplateTextType.LOVE)
+        }.shuffled()
+    }
+
+    fun getTextGreeting(context: Context): List<TemplateText> {
+        return getDataAsset(context, "text/text_greeting.json").mapIndexed { index, s ->
+            TemplateText(index, s, TemplateTextType.GREETING)
         }.shuffled()
     }
 

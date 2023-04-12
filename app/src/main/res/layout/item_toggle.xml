@@ -14,7 +14,7 @@
     <ImageView
         android:id="@+id/iv_icon"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/frogo_dimen_64dp"
+        android:layout_height="@dimen/frogo_dimen_48dp"
         app:tint="@color/tv_text_color" />
 
     <TextView
@@ -24,8 +24,9 @@
         android:layout_marginBottom="@dimen/frogo_dimen_8dp"
         android:gravity="center"
         android:text="Toggle"
+        android:maxLines="1"
         android:textColor="@color/tv_text_color"
-        android:textSize="@dimen/frogo_dimen_font_16sp"
+        android:textSize="@dimen/frogo_dimen_font_12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

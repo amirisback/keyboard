@@ -49,6 +49,12 @@ class KeyboardUtil {
                 pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
             ),
             KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING,
+                R.drawable.ic_menu_ps_greeting,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id, true)
+            ),
+            KeyboardFeature(
                 KeyboardFeatureType.NEWS.id,
                 KeyboardFeatureType.NEWS,
                 R.drawable.ic_menu_news,

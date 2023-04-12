@@ -46,4 +46,10 @@ object TemplateTextUtils {
         }.shuffled()
     }
 
+    fun getTextGreeting(context: Context): List<TemplateText> {
+        return getDataAsset(context, "text/text_greeting.json").mapIndexed { index, s ->
+            TemplateText(index, s, TemplateTextType.GREETING)
+        }.shuffled()
+    }
+
 }

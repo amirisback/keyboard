@@ -400,6 +400,11 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                     keyboardTemplateText.setupTemplateTextType(TemplateTextType.LOVE)
                                     keyboardTemplateText.visible()
                                 }
+                                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
+                                    hideMainKeyboard()
+                                    keyboardTemplateText.setupTemplateTextType(TemplateTextType.GREETING)
+                                    keyboardTemplateText.visible()
+                                }
                             }
 
                         }

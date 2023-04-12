@@ -4,5 +4,6 @@ enum class TemplateTextType {
     APP,
     GAME,
     SALE,
-    LOVE
+    LOVE,
+    GREETING
 }

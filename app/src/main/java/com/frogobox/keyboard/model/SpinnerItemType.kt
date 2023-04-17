@@ -1,5 +1,7 @@
 package com.frogobox.keyboard.model
 
+import androidx.annotation.Keep
+
 /**
  * Created by Faisal Amir on 04/12/22
  * -----------------------------------------
@@ -10,6 +12,7 @@ package com.frogobox.keyboard.model
  * All rights reserved
  */
 
+@Keep
 sealed class SpinnerItemType {
 
     data class Loading(

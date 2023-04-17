@@ -1,11 +1,13 @@
 package com.frogobox.keyboard.model
 
+import androidx.annotation.Keep
+
 /**
  * Created by Faisal Amir on 10/03/23
  * https://github.com/amirisback
  */
 
-
+@Keep
 enum class KeyboardFeatureType(val id: String, val title: String) {
     NEWS("menu_news","News API"),
     MOVIE("menu_movie","Movie API"),
@@ -16,5 +18,6 @@ enum class KeyboardFeatureType(val id: String, val title: String) {
     TEMPLATE_TEXT_GAME("menu_play_store_game","Game Review"),
     TEMPLATE_TEXT_SALE("menu_template_text_sale","Sale Admin"),
     TEMPLATE_TEXT_LOVE("menu_template_text_love","Love Emoji"),
-    TEMPLATE_TEXT_GREETING("menu_template_text_greeting", "Greeting")
+    TEMPLATE_TEXT_GREETING("menu_template_text_greeting", "Greeting"),
+    SETTING("menu_setting","Setting")
 }

@@ -1,5 +1,6 @@
 package com.frogobox.keyboard.services
 
+import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.text.InputType
@@ -33,6 +34,7 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
+import com.frogobox.keyboard.ui.main.MainActivity
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -406,6 +408,14 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                                     keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
                                     keyboardTemplateText.visible()
                                 }
+
+                                KeyboardFeatureType.SETTING -> {
+                                    binding.root.context.startActivity(
+                                        Intent(binding.root.context, MainActivity::class.java).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    })
+                                }
+
                             }
 
                         }

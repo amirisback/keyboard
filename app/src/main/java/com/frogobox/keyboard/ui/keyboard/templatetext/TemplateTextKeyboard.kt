@@ -36,13 +36,13 @@ class TemplateTextKeyboard(
                 MOVIE -> ""
                 WEB -> ""
                 FORM -> ""
+                SETTING -> ""
                 AUTO_TEXT -> ""
                 TEMPLATE_TEXT_GAME -> getTitleText(TEMPLATE_TEXT_GAME.name)
                 TEMPLATE_TEXT_APP -> getTitleText(TEMPLATE_TEXT_APP.name)
                 TEMPLATE_TEXT_SALE -> getTitleText(TEMPLATE_TEXT_SALE.name)
                 TEMPLATE_TEXT_GREETING -> getTitleText(TEMPLATE_TEXT_GREETING.name)
                 TEMPLATE_TEXT_LOVE -> getTitleText(TEMPLATE_TEXT_LOVE.name)
-
             }
         }
     }
@@ -55,6 +55,7 @@ class TemplateTextKeyboard(
                 WEB -> listOf()
                 FORM -> listOf()
                 AUTO_TEXT -> listOf()
+                SETTING -> listOf()
                 TEMPLATE_TEXT_GAME -> TemplateTextUtils.getTextGame(context)
                 TEMPLATE_TEXT_APP -> TemplateTextUtils.getTextApp(context)
                 TEMPLATE_TEXT_SALE -> TemplateTextUtils.getTextSale(context)

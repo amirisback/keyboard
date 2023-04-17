@@ -6,12 +6,14 @@ package com.frogobox.keyboard.model
  */
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 
+@Keep
 // Entity annotation to specify the table's name
 @Entity(tableName = "auto_text")
 // Parcelable annotation to make parcelable object

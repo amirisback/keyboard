@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Keyboard Dimen   -->
-    <dimen name="key_height">48dp</dimen>
+    <dimen name="key_height">52dp</dimen>
     <dimen name="key_margin">3dp</dimen>
     <dimen name="key_normal_radius">8dp</dimen>
     <dimen name="key_action_radius">16dp</dimen>

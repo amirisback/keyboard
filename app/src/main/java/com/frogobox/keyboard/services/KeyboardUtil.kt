@@ -77,7 +77,13 @@ class KeyboardUtil {
                 R.drawable.ic_menu_form,
                 pref.loadPrefBoolean(KeyboardFeatureType.FORM.id, true)
             ),
-        )
+            KeyboardFeature(
+                KeyboardFeatureType.SETTING.id,
+                KeyboardFeatureType.SETTING,
+                R.drawable.ic_menu_setting,
+                pref.loadPrefBoolean(KeyboardFeatureType.SETTING.id, true)
+            )
+        ).sortedBy { it.state }
     }
 
     fun menuKeyboard(): List<KeyboardFeature> {

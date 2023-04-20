@@ -44,6 +44,12 @@ android {
         resValue("string", "admob_app_id", AdmobValue.Debug.ADMOB_APP_ID)
         resValue("string", "admob_interstitial", AdmobValue.Debug.ADMOB_INTERSTITIAL)
 
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+
     }
 
     signingConfigs {

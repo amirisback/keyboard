@@ -3,9 +3,6 @@ package com.frogobox.keyboard.common.base
 import android.os.Bundle
 import androidx.viewbinding.ViewBinding
 import com.frogobox.keyboard.BuildConfig
-import com.frogobox.sdk.delegate.piracy.FrogoPiracyCallback
-import com.frogobox.sdk.delegate.piracy.FrogoPiracyDialogCallback
-import com.frogobox.sdk.delegate.piracy.util.PiracyMessage
 import com.frogobox.sdk.view.FrogoBindActivity
 
 /**

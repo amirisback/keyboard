@@ -65,7 +65,7 @@ class ToggleActivity : BaseMainActivity<ActivityToggleBinding>() {
                     binding.ivIcon.setImageResource(data.icon)
                     binding.tvTitle.text = data.type.title
                     binding.swToggle.isChecked = data.state
-                    binding.swToggle.setOnCheckedChangeListener { buttonView, isChecked ->
+                    binding.swToggle.setOnCheckedChangeListener { _, isChecked ->
                         pref.savePrefBoolean(data.id, isChecked)
                     }
                 }

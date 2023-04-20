@@ -17,6 +17,7 @@ import android.view.accessibility.AccessibilityManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.common.ext.*
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
@@ -30,6 +31,9 @@ import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_O
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import java.util.*
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 @SuppressLint("UseCompatLoadingForDrawables", "ClickableViewAccessibility")
 class MainKeyboard @JvmOverloads constructor(
@@ -146,8 +150,7 @@ class MainKeyboard @JvmOverloads constructor(
 
         try {
             for (i in 0 until indexCnt) {
-                val attr = attributes.getIndex(i)
-                when (attr) {
+                when (val attr = attributes.getIndex(i)) {
                     R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize =
                         attributes.getDimensionPixelSize(attr, 18)
                 }
@@ -298,7 +301,7 @@ class MainKeyboard @JvmOverloads constructor(
 
     private fun adjustCase(label: CharSequence): CharSequence? {
         var newLabel: CharSequence? = label
-        if (newLabel != null && newLabel.isNotEmpty() && mKeyboard!!.mShiftState > SHIFT_OFF && newLabel.length < 3 && Character.isLowerCase(
+        if (!newLabel.isNullOrEmpty() && mKeyboard!!.mShiftState > SHIFT_OFF && newLabel.length < 3 && Character.isLowerCase(
                 newLabel[0])
         ) {
             newLabel = newLabel.toString().uppercase(Locale.getDefault())
@@ -333,7 +336,7 @@ class MainKeyboard @JvmOverloads constructor(
         var dimensionSum = 0
         for (i in 0 until length) {
             val key = keys[i]
-            dimensionSum += Math.min(key.width, key.height) + key.gap
+            dimensionSum += min(key.width, key.height) + key.gap
         }
 
         if (dimensionSum < 0 || length == 0) {
@@ -357,8 +360,8 @@ class MainKeyboard @JvmOverloads constructor(
         if (mBuffer == null || mKeyboardChanged) {
             if (mBuffer == null || mKeyboardChanged && (mBuffer!!.width != width || mBuffer!!.height != height)) {
                 // Make sure our bitmap is at least 1x1
-                val width = Math.max(1, width)
-                val height = Math.max(1, height)
+                val width = max(1, width)
+                val height = max(1, height)
                 mBuffer = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                 mCanvas = Canvas(mBuffer!!)
             }
@@ -476,7 +479,7 @@ class MainKeyboard @JvmOverloads constructor(
                         SHIFT_ON_ONE_CHAR -> R.drawable.ic_keyboard_caps
                         else -> R.drawable.ic_keyboard_caps_underlined
                     }
-                    key.icon = resources.getDrawable(drawableId)
+                    key.icon = ResourcesCompat.getDrawable(resources, drawableId, null)
                 }
 
                 if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER) {
@@ -797,7 +800,7 @@ class MainKeyboard @JvmOverloads constructor(
             mPopupY -= mMiniKeyboardContainer!!.measuredHeight
             val x = mPopupX + mCoordinates[0]
             val y = mPopupY + mCoordinates[1]
-            val xOffset = Math.max(0, x)
+            val xOffset = max(0, x)
             mMiniKeyboard!!.setPopupOffset(xOffset, y)
 
             // make sure we highlight the proper key right after long pressing it, before any ACTION_MOVE event occurs
@@ -808,12 +811,11 @@ class MainKeyboard @JvmOverloads constructor(
             }
 
             val keysCnt = mMiniKeyboard!!.mKeys.size
-            var selectedKeyIndex =
-                Math.floor((me.x - miniKeyboardX) / popupKey.width.toDouble()).toInt()
+            var selectedKeyIndex = floor((me.x - miniKeyboardX) / popupKey.width.toDouble()).toInt()
             if (keysCnt > MAX_KEYS_PER_MINI_ROW) {
                 selectedKeyIndex += MAX_KEYS_PER_MINI_ROW
             }
-            selectedKeyIndex = Math.max(0, Math.min(selectedKeyIndex, keysCnt - 1))
+            selectedKeyIndex = max(0, min(selectedKeyIndex, keysCnt - 1))
 
             for (i in 0 until keysCnt) {
                 mMiniKeyboard!!.mKeys[i].focused = i == selectedKeyIndex
@@ -863,7 +865,7 @@ class MainKeyboard @JvmOverloads constructor(
                         mMiniKeyboard!!.getLocationOnScreen(coords)
                         val keysCnt = mMiniKeyboard!!.mKeys.size
                         val lastRowKeyCount = if (keysCnt > MAX_KEYS_PER_MINI_ROW) {
-                            Math.max(keysCnt % MAX_KEYS_PER_MINI_ROW, 1)
+                            max(keysCnt % MAX_KEYS_PER_MINI_ROW, 1)
                         } else {
                             keysCnt
                         }
@@ -875,13 +877,13 @@ class MainKeyboard @JvmOverloads constructor(
                         }
 
                         var selectedKeyIndex =
-                            Math.floor((me.x - coords[0]) / widthPerKey.toDouble()).toInt()
+                            floor((me.x - coords[0]) / widthPerKey.toDouble()).toInt()
                         if (keysCnt > MAX_KEYS_PER_MINI_ROW) {
-                            selectedKeyIndex = Math.max(0, selectedKeyIndex)
+                            selectedKeyIndex = max(0, selectedKeyIndex)
                             selectedKeyIndex += MAX_KEYS_PER_MINI_ROW
                         }
 
-                        selectedKeyIndex = Math.max(0, Math.min(selectedKeyIndex, keysCnt - 1))
+                        selectedKeyIndex = max(0, min(selectedKeyIndex, keysCnt - 1))
                         if (selectedKeyIndex != mMiniKeyboardSelectedKeyIndex) {
                             for (i in 0 until keysCnt) {
                                 mMiniKeyboard!!.mKeys[i].focused = i == selectedKeyIndex

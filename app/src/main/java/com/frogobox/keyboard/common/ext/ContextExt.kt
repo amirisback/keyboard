@@ -6,7 +6,6 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
 
@@ -19,10 +18,6 @@ import com.frogobox.keyboard.R
  * Copyright (C) Frogobox ID / amirisback
  * All rights reserved
  */
-
-fun Context.showToast(message: String) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-}
 
 fun Context.isDarkThemeOn(): Boolean {
     return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES

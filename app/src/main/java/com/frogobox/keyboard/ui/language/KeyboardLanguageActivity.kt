@@ -10,7 +10,9 @@ import com.frogobox.keyboard.databinding.ItemLanguageKeyboardBinding
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
+import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.showToast
+import com.frogobox.sdk.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -68,7 +70,7 @@ class KeyboardLanguageActivity : BaseActivity<ActivityKeyboardLanguageBinding>()
         notifyListener: FrogoRecyclerNotifyListener<KeyboardLanguage>
     ) {
         viewModel.setKeyboard(data.xml) {
-            showToast("${data.name} Selected")
+            viewModel.getKeyboardLanguage(this@KeyboardLanguageActivity)
         }
     }
 
@@ -87,6 +89,11 @@ class KeyboardLanguageActivity : BaseActivity<ActivityKeyboardLanguageBinding>()
     ) {
         binding.apply {
             tvItemKeyboardMain.text = data.name
+            if (viewModel.checkKeyboardType(data.xml)) {
+                this.ivIcon.visible()
+            } else {
+                this.ivIcon.gone()
+            }
         }
     }
 

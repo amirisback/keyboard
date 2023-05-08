@@ -69,4 +69,8 @@ class KeyboardLanguageViewModel @Inject constructor(
         })
     }
 
+    fun checkKeyboardType(xml: Int) : Boolean {
+        return pref.loadPrefInt(Constant.PREF_KEYBOARD_TYPE, R.xml.keys_letters_qwerty) == xml
+    }
+
 }

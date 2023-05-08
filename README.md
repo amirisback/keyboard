@@ -335,6 +335,25 @@ https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-
 </table>
 
 
+### Multi Language Support
+<table>
+
+<tr>
+    <th>Menu Multi Language (Light)</th>
+    <th>Change Language (Light)</th>
+    <th>Menu Multi Language (Dark)</th>
+    <th>Change Language (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/multi-language/light/ss-1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/multi-language/light/ss-2.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/multi-language/dark/ss-1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/multi-language/dark/ss-2.jpeg"></td>
+</tr>
+
+</table>
+
 ## Documentation
 - https://github.com/SimpleMobileTools/Simple-Keyboard 
     - Clone From This

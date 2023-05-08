@@ -37,6 +37,9 @@
             android:name=".ui.toggle.ToggleActivity"
             android:exported="false" />
 
+        <activity android:name=".ui.language.KeyboardLanguageActivity"
+            android:exported="false" />
+
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"

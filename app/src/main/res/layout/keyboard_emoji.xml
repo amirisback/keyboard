@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/emoji_palette_holder"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/frogo_dimen_0dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,7 +31,7 @@
                 android:layout_marginStart="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/emojis"
-                android:padding="4dp"
+                android:padding="@dimen/frogo_dimen_4dp"
                 android:src="@drawable/ic_keyboard_arrow_left"
                 app:tint="@color/tv_text_color" />
 
@@ -46,7 +46,7 @@
                 android:lines="1"
                 android:text="@string/emojis"
                 android:textColor="@color/tv_text_color"
-                android:textSize="18sp" />
+                android:textSize="@dimen/frogo_dimen_font_18sp" />
 
         </RelativeLayout>
 
@@ -56,7 +56,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/emoji_palette_top_bar"
             android:clipToPadding="false"
-            android:padding="4dp"
+            android:padding="@dimen/frogo_dimen_4dp"
             android:scrollbars="vertical" />
 
     </RelativeLayout>

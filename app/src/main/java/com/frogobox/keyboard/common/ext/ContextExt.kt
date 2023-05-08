@@ -8,6 +8,9 @@ import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
+import com.frogobox.keyboard.util.Constant.PREF_KEYBOARD_TYPE
+import com.frogobox.keyboard.util.Constant.PREF_ROOT_NAME
+import com.frogobox.sdk.delegate.preference.PreferenceDelegatesImpl
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -46,3 +49,8 @@ fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.keyboard_bg_
 fun Drawable.applyColorFilter(color: Int) = mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
 
 fun ImageView.applyColorFilter(color: Int) = setColorFilter(color, PorterDuff.Mode.SRC_IN)
+
+fun Context.getKeyboardType(): Int {
+    val pref = PreferenceDelegatesImpl(this, PREF_ROOT_NAME)
+    return pref.loadPrefInt(PREF_KEYBOARD_TYPE, R.xml.keys_letters_qwerty)
+}

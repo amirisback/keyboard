@@ -12,6 +12,7 @@ import com.frogobox.keyboard.common.ext.isDarkThemeOn
 import com.frogobox.keyboard.databinding.ActivityMainBinding
 import com.frogobox.keyboard.ui.autotext.AutoTextActivity
 import com.frogobox.keyboard.ui.detail.DetailActivity
+import com.frogobox.keyboard.ui.language.KeyboardLanguageActivity
 import com.frogobox.keyboard.ui.toggle.ToggleActivity
 import com.frogobox.sdk.ext.showLogDebug
 import com.frogobox.sdk.ext.startActivityExt
@@ -96,6 +97,10 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
 
             btnToggle.setOnClickListener {
                 startActivityExt<ToggleActivity>()
+            }
+
+            btnMultiLanguage.setOnClickListener {
+                startActivityExt<KeyboardLanguageActivity>()
             }
 
         }

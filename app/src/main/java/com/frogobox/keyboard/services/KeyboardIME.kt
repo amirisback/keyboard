@@ -23,6 +23,7 @@ import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
+import com.frogobox.keyboard.common.ext.getKeyboardType
 import com.frogobox.keyboard.common.ext.getProperBackgroundColor
 import com.frogobox.keyboard.common.ext.getProperTextColor
 import com.frogobox.keyboard.databinding.ItemKeyboardHeaderBinding
@@ -622,7 +623,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     }
 
     private fun getKeyboardLayoutXML(): Int {
-        return R.xml.keys_letters_qwerty
+        return baseContext.getKeyboardType()
     }
 
 }

@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.util
+package com.frogobox.keyboard.ui.language
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -10,14 +10,8 @@ package com.frogobox.keyboard.util
  * All rights reserved
  */
 
-object Constant {
 
-    const val PREF_ROOT_NAME = "PREF_ROOT_NAME"
-
-    const val PREF_KEYBOARD_TYPE = "PREF_KEYBOARD_TYPE"
-
-    object Extra {
-        const val EXTRA_DATA = "EXTRA_DATA"
-    }
-
-}
+data class KeyboardLanguage(
+    val name: String,
+    val xml: Int,
+)

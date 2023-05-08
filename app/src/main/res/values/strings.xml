@@ -42,4 +42,18 @@
     <string name="animals">Animals</string>
     <string name="network_problem">Network error occurred while downloading.</string>
     <string name="download_problem">IO error occurred while downloading</string>
+
+    <string name="translation_bengali">Bengali</string>
+    <string name="translation_bulgarian">Bulgarian</string>
+    <string name="translation_english">English</string>
+    <string name="translation_french">French</string>
+    <string name="translation_german">German</string>
+    <string name="translation_greek">Greek</string>
+    <string name="translation_lithuanian">Lithuanian</string>
+    <string name="translation_romanian">Romanian</string>
+    <string name="translation_russian">Russian</string>
+    <string name="translation_slovenian">Slovenian</string>
+    <string name="translation_spanish">Spanish</string>
+    <string name="translation_turkish">Turkish</string>
+
 </resources>

@@ -14,6 +14,7 @@
 object ProjectSetting {
 
     const val NAME_APP = "Frogo Keyboard"
+    const val NAME_APP_DEBUG = "$NAME_APP Dev"
 
     const val APP_DOMAIN = "com"
     const val APP_PLAY_CONSOLE = "frogobox"

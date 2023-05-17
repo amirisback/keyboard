@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/emoji_palette_holder"
@@ -57,6 +58,7 @@
             android:layout_below="@+id/emoji_palette_top_bar"
             android:clipToPadding="false"
             android:padding="@dimen/frogo_dimen_4dp"
+            tools:listitem="@layout/item_keyboard_emoji"
             android:scrollbars="vertical" />
 
     </RelativeLayout>

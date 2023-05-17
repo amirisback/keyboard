@@ -90,8 +90,8 @@ class EmojiKeyboard(
                 context.resources.getDimensionPixelSize(com.frogobox.ui.R.dimen.frogo_dimen_4dp).toFloat()
 
             layoutManager = AutoGridLayoutManager(context, emojiItemWidth)
-            adapter = EmojisAdapter(context = context, items = emojis) { emoji ->
-                mOnKeyboardActionListener!!.onText(emoji)
+            adapter = EmojisAdapter(data = emojis) {
+                mOnKeyboardActionListener!!.onText(it)
             }
 
             onScroll {

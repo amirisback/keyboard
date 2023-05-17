@@ -8,7 +8,7 @@ import android.view.ScaleGestureDetector
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.frogobox.keyboard.R
-import com.frogobox.keyboard.ui.keyboard.emoji.adapter.RecyclerScrollCallback
+import com.frogobox.keyboard.util.RecyclerScrollCallback
 
 // drag selection is based on https://github.com/afollestad/drag-select-recyclerview
 open class EmojiKeyboardRecyclerView : RecyclerView {

@@ -81,8 +81,6 @@ class ItemMainKeyboard {
         const val ITEM_SECTION_LABEL = 0
         const val ITEM_CLIP = 1
 
-        const val EMOJI_SPEC_FILE_PATH = "media/emoji_spec.txt"
-
         fun getDimensionOrFraction(a: TypedArray, index: Int, base: Int, defValue: Int): Int {
             val value = a.peekValue(index) ?: return defValue
             return when (value.type) {

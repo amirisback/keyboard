@@ -21,11 +21,8 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.widget.EditText
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.common.ext.getKeyboardType
-import com.frogobox.keyboard.common.ext.getProperBackgroundColor
-import com.frogobox.keyboard.common.ext.getProperTextColor
 import com.frogobox.keyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.keyboard.databinding.KeyboardImeBinding
 import com.frogobox.keyboard.model.KeyboardFeature
@@ -232,7 +229,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             keyboardWebview.gone()
             keyboardForm.gone()
             keyboardEmoji.gone()
-            keyboardEmoji.binding?.emojisList?.scrollToPosition(0)
+            keyboardEmoji.binding?.emojiList?.scrollToPosition(0)
         }
     }
 
@@ -282,9 +279,9 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 showMainKeyboard()
             }
 
-            keyboardEmoji.binding?.emojiPaletteClose?.setOnClickListener {
+            keyboardEmoji.binding?.toolbarBack?.setOnClickListener {
                 keyboardEmoji.gone()
-                keyboardEmoji.binding?.emojisList?.scrollToPosition(0)
+                keyboardEmoji.binding?.emojiList?.scrollToPosition(0)
                 showMainKeyboard()
             }
 
@@ -438,22 +435,8 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     }
 
     private fun initView() {
-
         setupFeatureKeyboard()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            binding?.keyboardEmoji?.setupEmojiPalette(
-                toolbarColor = ContextCompat.getColor(
-                    binding?.keyboardEmoji?.context!!,
-                    R.color.keyboard_toolbar_emoji_color
-                ),
-                backgroundColor = binding?.keyboardEmoji?.context!!.getProperBackgroundColor(),
-                textColor = binding?.keyboardEmoji?.context!!.getProperTextColor()
-            )
-        }
-
         initBackToMainKeyboard()
-
     }
 
     private fun updateShiftKeyState() {

@@ -20,16 +20,14 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.0.9
+    $version_release = 1.1.0
 
 What's New??
 
     * Avaiable in dark mode *
     * Enhance Performance *
     * Update Build Gradle Style Latest Version *
-    * Update CRUD Auto Text *
-    * Add Toggle Feature *
-    * Add Toggle Feature in Setting *
+    * Update Emoji Category *
 
 ## Video Play
 https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-9db1-24544f5593e0.mp4
@@ -202,18 +200,22 @@ https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-
 
 <tr>
     <th>Emojis (Light)</th>
+    <th>Emojis (Light)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_15.png"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_1.jpeg"></td>
+    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_2.jpeg"></td>
 </tr>
 
 <tr>
     <th>Emojis (Dark)</th>
+    <th>Emojis (Dark)</th>
 </tr>
 
 <tr>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/dark/ss_15.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/dark/ss_1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/dark/ss_2.jpeg"></td>
 </tr>
 
 </table>

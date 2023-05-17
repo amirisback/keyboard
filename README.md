@@ -204,8 +204,8 @@ https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-
 </tr>
 
 <tr>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_1.jpeg"></td>
-    <td><img width="200px" height="360px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_2.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_1.jpeg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/emojis/light/ss_2.jpeg"></td>
 </tr>
 
 <tr>

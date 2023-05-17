@@ -20,5 +20,6 @@
 
     <color name="tv_text_color">#FFFFFF</color>
     <color name="bg_card">#000000</color>
+    <color name="bg_card_reverse">#FFFFFF</color>
 
 </resources>

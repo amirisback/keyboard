@@ -47,12 +47,17 @@
         <com.frogobox.keyboard.ui.keyboard.emoji.EmojiKeyboardRecyclerView
             android:id="@+id/emoji_list"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/frogo_dimen_150dp"
+            android:layout_height="@dimen/frogo_dimen_160dp"
             android:clipToPadding="false"
             android:padding="@dimen/frogo_dimen_4dp"
             android:scrollbars="vertical"
             tools:itemCount="4"
             tools:listitem="@layout/item_keyboard_emoji" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/frogo_dimen_2dp"
+            android:background="@color/bg_card_reverse" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/emoji_category_list"

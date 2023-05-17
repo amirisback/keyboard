@@ -2,8 +2,6 @@ package com.frogobox.keyboard.ui.keyboard.emoji
 
 import android.content.Context
 
-private var cachedEmojiData: MutableList<String>? = null
-
 /**
  * Reads the emoji list at the given [path] and returns an parsed [MutableList]. If the
  * given file path does not exist, an empty [MutableList] is returned.
@@ -12,9 +10,6 @@ private var cachedEmojiData: MutableList<String>? = null
  * @param path The path to the asset file.
  */
 fun parseRawEmojiSpecsFile(context: Context, path: String): MutableList<String> {
-    if (cachedEmojiData != null) {
-        return cachedEmojiData!!
-    }
 
     val emojis = mutableListOf<String>()
     var emojiEditorList: MutableList<String>? = null
@@ -55,8 +50,7 @@ fun parseRawEmojiSpecsFile(context: Context, path: String): MutableList<String> 
         }
         commitEmojiEditorList()
     }
-
-    cachedEmojiData = emojis
+    
     return emojis
 }
 

@@ -40,16 +40,6 @@ abstract class BaseKeyboard<T : ViewBinding>(
         onCreate()
     }
 
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int,
-    ) : this(context, attrs, defStyleAttr) {
-        binding = setupViewBinding()
-        onCreate()
-    }
-
     fun setInputConnection(inputConnection: InputConnection) {
         Log.d("BaseKeyboard", "setInputConnection: $inputConnection")
         currentInputConnection = inputConnection

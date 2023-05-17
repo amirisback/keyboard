@@ -1,64 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/emoji_palette_holder"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clickable="true"
-        android:focusable="true"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
-            android:id="@+id/emoji_palette_top_bar"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/emoji_palette_close"
-                android:layout_width="@dimen/toolbar_icon_height"
-                android:layout_height="@dimen/toolbar_icon_height"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/emojis"
-                android:padding="4dp"
+                android:id="@+id/toolbar_back"
+                android:layout_width="@dimen/frogo_dimen_24dp"
+                android:layout_height="@dimen/frogo_dimen_24dp"
+                android:layout_margin="@dimen/frogo_dimen_16dp"
                 android:src="@drawable/ic_keyboard_arrow_left"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/tv_text_color" />
 
             <TextView
-                android:id="@+id/emoji_palette_label"
+                android:id="@+id/tv_toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/emoji_palette_close"
-                android:ellipsize="end"
-                android:lines="1"
+                android:layout_margin="@dimen/frogo_dimen_16dp"
                 android:text="@string/emojis"
                 android:textColor="@color/tv_text_color"
-                android:textSize="18sp" />
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/toolbar_back"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.frogobox.keyboard.ui.keyboard.emoji.EmojiKeyboardRecyclerView
-            android:id="@+id/emojis_list"
+            android:id="@+id/emoji_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/emoji_palette_top_bar"
+            android:layout_height="@dimen/frogo_dimen_160dp"
             android:clipToPadding="false"
-            android:padding="4dp"
-            android:scrollbars="vertical" />
+            android:padding="@dimen/frogo_dimen_4dp"
+            android:scrollbars="vertical"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_keyboard_emoji" />
 
-    </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/frogo_dimen_1dp"
+            android:background="@color/bg_card_reverse" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/emoji_category_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/frogo_dimen_4dp"
+            tools:itemCount="1"
+            tools:listitem="@layout/item_keyboard_emoji" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

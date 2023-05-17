@@ -1,4 +1,4 @@
-package com.frogobox.keyboard.ui.keyboard.emoji.adapter
+package com.frogobox.keyboard.util
 
 import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager

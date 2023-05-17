@@ -3,24 +3,23 @@ package com.frogobox.keyboard.ui.keyboard.emoji
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.keyboard.R
 import com.frogobox.keyboard.common.base.BaseKeyboard
+import com.frogobox.keyboard.databinding.ItemKeyboardEmojiBinding
 import com.frogobox.keyboard.databinding.KeyboardEmojiBinding
-import com.frogobox.keyboard.common.ext.applyColorFilter
-import com.frogobox.keyboard.common.ext.onScroll
-import com.frogobox.keyboard.ui.keyboard.emoji.adapter.AutoGridLayoutManager
-import com.frogobox.keyboard.ui.keyboard.emoji.adapter.EmojisAdapter
-import com.frogobox.keyboard.ui.keyboard.emoji.adapter.parseRawEmojiSpecsFile
-import com.frogobox.keyboard.ui.keyboard.main.ItemMainKeyboard
 import com.frogobox.keyboard.ui.keyboard.main.OnKeyboardActionListener
+import com.frogobox.keyboard.util.AutoGridLayoutManager
+import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
+import com.frogobox.recycler.core.IFrogoBindingAdapter
+import com.frogobox.recycler.ext.injectorBinding
 
 /**
  * Created by Faisal Amir on 11/12/22
@@ -49,55 +48,130 @@ class EmojiKeyboard(
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    fun setupEmojiPalette(toolbarColor: Int, backgroundColor: Int, textColor: Int) {
-        binding?.apply {
-            emojiPaletteTopBar.background = ColorDrawable(toolbarColor)
-            emojiPaletteHolder.background = ColorDrawable(backgroundColor)
-            emojiPaletteLabel.setTextColor(textColor)
-            emojiPaletteClose.applyColorFilter(textColor)
-        }
-        setupEmojis()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
     fun openEmojiPalette() {
-        setupEmojis()
+        setupEmojis(EmojiCategoryType.GENERAL.path)
+        setupEmojiCategory()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun setupEmojis() {
+    private fun setupEmojiCategory() {
+        val adapterCallback =
+            object : IFrogoBindingAdapter<EmojiCategory, ItemKeyboardEmojiBinding> {
+
+                override fun onItemClicked(
+                    binding: ItemKeyboardEmojiBinding,
+                    data: EmojiCategory,
+                    position: Int,
+                    notifyListener: FrogoRecyclerNotifyListener<EmojiCategory>
+                ) {
+                    setupEmojis(data.path)
+                }
+
+                override fun onItemLongClicked(
+                    binding: ItemKeyboardEmojiBinding,
+                    data: EmojiCategory,
+                    position: Int,
+                    notifyListener: FrogoRecyclerNotifyListener<EmojiCategory>
+                ) {
+                }
+
+                override fun setViewBinding(parent: ViewGroup): ItemKeyboardEmojiBinding {
+                    return ItemKeyboardEmojiBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
+                }
+
+                override fun setupInitComponent(
+                    binding: ItemKeyboardEmojiBinding,
+                    data: EmojiCategory,
+                    position: Int,
+                    notifyListener: FrogoRecyclerNotifyListener<EmojiCategory>
+                ) {
+                    val processed = EmojiCompat.get().process(data.icon)
+                    binding.tvEmoji.text = processed
+                }
+            }
+
+        binding?.apply {
+            emojiCategoryList.injectorBinding<EmojiCategory, ItemKeyboardEmojiBinding>()
+                .addData(getEmojiCategory())
+                .addCallback(adapterCallback)
+                .createLayoutLinearHorizontal(false)
+                .build()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setupEmojis(path: String) {
         ensureBackgroundThread {
-            val fullEmojiList = parseRawEmojiSpecsFile(context, ItemMainKeyboard.EMOJI_SPEC_FILE_PATH)
+            val fullEmojiList = parseRawEmojiSpecsFile(context, path)
             val systemFontPaint = Paint().apply {
                 typeface = Typeface.DEFAULT
             }
 
             val emojis = fullEmojiList.filter { emoji ->
-                systemFontPaint.hasGlyph(emoji) || (EmojiCompat.get().loadState == EmojiCompat.LOAD_STATE_SUCCEEDED && EmojiCompat.get()
-                    .getEmojiMatch(emoji, emojiCompatMetadataVersion) == EmojiCompat.EMOJI_SUPPORTED)
+                systemFontPaint.hasGlyph(emoji) || (EmojiCompat.get().loadState == EmojiCompat.LOAD_STATE_SUCCEEDED
+                        && EmojiCompat.get().getEmojiMatch(
+                    emoji,
+                    emojiCompatMetadataVersion
+                ) == EmojiCompat.EMOJI_SUPPORTED)
             }
 
             Handler(Looper.getMainLooper()).post {
                 setupEmojiAdapter(emojis)
             }
+
         }
     }
 
     private fun setupEmojiAdapter(emojis: List<String>) {
-        binding?.emojisList?.apply {
-            val emojiItemWidth = context.resources.getDimensionPixelSize(R.dimen.emoji_item_size)
-            val emojiTopBarElevation =
-                context.resources.getDimensionPixelSize(com.frogobox.ui.R.dimen.frogo_dimen_4dp).toFloat()
 
-            layoutManager = AutoGridLayoutManager(context, emojiItemWidth)
-            adapter = EmojisAdapter(context = context, items = emojis) { emoji ->
-                mOnKeyboardActionListener!!.onText(emoji)
+        val adapterCallback = object : IFrogoBindingAdapter<String, ItemKeyboardEmojiBinding> {
+            override fun onItemClicked(
+                binding: ItemKeyboardEmojiBinding,
+                data: String,
+                position: Int,
+                notifyListener: FrogoRecyclerNotifyListener<String>
+            ) {
+                mOnKeyboardActionListener!!.onText(data)
             }
 
-            onScroll {
-                binding!!.emojiPaletteTopBar.elevation =
-                    if (it > 4) emojiTopBarElevation else 0f
+            override fun onItemLongClicked(
+                binding: ItemKeyboardEmojiBinding,
+                data: String,
+                position: Int,
+                notifyListener: FrogoRecyclerNotifyListener<String>
+            ) {
+                mOnKeyboardActionListener!!.onText(data)
             }
+
+            override fun setViewBinding(parent: ViewGroup): ItemKeyboardEmojiBinding {
+                return ItemKeyboardEmojiBinding.inflate(LayoutInflater.from(context), parent, false)
+            }
+
+            override fun setupInitComponent(
+                binding: ItemKeyboardEmojiBinding,
+                data: String,
+                position: Int,
+                notifyListener: FrogoRecyclerNotifyListener<String>
+            ) {
+                val processed = EmojiCompat.get().process(data)
+                binding.tvEmoji.text = processed
+            }
+        }
+
+        val emojiItemWidth = context.resources.getDimensionPixelSize(R.dimen.emoji_item_size)
+        val mLayoutManager = AutoGridLayoutManager(context, emojiItemWidth)
+
+        binding?.apply {
+            emojiList.injectorBinding<String, ItemKeyboardEmojiBinding>()
+                .addCallback(adapterCallback)
+                .addData(emojis)
+                .build()
+
+            emojiList.layoutManager = mLayoutManager
         }
     }
 

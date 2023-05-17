@@ -1,8 +1,6 @@
-package com.frogobox.keyboard.ui.keyboard.emoji.adapter
+package com.frogobox.keyboard.ui.keyboard.emoji
 
 import android.content.Context
-
-private var cachedEmojiData: MutableList<String>? = null
 
 /**
  * Reads the emoji list at the given [path] and returns an parsed [MutableList]. If the
@@ -12,9 +10,6 @@ private var cachedEmojiData: MutableList<String>? = null
  * @param path The path to the asset file.
  */
 fun parseRawEmojiSpecsFile(context: Context, path: String): MutableList<String> {
-    if (cachedEmojiData != null) {
-        return cachedEmojiData!!
-    }
 
     val emojis = mutableListOf<String>()
     var emojiEditorList: MutableList<String>? = null
@@ -55,7 +50,21 @@ fun parseRawEmojiSpecsFile(context: Context, path: String): MutableList<String> 
         }
         commitEmojiEditorList()
     }
-
-    cachedEmojiData = emojis
+    
     return emojis
+}
+
+fun getEmojiCategory() : List<EmojiCategory>  {
+    return listOf(
+        EmojiCategory(EmojiCategoryType.GENERAL.name, EmojiCategoryType.GENERAL.icon, EmojiCategoryType.GENERAL.path),
+        EmojiCategory(EmojiCategoryType.SMILEYS_EMOTION.name, EmojiCategoryType.SMILEYS_EMOTION.icon, EmojiCategoryType.SMILEYS_EMOTION.path),
+        EmojiCategory(EmojiCategoryType.PEOPLE_BODY.name, EmojiCategoryType.PEOPLE_BODY.icon, EmojiCategoryType.PEOPLE_BODY.path),
+        EmojiCategory(EmojiCategoryType.ACTIVITIES.name, EmojiCategoryType.ACTIVITIES.icon, EmojiCategoryType.ACTIVITIES.path),
+        EmojiCategory(EmojiCategoryType.ANIMAL_NATURE.name, EmojiCategoryType.ANIMAL_NATURE.icon, EmojiCategoryType.ANIMAL_NATURE.path),
+        EmojiCategory(EmojiCategoryType.FOOD_DRINK.name, EmojiCategoryType.FOOD_DRINK.icon, EmojiCategoryType.FOOD_DRINK.path),
+        EmojiCategory(EmojiCategoryType.FLAG.name, EmojiCategoryType.FLAG.icon, EmojiCategoryType.FLAG.path),
+        EmojiCategory(EmojiCategoryType.OBJECTS.name, EmojiCategoryType.OBJECTS.icon, EmojiCategoryType.OBJECTS.path),
+        EmojiCategory(EmojiCategoryType.TRAVEL_PLACES.name, EmojiCategoryType.TRAVEL_PLACES.icon, EmojiCategoryType.TRAVEL_PLACES.path),
+        EmojiCategory(EmojiCategoryType.SYMBOLS.name, EmojiCategoryType.SYMBOLS.icon, EmojiCategoryType.SYMBOLS.path)
+    )
 }

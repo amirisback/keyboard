@@ -36,5 +36,6 @@
 
     <color name="tv_text_color">#000000</color>
     <color name="bg_card">#FFFFFF</color>
+    <color name="bg_card_reverse">#000000</color>
 
 </resources>

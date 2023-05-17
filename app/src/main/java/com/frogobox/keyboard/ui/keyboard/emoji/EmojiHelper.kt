@@ -57,14 +57,14 @@ fun parseRawEmojiSpecsFile(context: Context, path: String): MutableList<String> 
 fun getEmojiCategory() : List<EmojiCategory>  {
     return listOf(
         EmojiCategory(EmojiCategoryType.GENERAL.name, EmojiCategoryType.GENERAL.icon, EmojiCategoryType.GENERAL.path),
+        EmojiCategory(EmojiCategoryType.SMILEYS_EMOTION.name, EmojiCategoryType.SMILEYS_EMOTION.icon, EmojiCategoryType.SMILEYS_EMOTION.path),
+        EmojiCategory(EmojiCategoryType.PEOPLE_BODY.name, EmojiCategoryType.PEOPLE_BODY.icon, EmojiCategoryType.PEOPLE_BODY.path),
         EmojiCategory(EmojiCategoryType.ACTIVITIES.name, EmojiCategoryType.ACTIVITIES.icon, EmojiCategoryType.ACTIVITIES.path),
         EmojiCategory(EmojiCategoryType.ANIMAL_NATURE.name, EmojiCategoryType.ANIMAL_NATURE.icon, EmojiCategoryType.ANIMAL_NATURE.path),
-        EmojiCategory(EmojiCategoryType.FLAG.name, EmojiCategoryType.FLAG.icon, EmojiCategoryType.FLAG.path),
         EmojiCategory(EmojiCategoryType.FOOD_DRINK.name, EmojiCategoryType.FOOD_DRINK.icon, EmojiCategoryType.FOOD_DRINK.path),
+        EmojiCategory(EmojiCategoryType.FLAG.name, EmojiCategoryType.FLAG.icon, EmojiCategoryType.FLAG.path),
         EmojiCategory(EmojiCategoryType.OBJECTS.name, EmojiCategoryType.OBJECTS.icon, EmojiCategoryType.OBJECTS.path),
-        EmojiCategory(EmojiCategoryType.PEOPLE_BODY.name, EmojiCategoryType.PEOPLE_BODY.icon, EmojiCategoryType.PEOPLE_BODY.path),
-        EmojiCategory(EmojiCategoryType.SMILEYS_EMOTION.name, EmojiCategoryType.SMILEYS_EMOTION.icon, EmojiCategoryType.SMILEYS_EMOTION.path),
-        EmojiCategory(EmojiCategoryType.SYMBOLS.name, EmojiCategoryType.SYMBOLS.icon, EmojiCategoryType.SYMBOLS.path),
-        EmojiCategory(EmojiCategoryType.TRAVEL_PLACES.name, EmojiCategoryType.TRAVEL_PLACES.icon, EmojiCategoryType.TRAVEL_PLACES.path)
+        EmojiCategory(EmojiCategoryType.TRAVEL_PLACES.name, EmojiCategoryType.TRAVEL_PLACES.icon, EmojiCategoryType.TRAVEL_PLACES.path),
+        EmojiCategory(EmojiCategoryType.SYMBOLS.name, EmojiCategoryType.SYMBOLS.icon, EmojiCategoryType.SYMBOLS.path)
     )
 }

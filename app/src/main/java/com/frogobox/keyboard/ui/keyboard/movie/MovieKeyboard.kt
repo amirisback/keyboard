@@ -11,16 +11,14 @@ import com.frogobox.coreapi.movie.MovieUrl
 import com.frogobox.coreapi.movie.model.TrendingMovie
 import com.frogobox.coreapi.movie.response.Trending
 import com.frogobox.coresdk.response.FrogoDataResponse
-import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
-import com.frogobox.recycler.core.IFrogoBindingAdapter
-import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.ItemKeyboardMovieBinding
 import com.frogobox.keyboard.databinding.KeyboardGridBinding
-import com.frogobox.sdk.ext.glideLoad
+import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
+import com.frogobox.recycler.core.IFrogoBindingAdapter
+import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.visible
-import com.frogobox.ui.databinding.FrogoRvGridType6Binding
 
 /**
  * Created by Faisal Amir on 07/11/22
@@ -48,7 +46,7 @@ class MovieKeyboard(
 
     private fun initView() {
         binding?.apply {
-            tvToolbarTitle.text = "Moview Api"
+            tvToolbarTitle.text = "Movie Api"
         }
     }
 

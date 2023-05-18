@@ -12,12 +12,12 @@ import com.frogobox.coreapi.news.NewsConstant.COUNTRY_ID
 import com.frogobox.coreapi.news.NewsUrl
 import com.frogobox.coreapi.news.model.Article
 import com.frogobox.coreapi.news.response.ArticleResponse
-import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
-import com.frogobox.recycler.core.IFrogoBindingAdapter
-import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.keyboard.common.base.BaseKeyboard
 import com.frogobox.keyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.keyboard.databinding.KeyboardListBinding
+import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
+import com.frogobox.recycler.core.IFrogoBindingAdapter
+import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.visible
 

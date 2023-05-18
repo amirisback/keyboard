@@ -11,7 +11,7 @@ import com.frogobox.keyboard.di.koin.viewModelModule
 import com.frogobox.sdk.FrogoKoinApplication
 import dagger.hilt.android.HiltAndroidApp
 import org.koin.core.KoinApplication
-import java.util.*
+import java.util.Locale
 
 /**
  * Created by Faisal Amir on 24/10/22

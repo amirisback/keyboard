@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.frogobox.keyboard.common.base.BaseActivity
-import com.frogobox.keyboard.model.AutoTextEntity
 import com.frogobox.keyboard.databinding.ActivityAutotextEditorBinding
+import com.frogobox.keyboard.model.AutoTextEntity
 import com.frogobox.sdk.ext.toText
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint

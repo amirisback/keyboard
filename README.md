@@ -29,6 +29,53 @@ What's New??
     * Update Build Gradle Style Latest Version *
     * Update Emoji Category *
 
+## How To Use As Library (Coming Soon)
+
+### Step 1. Add the JitPack repository to your build file (build.gradle : Project)
+
+#### <Option 1> Groovy Gradle
+
+    // Add it in your root build.gradle at the end of repositories:
+
+    allprojects {
+        repositories {
+            ...
+            maven { url 'https://jitpack.io' }
+        }
+    }
+
+#### <Option 2> Kotlin DSL Gradle
+
+```kotlin
+// Add it in your root build.gradle.kts at the end of repositories:
+
+allprojects {
+    repositories {
+        ...
+        maven("https://jitpack.io")
+    }
+}
+```
+
+
+### Step 2. Add the dependency (build.gradle : Module)
+
+#### <Option 1> Groovy Gradle
+
+    dependencies {
+        // library frogo-keyboard
+        implementation 'com.github.amirisback:keyboard:1.1.0'
+    }
+
+#### <Option 2> Kotlin DSL Gradle
+
+    dependencies {
+        // library frogo-keyboard
+        implementation("com.github.amirisback:keyboard:1.1.0")
+    }
+
+### Step 3. Coming Soon
+
 ## Video Play
 https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-9db1-24544f5593e0.mp4
 

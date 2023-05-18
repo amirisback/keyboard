@@ -20,7 +20,7 @@
             android:background="@color/keyboard_bg_root"
             android:minHeight="@dimen/frogo_dimen_64dp" />
 
-        <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
+        <com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:background="@color/keyboard_bg_root"
             android:minHeight="@dimen/frogo_dimen_64dp" />
 
-        <com.frogobox.keyboard.ui.keyboard.main.MainKeyboard
+        <com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard
             android:id="@+id/mock_measure_height_keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"
@@ -53,7 +53,7 @@
 
     </LinearLayout>
 
-    <com.frogobox.keyboard.ui.keyboard.autotext.AutoTextKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboard
         android:id="@+id/keyboard_autotext"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -65,7 +65,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.templatetext.TemplateTextKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextKeyboard
         android:id="@+id/keyboard_template_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -77,7 +77,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.news.NewsKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.news.NewsKeyboard
         android:id="@+id/keyboard_news"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -89,7 +89,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.movie.MovieKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboard
         android:id="@+id/keyboard_moview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -101,7 +101,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.webview.WebiewKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.webview.WebiewKeyboard
         android:id="@+id/keyboard_webview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -113,7 +113,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.form.FormKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboard
         android:id="@+id/keyboard_form"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -125,7 +125,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.keyboard.ui.keyboard.emoji.EmojiKeyboard
+    <com.frogobox.appkeyboard.ui.keyboard.emoji.EmojiKeyboard
         android:id="@+id/keyboard_emoji"
         android:layout_width="match_parent"
         android:layout_height="0dp"

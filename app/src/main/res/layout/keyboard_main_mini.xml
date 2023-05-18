@@ -1,4 +1,4 @@
-<com.frogobox.keyboard.ui.keyboard.main.MainKeyboard xmlns:android="http://schemas.android.com/apk/res/android"
+<com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mini_keyboard_view"
     style="@style/MyKeyboardViewPopup"
     android:layout_width="match_parent"

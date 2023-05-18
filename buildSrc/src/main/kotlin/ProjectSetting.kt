@@ -37,7 +37,7 @@ object ProjectSetting {
     const val BASE_PACAKGE_NAME = "$APP_DOMAIN.$APP_PLAY_CONSOLE"
 
     val PROJECT_APP_ID = "$BASE_PACAKGE_NAME.$APP_NAME"
-    const val PROJECT_NAME_SPACE = "com.frogobox.keyboard"
+    const val PROJECT_NAME_SPACE = "com.frogobox.appkeyboard"
 
     const val PROJECT_VERSION_CODE =
         (VERSION_MAJOR * 100) + (VERSION_MINOR * 10) + (VERSION_PATCH * 1)

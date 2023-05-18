@@ -54,11 +54,4 @@ object ProjectSetting {
     val DB = "\"$NAME_DB.db\""
     val PREF = "\"pref_$NAME_DB\""
 
-    // ---------------------------------------------------------------------------------------------
-
-    const val PLAYSTORE_STORE_FILE = "frogoboxmedia.jks"
-    const val PLAYSTORE_STORE_PASSWORD = "amirisback"
-    const val PLAYSTORE_KEY_ALIAS = "frogoisback"
-    const val PLAYSTORE_KEY_PASSWORD = "amirisback"
-
 }

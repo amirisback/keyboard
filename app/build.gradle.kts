@@ -55,10 +55,10 @@ android {
             // You need to specify either an absolute path or include the
             // keystore file in the same directory as the build.gradle file.
             // [PROJECT FOLDER NAME/app/[COPY YOUT KEY STORE] .jks in here
-            storeFile = file(ProjectSetting.PLAYSTORE_STORE_FILE)
-            storePassword = ProjectSetting.PLAYSTORE_STORE_PASSWORD
-            keyAlias = ProjectSetting.PLAYSTORE_KEY_ALIAS
-            keyPassword = ProjectSetting.PLAYSTORE_KEY_PASSWORD
+            storeFile = file(ProjectSign.PLAYSTORE_STORE_FILE)
+            storePassword = ProjectSign.PLAYSTORE_STORE_PASSWORD
+            keyAlias = ProjectSign.PLAYSTORE_KEY_ALIAS
+            keyPassword = ProjectSign.PLAYSTORE_KEY_PASSWORD
         }
     }
 

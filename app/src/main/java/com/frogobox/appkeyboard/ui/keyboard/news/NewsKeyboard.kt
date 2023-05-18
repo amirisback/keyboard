@@ -12,7 +12,7 @@ import com.frogobox.coreapi.news.NewsConstant.COUNTRY_ID
 import com.frogobox.coreapi.news.NewsUrl
 import com.frogobox.coreapi.news.model.Article
 import com.frogobox.coreapi.news.response.ArticleResponse
-import com.frogobox.appkeyboard.common.base.BaseKeyboard
+import com.frogobox.libkeyboard.BaseKeyboard
 import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.appkeyboard.databinding.KeyboardListBinding
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener

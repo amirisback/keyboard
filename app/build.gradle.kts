@@ -8,7 +8,7 @@ plugins {
 
 android {
 
-    namespace = ProjectSetting.PROJECT_NAME_SPACE
+    namespace = ProjectSetting.PROJECT_NAME_SPACE_APP
     compileSdk = ProjectSetting.PROJECT_TARGET_SDK
 
     defaultConfig {
@@ -109,16 +109,13 @@ android {
 
 dependencies {
 
-    implementation(Androidx.Work.runtimeKtx)
+    implementation(project(DependencyGradle.MODULE_LIB_FROGO_KEYBOARD))
 
+    implementation(Androidx.Work.runtimeKtx)
     implementation(Google.Hilt.android)
 
-    implementation(Frogo.sdk)
-    implementation(Frogo.ui)
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
-
-    implementation(Androidx.emoji2)
 
     implementation(Util.FastAdapter.core)
     implementation(Util.FastAdapter.expandable)

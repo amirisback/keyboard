@@ -1,4 +1,4 @@
-package com.frogobox.appkeyboard.ui.keyboard.emoji
+package com.frogobox.libkeyboard
 
 /**
  * Created by Faisal Amir on 24/10/22

@@ -32,6 +32,14 @@ import com.frogobox.libkeyboard.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.libkeyboard.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.libkeyboard.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.libkeyboard.OnKeyboardActionListener
+import com.frogobox.libkeyboard.ext.adjustAlpha
+import com.frogobox.libkeyboard.ext.applyColorFilter
+import com.frogobox.libkeyboard.ext.getContrastColor
+import com.frogobox.libkeyboard.ext.getProperBackgroundColor
+import com.frogobox.libkeyboard.ext.getProperPrimaryColor
+import com.frogobox.libkeyboard.ext.getProperTextColor
+import com.frogobox.libkeyboard.ext.getStrokeColor
+import com.frogobox.libkeyboard.ext.isDarkThemeOn
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.max
@@ -144,8 +152,7 @@ class MainKeyboard @JvmOverloads constructor(
     // handle system default theme (Material You) specially as the color is taken from the system, not hardcoded by us
 
     init {
-        val attributes =
-            context.obtainStyledAttributes(attrs, com.frogobox.libkeyboard.R.styleable.KwKeyboardView, 0, defStyleRes)
+        val attributes = context.obtainStyledAttributes(attrs, com.frogobox.libkeyboard.R.styleable.KwKeyboardView, 0, defStyleRes)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val keyTextSize = 0
         val indexCnt = attributes.indexCount
@@ -172,7 +179,7 @@ class MainKeyboard @JvmOverloads constructor(
         mPrimaryColor = context.getProperPrimaryColor()
 
         mPreviewPopup = PopupWindow(context)
-        mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
+        mPreviewText = inflater.inflate(resources.getLayout(com.frogobox.libkeyboard.R.layout.item_keyboard_main), null) as TextView
         mPreviewTextSizeLarge = context.resources.getDimension(com.frogobox.libkeyboard.R.dimen.preview_text_size).toInt()
         mPreviewPopup.contentView = mPreviewText
         mPreviewPopup.setBackgroundDrawable(null)

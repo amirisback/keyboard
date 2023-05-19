@@ -1,4 +1,4 @@
-package com.frogobox.appkeyboard.common.ext
+package com.frogobox.libkeyboard.ext
 
 import android.graphics.Color
 

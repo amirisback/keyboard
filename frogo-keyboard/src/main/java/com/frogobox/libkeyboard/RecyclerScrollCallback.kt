@@ -1,4 +1,4 @@
-package com.frogobox.appkeyboard.util
+package com.frogobox.libkeyboard
 
 interface RecyclerScrollCallback {
     fun onScrolled(scrollY: Int)

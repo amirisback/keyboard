@@ -14,8 +14,12 @@ import androidx.emoji2.text.EmojiCompat
 import com.frogobox.appkeyboard.databinding.ItemKeyboardEmojiBinding
 import com.frogobox.appkeyboard.databinding.KeyboardEmojiBinding
 import com.frogobox.libkeyboard.OnKeyboardActionListener
-import com.frogobox.appkeyboard.util.AutoGridLayoutManager
+import com.frogobox.libkeyboard.AutoGridLayoutManager
 import com.frogobox.libkeyboard.BaseKeyboard
+import com.frogobox.libkeyboard.EmojiCategory
+import com.frogobox.libkeyboard.EmojiCategoryType
+import com.frogobox.libkeyboard.getEmojiCategory
+import com.frogobox.libkeyboard.parseRawEmojiSpecsFile
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

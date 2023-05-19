@@ -13,7 +13,7 @@ import com.frogobox.coreapi.movie.MovieUrl
 import com.frogobox.coreapi.movie.model.TrendingMovie
 import com.frogobox.coreapi.movie.response.Trending
 import com.frogobox.coresdk.response.FrogoDataResponse
-import com.frogobox.libkeyboard.BaseKeyboard
+import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

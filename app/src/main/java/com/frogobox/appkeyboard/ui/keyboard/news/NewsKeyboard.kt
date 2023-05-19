@@ -14,7 +14,7 @@ import com.frogobox.coreapi.news.NewsConstant.COUNTRY_ID
 import com.frogobox.coreapi.news.NewsUrl
 import com.frogobox.coreapi.news.model.Article
 import com.frogobox.coreapi.news.response.ArticleResponse
-import com.frogobox.libkeyboard.BaseKeyboard
+import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

@@ -1,4 +1,4 @@
-package com.frogobox.libkeyboard
+package com.frogobox.libkeyboard.util
 
 import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager

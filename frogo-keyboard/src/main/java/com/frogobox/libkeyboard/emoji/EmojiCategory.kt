@@ -1,4 +1,4 @@
-package com.frogobox.libkeyboard
+package com.frogobox.libkeyboard.emoji
 
 import androidx.annotation.Keep
 

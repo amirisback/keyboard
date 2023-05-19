@@ -30,7 +30,7 @@ import com.frogobox.libkeyboard.ItemMainKeyboard
 import com.frogobox.libkeyboard.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.libkeyboard.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.libkeyboard.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
-import com.frogobox.libkeyboard.OnKeyboardActionListener
+import com.frogobox.libkeyboard.util.OnKeyboardActionListener
 import com.frogobox.appkeyboard.ui.main.MainActivity
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter

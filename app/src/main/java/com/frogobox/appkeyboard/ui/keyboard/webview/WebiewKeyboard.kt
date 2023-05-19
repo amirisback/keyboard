@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import com.frogobox.appkeyboard.databinding.KeyboardWebviewBinding
-import com.frogobox.libkeyboard.BaseKeyboard
+import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.sdk.ext.loadUrlExt
 
 /**

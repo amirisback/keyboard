@@ -1,5 +1,5 @@
 ![Banner](/docs/image/banner-frogo-keyboard.png)
-
+[![Jitpack Io](https://jitpack.io/v/amirisback/keyboard.svg?style=flat-square)](https://jitpack.io/#amirisback/keyboard)
 [![Android CI](https://github.com/amirisback/keyboard/actions/workflows/android-ci.yml/badge.svg)](https://github.com/amirisback/keyboard/actions/workflows/android-ci.yml)
 [![Scan with Detekt](https://github.com/amirisback/keyboard/actions/workflows/detekt-analysis.yml/badge.svg)](https://github.com/amirisback/keyboard/actions/workflows/detekt-analysis.yml)
 [![Google Badge](https://img.shields.io/badge/Google%20Dev%20Library-keyboard-orange?style=flat-square)](https://devlibrary.withgoogle.com/products/android/repos/amirisback-keyboard)

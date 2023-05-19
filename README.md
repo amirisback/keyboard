@@ -20,7 +20,7 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.1.0
+    $version_release = 1.1.1
 
 What's New??
 
@@ -64,17 +64,246 @@ allprojects {
 
     dependencies {
         // library frogo-keyboard
-        implementation 'com.github.amirisback:keyboard:1.1.0'
+        implementation 'com.github.amirisback:keyboard:1.1.1'
     }
 
 #### <Option 2> Kotlin DSL Gradle
 
     dependencies {
         // library frogo-keyboard
-        implementation("com.github.amirisback:keyboard:1.1.0")
+        implementation("com.github.amirisback:keyboard:1.1.1")
     }
 
-### Step 3. Coming Soon
+### Step 3. Create Service Keyboard IME
+
+#### Create Class Keyboard IME
+```kotlin
+class KeyboardIME : BaseKeyboardIME<YourIMELayoutBinding>() {
+    
+    // ovveride function from IKeyboardIME
+    
+}
+```
+
+#### Interface IKeyboardIME
+```kotlin
+interface IKeyboardIME {
+
+    fun initialSetupKeyboard()
+
+    fun setupBinding() 
+    
+    fun invalidateKeyboard()
+
+    fun initCurrentInputConnection()
+    
+    fun hideMainKeyboard()
+
+    fun showMainKeyboard()
+
+    fun showOnlyKeyboard()
+    
+    fun hideOnlyKeyboard()
+    
+    fun EditText.showKeyboardExt()
+
+    fun initBackToMainKeyboard()
+
+    fun setupFeatureKeyboard()
+
+    fun initView()
+
+    fun invalidateAllKeys()
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun runEmojiBoard()
+
+    fun updateShiftKeyState()
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun onKeyExt(code: Int, inputConnection: InputConnection)
+
+    fun moveCursor(moveRight: Boolean)
+
+    fun getImeOptionsActionId(): Int
+
+    fun getKeyboardLayoutXML(): Int
+    
+}
+```
+
+### Step 4. Create Layout Keyboard IME
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/keyboard_holder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/keyboard_bg_root">
+
+    <LinearLayout
+        android:id="@+id/container_keyboard_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/keyboard_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/keyboard_bg_root"
+            android:minHeight="@dimen/frogo_dimen_64dp" />
+
+        <com.frogobox.libkeyboard.ui.main.MainKeyboard
+            android:id="@+id/keyboard_main"
+            style="@style/KwKeyboardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/theme_dark_background_color" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mock_measure_height_keyboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mock_keyboard_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/keyboard_bg_root"
+            android:minHeight="@dimen/frogo_dimen_64dp" />
+
+        <com.frogobox.libkeyboard.ui.main.MainKeyboard
+            android:id="@+id/mock_measure_height_keyboard_main"
+            style="@style/KwKeyboardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/theme_dark_background_color" />
+
+    </LinearLayout>
+
+    <com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboard
+        android:id="@+id/keyboard_autotext"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextKeyboard
+        android:id="@+id/keyboard_template_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.appkeyboard.ui.keyboard.news.NewsKeyboard
+        android:id="@+id/keyboard_news"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboard
+        android:id="@+id/keyboard_moview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.appkeyboard.ui.keyboard.webview.WebiewKeyboard
+        android:id="@+id/keyboard_webview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboard
+        android:id="@+id/keyboard_form"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+    <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboard
+        android:id="@+id/keyboard_emoji"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### Step 5. Create KeyConfig
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:icon="@drawable/ic_frogobox"
+    android:settingsActivity="com.frogobox.appkeyboard.ui.main.MainActivity">
+
+    <subtype android:imeSubtypeMode="Keyboard" />
+
+</input-method>
+
+```
+
+### Step 6. Create Keyboard Service In Manifest
+```xml
+<service
+    android:name=".services.KeyboardIME"
+    android:exported="true"
+    android:label="@string/app_name"
+    android:permission="android.permission.BIND_INPUT_METHOD">
+    <meta-data
+        android:name="android.view.im"
+        android:resource="@xml/keys_config" />
+    <intent-filter>
+        <action android:name="android.view.InputMethod" />
+    </intent-filter>
+</service>
+```
+
 
 ## Video Play
 https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-9db1-24544f5593e0.mp4

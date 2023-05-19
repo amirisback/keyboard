@@ -19,7 +19,7 @@
             android:background="@color/keyboard_bg_root"
             android:minHeight="@dimen/frogo_dimen_64dp" />
 
-        <com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard
+        <com.frogobox.libkeyboard.ui.main.MainKeyboard
             android:id="@+id/keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             android:background="@color/keyboard_bg_root"
             android:minHeight="@dimen/frogo_dimen_64dp" />
 
-        <com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard
+        <com.frogobox.libkeyboard.ui.main.MainKeyboard
             android:id="@+id/mock_measure_height_keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"

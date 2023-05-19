@@ -27,7 +27,7 @@ import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_PERM
 import com.frogobox.libkeyboard.ui.main.OnKeyboardActionListener
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
-abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeyboardActionListener {
+abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeyboardActionListener, IKeyboardIME {
 
     // how quickly do we have to doubletap shift to enable permanent caps lock
     var SHIFT_PERM_TOGGLE_SPEED = 500
@@ -144,40 +144,40 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         currentInputConnection?.commitText(text, 0)
     }
 
-    open fun initialSetupKeyboard() {
+    override fun initialSetupKeyboard() {
 
     }
 
-    open fun setupBinding() {
+    override fun setupBinding() {
         initialSetupKeyboard()
     }
 
-    open fun invalidateKeyboard() {
+    override fun invalidateKeyboard() {
 
         setupFeatureKeyboard()
     }
 
-    open fun initCurrentInputConnection() {
+    override fun initCurrentInputConnection() {
 
     }
 
-    open fun hideMainKeyboard() {
+    override fun hideMainKeyboard() {
 
     }
 
-    open fun showMainKeyboard() {
+    override fun showMainKeyboard() {
 
     }
 
-    open fun showOnlyKeyboard() {
+    override fun showOnlyKeyboard() {
 
     }
 
-    open fun hideOnlyKeyboard() {
+    override fun hideOnlyKeyboard() {
 
     }
 
-    open fun EditText.showKeyboardExt() {
+    override fun EditText.showKeyboardExt() {
         setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 showOnlyKeyboard()
@@ -188,28 +188,28 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         }
     }
 
-    open fun initBackToMainKeyboard() {
+    override fun initBackToMainKeyboard() {
 
     }
 
-    open fun setupFeatureKeyboard() {
+    override fun setupFeatureKeyboard() {
 
     }
 
-    open fun initView() {
+    override fun initView() {
         setupFeatureKeyboard()
         initBackToMainKeyboard()
     }
 
-    open fun invalidateAllKeys() {
+    override fun invalidateAllKeys() {
 
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    open fun runEmojiBoard() {
+    override fun runEmojiBoard() {
     }
 
-    open fun updateShiftKeyState() {
+    override fun updateShiftKeyState() {
         if (keyboardMode == KEYBOARD_LETTERS) {
             val editorInfo = currentInputEditorInfo
             if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
@@ -222,7 +222,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    open fun onKeyExt(code: Int, inputConnection: InputConnection) {
+    override fun onKeyExt(code: Int, inputConnection: InputConnection) {
         if (keyboard == null || inputConnection == null) {
             return
         }
@@ -352,7 +352,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         }
     }
 
-    open fun moveCursor(moveRight: Boolean) {
+    override fun moveCursor(moveRight: Boolean) {
         val extractedText =
             currentInputConnection?.getExtractedText(ExtractedTextRequest(), 0) ?: return
         var newCursorPosition = extractedText.selectionStart
@@ -365,7 +365,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         currentInputConnection?.setSelection(newCursorPosition, newCursorPosition)
     }
 
-    open fun getImeOptionsActionId(): Int {
+    override fun getImeOptionsActionId(): Int {
         return if (currentInputEditorInfo.imeOptions and IME_FLAG_NO_ENTER_ACTION != 0) {
             IME_ACTION_NONE
         } else {
@@ -373,7 +373,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         }
     }
 
-    open fun getKeyboardLayoutXML(): Int {
+    override fun getKeyboardLayoutXML(): Int {
         return R.xml.keys_letters_qwerty
     }
 

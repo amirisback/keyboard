@@ -1,4 +1,4 @@
-package com.frogobox.libkeyboard.emoji
+package com.frogobox.libkeyboard.ui.emoji
 
 import android.content.Context
 

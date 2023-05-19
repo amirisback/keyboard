@@ -45,7 +45,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.frogobox.libkeyboard.emoji.EmojiKeyboardRecyclerView
+        <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboardRecyclerView
             android:id="@+id/emoji_list"
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_160dp"

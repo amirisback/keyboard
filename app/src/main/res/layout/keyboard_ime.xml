@@ -124,7 +124,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.libkeyboard.emoji.EmojiKeyboard
+    <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboard
         android:id="@+id/keyboard_emoji"
         android:layout_width="match_parent"
         android:layout_height="0dp"

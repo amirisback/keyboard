@@ -1,4 +1,4 @@
-package com.frogobox.libkeyboard.emoji
+package com.frogobox.libkeyboard.ui.emoji
 
 import android.content.Context
 import android.graphics.Paint
@@ -15,8 +15,7 @@ import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.libkeyboard.databinding.ItemKeyboardEmojiBinding
 import com.frogobox.libkeyboard.databinding.KeyboardEmojiBinding
-import com.frogobox.libkeyboard.util.AutoGridLayoutManager
-import com.frogobox.libkeyboard.util.OnKeyboardActionListener
+import com.frogobox.libkeyboard.ui.main.OnKeyboardActionListener
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

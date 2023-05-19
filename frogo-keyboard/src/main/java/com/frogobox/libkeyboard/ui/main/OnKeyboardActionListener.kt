@@ -1,4 +1,4 @@
-package com.frogobox.libkeyboard.util
+package com.frogobox.libkeyboard.ui.main
 
 /**
  * Created by Faisal Amir on 07/11/22

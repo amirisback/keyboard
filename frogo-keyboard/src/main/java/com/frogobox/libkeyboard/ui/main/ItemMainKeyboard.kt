@@ -1,4 +1,4 @@
-package com.frogobox.libkeyboard
+package com.frogobox.libkeyboard.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,6 +11,7 @@ import android.util.Xml
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.EditorInfo.IME_ACTION_NONE
 import androidx.annotation.XmlRes
+import com.frogobox.libkeyboard.R
 import kotlin.math.roundToInt
 
 /**

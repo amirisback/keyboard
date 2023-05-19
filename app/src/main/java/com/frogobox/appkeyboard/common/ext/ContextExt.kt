@@ -7,9 +7,9 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import com.frogobox.libkeyboard.R
 import com.frogobox.appkeyboard.util.Constant.PREF_KEYBOARD_TYPE
 import com.frogobox.appkeyboard.util.Constant.PREF_ROOT_NAME
+import com.frogobox.libkeyboard.R
 import com.frogobox.sdk.delegate.preference.PreferenceDelegatesImpl
 
 /**

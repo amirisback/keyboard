@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.frogobox.api.news.ConsumeNewsApi
+import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
+import com.frogobox.appkeyboard.databinding.KeyboardListBinding
 import com.frogobox.coreapi.ConsumeApiResponse
 import com.frogobox.coreapi.news.NewsConstant.CATEGORY_HEALTH
 import com.frogobox.coreapi.news.NewsConstant.COUNTRY_ID
@@ -13,8 +15,6 @@ import com.frogobox.coreapi.news.NewsUrl
 import com.frogobox.coreapi.news.model.Article
 import com.frogobox.coreapi.news.response.ArticleResponse
 import com.frogobox.libkeyboard.BaseKeyboard
-import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
-import com.frogobox.appkeyboard.databinding.KeyboardListBinding
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

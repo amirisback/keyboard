@@ -21,7 +21,6 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.widget.EditText
 import androidx.annotation.RequiresApi
-import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.common.ext.getKeyboardType
 import com.frogobox.appkeyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.appkeyboard.databinding.KeyboardImeBinding

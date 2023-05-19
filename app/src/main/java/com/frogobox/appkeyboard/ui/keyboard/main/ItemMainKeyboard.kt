@@ -11,7 +11,6 @@ import android.util.Xml
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.EditorInfo.IME_ACTION_NONE
 import androidx.annotation.XmlRes
-import com.frogobox.appkeyboard.R
 import kotlin.math.roundToInt
 
 /**
@@ -387,7 +386,7 @@ class ItemMainKeyboard {
                             mKeys!!.add(key)
                             if (key.code == KEYCODE_ENTER) {
                                 val enterResourceId = when (mEnterKeyType) {
-                                    EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_menu_search
+                                    EditorInfo.IME_ACTION_SEARCH -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_search
                                     EditorInfo.IME_ACTION_NEXT, EditorInfo.IME_ACTION_GO -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_arrow_right
                                     EditorInfo.IME_ACTION_SEND -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_send
                                     else -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_enter

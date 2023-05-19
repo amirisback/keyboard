@@ -2,13 +2,13 @@ package com.frogobox.appkeyboard.ui.autotext
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.frogobox.coresdk.util.FrogoDate
 import com.frogobox.appkeyboard.common.base.BaseViewModel
 import com.frogobox.appkeyboard.common.callback.DataResponseCallback
 import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.AutoTextLabel
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
+import com.frogobox.coresdk.util.FrogoDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

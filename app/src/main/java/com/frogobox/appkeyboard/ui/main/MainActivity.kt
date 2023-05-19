@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.common.ext.isDarkThemeOn
 import com.frogobox.appkeyboard.databinding.ActivityMainBinding
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity

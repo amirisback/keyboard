@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.frogobox.libkeyboard.BaseKeyboard
 import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.appkeyboard.databinding.KeyboardAutotextBinding
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
@@ -20,6 +19,7 @@ import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_LOVE
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_SALE
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.WEB
 import com.frogobox.appkeyboard.model.TemplateText
+import com.frogobox.libkeyboard.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

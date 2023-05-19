@@ -1,6 +1,5 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keyboard_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -20,7 +19,7 @@
             android:background="@color/keyboard_bg_root"
             android:minHeight="@dimen/frogo_dimen_64dp" />
 
-        <com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard
+        <com.frogobox.libkeyboard.ui.main.MainKeyboard
             android:id="@+id/keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"
@@ -44,7 +43,7 @@
             android:background="@color/keyboard_bg_root"
             android:minHeight="@dimen/frogo_dimen_64dp" />
 
-        <com.frogobox.appkeyboard.ui.keyboard.main.MainKeyboard
+        <com.frogobox.libkeyboard.ui.main.MainKeyboard
             android:id="@+id/mock_measure_height_keyboard_main"
             style="@style/KwKeyboardView"
             android:layout_width="match_parent"
@@ -125,7 +124,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
 
-    <com.frogobox.appkeyboard.ui.keyboard.emoji.EmojiKeyboard
+    <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboard
         android:id="@+id/keyboard_emoji"
         android:layout_width="match_parent"
         android:layout_height="0dp"

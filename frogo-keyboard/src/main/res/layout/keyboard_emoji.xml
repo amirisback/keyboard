@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/keyboard_bg_root">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/toolbar_back"
+                android:layout_width="@dimen/frogo_dimen_24dp"
+                android:layout_height="@dimen/frogo_dimen_24dp"
+                android:layout_margin="@dimen/frogo_dimen_16dp"
+                android:src="@drawable/ic_keyboard_arrow_left"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/tv_text_color" />
+
+            <TextView
+                android:id="@+id/tv_toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/frogo_dimen_16dp"
+                android:text="@string/emojis"
+                android:textColor="@color/tv_text_color"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/toolbar_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboardRecyclerView
+            android:id="@+id/emoji_list"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/frogo_dimen_160dp"
+            android:clipToPadding="false"
+            android:padding="@dimen/frogo_dimen_4dp"
+            android:scrollbars="vertical"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_keyboard_emoji" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/frogo_dimen_1dp"
+            android:background="@color/bg_card_reverse" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/emoji_category_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/frogo_dimen_4dp"
+            tools:itemCount="1"
+            tools:listitem="@layout/item_keyboard_emoji" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

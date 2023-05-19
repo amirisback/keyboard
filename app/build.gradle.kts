@@ -8,7 +8,7 @@ plugins {
 
 android {
 
-    namespace = ProjectSetting.PROJECT_NAME_SPACE
+    namespace = ProjectSetting.PROJECT_NAME_SPACE_APP
     compileSdk = ProjectSetting.PROJECT_TARGET_SDK
 
     defaultConfig {
@@ -55,10 +55,10 @@ android {
             // You need to specify either an absolute path or include the
             // keystore file in the same directory as the build.gradle file.
             // [PROJECT FOLDER NAME/app/[COPY YOUT KEY STORE] .jks in here
-            storeFile = file(ProjectSetting.PLAYSTORE_STORE_FILE)
-            storePassword = ProjectSetting.PLAYSTORE_STORE_PASSWORD
-            keyAlias = ProjectSetting.PLAYSTORE_KEY_ALIAS
-            keyPassword = ProjectSetting.PLAYSTORE_KEY_PASSWORD
+            storeFile = file(ProjectSign.PLAYSTORE_STORE_FILE)
+            storePassword = ProjectSign.PLAYSTORE_STORE_PASSWORD
+            keyAlias = ProjectSign.PLAYSTORE_KEY_ALIAS
+            keyPassword = ProjectSign.PLAYSTORE_KEY_PASSWORD
         }
     }
 
@@ -109,27 +109,12 @@ android {
 
 dependencies {
 
-    implementation(Androidx.Work.runtimeKtx)
+    implementation(project(DependencyGradle.MODULE_LIB_FROGO_KEYBOARD))
 
+    implementation(Androidx.Work.runtimeKtx)
     implementation(Google.Hilt.android)
 
-    implementation(Frogo.sdk)
-    implementation(Frogo.ui)
-    implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
-
-    implementation(Androidx.emoji2)
-
-    implementation(Util.FastAdapter.core)
-    implementation(Util.FastAdapter.expandable)
-    implementation(Util.FastAdapter.binding)
-    implementation(Util.FastAdapter.diff)
-    implementation(Util.FastAdapter.drag)
-    implementation(Util.FastAdapter.paged)
-    implementation(Util.FastAdapter.scroll)
-    implementation(Util.FastAdapter.swipe)
-    implementation(Util.FastAdapter.ui)
-    implementation(Util.FastAdapter.utils)
 
     kapt(GitHub.glideCompiler)
     kapt(Google.Hilt.compiler)

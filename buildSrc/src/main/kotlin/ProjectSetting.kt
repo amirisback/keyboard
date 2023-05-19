@@ -36,11 +36,15 @@ object ProjectSetting {
 
     const val BASE_PACAKGE_NAME = "$APP_DOMAIN.$APP_PLAY_CONSOLE"
 
-    val PROJECT_APP_ID = "$BASE_PACAKGE_NAME.$APP_NAME"
-    const val PROJECT_NAME_SPACE = "com.frogobox.appkeyboard"
+    const val MODULE_APP = "appkeyboard"
+    const val MODULE_LIB_FROGO_KEYBOARD = "libkeyboard"
 
-    const val PROJECT_VERSION_CODE =
-        (VERSION_MAJOR * 100) + (VERSION_MINOR * 10) + (VERSION_PATCH * 1)
+    val PROJECT_APP_ID = "$BASE_PACAKGE_NAME.$APP_NAME"
+
+    const val PROJECT_NAME_SPACE_APP = "$BASE_PACAKGE_NAME.$MODULE_APP"
+    const val PROJECT_NAME_SPACE_LIB_FROGO_KEYBOARD = "$BASE_PACAKGE_NAME.$MODULE_LIB_FROGO_KEYBOARD"
+
+    const val PROJECT_VERSION_CODE = (VERSION_MAJOR * 100) + (VERSION_MINOR * 10) + (VERSION_PATCH * 1)
     const val PROJECT_VERSION_NAME = "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
 
     // ---------------------------------------------------------------------------------------------
@@ -49,12 +53,5 @@ object ProjectSetting {
     val NAME_DB = NAME_APP.lowercase().replace(" ", "_")
     val DB = "\"$NAME_DB.db\""
     val PREF = "\"pref_$NAME_DB\""
-
-    // ---------------------------------------------------------------------------------------------
-
-    const val PLAYSTORE_STORE_FILE = "frogoboxmedia.jks"
-    const val PLAYSTORE_STORE_PASSWORD = "amirisback"
-    const val PLAYSTORE_KEY_ALIAS = "frogoisback"
-    const val PLAYSTORE_KEY_PASSWORD = "amirisback"
 
 }

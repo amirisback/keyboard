@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.frogobox.api.movie.ConsumeMovieApi
+import com.frogobox.appkeyboard.databinding.ItemKeyboardMovieBinding
+import com.frogobox.appkeyboard.databinding.KeyboardGridBinding
 import com.frogobox.coreapi.movie.MovieUrl
 import com.frogobox.coreapi.movie.model.TrendingMovie
 import com.frogobox.coreapi.movie.response.Trending
 import com.frogobox.coresdk.response.FrogoDataResponse
-import com.frogobox.appkeyboard.common.base.BaseKeyboard
-import com.frogobox.appkeyboard.databinding.ItemKeyboardMovieBinding
-import com.frogobox.appkeyboard.databinding.KeyboardGridBinding
+import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

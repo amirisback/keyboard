@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.appkeyboard.databinding.ItemKeyboardEmojiBinding
 import com.frogobox.appkeyboard.databinding.KeyboardEmojiBinding
-import com.frogobox.appkeyboard.ui.keyboard.main.OnKeyboardActionListener
+import com.frogobox.libkeyboard.OnKeyboardActionListener
 import com.frogobox.appkeyboard.util.AutoGridLayoutManager
 import com.frogobox.libkeyboard.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener

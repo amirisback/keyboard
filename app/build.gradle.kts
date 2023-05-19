@@ -117,17 +117,6 @@ dependencies {
     implementation(Frogo.recyclerView)
     implementation(Frogo.consumeApi)
 
-    implementation(Util.FastAdapter.core)
-    implementation(Util.FastAdapter.expandable)
-    implementation(Util.FastAdapter.binding)
-    implementation(Util.FastAdapter.diff)
-    implementation(Util.FastAdapter.drag)
-    implementation(Util.FastAdapter.paged)
-    implementation(Util.FastAdapter.scroll)
-    implementation(Util.FastAdapter.swipe)
-    implementation(Util.FastAdapter.ui)
-    implementation(Util.FastAdapter.utils)
-
     kapt(GitHub.glideCompiler)
     kapt(Google.Hilt.compiler)
     kapt(Androidx.Room.compiler)

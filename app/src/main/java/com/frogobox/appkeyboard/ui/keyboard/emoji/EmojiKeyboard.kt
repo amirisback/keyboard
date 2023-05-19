@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.emoji2.text.EmojiCompat
-import com.frogobox.appkeyboard.R
 import com.frogobox.libkeyboard.BaseKeyboard
 import com.frogobox.appkeyboard.databinding.ItemKeyboardEmojiBinding
 import com.frogobox.appkeyboard.databinding.KeyboardEmojiBinding
@@ -162,7 +161,7 @@ class EmojiKeyboard(
             }
         }
 
-        val emojiItemWidth = context.resources.getDimensionPixelSize(R.dimen.emoji_item_size)
+        val emojiItemWidth = context.resources.getDimensionPixelSize(com.frogobox.libkeyboard.R.dimen.emoji_item_size)
         val mLayoutManager = AutoGridLayoutManager(context, emojiItemWidth)
 
         binding?.apply {

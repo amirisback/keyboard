@@ -62,7 +62,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
     private var binding: KeyboardImeBinding? = null
 
     override fun onCreate() {
-        setTheme(R.style.Theme_Research)
+        setTheme(com.frogobox.libkeyboard.R.style.Theme_Research)
         super.onCreate()
     }
 
@@ -107,12 +107,12 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
         val keyboardXml = when (inputTypeClass) {
             TYPE_CLASS_NUMBER -> {
                 keyboardMode = KEYBOARD_NUMBER
-                R.xml.keys_number
+                com.frogobox.libkeyboard.R.xml.keys_number
             }
 
             TYPE_CLASS_DATETIME, TYPE_CLASS_PHONE -> {
                 keyboardMode = KEYBOARD_SYMBOLS
-                R.xml.keys_symbols
+                com.frogobox.libkeyboard.R.xml.keys_symbols
             }
             else -> {
                 keyboardMode = KEYBOARD_LETTERS
@@ -503,10 +503,10 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
                 } else {
                     val keyboardXml = if (keyboardMode == KEYBOARD_SYMBOLS) {
                         keyboardMode = KEYBOARD_SYMBOLS_SHIFT
-                        R.xml.keys_symbols_shift
+                        com.frogobox.libkeyboard.R.xml.keys_symbols_shift
                     } else {
                         keyboardMode = KEYBOARD_SYMBOLS
-                        R.xml.keys_symbols
+                        com.frogobox.libkeyboard.R.xml.keys_symbols
                     }
                     keyboard = ItemMainKeyboard(this, keyboardXml, enterKeyType)
                     binding?.keyboardMain?.setKeyboard(keyboard!!)
@@ -540,7 +540,7 @@ class KeyboardIME : InputMethodService(), OnKeyboardActionListener {
             ItemMainKeyboard.KEYCODE_MODE_CHANGE -> {
                 val keyboardXml = if (keyboardMode == KEYBOARD_LETTERS) {
                     keyboardMode = KEYBOARD_SYMBOLS
-                    R.xml.keys_symbols
+                    com.frogobox.libkeyboard.R.xml.keys_symbols
                 } else {
                     keyboardMode = KEYBOARD_LETTERS
                     getKeyboardLayoutXML()

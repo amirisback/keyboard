@@ -128,7 +128,7 @@ class MainKeyboard @JvmOverloads constructor(
 
     companion object {
         private const val NOT_A_KEY = -1
-        private val LONG_PRESSABLE_STATE_SET = intArrayOf(R.attr.state_long_pressable)
+        private val LONG_PRESSABLE_STATE_SET = intArrayOf(com.frogobox.libkeyboard.R.attr.state_long_pressable)
         private const val MSG_REMOVE_PREVIEW = 1
         private const val MSG_REPEAT = 2
         private const val MSG_LONGPRESS = 3
@@ -143,7 +143,7 @@ class MainKeyboard @JvmOverloads constructor(
 
     init {
         val attributes =
-            context.obtainStyledAttributes(attrs, R.styleable.KwKeyboardView, 0, defStyleRes)
+            context.obtainStyledAttributes(attrs, com.frogobox.libkeyboard.R.styleable.KwKeyboardView, 0, defStyleRes)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val keyTextSize = 0
         val indexCnt = attributes.indexCount
@@ -151,7 +151,7 @@ class MainKeyboard @JvmOverloads constructor(
         try {
             for (i in 0 until indexCnt) {
                 when (val attr = attributes.getIndex(i)) {
-                    R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize =
+                    com.frogobox.libkeyboard.R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize =
                         attributes.getDimensionPixelSize(attr, 18)
                 }
             }
@@ -160,10 +160,10 @@ class MainKeyboard @JvmOverloads constructor(
         }
 
         mPopupLayout = R.layout.keyboard_main_mini
-        mKeyBackground = resources.getDrawable(R.drawable.keyboard_bg_mini_selector, context.theme)
-        mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
-        mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
-        mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
+        mKeyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_mini_selector, context.theme)
+        mVerticalCorrection = resources.getDimension(com.frogobox.libkeyboard.R.dimen.vertical_correction).toInt()
+        mLabelTextSize = resources.getDimension(com.frogobox.libkeyboard.R.dimen.label_text_size).toInt()
+        mPreviewHeight = resources.getDimension(com.frogobox.libkeyboard.R.dimen.key_height).toInt()
         mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
         mTextColor = context.getProperTextColor()
         mBackgroundColor = context.getProperBackgroundColor()
@@ -171,7 +171,7 @@ class MainKeyboard @JvmOverloads constructor(
 
         mPreviewPopup = PopupWindow(context)
         mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
-        mPreviewTextSizeLarge = context.resources.getDimension(R.dimen.preview_text_size).toInt()
+        mPreviewTextSizeLarge = context.resources.getDimension(com.frogobox.libkeyboard.R.dimen.preview_text_size).toInt()
         mPreviewPopup.contentView = mPreviewText
         mPreviewPopup.setBackgroundDrawable(null)
 
@@ -186,10 +186,10 @@ class MainKeyboard @JvmOverloads constructor(
         mPaint.alpha = 255
         mMiniKeyboardCache = HashMap()
         mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
-        mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
+        mPopupMaxMoveDistance = resources.getDimension(com.frogobox.libkeyboard.R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
-        mTopSmallNumberMarginWidth = resources.getDimension(R.dimen.top_small_number_margin_width)
-        mTopSmallNumberMarginHeight = resources.getDimension(R.dimen.top_small_number_margin_height)
+        mTopSmallNumberMarginWidth = resources.getDimension(com.frogobox.libkeyboard.R.dimen.top_small_number_margin_width)
+        mTopSmallNumberMarginHeight = resources.getDimension(com.frogobox.libkeyboard.R.dimen.top_small_number_margin_height)
     }
 
     @SuppressLint("HandlerLeak")
@@ -222,18 +222,18 @@ class MainKeyboard @JvmOverloads constructor(
             val strokeColor = context.getStrokeColor()
 
             val darkerColor = if (context.isDarkThemeOn()) {
-                ContextCompat.getColor(context, R.color.system_neutral1_900)
+                ContextCompat.getColor(context, com.frogobox.libkeyboard.R.color.system_neutral1_900)
             } else {
-                ContextCompat.getColor(context, R.color.system_neutral1_10)
+                ContextCompat.getColor(context, com.frogobox.libkeyboard.R.color.system_neutral1_10)
             }
 
-            val miniKeyboardBackgroundColor = ContextCompat.getColor(context, R.color.keyboard_bg_normal_color)
+            val miniKeyboardBackgroundColor = ContextCompat.getColor(context, com.frogobox.libkeyboard.R.color.keyboard_bg_normal_color)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
                 val previewBackground = background as LayerDrawable
-                previewBackground.findDrawableByLayerId(R.id.button_background_shape)
+                previewBackground.findDrawableByLayerId(com.frogobox.libkeyboard.R.id.button_background_shape)
                     .applyColorFilter(miniKeyboardBackgroundColor)
-                previewBackground.findDrawableByLayerId(R.id.button_background_stroke)
+                previewBackground.findDrawableByLayerId(com.frogobox.libkeyboard.R.id.button_background_stroke)
                     .applyColorFilter(strokeColor)
                 background = previewBackground
             } else {
@@ -393,35 +393,35 @@ class MainKeyboard @JvmOverloads constructor(
             val key = keys[i]
             val code = key.code
             val labels = key.label
-            var keyBackground = resources.getDrawable(R.drawable.keyboard_bg_normal, context.theme)
+            var keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_normal, context.theme)
             when (code) {
                 KEYCODE_SPACE -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_space, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_space, context.theme)
                 }
                 KEYCODE_ENTER -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_action, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_action, context.theme)
                 }
                 KEYCODE_MODE_CHANGE -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_change, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_change, context.theme)
                 }
                 KEYCODE_DELETE -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_attribute, context.theme)
                 }
                 KEYCODE_SHIFT -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_attribute, context.theme)
                 }
                 KEYCODE_EMOJI -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_attribute, context.theme)
                 }
 
             }
 
             when (labels) {
                 "," -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_attribute, context.theme)
                 }
                 "." -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground = resources.getDrawable(com.frogobox.libkeyboard.R.drawable.keyboard_bg_attribute, context.theme)
                 }
             }
 
@@ -475,9 +475,9 @@ class MainKeyboard @JvmOverloads constructor(
             } else if (key.icon != null && mKeyboard != null) {
                 if (code == KEYCODE_SHIFT) {
                     val drawableId = when (mKeyboard!!.mShiftState) {
-                        SHIFT_OFF -> R.drawable.ic_keyboard_caps_outline
-                        SHIFT_ON_ONE_CHAR -> R.drawable.ic_keyboard_caps
-                        else -> R.drawable.ic_keyboard_caps_underlined
+                        SHIFT_OFF -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_caps_outline
+                        SHIFT_ON_ONE_CHAR -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_caps
+                        else -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_caps_underlined
                     }
                     key.icon = ResourcesCompat.getDrawable(resources, drawableId, null)
                 }
@@ -662,10 +662,10 @@ class MainKeyboard @JvmOverloads constructor(
             val event = AccessibilityEvent.obtain(eventType)
             onInitializeAccessibilityEvent(event)
             val text: String = when (code) {
-                KEYCODE_DELETE -> context.getString(R.string.keycode_delete)
-                KEYCODE_ENTER -> context.getString(R.string.keycode_enter)
-                KEYCODE_MODE_CHANGE -> context.getString(R.string.keycode_mode_change)
-                KEYCODE_SHIFT -> context.getString(R.string.keycode_shift)
+                KEYCODE_DELETE -> context.getString(com.frogobox.libkeyboard.R.string.keycode_delete)
+                KEYCODE_ENTER -> context.getString(com.frogobox.libkeyboard.R.string.keycode_enter)
+                KEYCODE_MODE_CHANGE -> context.getString(com.frogobox.libkeyboard.R.string.keycode_mode_change)
+                KEYCODE_SHIFT -> context.getString(com.frogobox.libkeyboard.R.string.keycode_shift)
                 else -> code.toChar().toString()
             }
             event.text.add(text)

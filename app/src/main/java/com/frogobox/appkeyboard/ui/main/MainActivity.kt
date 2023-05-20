@@ -106,51 +106,20 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
     }
 
     private fun isUsingKeyboard(): Boolean {
-        val currentKeyboard =
-            Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        val enabledKeyboards = inputMethodManager.enabledInputMethodList
-        val check = enabledKeyboards.find {
-            it.settingsActivity == MainActivity::class.java.canonicalName
-        }
-        return if (isKeyboardEnabled()) {
-            check?.id == currentKeyboard
-        } else {
-            false
-        }
+        val currentKeyboard = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+        val pianoKeyboard = "$packageName/com.frogobox.appkeyboard.services.KeyboardIME"
+        return currentKeyboard == pianoKeyboard
     }
 
     private fun isKeyboardEnabled(): Boolean {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val enabledKeyboards = inputMethodManager.enabledInputMethodList
         return enabledKeyboards.any {
-            it.settingsActivity == MainActivity::class.java.canonicalName
-        }
-    }
-
-    private fun checkKeyboard() {
-        val currentKeyboard =
-            Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        val enabledKeyboards = inputMethodManager.inputMethodList
-        showLogDebug("Enabled Keyboards         : $currentKeyboard")
-        enabledKeyboards.forEachIndexed { index, it ->
-            showLogDebug("Index                     : $index")
-            showLogDebug("ID                        : ${it.id}")
-            showLogDebug("Class name                : ${it.component.className}")
-            showLogDebug("Package Name              : ${it.component.packageName}")
-            showLogDebug("Short Class Name          : ${it.component.shortClassName}")
-            showLogDebug("Settings Activity         : ${it.settingsActivity}")
-            showLogDebug("Service Name              : ${it.serviceName}")
-            showLogDebug("Service Info Name         : ${it.serviceInfo.name}")
-            showLogDebug("Service Info Package Name : ${it.serviceInfo.packageName}")
-            showLogDebug("Service Info Package Flag : ${it.serviceInfo.flags}")
-            showLogDebug("-----------------------------------------------------")
+            it.serviceInfo.packageName == packageName
         }
     }
 
     private fun handlingState() {
-        checkKeyboard()
         binding.titleState.apply {
             if (!isKeyboardEnabled()) {
                 text = "Frogo Keyboard Not Active"

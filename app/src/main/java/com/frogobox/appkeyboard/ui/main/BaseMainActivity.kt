@@ -7,18 +7,15 @@ import com.frogobox.sdk.delegate.piracy.FrogoPiracyDialogCallback
 import com.frogobox.sdk.delegate.piracy.PiracyDelegates
 import com.frogobox.sdk.delegate.piracy.PiracyDelegatesImpl
 import com.frogobox.sdk.delegate.piracy.util.PiracyMessage
-import com.frogobox.sdk.delegate.util.UtilDelegates
-import com.frogobox.sdk.delegate.util.UtilDelegatesImpl
+import com.frogobox.sdk.ext.openPlayStore
 
 abstract class BaseMainActivity<VB : ViewBinding> : BaseActivity<VB>(),
-    PiracyDelegates by PiracyDelegatesImpl(),
-    UtilDelegates by UtilDelegatesImpl()
+    PiracyDelegates by PiracyDelegatesImpl()
 {
 
     override fun setupDelegates() {
         super.setupDelegates()
         setupPiracyDelegate(this, this)
-        setupUtilDelegates(this)
     }
 
     override fun setupPiracyMode() {
@@ -27,7 +24,7 @@ abstract class BaseMainActivity<VB : ViewBinding> : BaseActivity<VB>(),
 
                 showPiracedDialog(message, object : FrogoPiracyDialogCallback {
                     override fun doOnPirated(message: PiracyMessage) {
-                        openPlaystore(packageName)
+                        openPlayStore(packageName)
                     }
 
                 })

@@ -69,7 +69,7 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
     private fun setupUI() {
         binding.apply {
             btnAdd.setOnClickListener {
-                startActivityResult.launch(
+                startActivityResultExt(
                     Intent(
                         this@AutoTextActivity,
                         AutoTextEditorActivity::class.java
@@ -105,7 +105,7 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
                     notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
                 ) {
                     val extra = Gson().toJson(data)
-                    startActivityResult.launch(
+                    startActivityResultExt(
                         Intent(this@AutoTextActivity, AutoTextDetailActivity::class.java).apply {
                             putExtra(AutoTextDetailActivity.EXTRA_AUTO_TEXT, extra)
                         }

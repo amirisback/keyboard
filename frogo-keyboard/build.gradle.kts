@@ -47,9 +47,9 @@ android {
 
 dependencies {
 
-    api(Frogo.sdk)
-    api(Frogo.ui)
-    api(Frogo.recyclerView)
+    api(DependencyGradle.FROGO_SDK)
+    api(DependencyGradle.FROGO_UI)
+    api(DependencyGradle.FROGO_RECYCLER_VIEW)
 
     api(Androidx.emoji2)
 

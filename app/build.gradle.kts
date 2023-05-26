@@ -114,7 +114,7 @@ dependencies {
     implementation(Androidx.Work.runtimeKtx)
     implementation(Google.Hilt.android)
 
-    implementation(Frogo.consumeApi)
+    implementation(DependencyGradle.FROGO_CONSUME_API)
 
     kapt(GitHub.glideCompiler)
     kapt(Google.Hilt.compiler)

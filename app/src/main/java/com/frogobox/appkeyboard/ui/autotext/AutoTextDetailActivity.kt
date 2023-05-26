@@ -84,7 +84,7 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
             }
 
             btnEdit.setOnClickListener {
-                startActivityResult.launch(
+                startActivityResultExt(
                     Intent(
                         this@AutoTextDetailActivity,
                         AutoTextEditorActivity::class.java

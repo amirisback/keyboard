@@ -27,7 +27,6 @@
         android:layout_height="@dimen/frogo_dimen_16dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_check"
-        app:tint="@color/tv_text_color"/>
+        android:src="@drawable/ic_check"/>
 
 </RelativeLayout>

@@ -137,7 +137,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/frogo_dimen_36dp"
             android:layout_marginBottom="@dimen/frogo_dimen_8dp"
-            android:src="@drawable/ic_menu_form" />
+            android:src="@drawable/ic_menu_keyboard" />
 
         <TextView
             android:layout_width="match_parent"

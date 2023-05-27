@@ -68,7 +68,7 @@ class KeyboardUtil {
             KeyboardFeature(
                 KeyboardFeatureType.WEB.id,
                 KeyboardFeatureType.WEB,
-                com.frogobox.libkeyboard.R.drawable.ic_keyboard_search,
+                R.drawable.ic_menu_website,
                 pref.loadPrefBoolean(KeyboardFeatureType.WEB.id, true)
             ),
             KeyboardFeature(

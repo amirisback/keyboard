@@ -11,7 +11,7 @@
         android:id="@+id/frogo_rv_empty_iv_poster"
         android:layout_width="@dimen/frogo_dimen_150dp"
         android:layout_height="@dimen/frogo_dimen_150dp"
-        android:src="@drawable/ic_empty_view" />
+        android:src="@drawable/frogo_ic_empty_view" />
 
     <TextView
         android:id="@+id/frogo_rv_empty_tv_title"

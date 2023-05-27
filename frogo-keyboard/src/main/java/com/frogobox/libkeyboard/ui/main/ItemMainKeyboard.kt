@@ -311,7 +311,7 @@ class ItemMainKeyboard {
         row.defaultHorizontalGap = mDefaultHorizontalGap
         mKeyboardHeightMultiplier = getKeyboardHeightMultiplier()
 
-        characters.forEachIndexed { index, character ->
+        characters.forEachIndexed { _, character ->
             val key = Key(row)
             if (column >= MAX_KEYS_PER_MINI_ROW) {
                 column = 0

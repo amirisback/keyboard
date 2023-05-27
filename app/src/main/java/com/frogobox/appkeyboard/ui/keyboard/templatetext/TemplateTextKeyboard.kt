@@ -47,6 +47,7 @@ class TemplateTextKeyboard(
                 WEB -> ""
                 FORM -> ""
                 SETTING -> ""
+                KeyboardFeatureType.CHANGE_KEYBOARD -> ""
                 AUTO_TEXT -> ""
                 TEMPLATE_TEXT_GAME -> getTitleText(TEMPLATE_TEXT_GAME.name)
                 TEMPLATE_TEXT_APP -> getTitleText(TEMPLATE_TEXT_APP.name)
@@ -66,6 +67,7 @@ class TemplateTextKeyboard(
                 FORM -> listOf()
                 AUTO_TEXT -> listOf()
                 SETTING -> listOf()
+                KeyboardFeatureType.CHANGE_KEYBOARD -> listOf()
                 TEMPLATE_TEXT_GAME -> TemplateTextUtils.getTextGame(context)
                 TEMPLATE_TEXT_APP -> TemplateTextUtils.getTextApp(context)
                 TEMPLATE_TEXT_SALE -> TemplateTextUtils.getTextSale(context)

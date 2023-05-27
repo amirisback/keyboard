@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.RequiresApi
 import com.frogobox.appkeyboard.common.ext.getKeyboardType
@@ -91,7 +92,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     }
 
     override fun EditText.showKeyboardExt() {
-        setOnFocusChangeListener { v, hasFocus ->
+        setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 showOnlyKeyboard()
             }
@@ -230,30 +231,39 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                                     hideMainKeyboard()
                                     keyboardAutotext.visible()
                                 }
+
                                 KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
                                     hideMainKeyboard()
                                     keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
                                     keyboardTemplateText.visible()
                                 }
+
                                 KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
                                     hideMainKeyboard()
                                     keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
                                     keyboardTemplateText.visible()
                                 }
+
                                 KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
                                     hideMainKeyboard()
                                     keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
                                     keyboardTemplateText.visible()
                                 }
+
                                 KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
                                     hideMainKeyboard()
                                     keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
                                     keyboardTemplateText.visible()
                                 }
+
                                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
                                     hideMainKeyboard()
                                     keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
                                     keyboardTemplateText.visible()
+                                }
+
+                                KeyboardFeatureType.CHANGE_KEYBOARD -> {
+                                    (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
                                 }
 
                                 KeyboardFeatureType.SETTING -> {

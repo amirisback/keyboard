@@ -78,6 +78,12 @@ class KeyboardUtil {
                 pref.loadPrefBoolean(KeyboardFeatureType.FORM.id, true)
             ),
             KeyboardFeature(
+                KeyboardFeatureType.CHANGE_KEYBOARD.id,
+                KeyboardFeatureType.CHANGE_KEYBOARD,
+                R.drawable.ic_menu_keyboard,
+                pref.loadPrefBoolean(KeyboardFeatureType.CHANGE_KEYBOARD.id, true)
+            ),
+            KeyboardFeature(
                 KeyboardFeatureType.SETTING.id,
                 KeyboardFeatureType.SETTING,
                 R.drawable.ic_menu_setting,

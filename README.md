@@ -20,7 +20,7 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.1.3
+    $version_release = 1.1.4
 
 What's New??
 
@@ -64,14 +64,14 @@ allprojects {
 
     dependencies {
         // library frogo-keyboard
-        implementation 'com.github.amirisback:keyboard:1.1.3'
+        implementation 'com.github.amirisback:keyboard:1.1.4'
     }
 
 #### <Option 2> Kotlin DSL Gradle
 
     dependencies {
         // library frogo-keyboard
-        implementation("com.github.amirisback:keyboard:1.1.3")
+        implementation("com.github.amirisback:keyboard:1.1.4")
     }
 
 ### Step 3. Create Service Keyboard IME

@@ -9,11 +9,12 @@ import com.frogobox.api.news.ConsumeNewsApi
 import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.appkeyboard.databinding.KeyboardListBinding
 import com.frogobox.coreapi.ConsumeApiResponse
-import com.frogobox.coreapi.news.NewsConstant.CATEGORY_HEALTH
-import com.frogobox.coreapi.news.NewsConstant.COUNTRY_ID
-import com.frogobox.coreapi.news.NewsUrl
-import com.frogobox.coreapi.news.model.Article
-import com.frogobox.coreapi.news.response.ArticleResponse
+import com.frogobox.coreutil.news.NewsConstant.CATEGORY_HEALTH
+import com.frogobox.coreutil.news.NewsConstant.COUNTRY_ID
+import com.frogobox.coreutil.news.NewsUrl
+import com.frogobox.coreutil.news.model.Article
+import com.frogobox.coreutil.news.response.ArticleResponse
+
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter

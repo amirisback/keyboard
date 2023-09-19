@@ -3,7 +3,9 @@ package com.frogobox.appkeyboard.services
 import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.RequiresApi
@@ -291,6 +293,38 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                     .build()
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onKey(code: Int) {
+        val formView = binding?.keyboardForm
+        var inputConnection = currentInputConnection
+
+        if (formView?.visibility == View.VISIBLE) {
+            val et1 = formView.binding?.etText
+            val et1Connection = et1?.onCreateInputConnection(EditorInfo())
+
+            val et2 = formView.binding?.etText2
+            val et2Connection = et2?.onCreateInputConnection(EditorInfo())
+
+            val et3 = formView.binding?.etText3
+            val et3Connection = et3?.onCreateInputConnection(EditorInfo())
+
+            if (et1?.isFocused == true) {
+                inputConnection = et1Connection
+            } else if (et2?.isFocused == true) {
+                inputConnection = et2Connection
+            } else if (et3?.isFocused == true) {
+                inputConnection = et3Connection
+            }
+
+        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
+            inputConnection =
+                binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
+        } else {
+            inputConnection = currentInputConnection
+        }
+        onKeyExt(code, inputConnection)
     }
 
     override fun initView() {

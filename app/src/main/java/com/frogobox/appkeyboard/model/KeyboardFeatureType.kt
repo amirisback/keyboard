@@ -20,5 +20,6 @@ enum class KeyboardFeatureType(val id: String, val title: String) {
     TEMPLATE_TEXT_LOVE("menu_template_text_love","Love Emoji"),
     TEMPLATE_TEXT_GREETING("menu_template_text_greeting", "Greeting"),
     CHANGE_KEYBOARD("menu_change_keyboard","Change Keyboard"),
-    SETTING("menu_setting","Setting")
+    SETTING("menu_setting","Setting"),
+    DUMMY("menu_dummy", "Dummy")
 }

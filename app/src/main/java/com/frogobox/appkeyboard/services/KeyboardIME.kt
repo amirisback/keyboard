@@ -275,6 +275,11 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                                     })
                                 }
 
+                                KeyboardFeatureType.DUMMY -> {
+                                    hideMainKeyboard()
+                                    keyboardDummy.visible()
+                                }
+
                             }
 
                         }

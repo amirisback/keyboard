@@ -42,18 +42,12 @@ class TemplateTextKeyboard(
     private fun setupTitleContent(templateTextType: KeyboardFeatureType) {
         binding?.apply {
             tvToolbarTitle.text = when (templateTextType) {
-                NEWS -> ""
-                MOVIE -> ""
-                WEB -> ""
-                FORM -> ""
-                SETTING -> ""
-                KeyboardFeatureType.CHANGE_KEYBOARD -> ""
-                AUTO_TEXT -> ""
                 TEMPLATE_TEXT_GAME -> getTitleText(TEMPLATE_TEXT_GAME.name)
                 TEMPLATE_TEXT_APP -> getTitleText(TEMPLATE_TEXT_APP.name)
                 TEMPLATE_TEXT_SALE -> getTitleText(TEMPLATE_TEXT_SALE.name)
                 TEMPLATE_TEXT_GREETING -> getTitleText(TEMPLATE_TEXT_GREETING.name)
                 TEMPLATE_TEXT_LOVE -> getTitleText(TEMPLATE_TEXT_LOVE.name)
+                else -> ""
             }
         }
     }
@@ -61,18 +55,12 @@ class TemplateTextKeyboard(
     private fun setupRvContent(templateTextType: KeyboardFeatureType) {
         setupRv(
             when (templateTextType) {
-                NEWS -> listOf()
-                MOVIE -> listOf()
-                WEB -> listOf()
-                FORM -> listOf()
-                AUTO_TEXT -> listOf()
-                SETTING -> listOf()
-                KeyboardFeatureType.CHANGE_KEYBOARD -> listOf()
                 TEMPLATE_TEXT_GAME -> TemplateTextUtils.getTextGame(context)
                 TEMPLATE_TEXT_APP -> TemplateTextUtils.getTextApp(context)
                 TEMPLATE_TEXT_SALE -> TemplateTextUtils.getTextSale(context)
                 TEMPLATE_TEXT_GREETING -> TemplateTextUtils.getTextGreeting(context)
                 TEMPLATE_TEXT_LOVE -> TemplateTextUtils.getTextLove(context)
+                else -> listOf()
             }
         )
     }

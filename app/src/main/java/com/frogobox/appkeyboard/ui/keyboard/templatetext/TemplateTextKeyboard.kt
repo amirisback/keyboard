@@ -13,6 +13,7 @@ import com.frogobox.appkeyboard.model.KeyboardFeatureType.MOVIE
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.NEWS
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.SETTING
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_APP
+import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_DUMMY
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_GAME
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_GREETING
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_LOVE
@@ -54,6 +55,7 @@ class TemplateTextKeyboard(
                 TEMPLATE_TEXT_SALE -> getTitleText(TEMPLATE_TEXT_SALE.name)
                 TEMPLATE_TEXT_GREETING -> getTitleText(TEMPLATE_TEXT_GREETING.name)
                 TEMPLATE_TEXT_LOVE -> getTitleText(TEMPLATE_TEXT_LOVE.name)
+                TEMPLATE_TEXT_DUMMY -> getTitleText(TEMPLATE_TEXT_DUMMY.name)
             }
         }
     }
@@ -73,6 +75,7 @@ class TemplateTextKeyboard(
                 TEMPLATE_TEXT_SALE -> TemplateTextUtils.getTextSale(context)
                 TEMPLATE_TEXT_GREETING -> TemplateTextUtils.getTextGreeting(context)
                 TEMPLATE_TEXT_LOVE -> TemplateTextUtils.getTextLove(context)
+                TEMPLATE_TEXT_DUMMY -> TemplateTextUtils.getTextDummy(context)
             }
         )
     }

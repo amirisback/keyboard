@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import com.frogobox.appkeyboard.databinding.KeyboardFormBinding
+import com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboard
+import com.frogobox.appkeyboard.util.KeyboardNavigationHelper
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
 
 /**
@@ -23,6 +25,8 @@ class FormKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardFormBinding>(context, attrs) {
 
+    private val destinationKeyboard = MovieKeyboard(context, attrs)
+
     override fun setupViewBinding(): KeyboardFormBinding {
         return KeyboardFormBinding.inflate(LayoutInflater.from(context), this, true)
     }
@@ -34,6 +38,10 @@ class FormKeyboard(
     private fun initView() {
         binding?.apply {
             Log.d("FormKeyboard", "initView: ${etText.onCreateInputConnection(EditorInfo())}")
+
+            btnSubmit.setOnClickListener {
+                KeyboardNavigationHelper.navigateTo(this@FormKeyboard, destinationKeyboard)
+            }
         }
     }
 

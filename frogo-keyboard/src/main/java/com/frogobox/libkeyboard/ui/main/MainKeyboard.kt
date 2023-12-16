@@ -19,6 +19,14 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.frogobox.libkeyboard.R
+import com.frogobox.libkeyboard.common.ext.adjustAlpha
+import com.frogobox.libkeyboard.common.ext.applyColorFilter
+import com.frogobox.libkeyboard.common.ext.getContrastColor
+import com.frogobox.libkeyboard.common.ext.getProperBackgroundColor
+import com.frogobox.libkeyboard.common.ext.getProperPrimaryColor
+import com.frogobox.libkeyboard.common.ext.getProperTextColor
+import com.frogobox.libkeyboard.common.ext.getStrokeColor
+import com.frogobox.libkeyboard.common.ext.isDarkThemeOn
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
@@ -29,14 +37,6 @@ import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.MAX_KEYS_PER_
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
-import com.frogobox.libkeyboard.common.ext.adjustAlpha
-import com.frogobox.libkeyboard.common.ext.applyColorFilter
-import com.frogobox.libkeyboard.common.ext.getContrastColor
-import com.frogobox.libkeyboard.common.ext.getProperBackgroundColor
-import com.frogobox.libkeyboard.common.ext.getProperPrimaryColor
-import com.frogobox.libkeyboard.common.ext.getProperTextColor
-import com.frogobox.libkeyboard.common.ext.getStrokeColor
-import com.frogobox.libkeyboard.common.ext.isDarkThemeOn
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.max
@@ -149,8 +149,10 @@ class MainKeyboard @JvmOverloads constructor(
     // handle system default theme (Material You) specially as the color is taken from the system, not hardcoded by us
 
     init {
-        val attributes = context.obtainStyledAttributes(attrs,
-            R.styleable.KwKeyboardView, 0, defStyleRes)
+        val attributes = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.KwKeyboardView, 0, defStyleRes
+        )
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val keyTextSize = 0
         val indexCnt = attributes.indexCount
@@ -171,13 +173,15 @@ class MainKeyboard @JvmOverloads constructor(
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
-        mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
+        mSpaceMoveThreshold =
+            resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
         mTextColor = context.getProperTextColor()
         mBackgroundColor = context.getProperBackgroundColor()
         mPrimaryColor = context.getProperPrimaryColor()
 
         mPreviewPopup = PopupWindow(context)
-        mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
+        mPreviewText =
+            inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
         mPreviewTextSizeLarge = context.resources.getDimension(R.dimen.preview_text_size).toInt()
         mPreviewPopup.contentView = mPreviewText
         mPreviewPopup.setBackgroundDrawable(null)
@@ -192,7 +196,8 @@ class MainKeyboard @JvmOverloads constructor(
         mPaint.textAlign = Align.CENTER
         mPaint.alpha = 255
         mMiniKeyboardCache = HashMap()
-        mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+        mAccessibilityManager =
+            (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
         mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
         mTopSmallNumberMarginWidth = resources.getDimension(R.dimen.top_small_number_margin_width)
@@ -211,6 +216,7 @@ class MainKeyboard @JvmOverloads constructor(
                             val repeat = Message.obtain(this, MSG_REPEAT)
                             sendMessageDelayed(repeat, REPEAT_INTERVAL.toLong())
                         }
+
                         MSG_LONGPRESS -> openPopupIfRequired(msg.obj as MotionEvent)
                     }
                 }
@@ -234,7 +240,8 @@ class MainKeyboard @JvmOverloads constructor(
                 ContextCompat.getColor(context, R.color.system_neutral1_10)
             }
 
-            val miniKeyboardBackgroundColor = ContextCompat.getColor(context,
+            val miniKeyboardBackgroundColor = ContextCompat.getColor(
+                context,
                 R.color.keyboard_bg_normal_color
             )
 
@@ -277,7 +284,10 @@ class MainKeyboard @JvmOverloads constructor(
 
     fun vibrateIfNeeded() {
         if (ItemMainKeyboard.VIBRATE_ON_KEYPRESS) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+            performHapticFeedback(
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
         }
     }
 
@@ -311,7 +321,8 @@ class MainKeyboard @JvmOverloads constructor(
     private fun adjustCase(label: CharSequence): CharSequence? {
         var newLabel: CharSequence? = label
         if (!newLabel.isNullOrEmpty() && mKeyboard!!.mShiftState > SHIFT_OFF && newLabel.length < 3 && Character.isLowerCase(
-                newLabel[0])
+                newLabel[0]
+            )
         ) {
             newLabel = newLabel.toString().uppercase(Locale.getDefault())
         }
@@ -405,32 +416,46 @@ class MainKeyboard @JvmOverloads constructor(
             var keyBackground = resources.getDrawable(R.drawable.keyboard_bg_normal, context.theme)
             when (code) {
                 KEYCODE_SPACE -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_space, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_space, context.theme)
                 }
+
                 KEYCODE_ENTER -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_action, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_action, context.theme)
                 }
+
                 KEYCODE_MODE_CHANGE -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_change, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_change, context.theme)
                 }
+
                 KEYCODE_DELETE -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
                 }
+
                 KEYCODE_SHIFT -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
                 }
+
                 KEYCODE_EMOJI -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
                 }
 
             }
 
             when (labels) {
                 "," -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
                 }
+
                 "." -> {
-                    keyBackground = resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
+                    keyBackground =
+                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
                 }
             }
 
@@ -473,10 +498,12 @@ class MainKeyboard @JvmOverloads constructor(
                 )
 
                 if (key.topSmallNumber.isNotEmpty()) {
-                    canvas.drawText(key.topSmallNumber,
+                    canvas.drawText(
+                        key.topSmallNumber,
                         key.width - mTopSmallNumberMarginWidth,
                         mTopSmallNumberMarginHeight,
-                        smallLetterPaint)
+                        smallLetterPaint
+                    )
                 }
 
                 // Turn off drop shadow
@@ -547,8 +574,10 @@ class MainKeyboard @JvmOverloads constructor(
                 oldKey.pressed = false
                 invalidateKey(oldKeyIndex)
                 val keyCode = oldKey.code
-                sendAccessibilityEventForUnicodeCharacter(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED,
-                    keyCode)
+                sendAccessibilityEventForUnicodeCharacter(
+                    AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED,
+                    keyCode
+                )
             }
 
             if (mCurrentKeyIndex != NOT_A_KEY && keys.size > mCurrentKeyIndex) {
@@ -560,8 +589,10 @@ class MainKeyboard @JvmOverloads constructor(
                 }
 
                 invalidateKey(mCurrentKeyIndex)
-                sendAccessibilityEventForUnicodeCharacter(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED,
-                    code)
+                sendAccessibilityEventForUnicodeCharacter(
+                    AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED,
+                    code
+                )
             }
         }
 
@@ -597,8 +628,10 @@ class MainKeyboard @JvmOverloads constructor(
                 mPreviewText!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, mKeyTextSize.toFloat())
                 mPreviewText!!.typeface = Typeface.DEFAULT_BOLD
             } else {
-                mPreviewText!!.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    mPreviewTextSizeLarge.toFloat())
+                mPreviewText!!.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    mPreviewTextSizeLarge.toFloat()
+                )
                 mPreviewText!!.typeface = Typeface.DEFAULT
             }
 
@@ -614,8 +647,10 @@ class MainKeyboard @JvmOverloads constructor(
         mPreviewText!!.background = previewBackground
 
         mPreviewText!!.setTextColor(mTextColor)
-        mPreviewText!!.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED))
+        mPreviewText!!.measure(
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        )
         val popupWidth = Math.max(mPreviewText!!.measuredWidth, key.width)
         val popupHeight = mPreviewHeight
         val lp = mPreviewText!!.layoutParams
@@ -658,10 +693,12 @@ class MainKeyboard @JvmOverloads constructor(
         if (key.label.isNotEmpty() && key.code != KEYCODE_MODE_CHANGE && key.code != KEYCODE_SHIFT) {
             previewPopup.width = popupWidth
             previewPopup.height = popupHeight
-            previewPopup.showAtLocation(mPopupParent,
+            previewPopup.showAtLocation(
+                mPopupParent,
                 Gravity.NO_GRAVITY,
                 mPopupPreviewX,
-                mPopupPreviewY)
+                mPopupPreviewY
+            )
             mPreviewText!!.visibility = VISIBLE
         }
     }
@@ -715,23 +752,29 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     private fun openPopupIfRequired(me: MotionEvent): Boolean {
-        // Check if we have a popup layout specified first.
-        if (mPopupLayout == 0) {
-            return false
+        return try {
+            // Check if we have a popup layout specified first.
+            if (mPopupLayout == 0) {
+                return false
+            }
+
+            if (mCurrentKey < 0 || mCurrentKey >= mKeys.size) {
+                return false
+            }
+
+            val popupKey = mKeys[mCurrentKey]
+            val result = onLongPress(popupKey, me)
+            if (result) {
+                mAbortKey = true
+                showPreview(NOT_A_KEY)
+            }
+            result
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
 
-        if (mCurrentKey < 0 || mCurrentKey >= mKeys.size) {
-            return false
-        }
 
-        val popupKey = mKeys[mCurrentKey]
-        val result = onLongPress(popupKey, me)
-        if (result) {
-            mAbortKey = true
-            showPreview(NOT_A_KEY)
-        }
-
-        return result
     }
 
     /**
@@ -749,7 +792,8 @@ class MainKeyboard @JvmOverloads constructor(
                 val inflater =
                     context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 mMiniKeyboardContainer = inflater.inflate(mPopupLayout, null)
-                mMiniKeyboard = mMiniKeyboardContainer!!.findViewById<View>(R.id.mini_keyboard_view) as MainKeyboard
+                mMiniKeyboard =
+                    mMiniKeyboardContainer!!.findViewById<View>(R.id.mini_keyboard_view) as MainKeyboard
 
                 mMiniKeyboard!!.mOnKeyboardActionListener = object : OnKeyboardActionListener {
                     override fun onKey(code: Int) {
@@ -779,10 +823,12 @@ class MainKeyboard @JvmOverloads constructor(
                 }
 
                 val keyboard = if (popupKey.popupCharacters != null) {
-                    ItemMainKeyboard(context,
+                    ItemMainKeyboard(
+                        context,
                         popupKeyboardId,
                         popupKey.popupCharacters!!,
-                        popupKey.width)
+                        popupKey.width
+                    )
                 } else {
                     ItemMainKeyboard(context, popupKeyboardId, 0)
                 }
@@ -910,6 +956,7 @@ class MainKeyboard @JvmOverloads constructor(
                         }
                     }
                 }
+
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     mMiniKeyboard?.mKeys?.firstOrNull { it.focused }?.apply {
                         mOnKeyboardActionListener!!.onKey(code)
@@ -968,6 +1015,7 @@ class MainKeyboard @JvmOverloads constructor(
                 invalidateKey(mCurrentKey)
                 return true
             }
+
             MotionEvent.ACTION_DOWN -> {
                 mAbortKey = false
                 mLastCodeX = touchX
@@ -1016,6 +1064,7 @@ class MainKeyboard @JvmOverloads constructor(
                     showPreview(keyIndex)
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 var continueLongPress = false
                 if (keyIndex != NOT_A_KEY) {
@@ -1069,6 +1118,7 @@ class MainKeyboard @JvmOverloads constructor(
                     mLastMoveTime = eventTime
                 }
             }
+
             MotionEvent.ACTION_UP -> {
                 mLastSpaceMoveX = 0
                 removeMessages()
@@ -1102,6 +1152,7 @@ class MainKeyboard @JvmOverloads constructor(
                 mOnKeyboardActionListener!!.onActionUp()
                 mIsLongPressingSpace = false
             }
+
             MotionEvent.ACTION_CANCEL -> {
                 mIsLongPressingSpace = false
                 mLastSpaceMoveX = 0

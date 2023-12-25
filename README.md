@@ -20,7 +20,7 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.1.4
+    $version_release = 1.1.5
 
 What's New??
 
@@ -74,65 +74,7 @@ allprojects {
         implementation("com.github.amirisback:keyboard:1.1.4")
     }
 
-### Step 3. Create Service Keyboard IME
-
-#### Create Class Keyboard IME
-```kotlin
-class KeyboardIME : BaseKeyboardIME<YourIMELayoutBinding>() {
-    
-    // ovveride function from IKeyboardIME
-    
-}
-```
-
-#### Interface IKeyboardIME
-```kotlin
-interface IKeyboardIME {
-
-    fun initialSetupKeyboard()
-
-    fun setupBinding() 
-    
-    fun invalidateKeyboard()
-
-    fun initCurrentInputConnection()
-    
-    fun hideMainKeyboard()
-
-    fun showMainKeyboard()
-
-    fun showOnlyKeyboard()
-    
-    fun hideOnlyKeyboard()
-    
-    fun EditText.showKeyboardExt()
-
-    fun initBackToMainKeyboard()
-
-    fun setupFeatureKeyboard()
-
-    fun initView()
-
-    fun invalidateAllKeys()
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun runEmojiBoard()
-
-    fun updateShiftKeyState()
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun onKeyExt(code: Int, inputConnection: InputConnection)
-
-    fun moveCursor(moveRight: Boolean)
-
-    fun getImeOptionsActionId(): Int
-
-    fun getKeyboardLayoutXML(): Int
-    
-}
-```
-
-### Step 4. Create Layout Keyboard IME
+### Step 3. Create Layout Keyboard IME
 ```xml
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -141,6 +83,7 @@ interface IKeyboardIME {
     android:layout_height="wrap_content"
     android:background="@color/keyboard_bg_root">
 
+    <!--  start of base keyboard-->
     <LinearLayout
         android:id="@+id/container_keyboard_main"
         android:layout_width="match_parent"
@@ -187,7 +130,9 @@ interface IKeyboardIME {
             android:background="@color/theme_dark_background_color" />
 
     </LinearLayout>
+    <!--   End of base keyboard-->
 
+    <!--  below is the layout for your header menu on top of your base keyboard -->
     <com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboard
         android:id="@+id/keyboard_autotext"
         android:layout_width="match_parent"
@@ -259,6 +204,7 @@ interface IKeyboardIME {
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+    <!--  end of header menu layout -->
 
     <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboard
         android:id="@+id/keyboard_emoji"
@@ -275,7 +221,368 @@ interface IKeyboardIME {
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-### Step 5. Create KeyConfig
+### Step 4. Create Service Keyboard IME
+
+#### Create Class Keyboard IME
+```kotlin
+class KeyboardIME : BaseKeyboardIME<YourIMELayoutBinding>() {
+  
+  // set your custom keyboard layout
+  override fun setupViewBinding(): YourIMELayoutBinding {
+    return YourIMELayoutBinding.inflate(LayoutInflater.from(this), null, false)
+  }
+
+  override fun initialSetupKeyboard() {
+    binding?.keyboardMain?.setKeyboard(keyboard!!) // your base keyboard
+    binding?.mockMeasureHeightKeyboardMain?.setKeyboard(keyboard!!) // this code is for your keyboard header menu 
+  }
+
+  override fun setupBinding() {
+    initialSetupKeyboard()
+    binding?.keyboardMain?.mOnKeyboardActionListener = this
+    binding?.keyboardEmoji?.mOnKeyboardActionListener = this
+  }
+
+  // redraw keyboard for capslock on/off state
+  override fun invalidateAllKeys() {
+    binding?.keyboardMain?.invalidateAllKeys()
+  }
+
+  // call this function when navigating to your feature
+  override fun hideMainKeyboard() {
+    binding?.apply {
+      keyboardMain.gone()
+      keyboardHeader.gone()
+      mockMeasureHeightKeyboard.invisible()
+    }
+  }
+
+  override fun showOnlyKeyboard() {
+    binding?.keyboardMain?.visible()
+  }
+
+  override fun hideOnlyKeyboard() {
+    binding?.keyboardMain?.visible()
+  }
+
+  // setup emoji keyboard 
+  override fun runEmojiBoard() {
+    binding?.keyboardEmoji?.visible()
+    hideMainKeyboard()
+    binding?.keyboardEmoji?.openEmojiPalette()
+  }
+}
+```
+
+### For Emoji Keyboard, dont forget to implement Dependency Injection to load emoji asset manager
+```kotlin
+@HiltAndroidApp
+class App: Application() {
+  override fun onCreate() {
+    super.onCreate()
+    setupEmojiCompat()
+  }
+
+  private fun setupEmojiCompat() {
+    val config = BundledEmojiCompatConfig(this)
+    EmojiCompat.init(config)
+  }
+}
+```
+
+### Step 5. Add keyboard header menu
+
+### setup keyboard header icon & menu name
+```kotlin
+class KeyboardUtil {
+
+    private val pref: PreferenceDelegatesImpl by inject(PreferenceDelegatesImpl::class.java)
+
+    fun menuToggle(): List<KeyboardFeature> {
+        return listOf(
+            KeyboardFeature(
+                KeyboardFeatureType.AUTO_TEXT.id,
+                KeyboardFeatureType.AUTO_TEXT,
+                R.drawable.ic_menu_auto_text,
+                pref.loadPrefBoolean(KeyboardFeatureType.AUTO_TEXT.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_APP.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_APP,
+                R.drawable.ic_menu_ps_app,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_APP.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME,
+                R.drawable.ic_menu_ps_game,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GAME.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE,
+                R.drawable.ic_menu_ps_love,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING,
+                R.drawable.ic_menu_ps_greeting,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE,
+                R.drawable.ic_menu_ps_sale,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.NEWS.id,
+                KeyboardFeatureType.NEWS,
+                R.drawable.ic_menu_news,
+                pref.loadPrefBoolean(KeyboardFeatureType.NEWS.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.MOVIE.id,
+                KeyboardFeatureType.MOVIE,
+                R.drawable.ic_menu_movie,
+                pref.loadPrefBoolean(KeyboardFeatureType.MOVIE.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.WEB.id,
+                KeyboardFeatureType.WEB,
+                R.drawable.ic_menu_website,
+                pref.loadPrefBoolean(KeyboardFeatureType.WEB.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.FORM.id,
+                KeyboardFeatureType.FORM,
+                R.drawable.ic_menu_form,
+                pref.loadPrefBoolean(KeyboardFeatureType.FORM.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.CHANGE_KEYBOARD.id,
+                KeyboardFeatureType.CHANGE_KEYBOARD,
+                R.drawable.ic_menu_keyboard,
+                pref.loadPrefBoolean(KeyboardFeatureType.CHANGE_KEYBOARD.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.SETTING.id,
+                KeyboardFeatureType.SETTING,
+                R.drawable.ic_menu_setting,
+                pref.loadPrefBoolean(KeyboardFeatureType.SETTING.id, true)
+            )
+        ).sortedBy { it.state }
+    }
+
+    fun menuKeyboard(): List<KeyboardFeature> {
+        val listFeature = mutableListOf<KeyboardFeature>()
+        menuToggle().forEach { data ->
+            if (data.state) {
+                listFeature.add(data)
+            }
+        }
+        return listFeature
+    }
+
+}
+```
+
+### setup keyboard header feature on KeyboardIME class
+```kotlin
+class KeyboardIME : BaseKeyboardIME<YourIMELayoutBinding>() {
+    // ...
+
+  override fun setupFeatureKeyboard() {
+    val maxMenu = 4
+    val gridSize = if (KeyboardUtil().menuKeyboard().size <= maxMenu) {
+      KeyboardUtil().menuKeyboard().size
+    } else if (KeyboardUtil().menuKeyboard().size.mod(maxMenu) == 0) {
+      maxMenu
+    } else {
+      maxMenu + 1
+    }
+
+    binding?.apply {
+      if (KeyboardUtil().menuKeyboard().isEmpty()) {
+        keyboardHeader.gone()
+        mockKeyboardHeader.gone()
+      } else {
+        keyboardHeader.visible()
+        mockKeyboardHeader.visible()
+        keyboardHeader.injectorBinding<KeyboardFeature, ItemKeyboardHeaderBinding>()
+          .addData(KeyboardUtil().menuKeyboard())
+          .addCallback(object :
+            IFrogoBindingAdapter<KeyboardFeature, ItemKeyboardHeaderBinding> {
+
+            override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
+              return ItemKeyboardHeaderBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+              )
+            }
+
+            override fun setupInitComponent(
+              binding: ItemKeyboardHeaderBinding,
+              data: KeyboardFeature,
+              position: Int,
+              notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+            ) {
+              binding.ivIcon.setImageResource(data.icon)
+              binding.tvTitle.text = data.type.title
+
+              if (data.state) {
+                binding.root.visible()
+              } else {
+                binding.root.gone()
+              }
+
+            }
+
+            override fun onItemClicked(
+              binding: ItemKeyboardHeaderBinding,
+              data: KeyboardFeature,
+              position: Int,
+              notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+            ) {
+
+              when (data.type) {
+                KeyboardFeatureType.NEWS -> {
+                  hideMainKeyboard()
+                  keyboardNews.visible()
+                }
+
+                KeyboardFeatureType.MOVIE -> {
+                  hideMainKeyboard()
+                  keyboardMoview.visible()
+                }
+
+                KeyboardFeatureType.WEB -> {
+                  mockMeasureHeightKeyboard.invisible()
+                  keyboardHeader.gone()
+                  keyboardWebview.visible()
+                }
+
+                KeyboardFeatureType.FORM -> {
+                  hideMainKeyboard()
+
+                  keyboardForm.visible()
+                  keyboardForm.binding?.etText?.showKeyboardExt()
+                  keyboardForm.binding?.etText2?.showKeyboardExt()
+                  keyboardForm.binding?.etText3?.showKeyboardExt()
+
+                  keyboardForm.setOnClickListener {
+                    hideOnlyKeyboard()
+                  }
+                }
+
+                KeyboardFeatureType.AUTO_TEXT -> {
+                  hideMainKeyboard()
+                  keyboardAutotext.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
+                  hideMainKeyboard()
+                  keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
+                  keyboardTemplateText.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
+                  hideMainKeyboard()
+                  keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
+                  keyboardTemplateText.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
+                  hideMainKeyboard()
+                  keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
+                  keyboardTemplateText.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
+                  hideMainKeyboard()
+                  keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
+                  keyboardTemplateText.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
+                  hideMainKeyboard()
+                  keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
+                  keyboardTemplateText.visible()
+                }
+
+                KeyboardFeatureType.CHANGE_KEYBOARD -> {
+                  (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+                }
+
+                KeyboardFeatureType.SETTING -> {
+                  binding.root.context.startActivity(
+                    Intent(binding.root.context, MainActivity::class.java).apply {
+                      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                }
+
+              }
+
+            }
+
+            override fun onItemLongClicked(
+              binding: ItemKeyboardHeaderBinding,
+              data: KeyboardFeature,
+              position: Int,
+              notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+            ) {
+            }
+
+
+          })
+          .createLayoutGrid(gridSize)
+          .build()
+      }
+    }
+  }
+    
+    // ...
+}
+```
+
+### if your feature is using a textfield, add below code to your KeyboardIME class
+```kotlin
+@RequiresApi(Build.VERSION_CODES.M)
+    override fun onKey(code: Int) {
+        val formView = binding?.keyboardForm
+        var inputConnection = currentInputConnection
+
+        if (formView?.visibility == View.VISIBLE) {
+            val et1 = formView.binding?.etText
+            val et1Connection = et1?.onCreateInputConnection(EditorInfo())
+
+            val et2 = formView.binding?.etText2
+            val et2Connection = et2?.onCreateInputConnection(EditorInfo())
+
+            val et3 = formView.binding?.etText3
+            val et3Connection = et3?.onCreateInputConnection(EditorInfo())
+
+            if (et1?.isFocused == true) {
+                inputConnection = et1Connection
+            } else if (et2?.isFocused == true) {
+                inputConnection = et2Connection
+            } else if (et3?.isFocused == true) {
+                inputConnection = et3Connection
+            }
+
+        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
+            inputConnection =
+                binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
+        } else {
+            inputConnection = currentInputConnection
+        }
+        onKeyExt(code, inputConnection)
+    }
+```
+
+### Step 6. Create keys_config.xml inside xml folder
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <input-method xmlns:android="http://schemas.android.com/apk/res/android"
@@ -288,7 +595,7 @@ interface IKeyboardIME {
 
 ```
 
-### Step 6. Create Keyboard Service In Manifest
+### Step 7. Create Keyboard Service In Manifest inside application tag
 ```xml
 <service
     android:name=".services.KeyboardIME"

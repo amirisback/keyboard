@@ -940,12 +940,12 @@ https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-
 </table>
 
 ## Documentation
-- https://github.com/SimpleMobileTools/Simple-Keyboard 
-    - Clone From This
-- https://github.com/anssih/finqwerty 
-    - Keymap app for phones with physical keyboards
-- https://github.com/shiftrot/caps2ctrl 
-    - Provides almost all keymaps we need usually
+- https://github.com/SimpleMobileTools/Simple-Keyboard
+  - Clone From This
+- https://github.com/anssih/finqwerty
+  - Keymap app for phones with physical keyboards
+- https://github.com/shiftrot/caps2ctrl
+  - Provides almost all keymaps we need usually
 - https://github.com/kolegad/custom-keyboard
 - https://android.googlesource.com/platform/frameworks/base/+/master/data/keyboards/Generic.kl
 - https://android.googlesource.com/platform/frameworks/base/+/master/data/keyboards/Generic.kcm

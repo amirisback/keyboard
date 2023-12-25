@@ -64,14 +64,14 @@ allprojects {
 
     dependencies {
         // library frogo-keyboard
-        implementation 'com.github.amirisback:keyboard:1.1.4'
+        implementation 'com.github.amirisback:keyboard:1.1.5'
     }
 
 #### <Option 2> Kotlin DSL Gradle
 
     dependencies {
         // library frogo-keyboard
-        implementation("com.github.amirisback:keyboard:1.1.4")
+        implementation("com.github.amirisback:keyboard:1.1.5")
     }
 
 ### Step 3. Create Layout Keyboard IME

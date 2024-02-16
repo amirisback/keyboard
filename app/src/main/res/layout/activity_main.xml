@@ -159,32 +159,36 @@
         app:layout_constraintTop_toBottomOf="@id/btn_go_to_setting">
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_auto_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Auto Text" />
+            android:text="Auto Text"
+            app:cornerRadius="@dimen/frogo_dimen_16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_toggle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Toggle Function" />
+            android:text="Toggle Function"
+            app:cornerRadius="@dimen/frogo_dimen_16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_multi_language"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Setup Keyboard Language" />
+            android:text="Setup Keyboard Language"
+            app:cornerRadius="@dimen/frogo_dimen_16dp" />
 
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_do_some_test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/frogo_dimen_16dp"
         android:text="Do Some Test"
+        app:cornerRadius="@dimen/frogo_dimen_16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

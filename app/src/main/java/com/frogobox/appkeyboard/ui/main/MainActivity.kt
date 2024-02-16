@@ -10,10 +10,9 @@ import androidx.core.content.ContextCompat
 import com.frogobox.libkeyboard.common.ext.isDarkThemeOn
 import com.frogobox.appkeyboard.databinding.ActivityMainBinding
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
-import com.frogobox.appkeyboard.ui.detail.DetailActivity
+import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.language.KeyboardLanguageActivity
 import com.frogobox.appkeyboard.ui.toggle.ToggleActivity
-import com.frogobox.sdk.ext.showLogDebug
 import com.frogobox.sdk.ext.startActivityExt
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -87,7 +86,7 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
             }
 
             btnDoSomeTest.setOnClickListener {
-                startActivityExt<DetailActivity>()
+                startActivityExt<TestActivity>()
             }
 
             btnAutoText.setOnClickListener {

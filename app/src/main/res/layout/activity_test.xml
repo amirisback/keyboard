@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.detail.DetailActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/container_test"
@@ -44,6 +43,7 @@
             android:background="@drawable/bg_border"
             android:focusable="true"
             android:hint="Full Text"
+            android:inputType="textMultiLine"
             android:padding="@dimen/frogo_dimen_16dp"
             android:textColor="@color/tv_text_color" />
 
@@ -61,7 +61,13 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="@dimen/frogo_dimen_16dp"
+            app:boxCornerRadiusBottomStart="@dimen/frogo_dimen_16dp"
+            app:boxCornerRadiusTopEnd="@dimen/frogo_dimen_16dp"
+            app:boxCornerRadiusTopStart="@dimen/frogo_dimen_16dp">
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/et_text_auto"
@@ -70,9 +76,7 @@
                 android:completionThreshold="1"
                 android:focusable="true"
                 android:hint="Full Text"
-                android:minHeight="@dimen/frogo_dimen_72dp"
-                android:paddingStart="@dimen/frogo_dimen_16dp"
-                android:paddingEnd="@dimen/frogo_dimen_16dp"
+                android:padding="@dimen/frogo_dimen_16dp"
                 android:textColor="@color/tv_text_color" />
 
         </com.google.android.material.textfield.TextInputLayout>

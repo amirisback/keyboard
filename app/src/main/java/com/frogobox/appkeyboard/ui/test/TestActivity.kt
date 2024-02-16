@@ -1,4 +1,4 @@
-package com.frogobox.appkeyboard.ui.detail
+package com.frogobox.appkeyboard.ui.test
 
 import android.os.Bundle
 import android.util.Log
@@ -6,20 +6,20 @@ import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.common.base.BaseActivity
-import com.frogobox.appkeyboard.databinding.ActivityDetailBinding
+import com.frogobox.appkeyboard.databinding.ActivityTestBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DetailActivity : BaseActivity<ActivityDetailBinding>() {
+class TestActivity : BaseActivity<ActivityTestBinding>() {
 
     companion object {
-        private val TAG: String = DetailActivity::class.java.simpleName
+        private val TAG: String = TestActivity::class.java.simpleName
     }
 
-    private val viewModel: DetailViewModel by viewModels()
+    private val viewModel: TestViewModel by viewModels()
 
-    override fun setupViewBinding(): ActivityDetailBinding {
-        return ActivityDetailBinding.inflate(layoutInflater)
+    override fun setupViewBinding(): ActivityTestBinding {
+        return ActivityTestBinding.inflate(layoutInflater)
     }
 
     override fun setupViewModel() {
@@ -52,7 +52,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 "Mente234234234ng",
                 "Pegangsaan"
             )
-            val adapterS = ArrayAdapter(this@DetailActivity, R.layout.item_spinner, R.id.tv_text, dummy)
+            val adapterS = ArrayAdapter(this@TestActivity, R.layout.item_spinner, R.id.tv_text, dummy)
             etTextAuto.setAdapter(adapterS)
         }
     }

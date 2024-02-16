@@ -30,12 +30,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_add"
         android:layout_width="@dimen/frogo_dimen_0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/frogo_dimen_16dp"
         android:text="Add Auto Text"
+        app:cornerRadius="@dimen/frogo_dimen_16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

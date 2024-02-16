@@ -48,22 +48,24 @@
 
     </ScrollView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_edit"
         android:layout_width="@dimen/frogo_dimen_0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/frogo_dimen_16dp"
         android:text="Edit"
+        app:cornerRadius="@dimen/frogo_dimen_16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_delete"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_delete"
         android:layout_width="@dimen/frogo_dimen_0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/frogo_dimen_16dp"
         android:text="Delete"
+        app:cornerRadius="@dimen/frogo_dimen_16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_edit" />

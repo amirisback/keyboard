@@ -58,16 +58,21 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Text">
+                    android:hint="Text"
+                    app:boxBackgroundColor="@android:color/transparent"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="@dimen/frogo_dimen_16dp"
+                    app:boxCornerRadiusBottomStart="@dimen/frogo_dimen_16dp"
+                    app:boxCornerRadiusTopEnd="@dimen/frogo_dimen_16dp"
+                    app:boxCornerRadiusTopStart="@dimen/frogo_dimen_16dp">
 
                     <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                         android:id="@+id/et_text"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/frogo_dimen_60dp"
+                        android:layout_height="wrap_content"
                         android:completionThreshold="1"
                         android:focusable="true"
-                        android:paddingStart="@dimen/frogo_dimen_16dp"
-                        android:paddingEnd="@dimen/frogo_dimen_16dp"
+                        android:padding="@dimen/frogo_dimen_16dp"
                         android:textColor="@color/tv_text_color">
 
                     </androidx.appcompat.widget.AppCompatAutoCompleteTextView>
@@ -83,25 +88,35 @@
                     android:id="@+id/et_text_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/frogo_dimen_16dp"
+                    android:layout_marginBottom="@dimen/frogo_dimen_16dp"
+                    android:background="@drawable/bg_border"
                     android:focusable="true"
-                    android:hint="Text"
+                    android:hint="Full Text"
+                    android:inputType="textMultiLine"
+                    android:padding="@dimen/frogo_dimen_16dp"
                     android:textColor="@color/tv_text_color" />
 
                 <EditText
                     android:id="@+id/et_text_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/frogo_dimen_16dp"
+                    android:background="@drawable/bg_border"
                     android:focusable="true"
-                    android:hint="Text"
+                    android:hint="Number"
+                    android:inputType="number"
+                    android:padding="@dimen/frogo_dimen_16dp"
                     android:textColor="@color/tv_text_color" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/frogo_dimen_16dp"
                     android:padding="@dimen/frogo_dimen_16dp"
-                    android:text="Submit" />
+                    android:text="Submit"
+                    app:cornerRadius="@dimen/frogo_dimen_16dp" />
 
             </LinearLayout>
 

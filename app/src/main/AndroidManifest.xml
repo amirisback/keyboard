@@ -18,7 +18,7 @@
         tools:targetApi="tiramisu">
 
         <activity
-            android:name=".ui.detail.DetailActivity"
+            android:name=".ui.test.TestActivity"
             android:exported="false" />
 
         <activity

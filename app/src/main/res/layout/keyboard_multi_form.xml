@@ -67,7 +67,7 @@
                     tools:itemCount="4"
                     tools:listitem="@layout/item_keyboard_multi_form" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

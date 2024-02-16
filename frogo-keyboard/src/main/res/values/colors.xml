@@ -16,12 +16,15 @@
     <color name="status_failed">#C53741</color>
     <color name="status_success">#41AF60</color>
     <color name="status_warning">#FFF57C00</color>
-    <color name="keyboard_board">@android:color/transparent</color>
+
+    <color name="tv_text">#000000</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_card_reverse">#000000</color>
 
     <!--  This Color For Change Background Keyboard  -->
     <color name="keyboard_background">#FCFCFF</color>
 
-    <color name="keyboard_bg_item_stroke">#757575</color>
+    <color name="keyboard_board">@android:color/transparent</color>
 
     <color name="keypad_text">#001E2C</color>
     <color name="keypad">#FFFFFF</color>
@@ -31,8 +34,8 @@
     <color name="keypad_action_icon">#FFFFFF</color>
     <color name="keypad_action_background">#76D1FF</color>
 
-    <color name="tv_text">#000000</color>
-    <color name="bg_card">#FFFFFF</color>
-    <color name="bg_card_reverse">#000000</color>
+    <color name="keypad_mini_stroke">#757575</color>
+    <color name="keypad_mini">#FFFFFF</color>
+
 
 </resources>

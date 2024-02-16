@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.Paint.Align
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.Handler
@@ -106,8 +105,6 @@ class MainKeyboard @JvmOverloads constructor(
     private val mSpaceMoveThreshold: Int
     private var ignoreTouches = false
 
-    private var mKeyBackground: Drawable? = null
-
     // For multi-tap
     private var mLastTapTime = 0L
 
@@ -171,7 +168,6 @@ class MainKeyboard @JvmOverloads constructor(
         mBackgroundColor = context.getColorExt(R.color.keyboard_board)
 
         mPopupLayout = R.layout.keyboard_main_mini
-        mKeyBackground = resources.getDrawable(R.drawable.keypad_mini, context.theme)
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
@@ -236,7 +232,7 @@ class MainKeyboard @JvmOverloads constructor(
             mTextColor = context.getColorExt(R.color.keypad_text)
             mBackgroundColor = context.getColorExt(R.color.keyboard_board)
 
-            val strokeColor = context.getColorExt(R.color.keyboard_bg_item_stroke)
+            val strokeColor = context.getColorExt(R.color.keypad_mini_stroke)
             val miniKeyboardBackgroundColor = context.getColorExt(R.color.keypad)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {

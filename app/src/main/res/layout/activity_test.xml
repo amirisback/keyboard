@@ -33,7 +33,7 @@
             android:layout_height="@dimen/frogo_dimen_2dp"
             android:layout_marginTop="@dimen/frogo_dimen_16dp"
             android:layout_marginBottom="@dimen/frogo_dimen_16dp"
-            android:background="@color/theme_dark_background" />
+            android:background="@color/grey" />
 
         <EditText
             android:id="@+id/et_text"

@@ -6,6 +6,9 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
+    <!--  Default Color  -->
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#424242</color>
@@ -14,8 +17,7 @@
     <color name="status_success">#41AF60</color>
     <color name="status_warning">#FFF57C00</color>
 
-    <color name="theme_dark_background">@color/grey</color>
-
+    <!--  This Color For Change Background Keyboard  -->
     <color name="keyboard_background">#FCFCFF</color>
 
     <color name="keyboard_toolbar_emoji">#E0F3FF</color>

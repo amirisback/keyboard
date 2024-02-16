@@ -4,16 +4,16 @@
         <attr name="state_long_pressable" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="KwKeyboardView">
+    <declare-styleable name="FrogoKeyboardView">
         <attr name="keyTextSize" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="KwKeyboard">
+    <declare-styleable name="FrogoKeyboard">
         <attr name="keyWidth" format="fraction" />
         <attr name="horizontalGap" format="fraction" />
     </declare-styleable>
 
-    <declare-styleable name="KwKeyboard_Key">
+    <declare-styleable name="FrogoKeyboard_Key">
         <!-- The unicode value that this key outputs. -->
         <attr name="code" format="integer" />
         <!-- The XML keyboard layout of any popup keyboard. -->

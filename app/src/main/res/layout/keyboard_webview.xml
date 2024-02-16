@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/keyboard_bg_root">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +28,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/tv_text_color" />
+                app:tint="@color/tv_text" />
 
             <TextView
                 android:id="@+id/tv_toolbar_title"
@@ -37,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/frogo_dimen_16dp"
                 android:text="Webview"
-                android:textColor="@color/tv_text_color"
+                android:textColor="@color/tv_text"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/toolbar_back"
@@ -47,7 +46,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="@dimen/frogo_dimen_200dp">
 
             <WebView
                 android:id="@+id/webview"

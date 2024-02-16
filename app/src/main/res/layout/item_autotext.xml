@@ -15,7 +15,7 @@
         android:id="@+id/tv_autotext_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         tools:text="@tools:sample/lorem" />
 
     <TextView
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="2"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         tools:text="@tools:sample/lorem/random" />
 
 </LinearLayout>

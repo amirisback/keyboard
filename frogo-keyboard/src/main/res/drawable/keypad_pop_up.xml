@@ -2,18 +2,18 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/button_background_shape">
         <shape android:shape="rectangle">
-            <solid android:color="@color/keyboard_bg_normal_color" />
-            <corners android:radius="@dimen/frogo_dimen_4dp" />
+            <solid android:color="@color/keypad_mini" />
+            <corners android:radius="@dimen/frogo_dimen_8dp" />
         </shape>
     </item>
 
     <item android:id="@+id/button_background_stroke">
         <shape android:shape="rectangle">
             <stroke
-                android:width="1dp"
-                android:color="@color/keyboard_bg_item_grey" />
+                android:width="@dimen/frogo_dimen_1dp"
+                android:color="@color/keypad_mini_stroke" />
             <solid android:color="@android:color/transparent" />
-            <corners android:radius="@dimen/frogo_dimen_4dp" />
+            <corners android:radius="@dimen/frogo_dimen_8dp" />
         </shape>
     </item>
 </layer-list>

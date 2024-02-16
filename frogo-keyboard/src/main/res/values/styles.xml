@@ -1,14 +1,14 @@
 <resources>
 
-    <style name="KwKeyboard">
+    <style name="FrogoKeyboard">
         <item name="itemTextAppearance">?attr/itemTextAppearance</item>
     </style>
 
-    <style name="KwKeyboardView" parent="KwKeyboard">
+    <style name="FrogoKeyboardView" parent="FrogoKeyboard">
         <item name="keyTextSize">@dimen/keyboard_text_size</item>
     </style>
 
-    <style name="MyKeyboardViewPopup" parent="KwKeyboard">
+    <style name="FrogoKeyboardViewPopup" parent="FrogoKeyboard">
         <item name="keyTextSize">@dimen/preview_text_size</item>
     </style>
 

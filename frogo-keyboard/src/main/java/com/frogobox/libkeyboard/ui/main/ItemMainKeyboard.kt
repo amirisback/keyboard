@@ -120,15 +120,15 @@ class ItemMainKeyboard {
 
         constructor(res: Resources, parent: ItemMainKeyboard, parser: XmlResourceParser?) {
             this.parent = parent
-            val a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.KwKeyboard)
+            val a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.FrogoKeyboard)
             defaultWidth = getDimensionOrFraction(a,
-                R.styleable.KwKeyboard_keyWidth,
+                R.styleable.FrogoKeyboard_keyWidth,
                 parent.mDisplayWidth,
                 parent.mDefaultWidth)
             defaultHeight =
                 (res.getDimension(R.dimen.key_height) * this.parent.mKeyboardHeightMultiplier).roundToInt()
             defaultHorizontalGap = getDimensionOrFraction(a,
-                R.styleable.KwKeyboard_horizontalGap,
+                R.styleable.FrogoKeyboard_horizontalGap,
                 parent.mDisplayWidth,
                 parent.mDefaultHorizontalGap)
             a.recycle()
@@ -212,31 +212,31 @@ class ItemMainKeyboard {
             parent) {
             this.x = x
             this.y = y
-            var a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.KwKeyboard)
+            var a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.FrogoKeyboard)
             width = getDimensionOrFraction(a,
-                R.styleable.KwKeyboard_keyWidth,
+                R.styleable.FrogoKeyboard_keyWidth,
                 keyboard.mDisplayWidth,
                 parent.defaultWidth)
             height = parent.defaultHeight
             gap = getDimensionOrFraction(a,
-                R.styleable.KwKeyboard_horizontalGap,
+                R.styleable.FrogoKeyboard_horizontalGap,
                 keyboard.mDisplayWidth,
                 parent.defaultHorizontalGap)
             this.x += gap
 
             a.recycle()
-            a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.KwKeyboard_Key)
-            code = a.getInt(R.styleable.KwKeyboard_Key_code, 0)
+            a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.FrogoKeyboard_Key)
+            code = a.getInt(R.styleable.FrogoKeyboard_Key_code, 0)
 
-            popupCharacters = a.getText(R.styleable.KwKeyboard_Key_popupCharacters)
-            popupResId = a.getResourceId(R.styleable.KwKeyboard_Key_popupKeyboard, 0)
-            repeatable = a.getBoolean(R.styleable.KwKeyboard_Key_isRepeatable, false)
-            edgeFlags = a.getInt(R.styleable.KwKeyboard_Key_keyEdgeFlags, 0)
-            icon = a.getDrawable(R.styleable.KwKeyboard_Key_keyIcon)
+            popupCharacters = a.getText(R.styleable.FrogoKeyboard_Key_popupCharacters)
+            popupResId = a.getResourceId(R.styleable.FrogoKeyboard_Key_popupKeyboard, 0)
+            repeatable = a.getBoolean(R.styleable.FrogoKeyboard_Key_isRepeatable, false)
+            edgeFlags = a.getInt(R.styleable.FrogoKeyboard_Key_keyEdgeFlags, 0)
+            icon = a.getDrawable(R.styleable.FrogoKeyboard_Key_keyIcon)
             icon?.setBounds(0, 0, icon!!.intrinsicWidth, icon!!.intrinsicHeight)
 
-            label = a.getText(R.styleable.KwKeyboard_Key_keyLabel) ?: ""
-            topSmallNumber = a.getString(R.styleable.KwKeyboard_Key_topSmallNumber) ?: ""
+            label = a.getText(R.styleable.FrogoKeyboard_Key_keyLabel) ?: ""
+            topSmallNumber = a.getString(R.styleable.FrogoKeyboard_Key_topSmallNumber) ?: ""
 
             if (label.isNotEmpty() && code != KEYCODE_MODE_CHANGE && code != KEYCODE_SHIFT) {
                 code = label[0].code
@@ -421,10 +421,10 @@ class ItemMainKeyboard {
     }
 
     private fun parseKeyboardAttributes(res: Resources, parser: XmlResourceParser) {
-        val a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.KwKeyboard)
-        mDefaultWidth = getDimensionOrFraction(a, R.styleable.KwKeyboard_keyWidth, mDisplayWidth, mDisplayWidth / 10)
+        val a = res.obtainAttributes(Xml.asAttributeSet(parser), R.styleable.FrogoKeyboard)
+        mDefaultWidth = getDimensionOrFraction(a, R.styleable.FrogoKeyboard_keyWidth, mDisplayWidth, mDisplayWidth / 10)
         mDefaultHeight = res.getDimension(R.dimen.key_height).toInt()
-        mDefaultHorizontalGap = getDimensionOrFraction(a, R.styleable.KwKeyboard_horizontalGap, mDisplayWidth, 0)
+        mDefaultHorizontalGap = getDimensionOrFraction(a, R.styleable.FrogoKeyboard_horizontalGap, mDisplayWidth, 0)
         a.recycle()
     }
 

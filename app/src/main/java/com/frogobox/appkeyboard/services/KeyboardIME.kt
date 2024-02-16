@@ -32,7 +32,6 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun initialSetupKeyboard() {
         binding?.keyboardMain?.setKeyboard(keyboard!!)
-        binding?.mockMeasureHeightKeyboardMain?.setKeyboard(keyboard!!)
     }
 
     override fun setupBinding() {
@@ -60,16 +59,14 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun hideMainKeyboard() {
         binding?.apply {
-            keyboardMain.gone()
-            keyboardHeader.gone()
-            mockMeasureHeightKeyboard.invisible()
+            keyboardMain.invisible()
+            keyboardHeader.invisible()
         }
     }
 
     override fun showMainKeyboard() {
         binding?.apply {
             keyboardMain.visible()
-            mockMeasureHeightKeyboard.gone()
             if (KeyboardUtil().menuKeyboard().isEmpty()) {
                 keyboardHeader.gone()
             } else {
@@ -158,10 +155,8 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         binding?.apply {
             if (KeyboardUtil().menuKeyboard().isEmpty()) {
                 keyboardHeader.gone()
-                mockKeyboardHeader.gone()
             } else {
                 keyboardHeader.visible()
-                mockKeyboardHeader.visible()
                 keyboardHeader.injectorBinding<KeyboardFeature, ItemKeyboardHeaderBinding>()
                     .addData(KeyboardUtil().menuKeyboard())
                     .addCallback(object :
@@ -211,14 +206,12 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                                 }
 
                                 KeyboardFeatureType.WEB -> {
-                                    mockMeasureHeightKeyboard.invisible()
                                     keyboardHeader.gone()
                                     keyboardWebview.visible()
                                 }
 
                                 KeyboardFeatureType.FORM -> {
-                                    hideMainKeyboard()
-
+                                    keyboardHeader.gone()
                                     keyboardForm.visible()
                                     keyboardForm.binding?.etText?.showKeyboardExt()
                                     keyboardForm.binding?.etText2?.showKeyboardExt()
@@ -339,7 +332,8 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun runEmojiBoard() {
         binding?.keyboardEmoji?.visible()
-        hideMainKeyboard()
+        binding?.keyboardMain?.invisible()
+        binding?.keyboardHeader?.gone()
         binding?.keyboardEmoji?.openEmojiPalette()
     }
 

@@ -1,6 +1,7 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="23dp"
     android:height="18dp"
+    android:tint="@color/keypad_action_icon"
     android:viewportWidth="23"
     android:viewportHeight="18">
     <path

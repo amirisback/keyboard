@@ -1,4 +1,4 @@
-package com.frogobox.appkeyboard.ui.detail
+package com.frogobox.appkeyboard.ui.test
 
 import com.frogobox.appkeyboard.common.base.BaseViewModel
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
@@ -16,7 +16,7 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class DetailViewModel @Inject constructor(
+class TestViewModel @Inject constructor(
     private val repository: AutoTextRepository
 ): BaseViewModel() {
 

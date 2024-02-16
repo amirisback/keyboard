@@ -107,30 +107,6 @@ allprojects {
             android:background="@color/theme_dark_background_color" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/mock_measure_height_keyboard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mock_keyboard_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/keyboard_bg_root"
-            android:minHeight="@dimen/frogo_dimen_64dp" />
-
-        <com.frogobox.libkeyboard.ui.main.MainKeyboard
-            android:id="@+id/mock_measure_height_keyboard_main"
-            style="@style/KwKeyboardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/theme_dark_background_color" />
-
-    </LinearLayout>
     <!--   End of base keyboard-->
 
     <!--  below is the layout for your header menu on top of your base keyboard -->
@@ -141,10 +117,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
 
     <com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextKeyboard
         android:id="@+id/keyboard_template_text"
@@ -153,10 +129,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
 
     <com.frogobox.appkeyboard.ui.keyboard.news.NewsKeyboard
         android:id="@+id/keyboard_news"
@@ -165,10 +141,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
 
     <com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboard
         android:id="@+id/keyboard_moview"
@@ -177,10 +153,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
 
     <com.frogobox.appkeyboard.ui.keyboard.webview.WebiewKeyboard
         android:id="@+id/keyboard_webview"
@@ -189,10 +165,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
 
     <com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboard
         android:id="@+id/keyboard_form"
@@ -201,10 +177,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
     <!--  end of header menu layout -->
 
     <com.frogobox.libkeyboard.ui.emoji.EmojiKeyboard
@@ -214,10 +190,10 @@ allprojects {
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mock_measure_height_keyboard"
+        app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mock_measure_height_keyboard" />
+        app:layout_constraintTop_toTopOf="@id/container_keyboard_main" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```

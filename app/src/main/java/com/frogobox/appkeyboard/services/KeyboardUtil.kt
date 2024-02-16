@@ -88,6 +88,12 @@ class KeyboardUtil {
                 KeyboardFeatureType.SETTING,
                 R.drawable.ic_menu_setting,
                 pref.loadPrefBoolean(KeyboardFeatureType.SETTING.id, true)
+            ),
+            KeyboardFeature(
+                KeyboardFeatureType.TEMPLATE_TEXT_DUMMY.id,
+                KeyboardFeatureType.TEMPLATE_TEXT_DUMMY,
+                com.frogobox.api.R.drawable.ic_frogo_cracked,
+                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_DUMMY.id, true)
             )
         ).sortedBy { it.state }
     }

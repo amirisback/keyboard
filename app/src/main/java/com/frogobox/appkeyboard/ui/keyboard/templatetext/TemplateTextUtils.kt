@@ -52,4 +52,10 @@ object TemplateTextUtils {
         }.shuffled()
     }
 
+    fun getTextDummy(context: Context): List<TemplateText> {
+        return getDataAsset(context, "text/text_dummy.json").mapIndexed { index, s ->
+            TemplateText(index, s, KeyboardFeatureType.TEMPLATE_TEXT_DUMMY)
+        }
+    }
+
 }

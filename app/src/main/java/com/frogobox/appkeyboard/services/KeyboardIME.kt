@@ -264,6 +264,12 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                                     keyboardTemplateText.visible()
                                 }
 
+                                KeyboardFeatureType.TEMPLATE_TEXT_DUMMY -> {
+                                    hideMainKeyboard()
+                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_DUMMY)
+                                    keyboardTemplateText.visible()
+                                }
+
                                 KeyboardFeatureType.CHANGE_KEYBOARD -> {
                                     (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
                                 }

@@ -16,19 +16,20 @@
 
     <color name="theme_dark_background">@color/grey</color>
 
+    <color name="keyboard_background">#FCFCFF</color>
+
     <color name="keyboard_toolbar_emoji">#E0F3FF</color>
-
-    <color name="keyboard_bg_board">#FCFCFF</color>
-
     <color name="keyboard_text">#001E2C</color>
 
     <color name="keyboard_bg_item_stroke">#757575</color>
+    <color name="keyboard_bg_board">@android:color/transparent</color>
 
     <color name="keyboard_bg_normal">#FFFFFF</color>
     <color name="keyboard_bg_normal_stroke">#EFEFEF</color>
 
-    <color name="keyboard_item_action">#FFFFFF</color>
+    <color name="keyboard_bg_item_action">#FFFFFF</color>
     <color name="keyboard_bg_action">#76D1FF</color>
+
     <color name="keyboard_bg_attribute">#D1E5F4</color>
     <color name="keyboard_bg_change">#B5CAD7</color>
 

@@ -107,30 +107,6 @@ allprojects {
             android:background="@color/theme_dark_background_color" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/container_keyboard_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/container_keyboard_main">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mock_keyboard_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/keyboard_bg_root"
-            android:minHeight="@dimen/frogo_dimen_64dp" />
-
-        <com.frogobox.libkeyboard.ui.main.MainKeyboard
-            android:id="@+id/container_keyboard_main_main"
-            style="@style/KwKeyboardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/theme_dark_background_color" />
-
-    </LinearLayout>
     <!--   End of base keyboard-->
 
     <!--  below is the layout for your header menu on top of your base keyboard -->

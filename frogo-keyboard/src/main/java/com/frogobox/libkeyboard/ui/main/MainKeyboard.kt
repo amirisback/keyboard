@@ -148,7 +148,7 @@ class MainKeyboard @JvmOverloads constructor(
 
     init {
         val attributes =
-            context.obtainStyledAttributes(attrs, R.styleable.KwKeyboardView, 0, defStyleRes)
+            context.obtainStyledAttributes(attrs, R.styleable.FrogoKeyboardView, 0, defStyleRes)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val keyTextSize = 0
         val indexCnt = attributes.indexCount
@@ -156,7 +156,7 @@ class MainKeyboard @JvmOverloads constructor(
         try {
             for (i in 0 until indexCnt) {
                 when (val attr = attributes.getIndex(i)) {
-                    R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize =
+                    R.styleable.FrogoKeyboardView_keyTextSize -> mKeyTextSize =
                         attributes.getDimensionPixelSize(attr, 18)
                 }
             }
@@ -171,12 +171,10 @@ class MainKeyboard @JvmOverloads constructor(
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
-        mSpaceMoveThreshold =
-            resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
+        mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
 
-        mPreviewText =
-            inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
-        mPreviewTextSizeLarge = context.resources.getDimension(R.dimen.preview_text_size).toInt()
+        mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
+        mPreviewTextSizeLarge = resources.getDimension(R.dimen.preview_text_size).toInt()
 
         mPreviewPopup = PopupWindow(context)
         mPreviewPopup.contentView = mPreviewText
@@ -195,8 +193,7 @@ class MainKeyboard @JvmOverloads constructor(
         }
 
         mMiniKeyboardCache = HashMap()
-        mAccessibilityManager =
-            (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+        mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
 
         mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)

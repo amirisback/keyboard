@@ -16,17 +16,13 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.common.ext.adjustAlpha
 import com.frogobox.libkeyboard.common.ext.applyColorFilter
-import com.frogobox.libkeyboard.common.ext.getContrastColor
 import com.frogobox.libkeyboard.common.ext.getProperBackgroundColor
-import com.frogobox.libkeyboard.common.ext.getProperPrimaryColor
 import com.frogobox.libkeyboard.common.ext.getProperTextColor
 import com.frogobox.libkeyboard.common.ext.getStrokeColor
-import com.frogobox.libkeyboard.common.ext.isDarkThemeOn
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
@@ -37,6 +33,7 @@ import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.MAX_KEYS_PER_
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
+import com.frogobox.sdk.ext.getColorExt
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.max
@@ -57,7 +54,6 @@ class MainKeyboard @JvmOverloads constructor(
 
     private var mTextColor = 0
     private var mBackgroundColor = 0
-    private var mPrimaryColor = 0
 
     private var mPreviewText: TextView? = null
     private val mPreviewPopup: PopupWindow
@@ -66,21 +62,26 @@ class MainKeyboard @JvmOverloads constructor(
 
     private val mCoordinates = IntArray(2)
     private val mPopupKeyboard: PopupWindow
+
     private var mMiniKeyboardContainer: View? = null
     private var mMiniKeyboard: MainKeyboard? = null
     private var mMiniKeyboardOnScreen = false
+
     private var mPopupParent: View
     private var mMiniKeyboardOffsetX = 0
     private var mMiniKeyboardOffsetY = 0
+
     private val mMiniKeyboardCache: MutableMap<ItemMainKeyboard.Key, View?>
     private var mKeys = ArrayList<ItemMainKeyboard.Key>()
+
     private var mMiniKeyboardSelectedKeyIndex = -1
 
-    var mOnKeyboardActionListener: OnKeyboardActionListener? = null
     private var mVerticalCorrection = 0
     private var mProximityThreshold = 0
+
     private var mPopupPreviewX = 0
     private var mPopupPreviewY = 0
+
     private var mLastX = 0
     private var mLastY = 0
 
@@ -133,9 +134,10 @@ class MainKeyboard @JvmOverloads constructor(
 
     private var mHandler: Handler? = null
 
+    var mOnKeyboardActionListener: OnKeyboardActionListener? = null
+
     companion object {
         private const val NOT_A_KEY = -1
-        private val LONG_PRESSABLE_STATE_SET = intArrayOf(R.attr.state_long_pressable)
         private const val MSG_REMOVE_PREVIEW = 1
         private const val MSG_REPEAT = 2
         private const val MSG_LONGPRESS = 3
@@ -143,61 +145,59 @@ class MainKeyboard @JvmOverloads constructor(
         private const val DEBOUNCE_TIME = 70
         private const val REPEAT_INTERVAL = 50 // ~20 keys per second
         private const val REPEAT_START_DELAY = 400
+
+        private val LONG_PRESSABLE_STATE_SET = intArrayOf(R.attr.state_long_pressable)
         private val LONGPRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout()
     }
 
     // handle system default theme (Material You) specially as the color is taken from the system, not hardcoded by us
 
     init {
-        val attributes = context.obtainStyledAttributes(
-            attrs,
-            R.styleable.KwKeyboardView, 0, defStyleRes
-        )
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.KwKeyboardView, 0, defStyleRes)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val keyTextSize = 0
         val indexCnt = attributes.indexCount
 
         try {
             for (i in 0 until indexCnt) {
-                when (val attr = attributes.getIndex(i)) {
-                    R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize =
-                        attributes.getDimensionPixelSize(attr, 18)
-                }
+                when (val attr = attributes.getIndex(i)) {R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize = attributes.getDimensionPixelSize(attr, 18) }
             }
         } finally {
             attributes.recycle()
         }
+
+        mTextColor = context.getProperTextColor()
+        mBackgroundColor = context.getProperBackgroundColor()
 
         mPopupLayout = R.layout.keyboard_main_mini
         mKeyBackground = resources.getDrawable(R.drawable.keyboard_bg_mini_selector, context.theme)
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
-        mSpaceMoveThreshold =
-            resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
-        mTextColor = context.getProperTextColor()
-        mBackgroundColor = context.getProperBackgroundColor()
-        mPrimaryColor = context.getProperPrimaryColor()
+        mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
+
+        mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
+        mPreviewTextSizeLarge = context.resources.getDimension(R.dimen.preview_text_size).toInt()
 
         mPreviewPopup = PopupWindow(context)
-        mPreviewText =
-            inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
-        mPreviewTextSizeLarge = context.resources.getDimension(R.dimen.preview_text_size).toInt()
         mPreviewPopup.contentView = mPreviewText
         mPreviewPopup.setBackgroundDrawable(null)
-
         mPreviewPopup.isTouchable = false
+
         mPopupKeyboard = PopupWindow(context)
         mPopupKeyboard.setBackgroundDrawable(null)
         mPopupParent = this
-        mPaint = Paint()
-        mPaint.isAntiAlias = true
-        mPaint.textSize = keyTextSize.toFloat()
-        mPaint.textAlign = Align.CENTER
-        mPaint.alpha = 255
+
+        mPaint = Paint().apply {
+            isAntiAlias = true
+            textSize = keyTextSize.toFloat()
+            textAlign = Align.CENTER
+            alpha = 255
+        }
+
         mMiniKeyboardCache = HashMap()
-        mAccessibilityManager =
-            (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+        mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+
         mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
         mTopSmallNumberMarginWidth = resources.getDimension(R.dimen.top_small_number_margin_width)
@@ -231,22 +231,15 @@ class MainKeyboard @JvmOverloads constructor(
         if (visibility == VISIBLE) {
             mTextColor = context.getProperTextColor()
             mBackgroundColor = context.getProperBackgroundColor()
-            mPrimaryColor = context.getProperPrimaryColor()
+
             val strokeColor = context.getStrokeColor()
-
-            val darkerColor = ContextCompat.getColor(context, R.color.keyboard_bg_root)
-
-            val miniKeyboardBackgroundColor = ContextCompat.getColor(
-                context,
-                R.color.keyboard_bg_normal_color
-            )
+            val darkerColor = context.getColorExt(R.color.keyboard_bg_board)
+            val miniKeyboardBackgroundColor = context.getColorExt(R.color.keyboard_bg_normal)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
                 val previewBackground = background as LayerDrawable
-                previewBackground.findDrawableByLayerId(R.id.button_background_shape)
-                    .applyColorFilter(miniKeyboardBackgroundColor)
-                previewBackground.findDrawableByLayerId(R.id.button_background_stroke)
-                    .applyColorFilter(strokeColor)
+                previewBackground.findDrawableByLayerId(R.id.button_background_shape).applyColorFilter(miniKeyboardBackgroundColor)
+                previewBackground.findDrawableByLayerId(R.id.button_background_stroke).applyColorFilter(strokeColor)
                 background = previewBackground
             } else {
                 background.applyColorFilter(darkerColor)
@@ -480,11 +473,7 @@ class MainKeyboard @JvmOverloads constructor(
                     paint.typeface = Typeface.DEFAULT
                 }
 
-                paint.color = if (key.focused) {
-                    mPrimaryColor.getContrastColor()
-                } else {
-                    mTextColor
-                }
+                paint.color = mTextColor
 
                 canvas.drawText(
                     label,

@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="color_proper">#219BCC</color>
+    <color name="keyboard_toolbar_emoji">#151515</color>
 
-    <color name="keyboard_toolbar_emoji_color">#151515</color>
+    <color name="keyboard_text">#F9FCFF</color>
+    <color name="keyboard_bg_board">#191C1E</color>
+    <color name="keyboard_bg_normal">#232427</color>
+    <color name="keyboard_bg_normal_stroke">#232427</color>
 
-    <color name="keyboard_text_color">#F9FCFF</color>
-    <color name="keyboard_bg_root">#191C1E</color>
-    <color name="keyboard_bg_normal_color">#232427</color>
-    <color name="keyboard_bg_normal_stroke_color">#232427</color>
+    <color name="keyboard_item_action">#181921</color>
+    <color name="keyboard_bg_action">#CADAFE</color>
+    <color name="keyboard_bg_attribute">#36373A</color>
+    <color name="keyboard_bg_change">#909BB2</color>
 
-    <color name="keyboard_item_action_color">#181921</color>
-    <color name="keyboard_bg_action_color">#CADAFE</color>
-    <color name="keyboard_bg_attribute_color">#36373A</color>
-    <color name="keyboard_bg_change_color">#909BB2</color>
-
-    <color name="tv_text_color">#FFFFFF</color>
+    <color name="tv_text">#FFFFFF</color>
     <color name="bg_card">#000000</color>
     <color name="bg_card_reverse">#FFFFFF</color>
 

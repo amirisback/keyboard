@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_menu_news"
-        app:tint="@color/tv_text_color" />
+        app:tint="@color/tv_text" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -22,7 +22,7 @@
         android:gravity="center"
         android:maxLines="1"
         android:text="News API"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_10sp" />
 
 </LinearLayout>

@@ -6,8 +6,8 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import com.frogobox.libkeyboard.R
+import com.frogobox.sdk.ext.getColorExt
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -23,13 +23,9 @@ fun Context.isDarkThemeOn(): Boolean {
     return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 }
 
-fun Context.getProperTextColor() = ContextCompat.getColor(this, R.color.keyboard_text_color)
-
-fun Context.getProperBackgroundColor() = ContextCompat.getColor(this, R.color.keyboard_bg_root)
-
-fun Context.getProperPrimaryColor() = ContextCompat.getColor(this, R.color.color_proper)
-
-fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.keyboard_bg_item_grey)
+fun Context.getProperTextColor() = getColorExt(R.color.keyboard_text)
+fun Context.getProperBackgroundColor() = getColorExt(R.color.keyboard_bg_board)
+fun Context.getStrokeColor() = getColorExt(R.color.keyboard_bg_item_stroke)
 
 fun Drawable.applyColorFilter(color: Int) = mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
 

@@ -20,7 +20,7 @@
         android:layout_marginTop="@dimen/frogo_dimen_8dp"
         android:text="@string/frogo_no_data_found"
         android:textAllCaps="true"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_20sp"
         android:textStyle="bold" />
 

@@ -7,7 +7,7 @@
         android:right="@dimen/key_margin"
         android:top="@dimen/key_margin">
         <shape android:shape="rectangle">
-            <solid android:color="@color/keyboard_bg_attribute_color" />
+            <solid android:color="@color/keyboard_bg_attribute" />
             <corners android:radius="@dimen/key_normal_radius" />
         </shape>
     </item>

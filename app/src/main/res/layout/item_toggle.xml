@@ -24,7 +24,7 @@
         android:gravity="center"
         android:text="Toggle"
         android:maxLines="1"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

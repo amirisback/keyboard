@@ -18,7 +18,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/frogo_dimen_16dp"
         android:layout_toStartOf="@id/iv_icon"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         tools:text="Frogo Keyboard" />
 
     <ImageView

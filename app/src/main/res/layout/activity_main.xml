@@ -13,7 +13,7 @@
         android:layout_margin="30dp"
         android:gravity="center"
         android:text="@string/welcome"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:text="@string/enable_and_set_for_default"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
         android:layout_marginTop="@dimen/frogo_dimen_16dp"
         android:layout_marginEnd="@dimen/frogo_dimen_30dp"
         android:text="@string/description_for_sharing"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +53,7 @@
         android:layout_marginStart="@dimen/frogo_dimen_16dp"
         android:layout_marginTop="@dimen/frogo_dimen_16dp"
         android:layout_marginEnd="@dimen/frogo_dimen_16dp"
-        android:background="@color/theme_dark_background_color"
+        android:background="@color/theme_dark_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paragraph2" />
@@ -67,7 +67,7 @@
         android:layout_marginEnd="@dimen/frogo_dimen_30dp"
         android:gravity="center"
         android:text="@string/welcome"
-        android:textColor="@color/tv_text_color"
+        android:textColor="@color/tv_text"
         android:textSize="@dimen/frogo_dimen_font_16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@
         android:layout_marginStart="@dimen/frogo_dimen_16dp"
         android:layout_marginTop="@dimen/frogo_dimen_16dp"
         android:layout_marginEnd="@dimen/frogo_dimen_16dp"
-        android:background="@color/theme_dark_background_color"
+        android:background="@color/theme_dark_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_state" />
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Activated Keyboard"
-            android:textColor="@color/tv_text_color"
+            android:textColor="@color/tv_text"
             android:textSize="@dimen/frogo_dimen_font_12sp"
             android:textStyle="bold" />
 
@@ -144,7 +144,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/change_keyboard"
-            android:textColor="@color/tv_text_color"
+            android:textColor="@color/tv_text"
             android:textSize="@dimen/frogo_dimen_font_12sp"
             android:textStyle="bold" />
 

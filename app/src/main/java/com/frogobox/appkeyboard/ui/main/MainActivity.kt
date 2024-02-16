@@ -6,13 +6,12 @@ import android.provider.Settings
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
-import com.frogobox.libkeyboard.common.ext.isDarkThemeOn
 import com.frogobox.appkeyboard.databinding.ActivityMainBinding
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
 import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.language.KeyboardLanguageActivity
 import com.frogobox.appkeyboard.ui.toggle.ToggleActivity
+import com.frogobox.sdk.ext.getColorExt
 import com.frogobox.sdk.ext.startActivityExt
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,8 +48,6 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
             Log.d(TAG, "View Model : ${viewModel::class.java.simpleName}")
         }
         // TODO : Add your code here
-
-        Log.d(TAG, "isDarkThemeOn : ${isDarkThemeOn()}")
         initView()
     }
 
@@ -122,14 +119,14 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
         binding.titleState.apply {
             if (!isKeyboardEnabled()) {
                 text = "Frogo Keyboard Not Active"
-                setTextColor(ContextCompat.getColor(this@MainActivity, com.frogobox.libkeyboard.R.color.color_failed))
+                setTextColor(getColorExt(com.frogobox.libkeyboard.R.color.status_failed))
             } else {
                 if (isUsingKeyboard()) {
                     text = "Frogo Keyboard Active"
-                    setTextColor(ContextCompat.getColor(this@MainActivity, com.frogobox.libkeyboard.R.color.color_success))
+                    setTextColor(getColorExt(com.frogobox.libkeyboard.R.color.status_success))
                 } else {
                     text = "Not Using Frogo Keyboard"
-                    setTextColor(ContextCompat.getColor(this@MainActivity, com.frogobox.libkeyboard.R.color.color_warning))
+                    setTextColor(getColorExt(com.frogobox.libkeyboard.R.color.status_warning))
                 }
             }
         }

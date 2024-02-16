@@ -332,7 +332,8 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun runEmojiBoard() {
         binding?.keyboardEmoji?.visible()
-        hideMainKeyboard()
+        binding?.keyboardMain?.invisible()
+        binding?.keyboardHeader?.gone()
         binding?.keyboardEmoji?.openEmojiPalette()
     }
 

@@ -16,14 +16,11 @@
 
     <color name="theme_dark_background_color">@color/grey</color>
 
-    <color name="system_neutral1_10">#FCFCFF</color>
-    <color name="system_accent1_400">#219BCC</color>
-    <color name="system_neutral1_900">#191C1E</color>
-    <color name="system_accent1_900">#001E2C</color>
-    <color name="system_accent1_10">#F9FCFF</color>
+    <color name="color_proper">#219BCC</color>
 
     <color name="keyboard_toolbar_emoji_color">#E0F3FF</color>
 
+    <color name="keyboard_text_color">#001E2C</color>
     <color name="keyboard_bg_root">#FCFCFF</color>
     <color name="keyboard_bg_item_grey">#757575</color>
     <color name="keyboard_bg_normal_color">#FFFFFF</color>

@@ -234,11 +234,7 @@ class MainKeyboard @JvmOverloads constructor(
             mPrimaryColor = context.getProperPrimaryColor()
             val strokeColor = context.getStrokeColor()
 
-            val darkerColor = if (context.isDarkThemeOn()) {
-                ContextCompat.getColor(context, R.color.system_neutral1_900)
-            } else {
-                ContextCompat.getColor(context, R.color.system_neutral1_10)
-            }
+            val darkerColor = ContextCompat.getColor(context, R.color.keyboard_bg_root)
 
             val miniKeyboardBackgroundColor = ContextCompat.getColor(
                 context,

@@ -23,23 +23,11 @@ fun Context.isDarkThemeOn(): Boolean {
     return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 }
 
-fun Context.getProperTextColor() = if (isDarkThemeOn()) {
-    ContextCompat.getColor(this, R.color.system_accent1_10)
-} else {
-    ContextCompat.getColor(this, R.color.system_accent1_900)
-}
+fun Context.getProperTextColor() = ContextCompat.getColor(this, R.color.keyboard_text_color)
 
-fun Context.getProperBackgroundColor() = if (isDarkThemeOn()) {
-    ContextCompat.getColor(this, R.color.system_neutral1_900)
-} else {
-    ContextCompat.getColor(this, R.color.system_neutral1_10)
-}
+fun Context.getProperBackgroundColor() = ContextCompat.getColor(this, R.color.keyboard_bg_root)
 
-fun Context.getProperPrimaryColor() = if (isDarkThemeOn()) {
-    ContextCompat.getColor(this, R.color.system_accent1_400)
-} else {
-    ContextCompat.getColor(this, R.color.system_accent1_400)
-}
+fun Context.getProperPrimaryColor() = ContextCompat.getColor(this, R.color.color_proper)
 
 fun Context.getStrokeColor() = ContextCompat.getColor(this, R.color.keyboard_bg_item_grey)
 

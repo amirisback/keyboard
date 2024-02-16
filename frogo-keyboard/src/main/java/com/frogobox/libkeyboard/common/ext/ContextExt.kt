@@ -23,10 +23,6 @@ fun Context.isDarkThemeOn(): Boolean {
     return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 }
 
-fun Context.getProperTextColor() = getColorExt(R.color.keyboard_text)
-fun Context.getProperBackgroundColor() = getColorExt(R.color.keyboard_bg_board)
-fun Context.getStrokeColor() = getColorExt(R.color.keyboard_bg_item_stroke)
-
 fun Drawable.applyColorFilter(color: Int) = mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
 
 fun ImageView.applyColorFilter(color: Int) = setColorFilter(color, PorterDuff.Mode.SRC_IN)

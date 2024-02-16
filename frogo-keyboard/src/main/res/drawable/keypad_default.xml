@@ -3,14 +3,13 @@
     <item android:state_pressed="true">
         <layer-list>
             <item
-                android:id="@+id/space_pressed"
                 android:bottom="@dimen/key_margin"
                 android:left="@dimen/key_margin"
                 android:right="@dimen/key_margin"
                 android:top="@dimen/key_margin"
                 android:state_pressed="true">
                 <shape android:shape="rectangle">
-                    <solid android:color="@color/keyboard_bg_item_stroke" />
+                    <solid android:color="@color/keypad_pressed" />
                     <corners android:radius="@dimen/key_normal_radius" />
                 </shape>
             </item>
@@ -19,15 +18,15 @@
     <item>
         <layer-list>
             <item
-                android:id="@+id/space_normal"
-                android:bottom="@dimen/frogo_dimen_2dp"
-                android:left="@dimen/frogo_dimen_2dp"
-                android:right="@dimen/frogo_dimen_2dp"
-                android:top="@dimen/frogo_dimen_2dp"
+                android:bottom="@dimen/key_margin"
+                android:left="@dimen/key_margin"
+                android:right="@dimen/key_margin"
+                android:top="@dimen/key_margin"
                 android:state_pressed="true">
                 <shape android:shape="rectangle">
-                    <stroke android:width="1dp" android:color="@color/keyboard_bg_normal_stroke" />
-                    <solid android:color="@color/keyboard_bg_normal" />
+                    <stroke android:width="@dimen/frogo_dimen_1dp"
+                        android:color="@color/keypad_stroke" />
+                    <solid android:color="@color/keypad" />
                     <corners android:radius="@dimen/key_normal_radius" />
                 </shape>
             </item>

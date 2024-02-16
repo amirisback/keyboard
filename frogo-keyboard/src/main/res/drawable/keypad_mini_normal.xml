@@ -2,8 +2,8 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/button_background_shape">
         <shape android:shape="rectangle">
-            <solid android:color="@color/keyboard_bg_normal" />
-            <corners android:radius="@dimen/frogo_dimen_4dp" />
+            <solid android:color="@color/keypad" />
+            <corners android:radius="@dimen/frogo_dimen_8dp" />
         </shape>
     </item>
 
@@ -13,7 +13,7 @@
                 android:width="1dp"
                 android:color="@color/keyboard_bg_item_stroke" />
             <solid android:color="@android:color/transparent" />
-            <corners android:radius="@dimen/frogo_dimen_4dp" />
+            <corners android:radius="@dimen/frogo_dimen_8dp" />
         </shape>
     </item>
 </layer-list>

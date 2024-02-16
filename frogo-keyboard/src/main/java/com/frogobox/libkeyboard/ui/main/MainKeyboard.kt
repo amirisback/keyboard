@@ -20,9 +20,6 @@ import androidx.core.content.res.ResourcesCompat
 import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.common.ext.adjustAlpha
 import com.frogobox.libkeyboard.common.ext.applyColorFilter
-import com.frogobox.libkeyboard.common.ext.getProperBackgroundColor
-import com.frogobox.libkeyboard.common.ext.getProperTextColor
-import com.frogobox.libkeyboard.common.ext.getStrokeColor
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
@@ -153,30 +150,36 @@ class MainKeyboard @JvmOverloads constructor(
     // handle system default theme (Material You) specially as the color is taken from the system, not hardcoded by us
 
     init {
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.KwKeyboardView, 0, defStyleRes)
+        val attributes =
+            context.obtainStyledAttributes(attrs, R.styleable.KwKeyboardView, 0, defStyleRes)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val keyTextSize = 0
         val indexCnt = attributes.indexCount
 
         try {
             for (i in 0 until indexCnt) {
-                when (val attr = attributes.getIndex(i)) {R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize = attributes.getDimensionPixelSize(attr, 18) }
+                when (val attr = attributes.getIndex(i)) {
+                    R.styleable.KwKeyboardView_keyTextSize -> mKeyTextSize =
+                        attributes.getDimensionPixelSize(attr, 18)
+                }
             }
         } finally {
             attributes.recycle()
         }
 
-        mTextColor = context.getProperTextColor()
-        mBackgroundColor = context.getProperBackgroundColor()
+        mTextColor = context.getColorExt(R.color.keypad_text)
+        mBackgroundColor = context.getColorExt(R.color.keyboard_board)
 
         mPopupLayout = R.layout.keyboard_main_mini
-        mKeyBackground = resources.getDrawable(R.drawable.keyboard_bg_mini_selector, context.theme)
+        mKeyBackground = resources.getDrawable(R.drawable.keypad_mini, context.theme)
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
-        mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
+        mSpaceMoveThreshold =
+            resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
 
-        mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
+        mPreviewText =
+            inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
         mPreviewTextSizeLarge = context.resources.getDimension(R.dimen.preview_text_size).toInt()
 
         mPreviewPopup = PopupWindow(context)
@@ -196,7 +199,8 @@ class MainKeyboard @JvmOverloads constructor(
         }
 
         mMiniKeyboardCache = HashMap()
-        mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+        mAccessibilityManager =
+            (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
 
         mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
@@ -229,20 +233,21 @@ class MainKeyboard @JvmOverloads constructor(
         super.onVisibilityChanged(changedView, visibility)
 
         if (visibility == VISIBLE) {
-            mTextColor = context.getProperTextColor()
-            mBackgroundColor = context.getProperBackgroundColor()
+            mTextColor = context.getColorExt(R.color.keypad_text)
+            mBackgroundColor = context.getColorExt(R.color.keyboard_board)
 
-            val strokeColor = context.getStrokeColor()
-            val darkerColor = context.getColorExt(R.color.keyboard_bg_board)
-            val miniKeyboardBackgroundColor = context.getColorExt(R.color.keyboard_bg_normal)
+            val strokeColor = context.getColorExt(R.color.keyboard_bg_item_stroke)
+            val miniKeyboardBackgroundColor = context.getColorExt(R.color.keypad)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
                 val previewBackground = background as LayerDrawable
-                previewBackground.findDrawableByLayerId(R.id.button_background_shape).applyColorFilter(miniKeyboardBackgroundColor)
-                previewBackground.findDrawableByLayerId(R.id.button_background_stroke).applyColorFilter(strokeColor)
+                previewBackground.findDrawableByLayerId(R.id.button_background_shape)
+                    .applyColorFilter(miniKeyboardBackgroundColor)
+                previewBackground.findDrawableByLayerId(R.id.button_background_stroke)
+                    .applyColorFilter(strokeColor)
                 background = previewBackground
             } else {
-                background.applyColorFilter(darkerColor)
+                background.applyColorFilter(mBackgroundColor)
             }
 
         }
@@ -402,50 +407,16 @@ class MainKeyboard @JvmOverloads constructor(
             val key = keys[i]
             val code = key.code
             val labels = key.label
-            var keyBackground = resources.getDrawable(R.drawable.keyboard_bg_normal, context.theme)
+            var keyBackground = resources.getDrawable(R.drawable.keypad_default, context.theme)
             when (code) {
-                KEYCODE_SPACE -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_space, context.theme)
-                }
 
-                KEYCODE_ENTER -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_action, context.theme)
-                }
-
+                KEYCODE_SHIFT,
+                KEYCODE_DELETE,
+                KEYCODE_ENTER,
                 KEYCODE_MODE_CHANGE -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_change, context.theme)
+                    keyBackground = resources.getDrawable(R.drawable.keypad_action, context.theme)
                 }
 
-                KEYCODE_DELETE -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
-                }
-
-                KEYCODE_SHIFT -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
-                }
-
-                KEYCODE_EMOJI -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
-                }
-
-            }
-
-            when (labels) {
-                "," -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
-                }
-
-                "." -> {
-                    keyBackground =
-                        resources.getDrawable(R.drawable.keyboard_bg_attribute, context.theme)
-                }
             }
 
             // Switch the character to uppercase if shift is pressed

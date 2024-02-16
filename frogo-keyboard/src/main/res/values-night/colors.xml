@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--  For Testing and Dev  -->
+<!--    <color name="keyboard_background">#FF03DAC5</color>-->
+
+    <!--  Default  -->
     <color name="keyboard_background">#191C1E</color>
 
-    <color name="keyboard_toolbar_emoji">#151515</color>
-    <color name="keyboard_text">#F9FCFF</color>
+    <color name="keypad_text">#F9FCFF</color>
+    <color name="keypad">#232427</color>
+    <color name="keypad_stroke">#232427</color>
 
-    <color name="keyboard_bg_normal">#232427</color>
-    <color name="keyboard_bg_normal_stroke">#232427</color>
-
-    <color name="keyboard_bg_action">#CADAFE</color>
-    <color name="keyboard_bg_item_action">#181921</color>
-
-    <color name="keyboard_bg_attribute">#36373A</color>
-    <color name="keyboard_bg_change">#909BB2</color>
+    <color name="keypad_action_icon">#181921</color>
+    <color name="keypad_action_background">#B1BEFF</color>
 
     <color name="tv_text">#FFFFFF</color>
     <color name="bg_card">#000000</color>

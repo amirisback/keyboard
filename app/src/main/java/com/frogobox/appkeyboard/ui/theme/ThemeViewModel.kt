@@ -1,7 +1,13 @@
 package com.frogobox.appkeyboard.ui.theme
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.common.base.BaseViewModel
-import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
+import com.frogobox.appkeyboard.model.KeyboardThemeModel
+import com.frogobox.appkeyboard.services.KeyboardUtil
+import com.frogobox.coresdk.response.FrogoStateResponse
+import com.frogobox.sdk.delegate.preference.PreferenceDelegates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,8 +23,31 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
-    private val repository: AutoTextRepository
-): BaseViewModel() {
+    private val pref: PreferenceDelegates,
+    private val keyboardUtil: KeyboardUtil
+) : BaseViewModel() {
 
+    private var _keyboardThemeState = MutableLiveData<List<KeyboardThemeModel>>()
+    var keyboardThemeState: LiveData<List<KeyboardThemeModel>> = _keyboardThemeState
+
+    fun getThemeData() {
+        _keyboardThemeState.postValue(keyboardUtil.keyboardTheme())
+    }
+
+    fun getThemeColor(): Int {
+        return pref.loadPrefInt(KeyboardUtil.KEYBOARD_COLOR, R.color.color_bg_keyboard_default)
+    }
+
+    fun setThemeColor(color: Int, onSuccess: () -> Unit) {
+        pref.savePrefInt(KeyboardUtil.KEYBOARD_COLOR, color, object : FrogoStateResponse {
+            override fun onFailed(statusCode: Int, errorMessage: String) {}
+            override fun onFinish() {}
+            override fun onHideProgress() {}
+            override fun onShowProgress() {}
+            override fun onSuccess() {
+                onSuccess()
+            }
+        })
+    }
 
 }

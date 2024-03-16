@@ -8,8 +8,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import com.frogobox.appkeyboard.databinding.ActivityMainBinding
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
-import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.language.KeyboardLanguageActivity
+import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.theme.ThemeActivity
 import com.frogobox.appkeyboard.ui.toggle.ToggleActivity
 import com.frogobox.sdk.ext.getColorExt

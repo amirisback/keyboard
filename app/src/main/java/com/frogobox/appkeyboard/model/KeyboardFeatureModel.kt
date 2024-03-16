@@ -8,9 +8,8 @@ import androidx.annotation.Keep
  */
 
 @Keep
-data class KeyboardFeature(
+data class KeyboardFeatureModel(
     var id: String,
-    var type: KeyboardFeatureType,
+    var text: String,
     var icon: Int,
-    var state: Boolean = false
 )

@@ -4,7 +4,7 @@
     android:id="@+id/holder_keyboard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/keyboard_background">
+    android:background="@color/color_bg_keyboard_default">
 
     <ImageView
         android:id="@+id/iv_background_keyboard"
@@ -38,7 +38,7 @@
             style="@style/FrogoKeyboardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/keyboard_board" />
+            android:background="@color/color_bg_keyboard_default" />
 
     </LinearLayout>
 

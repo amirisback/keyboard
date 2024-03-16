@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import com.frogobox.appkeyboard.databinding.ActivityToggleBinding
 import com.frogobox.appkeyboard.databinding.ItemToggleBinding
-import com.frogobox.appkeyboard.model.KeyboardFeature
+import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.ui.main.BaseMainActivity
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
@@ -38,17 +38,20 @@ class ToggleActivity : BaseMainActivity<ActivityToggleBinding>() {
         if (savedInstanceState == null) {
             viewModel.getKeyboardFeatureData()
         }
+    }
 
+    override fun initView() {
+        super.initView()
         setupDetailActivity("Toggle Feature")
     }
 
     override fun setupViewModel() {
         super.setupViewModel()
         viewModel.keyboardFeatureState.observe(this) {
-            binding.root.injectorBinding<KeyboardFeature, ItemToggleBinding>()
+            binding.root.injectorBinding<KeyboardFeatureModel, ItemToggleBinding>()
                 .addData(it)
                 .addCallback(object :
-                    IFrogoBindingAdapter<KeyboardFeature, ItemToggleBinding> {
+                    IFrogoBindingAdapter<KeyboardFeatureModel, ItemToggleBinding> {
 
                     override fun setViewBinding(parent: ViewGroup): ItemToggleBinding {
                         return ItemToggleBinding.inflate(
@@ -60,13 +63,14 @@ class ToggleActivity : BaseMainActivity<ActivityToggleBinding>() {
 
                     override fun setupInitComponent(
                         binding: ItemToggleBinding,
-                        data: KeyboardFeature,
+                        data: KeyboardFeatureModel,
                         position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                     ) {
+                        binding.swToggle.setOnCheckedChangeListener(null)
                         binding.ivIcon.setImageResource(data.icon)
-                        binding.tvTitle.text = data.type.title
-                        binding.swToggle.isChecked = data.state
+                        binding.tvTitle.text = data.text
+                        binding.swToggle.isChecked = viewModel.getSwitchToggle(data.id)
                         binding.swToggle.setOnCheckedChangeListener { _, isChecked ->
                             viewModel.switchToggle(data.id, isChecked)
                         }
@@ -74,16 +78,16 @@ class ToggleActivity : BaseMainActivity<ActivityToggleBinding>() {
 
                     override fun onItemClicked(
                         binding: ItemToggleBinding,
-                        data: KeyboardFeature,
+                        data: KeyboardFeatureModel,
                         position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                     ) {}
 
                     override fun onItemLongClicked(
                         binding: ItemToggleBinding,
-                        data: KeyboardFeature,
+                        data: KeyboardFeatureModel,
                         position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                     ) {}
 
                 })

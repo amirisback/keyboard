@@ -7,12 +7,14 @@ import androidx.activity.viewModels
 import com.frogobox.appkeyboard.common.base.BaseActivity
 import com.frogobox.appkeyboard.databinding.ActivityKeyboardLanguageBinding
 import com.frogobox.appkeyboard.databinding.ItemLanguageKeyboardBinding
+import com.frogobox.appkeyboard.model.KeyboardThemeModel
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.showToast
 import com.frogobox.sdk.ext.visible
+import com.frogobox.sdk.util.FrogoFunc
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -69,10 +71,7 @@ class KeyboardLanguageActivity : BaseActivity<ActivityKeyboardLanguageBinding>()
         position: Int,
         notifyListener: FrogoRecyclerNotifyListener<KeyboardLanguage>
     ) {
-        viewModel.setKeyboard(data.xml) {
-            showToast("${data.name} Selected")
-            viewModel.getKeyboardLanguage(this@KeyboardLanguageActivity)
-        }
+        applyLanguage(data)
     }
 
     override fun onItemLongClicked(
@@ -105,6 +104,21 @@ class KeyboardLanguageActivity : BaseActivity<ActivityKeyboardLanguageBinding>()
             .addCallback(this)
             .createLayoutLinearVertical(false)
             .build()
+    }
+
+    private fun applyLanguage(data: KeyboardLanguage) {
+        FrogoFunc.createDialogDefault(
+            this@KeyboardLanguageActivity,
+            "Change Theme",
+            "Are you sure you want to change keyboard theme?",
+            listenerNo = {},
+            listenerYes = {
+                viewModel.setKeyboard(data.xml) {
+                    showToast("${data.name} Language Applied")
+                    viewModel.getKeyboardLanguage(this@KeyboardLanguageActivity)
+                }
+            }
+        )
     }
 
 }

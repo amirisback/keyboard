@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+ * Created by
+ * FrogoBox Inc License
+ * =========================================
+ *
+ * Copyright (C) .
+ * All rights reserved
+ *
+ * Name     : Muhammad Faisal Amir
+ * E-mail   : faisalamircs@gmail.com
+ * Github   : github.com/amirisback
+ * LinkedIn : linkedin.com/in/faisalamircs
+ *
+ * FrogoBox Software Industries
+ *
+ -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frogo_rv_grid_type_6_root_linear_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/frogo_dimen_16dp"
+    android:layout_marginEnd="@dimen/frogo_dimen_16dp"
+    android:layout_marginBottom="@dimen/frogo_dimen_16dp"
+    android:background="@drawable/bg_card_16dp"
+    android:elevation="@dimen/frogo_dimen_4dp"
+    android:paddingHorizontal="@dimen/frogo_dimen_16dp"
+    android:paddingVertical="@dimen/frogo_dimen_8dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_background"
+        android:layout_width="@dimen/frogo_dimen_72dp"
+        android:layout_height="@dimen/frogo_dimen_72dp"
+        android:contentDescription="@string/frogo_dummy_content_description"
+        android:elevation="@dimen/frogo_dimen_4dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="@dimen/frogo_dimen_0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/frogo_dimen_16dp"
+        android:maxLines="1"
+        android:textColor="@color/tv_text"
+        android:textSize="@dimen/frogo_dimen_font_14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc"
+        app:layout_constraintEnd_toStartOf="@id/iv_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        tools:text="@tools:sample/lorem/random" />
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="@dimen/frogo_dimen_0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/frogo_dimen_16dp"
+        android:maxLines="1"
+        android:textColor="@color/tv_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_background"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:text="@tools:sample/lorem/random" />
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="@dimen/frogo_dimen_32dp"
+        android:layout_height="@dimen/frogo_dimen_32dp"
+        android:src="@drawable/ic_check"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="color_bg_keyboard_default">#FF5722</color>
+    <color name="color_bg_keyboard_default">@color/keyboard_background</color>
+    <color name="color_bg_keyboard_red">#F44336</color>
+    <color name="color_bg_keyboard_green">#4CAF50</color>
+    <color name="color_bg_keyboard_blue">#3F51B5</color>
+    <color name="color_bg_keyboard_yellow">#FFEB3B</color>
 
 </resources>

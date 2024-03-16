@@ -9,9 +9,10 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.RequiresApi
+import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.appkeyboard.databinding.KeyboardImeBinding
-import com.frogobox.appkeyboard.model.KeyboardFeature
+import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.ui.main.MainActivity
 import com.frogobox.libkeyboard.common.core.BaseKeyboardIME
@@ -42,13 +43,11 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun setupTheme() {
         binding?.apply {
-            holderKeyboard.setBackgroundColor(
-                pref.loadPrefInt(
-                    KeyboardUtil.PREF_KEYBOARD_BACKGROUND_COLOR,
-                    getColorExt(com.frogobox.libkeyboard.R.color.keyboard_board)
-                )
-            )
-            ivBackgroundKeyboard.setImageResource(android.R.color.transparent)
+            holderKeyboard.setBackgroundColor(getColorExt(android.R.color.transparent))
+            ivBackgroundKeyboard.setImageResource(pref.loadPrefInt(
+                KeyboardUtil.KEYBOARD_COLOR,
+                getColorExt(R.color.color_bg_keyboard_default)
+            ))
         }
     }
 
@@ -182,9 +181,9 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                 keyboardHeader.gone()
             } else {
                 keyboardHeader.visible()
-                keyboardHeader.injectorBinding<KeyboardFeature, ItemKeyboardHeaderBinding>()
+                keyboardHeader.injectorBinding<KeyboardFeatureModel, ItemKeyboardHeaderBinding>()
                     .addData(keyboardUtil.menuKeyboard()).addCallback(object :
-                        IFrogoBindingAdapter<KeyboardFeature, ItemKeyboardHeaderBinding> {
+                        IFrogoBindingAdapter<KeyboardFeatureModel, ItemKeyboardHeaderBinding> {
 
                         override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
                             return ItemKeyboardHeaderBinding.inflate(
@@ -194,14 +193,14 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
                         override fun setupInitComponent(
                             binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeature,
+                            data: KeyboardFeatureModel,
                             position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                         ) {
                             binding.ivIcon.setImageResource(data.icon)
-                            binding.tvTitle.text = data.type.title
+                            binding.tvTitle.text = data.text
 
-                            if (data.state) {
+                            if (getStateToggle(data.id)) {
                                 binding.root.visible()
                             } else {
                                 binding.root.gone()
@@ -211,12 +210,12 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
                         override fun onItemClicked(
                             binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeature,
+                            data: KeyboardFeatureModel,
                             position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                         ) {
 
-                            when (data.type) {
+                            when (KeyboardFeatureType.from(data.id)) {
                                 KeyboardFeatureType.NEWS -> {
                                     hideMainKeyboard()
                                     keyboardNews.visible()
@@ -297,9 +296,9 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
                         override fun onItemLongClicked(
                             binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeature,
+                            data: KeyboardFeatureModel,
                             position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeature>,
+                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                         ) {
                         }
 
@@ -360,8 +359,12 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun getKeyboardLayoutXML(): Int {
         return pref.loadPrefInt(
-            KeyboardUtil.PREF_KEYBOARD_TYPE, com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
+            KeyboardUtil.KEYBOARD_TYPE, com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
         )
+    }
+
+    private fun getStateToggle(key: String) : Boolean {
+        return pref.loadPrefBoolean(key, true)
     }
 
 }

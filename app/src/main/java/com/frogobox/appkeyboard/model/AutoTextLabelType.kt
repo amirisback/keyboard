@@ -9,7 +9,7 @@ import androidx.annotation.Keep
 
 
 @Keep
-enum class AutoTextLabel {
+enum class AutoTextLabelType {
     DEFAULT,
     USER
 }

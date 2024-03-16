@@ -1,11 +1,9 @@
 package com.frogobox.appkeyboard.ui.toggle
 
-import android.inputmethodservice.Keyboard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.frogobox.appkeyboard.common.base.BaseViewModel
-import com.frogobox.appkeyboard.model.KeyboardFeature
-import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
+import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.services.KeyboardUtil
 import com.frogobox.sdk.delegate.preference.PreferenceDelegates
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,13 +23,17 @@ import javax.inject.Inject
 class ToggleViewModel @Inject constructor(
     private val pref: PreferenceDelegates,
     private val keyboardUtil: KeyboardUtil
-): BaseViewModel() {
+) : BaseViewModel() {
 
-    private var _keyboardFeatureState = MutableLiveData<List<KeyboardFeature>>()
-    var keyboardFeatureState: LiveData<List<KeyboardFeature>> = _keyboardFeatureState
+    private var _keyboardFeatureState = MutableLiveData<List<KeyboardFeatureModel>>()
+    var keyboardFeatureState: LiveData<List<KeyboardFeatureModel>> = _keyboardFeatureState
 
     fun switchToggle(key: String, value: Boolean) {
         pref.savePrefBoolean(key, value)
+    }
+
+    fun getSwitchToggle(key: String): Boolean {
+        return pref.loadPrefBoolean(key, true)
     }
 
     fun getKeyboardFeatureData() {

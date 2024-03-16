@@ -28,7 +28,7 @@ data class AutoTextEntity(
     var title: String = "",
 
     @ColumnInfo(name = "label")
-    var label: AutoTextLabel = AutoTextLabel.USER,
+    var label: AutoTextLabelType = AutoTextLabelType.USER,
 
     @ColumnInfo(name = "date")
     var date: String = "",

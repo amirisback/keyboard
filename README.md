@@ -927,10 +927,10 @@ https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-
 </tr>
 
 <tr>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/light/ss-1.jpg"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/light/ss-2.jpg"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/dark/ss-1.jpg"></td>
-    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/dark/ss-2.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/light/ss_1.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/light/ss_2.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/dark/ss_1.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/dark/ss_2.jpg"></td>
 </tr>
 
 </table>

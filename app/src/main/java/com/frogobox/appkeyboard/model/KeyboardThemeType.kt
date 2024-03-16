@@ -20,8 +20,11 @@ enum class KeyboardThemeType(
     DEFAULT("Default", "Default Color", R.color.color_bg_keyboard_default),
     RED("Red", "Red Color", R.color.color_bg_keyboard_red),
     GREEN("Green", "Green Color", R.color.color_bg_keyboard_green),
-    BLUE("Blue", "Blue Color", R.color.color_bg_keyboard_blue);
-    
+    YELLOW("Yellow", "Yellow Color", R.color.color_bg_keyboard_yellow),
+    BLUE("Blue", "Blue Color", R.color.color_bg_keyboard_blue),
+    IMAGE_BG_DARK("Image", "Sample Wallpaper", R.drawable.ic_wallpaper_dummy)
+    ;
+
     fun mapToModel(): KeyboardThemeModel {
         return KeyboardThemeModel(
             this.label,

@@ -58,7 +58,9 @@ class KeyboardUtil @Inject constructor(
             KeyboardThemeType.DEFAULT.mapToModel(),
             KeyboardThemeType.RED.mapToModel(),
             KeyboardThemeType.GREEN.mapToModel(),
-            KeyboardThemeType.BLUE.mapToModel()
+            KeyboardThemeType.YELLOW.mapToModel(),
+            KeyboardThemeType.BLUE.mapToModel(),
+            KeyboardThemeType.IMAGE_BG_DARK.mapToModel()
         )
     }
 

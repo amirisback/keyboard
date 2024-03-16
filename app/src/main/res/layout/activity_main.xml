@@ -177,20 +177,23 @@
             android:id="@+id/btn_multi_language"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Setup Keyboard Language"
+            android:text="Language"
+            app:cornerRadius="@dimen/frogo_dimen_16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Theme"
+            app:cornerRadius="@dimen/frogo_dimen_16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_do_some_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Do Some Test"
             app:cornerRadius="@dimen/frogo_dimen_16dp" />
 
     </LinearLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_do_some_test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/frogo_dimen_16dp"
-        android:text="Do Some Test"
-        app:cornerRadius="@dimen/frogo_dimen_16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

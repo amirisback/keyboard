@@ -5,9 +5,13 @@ package com.frogobox.appkeyboard.data.local.autotext
  * https://github.com/amirisback
  */
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import com.frogobox.appkeyboard.model.AutoTextEntity
-import com.frogobox.appkeyboard.model.AutoTextLabel
+import com.frogobox.appkeyboard.model.AutoTextLabelType
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
@@ -42,7 +46,7 @@ interface AutoTextDao {
     fun getByTitle(search: String): Single<List<AutoTextEntity>>
 
     @Query("SELECT * FROM auto_text WHERE label = :search ORDER BY id ASC")
-    fun getByLabel(search: AutoTextLabel) : Single<List<AutoTextEntity>>
+    fun getByLabel(search: AutoTextLabelType) : Single<List<AutoTextEntity>>
 
     @Query("SELECT * FROM auto_text WHERE body LIKE '%' || :search || '%' ORDER BY id ASC")
     fun getByBody(search: String) : Single<List<AutoTextEntity>>

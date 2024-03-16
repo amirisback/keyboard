@@ -4,7 +4,7 @@ import com.frogobox.appkeyboard.common.callback.DataResponseCallback
 import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.data.local.autotext.AutoTextDao
 import com.frogobox.appkeyboard.model.AutoTextEntity
-import com.frogobox.appkeyboard.model.AutoTextLabel
+import com.frogobox.appkeyboard.model.AutoTextLabelType
 import com.frogobox.sdk.ext.executeRoomDB
 import com.frogobox.sdk.ext.fetchRoomDB
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -38,7 +38,7 @@ class AutoTextRepositoryImpl @Inject constructor(
     }
 
     override fun getAutoTextByLabel(
-        label: AutoTextLabel,
+        label: AutoTextLabelType,
         callback: DataResponseCallback<List<AutoTextEntity>>,
     ) {
         dao.getByLabel(label).fetchRoomDB(callback) {

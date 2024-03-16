@@ -1,4 +1,4 @@
-package com.frogobox.appkeyboard.di.hilt
+package com.frogobox.appkeyboard.di
 
 import com.frogobox.appkeyboard.di.*
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository

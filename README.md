@@ -916,6 +916,25 @@ https://user-images.githubusercontent.com/24654871/231431022-4410933f-7199-4967-
 
 </table>
 
+### Multi Theme Suppported
+<table>
+
+<tr>
+    <th>Setup Theme (Light)</th>
+    <th>Theme Applied (Light)</th>
+    <th>Setup Theme (Dark)</th>
+    <th>Theme Applied (Dark)</th>
+</tr>
+
+<tr>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/light/ss-1.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/light/ss-2.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/dark/ss-1.jpg"></td>
+    <td><img width="200px" height="420px" src="https://amirisback.github.io/keyboard/docs/image/ss/theme/dark/ss-2.jpg"></td>
+</tr>
+
+</table>
+
 ## Documentation
 - https://github.com/SimpleMobileTools/Simple-Keyboard
   - Clone From This

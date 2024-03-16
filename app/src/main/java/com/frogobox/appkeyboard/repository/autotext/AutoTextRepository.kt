@@ -3,7 +3,7 @@ package com.frogobox.appkeyboard.repository.autotext
 import com.frogobox.appkeyboard.common.callback.DataResponseCallback
 import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.model.AutoTextEntity
-import com.frogobox.appkeyboard.model.AutoTextLabel
+import com.frogobox.appkeyboard.model.AutoTextLabelType
 
 
 /**
@@ -15,7 +15,7 @@ interface AutoTextRepository {
 
     fun getAutoText(callback: DataResponseCallback<List<AutoTextEntity>>)
 
-    fun getAutoTextByLabel(label: AutoTextLabel, callback: DataResponseCallback<List<AutoTextEntity>>)
+    fun getAutoTextByLabel(label: AutoTextLabelType, callback: DataResponseCallback<List<AutoTextEntity>>)
 
     fun getAutoTextByTitle(title: String, callback: DataResponseCallback<List<AutoTextEntity>>)
 

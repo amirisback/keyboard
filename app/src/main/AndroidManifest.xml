@@ -37,6 +37,10 @@
             android:name=".ui.toggle.ToggleActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.theme.ThemeActivity"
+            android:exported="false" />
+
         <activity android:name=".ui.language.KeyboardLanguageActivity"
             android:exported="false" />
 

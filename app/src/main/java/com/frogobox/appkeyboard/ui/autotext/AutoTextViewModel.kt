@@ -6,7 +6,7 @@ import com.frogobox.appkeyboard.common.base.BaseViewModel
 import com.frogobox.appkeyboard.common.callback.DataResponseCallback
 import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.model.AutoTextEntity
-import com.frogobox.appkeyboard.model.AutoTextLabel
+import com.frogobox.appkeyboard.model.AutoTextLabelType
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
 import com.frogobox.coresdk.util.FrogoDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,7 +56,7 @@ class AutoTextViewModel @Inject constructor(
     fun insertAutoText(title: String, body: String) {
         val data = AutoTextEntity(
             title = title,
-            label = AutoTextLabel.DEFAULT,
+            label = AutoTextLabelType.DEFAULT,
             date = FrogoDate.getTimeNow(),
             body = body,
             isActive = true
@@ -115,7 +115,7 @@ class AutoTextViewModel @Inject constructor(
         val data = AutoTextEntity(
             id = id,
             title = title,
-            label = AutoTextLabel.DEFAULT,
+            label = AutoTextLabelType.DEFAULT,
             date = FrogoDate.getTimeNow(),
             body = body,
             isActive = true

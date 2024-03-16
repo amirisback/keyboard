@@ -20,6 +20,8 @@ interface IKeyboardIME {
 
     fun initialSetupKeyboard()
 
+    fun setupTheme()
+
     fun setupBinding() 
     
     fun invalidateKeyboard()

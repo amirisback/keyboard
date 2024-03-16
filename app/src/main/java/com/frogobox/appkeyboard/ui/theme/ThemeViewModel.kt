@@ -38,8 +38,9 @@ class ThemeViewModel @Inject constructor(
         return pref.loadPrefInt(KeyboardUtil.KEYBOARD_COLOR, R.color.color_bg_keyboard_default)
     }
 
-    fun setThemeColor(color: Int, onSuccess: () -> Unit) {
-        pref.savePrefInt(KeyboardUtil.KEYBOARD_COLOR, color, object : FrogoStateResponse {
+    fun setThemeColor(data: KeyboardThemeModel, onSuccess: () -> Unit) {
+        pref.savePrefString(KeyboardUtil.KEYBOARD_COLOR_TYPE, data.themType.name)
+        pref.savePrefInt(KeyboardUtil.KEYBOARD_COLOR, data.background, object : FrogoStateResponse {
             override fun onFailed(statusCode: Int, errorMessage: String) {}
             override fun onFinish() {}
             override fun onHideProgress() {}

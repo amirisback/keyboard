@@ -14,6 +14,7 @@ import com.frogobox.appkeyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.appkeyboard.databinding.KeyboardImeBinding
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
+import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.ui.main.MainActivity
 import com.frogobox.libkeyboard.common.core.BaseKeyboardIME
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
@@ -43,11 +44,27 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun setupTheme() {
         binding?.apply {
-            holderKeyboard.setBackgroundColor(getColorExt(android.R.color.transparent))
-            ivBackgroundKeyboard.setImageResource(pref.loadPrefInt(
+
+            val background = pref.loadPrefInt(
                 KeyboardUtil.KEYBOARD_COLOR,
-                getColorExt(R.color.color_bg_keyboard_default)
-            ))
+                R.color.color_bg_keyboard_default
+            )
+
+            val backgroundType = ThemeType.valueOf(
+                pref.loadPrefString(
+                    KeyboardUtil.KEYBOARD_COLOR_TYPE,
+                    ThemeType.COLOR.name
+                )
+            )
+
+            when (backgroundType) {
+                ThemeType.COLOR -> {
+                    ivBackgroundKeyboard.setBackgroundColor(getColorExt(background))
+                }
+                ThemeType.IMAGE -> {
+                    ivBackgroundKeyboard.setImageResource(background)
+                }
+            }
         }
     }
 
@@ -363,7 +380,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         )
     }
 
-    private fun getStateToggle(key: String) : Boolean {
+    private fun getStateToggle(key: String): Boolean {
         return pref.loadPrefBoolean(key, true)
     }
 

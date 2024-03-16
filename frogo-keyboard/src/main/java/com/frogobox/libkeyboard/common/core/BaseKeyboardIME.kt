@@ -144,13 +144,9 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         currentInputConnection?.commitText(text, 0)
     }
 
-    override fun initialSetupKeyboard() {
+    override fun initialSetupKeyboard() {}
 
-    }
-
-    override fun setupTheme() {
-
-    }
+    override fun setupTheme() {}
 
     override fun setupBinding() {
         initialSetupKeyboard()
@@ -158,29 +154,19 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     }
 
     override fun invalidateKeyboard() {
-
+        setupTheme()
         setupFeatureKeyboard()
     }
 
-    override fun initCurrentInputConnection() {
+    override fun initCurrentInputConnection() {}
 
-    }
+    override fun hideMainKeyboard() {}
 
-    override fun hideMainKeyboard() {
+    override fun showMainKeyboard() {}
 
-    }
+    override fun showOnlyKeyboard() {}
 
-    override fun showMainKeyboard() {
-
-    }
-
-    override fun showOnlyKeyboard() {
-
-    }
-
-    override fun hideOnlyKeyboard() {
-
-    }
+    override fun hideOnlyKeyboard() {}
 
     override fun EditText.showKeyboardExt() {
         setOnFocusChangeListener { v, hasFocus ->

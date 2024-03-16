@@ -21,6 +21,7 @@ class KeyboardUtil @Inject constructor(
     companion object {
         const val KEYBOARD_TYPE = "KEYBOARD_TYPE"
         const val KEYBOARD_COLOR = "KEYBOARD_COLOR"
+        const val KEYBOARD_COLOR_TYPE = "KEYBOARD_COLOR_TYPE"
     }
 
     private fun getStateToggle(key: String) : Boolean {

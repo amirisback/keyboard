@@ -13,5 +13,6 @@ package com.frogobox.appkeyboard.model
 data class KeyboardThemeModel(
     val name: String,
     val description: String,
+    val themType: ThemeType,
     val background: Int,
 )

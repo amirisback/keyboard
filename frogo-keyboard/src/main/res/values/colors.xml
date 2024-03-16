@@ -27,8 +27,8 @@
     <color name="keyboard_board">@android:color/transparent</color>
 
     <color name="keypad_text">#001E2C</color>
-    <color name="keypad">#FFFFFF</color>
-    <color name="keypad_stroke">#EFEFEF</color>
+    <color name="keypad">#80FFFFFF</color>
+    <color name="keypad_stroke">#80EFEFEF</color>
     <color name="keypad_pressed">#757575</color>
 
     <color name="keypad_action_icon">#FFFFFF</color>

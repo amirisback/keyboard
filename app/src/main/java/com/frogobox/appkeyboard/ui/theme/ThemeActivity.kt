@@ -122,7 +122,7 @@ class ThemeActivity : BaseActivity<ActivityThemeBinding>(),
             "Are you sure you want to change keyboard theme?",
             listenerNo = {},
             listenerYes = {
-                viewModel.setThemeColor(data.background) {
+                viewModel.setThemeColor(data) {
                     viewModel.getThemeData()
                     showToast("${data.name} Theme Applied")
                 }

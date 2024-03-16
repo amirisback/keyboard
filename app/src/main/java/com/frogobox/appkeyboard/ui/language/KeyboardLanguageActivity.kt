@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import com.frogobox.appkeyboard.common.base.BaseActivity
 import com.frogobox.appkeyboard.databinding.ActivityKeyboardLanguageBinding
 import com.frogobox.appkeyboard.databinding.ItemLanguageKeyboardBinding
-import com.frogobox.appkeyboard.model.KeyboardThemeModel
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding

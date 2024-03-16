@@ -35,7 +35,7 @@ enum class KeyboardThemeType(
 
     companion object {
         infix fun from(value: String): KeyboardThemeType =
-            KeyboardThemeType.entries.firstOrNull { it.name == value } ?: KeyboardThemeType.DEFAULT
+            KeyboardThemeType.entries.firstOrNull { it.name == value } ?: DEFAULT
     }
 
 }

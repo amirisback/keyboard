@@ -53,13 +53,8 @@ class MovieKeyboard(
     private fun setupData() {
         val consumeMovieApi = ConsumeMovieApi(MovieUrl.API_KEY) // Your API_KEY
         consumeMovieApi.getTrendingMovieDay(object : FrogoDataResponse<Trending<TrendingMovie>> {
-            override fun onFailed(statusCode: Int, errorMessage: String) {
-
-            }
-
-            override fun onFinish() {
-
-            }
+            override fun onFailed(statusCode: Int, errorMessage: String) {}
+            override fun onFinish() {}
 
             override fun onHideProgress() {
                 binding?.progressBar?.gone()

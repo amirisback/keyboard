@@ -21,14 +21,14 @@
 ## Version Release
 This Is Latest Release
 
-    $version_release = 1.1.6
+    $version_release = 1.1.7
 
 What's New??
 
     * Avaiable in dark mode *
     * Enhance Performance *
     * Easy Change Background Keyboard *
-    * Refactoring Color *
+    * Setup Theme *
 
 ## How To Use As Library (Coming Soon)
 
@@ -65,14 +65,14 @@ allprojects {
 
     dependencies {
         // library frogo-keyboard
-        implementation 'com.github.amirisback:keyboard:1.1.6'
+        implementation 'com.github.amirisback:keyboard:1.1.7'
     }
 
 #### <Option 2> Kotlin DSL Gradle
 
     dependencies {
         // library frogo-keyboard
-        implementation("com.github.amirisback:keyboard:1.1.6")
+        implementation("com.github.amirisback:keyboard:1.1.7")
     }
 
 ### Step 3. Create Layout Keyboard IME

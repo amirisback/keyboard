@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.frogobox.appkeyboard.common.base.BaseViewModel
+import com.frogobox.appkeyboard.services.KeyboardUtil
 import com.frogobox.appkeyboard.util.Constant
 import com.frogobox.coresdk.response.FrogoStateResponse
 import com.frogobox.sdk.delegate.preference.PreferenceDelegates
@@ -124,7 +125,7 @@ class KeyboardLanguageViewModel @Inject constructor(
     }
 
     fun setKeyboard(xml: Int, onSuccess: () -> Unit) {
-        pref.savePrefInt(Constant.PREF_KEYBOARD_TYPE, xml, object : FrogoStateResponse {
+        pref.savePrefInt(KeyboardUtil.PREF_KEYBOARD_TYPE, xml, object : FrogoStateResponse {
             override fun onFailed(statusCode: Int, errorMessage: String) {}
             override fun onFinish() {}
             override fun onHideProgress() {
@@ -143,7 +144,7 @@ class KeyboardLanguageViewModel @Inject constructor(
 
     fun checkKeyboardType(xml: Int): Boolean {
         return pref.loadPrefInt(
-            Constant.PREF_KEYBOARD_TYPE,
+            KeyboardUtil.PREF_KEYBOARD_TYPE,
             com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
         ) == xml
     }

@@ -148,8 +148,13 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
     }
 
+    override fun setupTheme() {
+
+    }
+
     override fun setupBinding() {
         initialSetupKeyboard()
+        setupTheme()
     }
 
     override fun invalidateKeyboard() {

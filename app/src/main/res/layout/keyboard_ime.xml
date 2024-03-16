@@ -1,10 +1,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/keyboard_holder"
+    android:id="@+id/holder_keyboard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/keyboard_background">
+
+    <ImageView
+        android:id="@+id/iv_background_keyboard"
+        android:layout_width="@dimen/frogo_dimen_0dp"
+        android:layout_height="@dimen/frogo_dimen_0dp"
+        android:contentDescription="@string/dummy"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_wallpaper_dummy"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/container_keyboard_main"
@@ -109,6 +121,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/container_keyboard_main"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

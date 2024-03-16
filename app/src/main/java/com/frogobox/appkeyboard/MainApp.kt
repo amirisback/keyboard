@@ -4,13 +4,8 @@ import android.content.Context
 import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
-import com.frogobox.appkeyboard.di.koin.databaseModule
-import com.frogobox.appkeyboard.di.koin.delegateModule
-import com.frogobox.appkeyboard.di.koin.repositoryModule
-import com.frogobox.appkeyboard.di.koin.viewModelModule
 import com.frogobox.sdk.FrogoKoinApplication
 import dagger.hilt.android.HiltAndroidApp
-import org.koin.core.KoinApplication
 import java.util.Locale
 
 /**
@@ -41,17 +36,6 @@ class MainApp : FrogoKoinApplication() {
             }
         }
 
-    }
-
-    override fun setupKoinModule(koinApplication: KoinApplication) {
-        koinApplication.modules(
-            listOf(
-                delegateModule,
-                repositoryModule,
-                databaseModule,
-                viewModelModule,
-            )
-        )
     }
 
     override fun onCreate() {

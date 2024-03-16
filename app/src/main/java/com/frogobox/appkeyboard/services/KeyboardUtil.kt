@@ -3,17 +3,24 @@ package com.frogobox.appkeyboard.services
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.model.KeyboardFeature
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
-import com.frogobox.sdk.delegate.preference.PreferenceDelegatesImpl
-import org.koin.java.KoinJavaComponent.inject
+import com.frogobox.sdk.delegate.preference.PreferenceDelegates
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by Faisal Amir on 11/03/23
  * https://github.com/amirisback
  */
 
-class KeyboardUtil {
+@Singleton
+class KeyboardUtil @Inject constructor(
+    private val pref: PreferenceDelegates
+) {
 
-    private val pref: PreferenceDelegatesImpl by inject(PreferenceDelegatesImpl::class.java)
+    companion object {
+        const val PREF_KEYBOARD_TYPE = "PREF_KEYBOARD_TYPE"
+        const val PREF_KEYBOARD_BACKGROUND_COLOR = "PREF_KEYBOARD_BACKGROUND_COLOR"
+    }
 
     fun menuToggle(): List<KeyboardFeature> {
         return listOf(

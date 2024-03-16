@@ -1,9 +1,8 @@
-package com.frogobox.appkeyboard.di.hilt
+package com.frogobox.appkeyboard.di
 
 import android.content.Context
-import com.frogobox.appkeyboard.util.Constant.PREF_ROOT_NAME
-import com.frogobox.sdk.delegate.preference.PreferenceDelegates
-import com.frogobox.sdk.delegate.preference.PreferenceDelegatesImpl
+import com.frogobox.appkeyboard.data.local.autotext.AutoTextDao
+import com.frogobox.appkeyboard.data.local.db.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,14 +20,20 @@ import javax.inject.Singleton
  * All rights reserved
  */
 
+
 @Module
 @InstallIn(SingletonComponent::class)
-class UtilModule {
+object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providePreferenceDelegates(@ApplicationContext context: Context): PreferenceDelegates {
-        return PreferenceDelegatesImpl(context, PREF_ROOT_NAME)
+    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        return AppDatabase.newInstance(appContext)
+    }
+
+    @Provides
+    fun provideAutoTextDao(database: AppDatabase): AutoTextDao {
+        return database.autoTextDao()
     }
 
 }

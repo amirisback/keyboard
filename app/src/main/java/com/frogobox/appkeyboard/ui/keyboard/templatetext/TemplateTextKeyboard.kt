@@ -111,6 +111,20 @@ class TemplateTextKeyboard(
                 ) {
                 }
 
+                override fun areContentsTheSame(
+                    oldItem: TemplateText,
+                    newItem: TemplateText
+                ): Boolean {
+                    return oldItem == newItem
+                }
+
+                override fun areItemsTheSame(
+                    oldItem: TemplateText,
+                    newItem: TemplateText
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
+
                 override fun setViewBinding(parent: ViewGroup): ItemKeyboardNewsBinding {
                     return ItemKeyboardNewsBinding.inflate(
                         LayoutInflater.from(context),

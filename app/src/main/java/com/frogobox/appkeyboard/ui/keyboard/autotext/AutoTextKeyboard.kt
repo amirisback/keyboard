@@ -67,6 +67,20 @@ class AutoTextKeyboard(
                 ) {
                 }
 
+                override fun areContentsTheSame(
+                    oldItem: AutoTextEntity,
+                    newItem: AutoTextEntity
+                ): Boolean {
+                    return oldItem == newItem
+                }
+
+                override fun areItemsTheSame(
+                    oldItem: AutoTextEntity,
+                    newItem: AutoTextEntity
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
+
                 override fun setViewBinding(parent: ViewGroup): ItemKeyboardNewsBinding {
                     return ItemKeyboardNewsBinding.inflate(
                         LayoutInflater.from(context),

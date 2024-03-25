@@ -52,6 +52,19 @@ class ToggleActivity : BaseMainActivity<ActivityToggleBinding>() {
                 .addData(it)
                 .addCallback(object :
                     IFrogoBindingAdapter<KeyboardFeatureModel, ItemToggleBinding> {
+                    override fun areContentsTheSame(
+                        oldItem: KeyboardFeatureModel,
+                        newItem: KeyboardFeatureModel
+                    ): Boolean {
+                        return oldItem == newItem
+                    }
+
+                    override fun areItemsTheSame(
+                        oldItem: KeyboardFeatureModel,
+                        newItem: KeyboardFeatureModel
+                    ): Boolean {
+                        return oldItem.id == newItem.id
+                    }
 
                     override fun setViewBinding(parent: ViewGroup): ItemToggleBinding {
                         return ItemToggleBinding.inflate(
@@ -83,12 +96,7 @@ class ToggleActivity : BaseMainActivity<ActivityToggleBinding>() {
                         notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
                     ) {}
 
-                    override fun onItemLongClicked(
-                        binding: ItemToggleBinding,
-                        data: KeyboardFeatureModel,
-                        position: Int,
-                        notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
-                    ) {}
+
 
                 })
                 .createLayoutGrid(2)

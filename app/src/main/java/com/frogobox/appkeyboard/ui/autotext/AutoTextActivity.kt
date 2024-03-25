@@ -83,6 +83,19 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
         binding.rvAutotext.injectorBinding<AutoTextEntity, ItemAutotextBinding>()
             .addData(data)
             .addCallback(object : IFrogoBindingAdapter<AutoTextEntity, ItemAutotextBinding> {
+                override fun areContentsTheSame(
+                    oldItem: AutoTextEntity,
+                    newItem: AutoTextEntity
+                ): Boolean {
+                    return oldItem == newItem
+                }
+
+                override fun areItemsTheSame(
+                    oldItem: AutoTextEntity,
+                    newItem: AutoTextEntity
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
 
                 override fun setViewBinding(parent: ViewGroup): ItemAutotextBinding {
                     return ItemAutotextBinding.inflate(layoutInflater, parent, false)
@@ -110,14 +123,6 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
                             putExtra(AutoTextDetailActivity.EXTRA_AUTO_TEXT, extra)
                         }
                     )
-                }
-
-                override fun onItemLongClicked(
-                    binding: ItemAutotextBinding,
-                    data: AutoTextEntity,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
-                ) {
                 }
 
             })

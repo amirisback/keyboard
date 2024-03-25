@@ -121,6 +121,14 @@ class NewsKeyboard(
                 ) {
                 }
 
+                override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
+                    return oldItem == newItem
+                }
+
+                override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
+                    return oldItem.title == newItem.title
+                }
+
                 override fun setViewBinding(parent: ViewGroup): ItemKeyboardNewsBinding {
                     return ItemKeyboardNewsBinding.inflate(LayoutInflater.from(context),
                         parent,

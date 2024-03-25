@@ -102,6 +102,20 @@ class MovieKeyboard(
                     ) {
                     }
 
+                    override fun areContentsTheSame(
+                        oldItem: TrendingMovie,
+                        newItem: TrendingMovie
+                    ): Boolean {
+                        return oldItem == newItem
+                    }
+
+                    override fun areItemsTheSame(
+                        oldItem: TrendingMovie,
+                        newItem: TrendingMovie
+                    ): Boolean {
+                        return oldItem.id == newItem.id
+                    }
+
                     override fun setViewBinding(parent: ViewGroup): ItemKeyboardMovieBinding {
                         return ItemKeyboardMovieBinding.inflate(LayoutInflater.from(context),
                             parent,

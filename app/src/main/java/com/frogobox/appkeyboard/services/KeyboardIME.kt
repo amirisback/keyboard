@@ -202,6 +202,20 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                     .addData(keyboardUtil.menuKeyboard()).addCallback(object :
                         IFrogoBindingAdapter<KeyboardFeatureModel, ItemKeyboardHeaderBinding> {
 
+                            override fun areContentsTheSame(
+                            oldItem: KeyboardFeatureModel,
+                            newItem: KeyboardFeatureModel
+                        ): Boolean {
+                            return oldItem == newItem
+                        }
+
+                        override fun areItemsTheSame(
+                            oldItem: KeyboardFeatureModel,
+                            newItem: KeyboardFeatureModel
+                        ): Boolean {
+                            return oldItem.id == newItem.id
+                        }
+
                         override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
                             return ItemKeyboardHeaderBinding.inflate(
                                 LayoutInflater.from(parent.context), parent, false
@@ -310,15 +324,6 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                             }
 
                         }
-
-                        override fun onItemLongClicked(
-                            binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeatureModel,
-                            position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
-                        ) {
-                        }
-
 
                     }).createLayoutGrid(gridSize).build()
             }

@@ -66,12 +66,18 @@ class EmojiKeyboard(
                     setupEmojis(data.path)
                 }
 
-                override fun onItemLongClicked(
-                    binding: ItemKeyboardEmojiBinding,
-                    data: EmojiCategory,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<EmojiCategory>
-                ) {
+                override fun areContentsTheSame(
+                    oldItem: EmojiCategory,
+                    newItem: EmojiCategory
+                ): Boolean {
+                    return oldItem == newItem
+                }
+
+                override fun areItemsTheSame(
+                    oldItem: EmojiCategory,
+                    newItem: EmojiCategory
+                ): Boolean {
+                    return oldItem.name == newItem.name
                 }
 
                 override fun setViewBinding(parent: ViewGroup): ItemKeyboardEmojiBinding {
@@ -144,6 +150,14 @@ class EmojiKeyboard(
                 notifyListener: FrogoRecyclerNotifyListener<String>
             ) {
                 mOnKeyboardActionListener!!.onText(data)
+            }
+
+            override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+                return oldItem.hashCode() == newItem.hashCode()
             }
 
             override fun setViewBinding(parent: ViewGroup): ItemKeyboardEmojiBinding {

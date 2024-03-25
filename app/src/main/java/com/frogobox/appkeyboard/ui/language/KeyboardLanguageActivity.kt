@@ -60,6 +60,14 @@ class KeyboardLanguageActivity : BaseActivity<ActivityKeyboardLanguageBinding>()
         }
     }
 
+    override fun areContentsTheSame(oldItem: KeyboardLanguage, newItem: KeyboardLanguage): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areItemsTheSame(oldItem: KeyboardLanguage, newItem: KeyboardLanguage): Boolean {
+        return oldItem.xml == newItem.xml
+    }
+
     override fun setViewBinding(parent: ViewGroup): ItemLanguageKeyboardBinding {
         return ItemLanguageKeyboardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     }

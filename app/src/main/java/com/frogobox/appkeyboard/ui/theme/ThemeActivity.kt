@@ -83,6 +83,20 @@ class ThemeActivity : BaseActivity<ActivityThemeBinding>(),
         notifyListener: FrogoRecyclerNotifyListener<KeyboardThemeModel>
     ) {}
 
+    override fun areContentsTheSame(
+        oldItem: KeyboardThemeModel,
+        newItem: KeyboardThemeModel
+    ): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areItemsTheSame(
+        oldItem: KeyboardThemeModel,
+        newItem: KeyboardThemeModel
+    ): Boolean {
+        return oldItem.name == newItem.name
+    }
+
     override fun setViewBinding(parent: ViewGroup): ItemThemeBinding {
         return ItemThemeBinding.inflate(
             LayoutInflater.from(parent.context),

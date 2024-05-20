@@ -25,7 +25,7 @@ class KeyboardUtil @Inject constructor(
     }
 
     private fun getStateToggle(key: String) : Boolean {
-        return pref.loadPrefBoolean(key, true)
+        return pref.getPrefBoolean(key, true)
     }
 
     fun menuToggle(): List<KeyboardFeatureModel> {

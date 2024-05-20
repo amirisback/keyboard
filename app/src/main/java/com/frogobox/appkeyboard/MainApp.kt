@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
-import com.frogobox.sdk.FrogoKoinApplication
+import com.frogobox.sdk.FrogoApplication
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Locale
 
@@ -19,10 +19,9 @@ import java.util.Locale
  */
 
 @HiltAndroidApp
-class MainApp : FrogoKoinApplication() {
+class MainApp : FrogoApplication() {
 
     companion object {
-        val TAG: String = MainApp::class.java.simpleName
 
         lateinit var instance: MainApp
 

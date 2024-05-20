@@ -1,6 +1,5 @@
 package com.frogobox.appkeyboard.di
 
-import com.frogobox.appkeyboard.di.*
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepositoryImpl
 import dagger.Binds

@@ -274,7 +274,6 @@ class ItemMainKeyboard {
      * @param xmlLayoutResId the resource file that contains the keyboard layout and keys.
      * @param enterKeyType determines what icon should we show on Enter key
      */
-    @JvmOverloads
     constructor(context: Context, @XmlRes xmlLayoutResId: Int, enterKeyType: Int) {
         mDisplayWidth = context.resources.displayMetrics.widthPixels
         mDefaultHorizontalGap = 0

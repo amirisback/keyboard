@@ -399,7 +399,6 @@ class MainKeyboard @JvmOverloads constructor(
         for (i in 0 until keyCount) {
             val key = keys[i]
             val code = key.code
-            val labels = key.label
             var keyBackground = resources.getDrawable(R.drawable.keypad_default, context.theme)
             when (code) {
 

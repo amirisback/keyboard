@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
@@ -42,10 +42,8 @@ android {
         resValue("string", "admob_app_id", AdmobValue.Debug.ADMOB_APP_ID)
         resValue("string", "admob_interstitial", AdmobValue.Debug.ADMOB_INTERSTITIAL)
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas") // If Using Ksp
         }
 
     }
@@ -116,9 +114,9 @@ dependencies {
 
     implementation(DependencyGradle.FROGO_CONSUME_API)
 
-    kapt(GitHub.glideCompiler)
-    kapt(Google.Hilt.compiler)
-    kapt(Androidx.Room.compiler)
-    kapt(Androidx.Lifecycle.compiler)
+    ksp(GitHub.glideCompiler)
+    ksp(Google.Hilt.compiler)
+    ksp(Androidx.Room.compiler)
+    ksp(Androidx.Lifecycle.compiler)
 
 }

@@ -281,73 +281,73 @@ class KeyboardUtil {
                 KeyboardFeatureType.AUTO_TEXT.id,
                 KeyboardFeatureType.AUTO_TEXT,
                 R.drawable.ic_menu_auto_text,
-                pref.loadPrefBoolean(KeyboardFeatureType.AUTO_TEXT.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.AUTO_TEXT.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_APP.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_APP,
                 R.drawable.ic_menu_ps_app,
-                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_APP.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_APP.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_GAME.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_GAME,
                 R.drawable.ic_menu_ps_game,
-                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GAME.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GAME.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_LOVE,
                 R.drawable.ic_menu_ps_love,
-                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING,
                 R.drawable.ic_menu_ps_greeting,
-                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.TEMPLATE_TEXT_SALE.id,
                 KeyboardFeatureType.TEMPLATE_TEXT_SALE,
                 R.drawable.ic_menu_ps_sale,
-                pref.loadPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.TEMPLATE_TEXT_SALE.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.NEWS.id,
                 KeyboardFeatureType.NEWS,
                 R.drawable.ic_menu_news,
-                pref.loadPrefBoolean(KeyboardFeatureType.NEWS.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.NEWS.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.MOVIE.id,
                 KeyboardFeatureType.MOVIE,
                 R.drawable.ic_menu_movie,
-                pref.loadPrefBoolean(KeyboardFeatureType.MOVIE.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.MOVIE.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.WEB.id,
                 KeyboardFeatureType.WEB,
                 R.drawable.ic_menu_website,
-                pref.loadPrefBoolean(KeyboardFeatureType.WEB.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.WEB.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.FORM.id,
                 KeyboardFeatureType.FORM,
                 R.drawable.ic_menu_form,
-                pref.loadPrefBoolean(KeyboardFeatureType.FORM.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.FORM.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.CHANGE_KEYBOARD.id,
                 KeyboardFeatureType.CHANGE_KEYBOARD,
                 R.drawable.ic_menu_keyboard,
-                pref.loadPrefBoolean(KeyboardFeatureType.CHANGE_KEYBOARD.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.CHANGE_KEYBOARD.id, true)
             ),
             KeyboardFeature(
                 KeyboardFeatureType.SETTING.id,
                 KeyboardFeatureType.SETTING,
                 R.drawable.ic_menu_setting,
-                pref.loadPrefBoolean(KeyboardFeatureType.SETTING.id, true)
+                pref.getPrefBoolean(KeyboardFeatureType.SETTING.id, true)
             )
         ).sortedBy { it.state }
     }

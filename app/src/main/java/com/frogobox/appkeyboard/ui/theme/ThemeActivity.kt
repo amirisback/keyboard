@@ -15,6 +15,7 @@ import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.showToast
 import com.frogobox.sdk.ext.visible
 import com.frogobox.sdk.util.FrogoFunc
+import com.frogobox.sdk.util.SimpleDialogUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -130,15 +131,17 @@ class ThemeActivity : BaseActivity<ActivityThemeBinding>(),
     }
 
     private fun applyTheme(data: KeyboardThemeModel) {
-        FrogoFunc.createDialogDefault(
+        SimpleDialogUtil.create(
             this@ThemeActivity,
             "Change Theme",
             "Are you sure you want to change keyboard theme?",
-            listenerNo = {},
-            listenerYes = {
-                viewModel.setThemeColor(data) {
-                    viewModel.getThemeData()
-                    showToast("${data.name} Theme Applied")
+            object : SimpleDialogUtil.OnDialogClickListener {
+                override fun negativeButton() {}
+                override fun positiveButton() {
+                    viewModel.setThemeColor(data) {
+                        viewModel.getThemeData()
+                        showToast("${data.name} Theme Applied")
+                    }
                 }
             }
         )

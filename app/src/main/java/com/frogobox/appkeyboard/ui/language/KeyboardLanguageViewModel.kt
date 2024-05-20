@@ -124,25 +124,14 @@ class KeyboardLanguageViewModel @Inject constructor(
     }
 
     fun setKeyboard(xml: Int, onSuccess: () -> Unit) {
-        pref.savePrefInt(KeyboardUtil.KEYBOARD_TYPE, xml, object : FrogoStateResponse {
-            override fun onFailed(statusCode: Int, errorMessage: String) {}
-            override fun onFinish() {}
-            override fun onHideProgress() {
-                _showloading.postValue(false)
-            }
-
-            override fun onShowProgress() {
-                _showloading.postValue(true)
-            }
-
-            override fun onSuccess() {
-                onSuccess()
-            }
-        })
+        _showloading.postValue(true)
+        pref.savePrefInt(KeyboardUtil.KEYBOARD_TYPE, xml)
+        _showloading.postValue(false)
+        onSuccess()
     }
 
     fun checkKeyboardType(xml: Int): Boolean {
-        return pref.loadPrefInt(
+        return pref.getPrefInt(
             KeyboardUtil.KEYBOARD_TYPE,
             com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
         ) == xml

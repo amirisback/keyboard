@@ -8,6 +8,7 @@ import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.AutoTextLabelType
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
+import com.frogobox.coresdk.source.FrogoResult
 import com.frogobox.coresdk.util.FrogoDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,31 +24,49 @@ class AutoTextViewModel @Inject constructor(
     private val repository: AutoTextRepository,
 ) : BaseViewModel() {
 
-    private var _autoText = MutableLiveData<List<AutoTextEntity>>()
-    var autoText: LiveData<List<AutoTextEntity>> = _autoText
+    private var _autoText = MutableLiveData<FrogoResult<List<AutoTextEntity>>>()
+    var autoText: LiveData<FrogoResult<List<AutoTextEntity>>> = _autoText
+
+    protected var _eventFailed = MutableLiveData<String>()
+    var eventFailed: LiveData<String> = _eventFailed
+
+    protected var _eventSuccess = MutableLiveData<String>()
+    var eventSuccess: LiveData<String> = _eventSuccess
+
+    protected var _eventEmptyState = MutableLiveData<Boolean>()
+    var eventEmptyState: LiveData<Boolean> = _eventEmptyState
+
+    protected var _eventFailedState = MutableLiveData<Boolean>()
+    var eventFailedState: LiveData<Boolean> = _eventFailedState
+
+    protected var _eventFinishState = MutableLiveData<Boolean>()
+    var eventFinishState: LiveData<Boolean> = _eventFinishState
+
+    protected var _eventSuccessState = MutableLiveData<Boolean>()
+    var eventSuccessState: LiveData<Boolean> = _eventSuccessState
+
+    protected var _eventNoInternetState = MutableLiveData<Boolean>()
+    var eventNoInternetState: LiveData<Boolean> = _eventNoInternetState
+
+    protected var _eventShowProgressState = MutableLiveData<Boolean>()
+    var eventShowProgressState: LiveData<Boolean> = _eventShowProgressState
+
 
     fun getAutoText() {
         repository.getAutoText(object : DataResponseCallback<List<AutoTextEntity>> {
+            override fun onFinish() {}
+            override fun onHideProgress() {}
+
             override fun onFailed(statusCode: Int, errorMessage: String) {
-                _eventFailed.postValue(errorMessage)
-            }
-
-            override fun onFinish() {
-                _eventFinishState.postValue(true)
-            }
-
-            override fun onHideProgress() {
-                _eventShowProgressState.postValue(false)
-
+                _autoText.postValue(FrogoResult.Error(statusCode, errorMessage))
             }
 
             override fun onShowProgress() {
-                _eventShowProgressState.postValue(true)
-
+                _autoText.postValue(FrogoResult.Loading(true))
             }
 
             override fun onSuccess(data: List<AutoTextEntity>) {
-                _autoText.postValue(data)
+                _autoText.postValue(FrogoResult.Success(data))
             }
 
         })

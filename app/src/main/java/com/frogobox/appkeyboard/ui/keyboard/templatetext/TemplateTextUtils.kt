@@ -3,6 +3,7 @@ package com.frogobox.appkeyboard.ui.keyboard.templatetext
 import android.content.Context
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.TemplateText
+import com.frogobox.sdk.ext.getDataFromJsonAsset
 import com.frogobox.sdk.util.FrogoFunc
 
 /**
@@ -19,7 +20,7 @@ import com.frogobox.sdk.util.FrogoFunc
 object TemplateTextUtils {
 
     private fun getDataAsset(context: Context, fileName: String): List<String> {
-        return FrogoFunc.getArrayFromJsonAsset(context, fileName)
+        return context.getDataFromJsonAsset(fileName)
     }
 
     fun getTextApp(context: Context): List<TemplateText> {

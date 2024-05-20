@@ -33,7 +33,7 @@ class ToggleViewModel @Inject constructor(
     }
 
     fun getSwitchToggle(key: String): Boolean {
-        return pref.loadPrefBoolean(key, true)
+        return pref.getPrefBoolean(key, true)
     }
 
     fun getKeyboardFeatureData() {

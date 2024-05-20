@@ -45,13 +45,13 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     override fun setupTheme() {
         binding?.apply {
 
-            val background = pref.loadPrefInt(
+            val background = pref.getPrefInt(
                 KeyboardUtil.KEYBOARD_COLOR,
                 R.color.color_bg_keyboard_default
             )
 
             val backgroundType = ThemeType.valueOf(
-                pref.loadPrefString(
+                pref.getPrefString(
                     KeyboardUtil.KEYBOARD_COLOR_TYPE,
                     ThemeType.COLOR.name
                 )
@@ -380,13 +380,13 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     }
 
     override fun getKeyboardLayoutXML(): Int {
-        return pref.loadPrefInt(
+        return pref.getPrefInt(
             KeyboardUtil.KEYBOARD_TYPE, com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
         )
     }
 
     private fun getStateToggle(key: String): Boolean {
-        return pref.loadPrefBoolean(key, true)
+        return pref.getPrefBoolean(key, true)
     }
 
 }

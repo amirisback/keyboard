@@ -14,6 +14,7 @@ import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.showToast
 import com.frogobox.sdk.ext.visible
 import com.frogobox.sdk.util.FrogoFunc
+import com.frogobox.sdk.util.SimpleDialogUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -114,15 +115,18 @@ class KeyboardLanguageActivity : BaseActivity<ActivityKeyboardLanguageBinding>()
     }
 
     private fun applyLanguage(data: KeyboardLanguage) {
-        FrogoFunc.createDialogDefault(
+        SimpleDialogUtil.create(
             this@KeyboardLanguageActivity,
             "Change Theme",
             "Are you sure you want to change keyboard theme?",
-            listenerNo = {},
-            listenerYes = {
-                viewModel.setKeyboard(data.xml) {
-                    showToast("${data.name} Language Applied")
-                    viewModel.getKeyboardLanguage(this@KeyboardLanguageActivity)
+            object  : SimpleDialogUtil.OnDialogClickListener {
+
+                override fun negativeButton() {}
+                override fun positiveButton() {
+                    viewModel.setKeyboard(data.xml) {
+                        showToast("${data.name} Language Applied")
+                        viewModel.getKeyboardLanguage(this@KeyboardLanguageActivity)
+                    }
                 }
             }
         )

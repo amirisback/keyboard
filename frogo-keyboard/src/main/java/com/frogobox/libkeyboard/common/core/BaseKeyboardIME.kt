@@ -169,7 +169,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     override fun hideOnlyKeyboard() {}
 
     override fun EditText.showKeyboardExt() {
-        setOnFocusChangeListener { v, hasFocus ->
+        setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 showOnlyKeyboard()
             }
@@ -214,7 +214,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onKeyExt(code: Int, inputConnection: InputConnection) {
-        if (keyboard == null || inputConnection == null) {
+        if (keyboard == null) {
             return
         }
 

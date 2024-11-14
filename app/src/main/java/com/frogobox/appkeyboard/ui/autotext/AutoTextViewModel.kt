@@ -62,7 +62,7 @@ class AutoTextViewModel @Inject constructor(
             }
 
             override fun onShowProgress() {
-                _autoText.postValue(FrogoResult.Loading(true))
+                _autoText.postValue(FrogoResult.Loading())
             }
 
             override fun onSuccess(data: List<AutoTextEntity>) {

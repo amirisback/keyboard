@@ -42,7 +42,6 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
 
                 when (it) {
                     is FrogoResult.Error -> {}
-                    is FrogoResult.Finish -> {}
                     is FrogoResult.Loading -> {}
                     is FrogoResult.Success -> {
                         if (it.result.isEmpty()) {

@@ -90,6 +90,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     compileOptions {
@@ -109,14 +110,12 @@ dependencies {
 
     implementation(project(DependencyGradle.MODULE_LIB_FROGO_KEYBOARD))
 
-    implementation(Androidx.Work.runtimeKtx)
-    implementation(Google.Hilt.android)
+    implementation(libs.androidx.work.ktx)
+    implementation(libs.google.hilt)
 
-    implementation(DependencyGradle.FROGO_CONSUME_API)
-
-    ksp(GitHub.glideCompiler)
-    ksp(Google.Hilt.compiler)
-    ksp(Androidx.Room.compiler)
-    ksp(Androidx.Lifecycle.compiler)
+    ksp(libs.github.glide.compiler)
+    ksp(libs.google.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.lifecycle.compiler)
 
 }

@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import com.frogobox.appkeyboard.databinding.KeyboardWebviewBinding
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
-import com.frogobox.sdk.ext.loadUrlExt
+import com.frogobox.sdk.ext.loadUrlFrogoExt
 
 /**
  * Created by Faisal Amir on 07/11/22
@@ -32,7 +32,7 @@ class WebiewKeyboard(
 
     private fun initView() {
         binding?.apply {
-            webview.loadUrlExt("https://www.google.com")
+            webview.loadUrlFrogoExt("https://www.google.com")
         }
     }
 

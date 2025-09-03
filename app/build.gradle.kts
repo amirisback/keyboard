@@ -1,9 +1,15 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
     id("kotlin-parcelize")
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas") // If Using Ksp
 }
 
 android {
@@ -33,7 +39,6 @@ android {
         // Declaration apps name debug mode
         val debugAttribute = "Dev"
         val nameAppDebug = "${ProjectSetting.NAME_APP} $debugAttribute"
-        resourceConfigurations += setOf("en", "id")
 
         // Inject app name for debug
         resValue("string", "app_name", nameAppDebug)
@@ -41,10 +46,6 @@ android {
         // Inject admob id for debug
         resValue("string", "admob_app_id", AdmobValue.Debug.ADMOB_APP_ID)
         resValue("string", "admob_interstitial", AdmobValue.Debug.ADMOB_INTERSTITIAL)
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas") // If Using Ksp
-        }
 
     }
 
@@ -98,12 +99,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlin {
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of("17"))
-        }
-    }
+}
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+    }
 }
 
 dependencies {

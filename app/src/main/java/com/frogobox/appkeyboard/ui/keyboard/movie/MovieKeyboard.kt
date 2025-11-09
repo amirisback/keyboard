@@ -40,18 +40,16 @@ class MovieKeyboard(
         return KeyboardGridBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    override fun onCreate() {
-        setupData()
-        initView()
-    }
-
-    private fun initView() {
+    override fun initUI() {
+        super.initUI()
         binding.apply {
             tvToolbarTitle.text = "Movie Api"
         }
     }
 
-    private fun setupData() {
+    override fun initData() {
+        super.initData()
+
         val consumeMovieApi = ConsumeMovieApi(MovieUrl.API_KEY) // Your API_KEY
         consumeMovieApi.getTrendingMovieDay(object : FrogoDataResponse<Trending<TrendingMovie>> {
             override fun onFailed(statusCode: Int, errorMessage: String) {}

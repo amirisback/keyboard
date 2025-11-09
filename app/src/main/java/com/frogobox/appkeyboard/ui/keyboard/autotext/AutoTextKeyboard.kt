@@ -27,18 +27,15 @@ class AutoTextKeyboard(
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    override fun onCreate() {
-        initView()
-        setupData()
-    }
-
-    private fun initView() {
+    override fun initUI() {
+        super.initUI()
         binding.apply {
             tvToolbarTitle.text = "Auto Text"
         }
     }
 
-    fun setupData() {
+    override fun initData() {
+        super.initData()
         val viewModel = AutoTextKeyboardViewModel(context)
         viewModel.getAutoText {
             setupRv(it)

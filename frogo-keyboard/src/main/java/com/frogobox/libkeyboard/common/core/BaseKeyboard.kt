@@ -52,13 +52,19 @@ abstract class BaseKeyboard<VB : ViewBinding> @JvmOverloads constructor(
      * Called once after the binding has been created and attached.
      * Use this to initialize your views and listeners.
      */
-    protected abstract fun onCreate()
+    protected open fun onCreate() {
+        initUI()
+        initData()
+    }
 
     /**
      * Called when the keyboard is being destroyed or detached.
      * Override to release resources or remove callbacks.
      */
     protected open fun onDestroy() {}
+
+    open fun initUI() {}
+    open fun initData() {}
 
     init {
         orientation = VERTICAL

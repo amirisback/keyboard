@@ -80,7 +80,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     }
 
     override fun invalidateKeyboard() {
-        binding?.keyboardAutotext?.setupData()
+        binding?.keyboardAutotext?.initData()
         setupFeatureKeyboard()
     }
 

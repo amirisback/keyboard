@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.frogobox.appkeyboard.databinding.KeyboardFormBinding
+import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardViewModel
 import com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboard
 import com.frogobox.appkeyboard.util.KeyboardNavigationHelper
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
@@ -30,11 +31,8 @@ class FormKeyboard(
         return KeyboardFormBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    override fun onCreate() {
-        initView()
-    }
-
-    private fun initView() {
+    override fun initUI() {
+        super.initUI()
         binding.apply {
             btnSubmit.setOnClickListener {
                 KeyboardNavigationHelper.navigateTo(this@FormKeyboard, destinationKeyboard)

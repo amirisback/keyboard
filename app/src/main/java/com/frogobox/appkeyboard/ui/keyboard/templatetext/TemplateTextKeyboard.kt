@@ -30,8 +30,14 @@ class TemplateTextKeyboard(
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    override fun onCreate() {
-        initView()
+    override fun initUI() {
+        super.initUI()
+        typePlayStore?.let { setupContent(it) }
+    }
+
+    fun setupTemplateTextType(templateTextType: KeyboardFeatureType) {
+        this.typePlayStore = templateTextType
+        setupContent(templateTextType)
     }
 
     private fun setupContent(templateTextType: KeyboardFeatureType) {
@@ -73,15 +79,6 @@ class TemplateTextKeyboard(
 
         binding.tvToolbarTitle.text = title
         setupRv(list)
-    }
-
-    private fun initView() {
-        typePlayStore?.let { setupContent(it) }
-    }
-
-    fun setupTemplateTextType(templateTextType: KeyboardFeatureType) {
-        this.typePlayStore = templateTextType
-        setupContent(templateTextType)
     }
 
     private fun getTitleText(title: String): String {

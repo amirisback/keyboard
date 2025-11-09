@@ -27,11 +27,8 @@ class WebiewKeyboard(
         return KeyboardWebviewBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    override fun onCreate() {
-        initView()
-    }
-
-    private fun initView() {
+    override fun initUI() {
+        super.initUI()
         binding.apply {
             webview.loadUrlFrogoExt("https://www.google.com")
         }

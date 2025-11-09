@@ -3,13 +3,12 @@ package com.frogobox.libkeyboard.ui.emoji
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
+import android.widget.LinearLayout
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
@@ -39,20 +38,18 @@ class EmojiKeyboard(
 
     var mOnKeyboardActionListener: OnKeyboardActionListener? = null
 
-    override fun setupViewBinding(): KeyboardEmojiBinding {
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardEmojiBinding {
         return KeyboardEmojiBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     override fun onCreate() {
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun openEmojiPalette() {
         setupEmojis(EmojiCategoryType.GENERAL.path)
         setupEmojiCategory()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun setupEmojiCategory() {
         val adapterCallback =
             object : IFrogoBindingAdapter<EmojiCategory, ItemKeyboardEmojiBinding> {
@@ -99,7 +96,7 @@ class EmojiKeyboard(
                 }
             }
 
-        binding?.apply {
+        binding.apply {
             emojiCategoryList.injectorBinding<EmojiCategory, ItemKeyboardEmojiBinding>()
                 .addData(getEmojiCategory())
                 .addCallback(adapterCallback)
@@ -108,7 +105,6 @@ class EmojiKeyboard(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun setupEmojis(path: String) {
         ensureBackgroundThread {
             val fullEmojiList = parseRawEmojiSpecsFile(context, path)
@@ -178,7 +174,7 @@ class EmojiKeyboard(
         val emojiItemWidth = context.resources.getDimensionPixelSize(R.dimen.emoji_item_size)
         val mLayoutManager = AutoGridLayoutManager(context, emojiItemWidth)
 
-        binding?.apply {
+        binding.apply {
             emojiList.injectorBinding<String, ItemKeyboardEmojiBinding>()
                 .addCallback(adapterCallback)
                 .addData(emojis)

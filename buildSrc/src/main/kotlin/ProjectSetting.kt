@@ -23,7 +23,7 @@ object ProjectSetting {
 
     const val VERSION_MAJOR = 1
     const val VERSION_MINOR = 2
-    const val VERSION_PATCH = 0
+    const val VERSION_PATCH = 1
 
     // ---------------------------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ object ProjectSetting {
 
     // ---------------------------------------------------------------------------------------------
 
-    const val BASE_PACAKGE_NAME = "com.frogobox"
+    const val BASE_PACKAGE_NAME = "com.frogobox"
 
     const val MODULE_APP = "appkeyboard"
     const val MODULE_LIB_FROGO_KEYBOARD = "libkeyboard"
@@ -42,8 +42,8 @@ object ProjectSetting {
 
     val PROJECT_APP_ID = "$APP_DOMAIN.$APP_PLAY_CONSOLE.$APP_NAME"
 
-    const val PROJECT_NAME_SPACE_APP = "$BASE_PACAKGE_NAME.$MODULE_APP"
-    const val PROJECT_NAME_SPACE_LIB_FROGO_KEYBOARD = "$BASE_PACAKGE_NAME.$MODULE_LIB_FROGO_KEYBOARD"
+    const val PROJECT_NAME_SPACE_APP = "$BASE_PACKAGE_NAME.$MODULE_APP"
+    const val PROJECT_NAME_SPACE_LIB_FROGO_KEYBOARD = "$BASE_PACKAGE_NAME.$MODULE_LIB_FROGO_KEYBOARD"
 
     const val PROJECT_VERSION_CODE = (VERSION_MAJOR * 100) + (VERSION_MINOR * 10) + (VERSION_PATCH * 1)
     const val PROJECT_VERSION_NAME = "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"

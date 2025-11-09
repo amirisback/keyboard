@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.frogobox.api.news.ConsumeNewsApi
 import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.appkeyboard.databinding.KeyboardListBinding
@@ -37,7 +38,7 @@ class NewsKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardListBinding>(context, attrs) {
 
-    override fun setupViewBinding(): KeyboardListBinding {
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardListBinding {
         return KeyboardListBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
@@ -47,7 +48,7 @@ class NewsKeyboard(
     }
 
     private fun initView() {
-        binding?.apply {
+        binding.apply {
             tvToolbarTitle.text = "News Api"
         }
     }
@@ -77,12 +78,12 @@ class NewsKeyboard(
 
                 override fun onShowProgress() {
                     // Your Progress Show
-                    binding?.progressBar?.visible()
+                    binding.progressBar.visible()
                 }
 
                 override fun onHideProgress() {
                     // Your Progress Hide
-                    binding?.progressBar?.gone()
+                    binding.progressBar.gone()
                 }
 
             })
@@ -90,7 +91,7 @@ class NewsKeyboard(
     }
 
     private fun setupRv(data: List<Article>) {
-        binding?.apply {
+        binding.apply {
 
             val adapterCallback = object : IFrogoBindingAdapter<Article, ItemKeyboardNewsBinding> {
                 override fun onItemClicked(

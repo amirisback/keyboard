@@ -2,19 +2,29 @@ package com.frogobox.libkeyboard.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Paint.Align
+import android.graphics.PorterDuff
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
-import android.os.Build
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.*
+import android.view.Gravity
+import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
-import android.widget.*
-import androidx.annotation.RequiresApi
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.common.ext.adjustAlpha
@@ -30,7 +40,8 @@ import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_PERMANENT
 import com.frogobox.sdk.ext.getColorExt
-import java.util.*
+import java.util.Arrays
+import java.util.Locale
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -221,7 +232,7 @@ class MainKeyboard @JvmOverloads constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
 

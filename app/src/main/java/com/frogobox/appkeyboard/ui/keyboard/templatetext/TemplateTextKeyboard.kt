@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.appkeyboard.databinding.KeyboardAutotextBinding
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
@@ -25,12 +26,18 @@ class TemplateTextKeyboard(
 
     private var typePlayStore: KeyboardFeatureType? = null
 
-    override fun setupViewBinding(): KeyboardAutotextBinding {
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardAutotextBinding {
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    override fun onCreate() {
-        initView()
+    override fun initUI() {
+        super.initUI()
+        typePlayStore?.let { setupContent(it) }
+    }
+
+    fun setupTemplateTextType(templateTextType: KeyboardFeatureType) {
+        this.typePlayStore = templateTextType
+        setupContent(templateTextType)
     }
 
     private fun setupContent(templateTextType: KeyboardFeatureType) {
@@ -70,17 +77,8 @@ class TemplateTextKeyboard(
 
         }
 
-        binding?.tvToolbarTitle?.text = title
+        binding.tvToolbarTitle.text = title
         setupRv(list)
-    }
-
-    private fun initView() {
-        typePlayStore?.let { setupContent(it) }
-    }
-
-    fun setupTemplateTextType(templateTextType: KeyboardFeatureType) {
-        this.typePlayStore = templateTextType
-        setupContent(templateTextType)
     }
 
     private fun getTitleText(title: String): String {
@@ -88,7 +86,7 @@ class TemplateTextKeyboard(
     }
 
     private fun setupRv(data: List<TemplateText>) {
-        binding?.apply {
+        binding.apply {
 
             val adapterCallback = object :
                 IFrogoBindingAdapter<TemplateText, ItemKeyboardNewsBinding> {

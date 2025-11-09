@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import com.frogobox.appkeyboard.common.base.BaseViewModel
 import com.frogobox.appkeyboard.common.callback.DataResponseCallback
 import com.frogobox.appkeyboard.common.callback.StateResponseCallback
+import com.frogobox.appkeyboard.common.ext.getTimeNow
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.AutoTextLabelType
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
-import com.frogobox.coresdk.source.FrogoResult
-import com.frogobox.coresdk.util.FrogoDate
+import com.frogobox.coresdk.source.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -24,8 +24,8 @@ class AutoTextViewModel @Inject constructor(
     private val repository: AutoTextRepository,
 ) : BaseViewModel() {
 
-    private var _autoText = MutableLiveData<FrogoResult<List<AutoTextEntity>>>()
-    var autoText: LiveData<FrogoResult<List<AutoTextEntity>>> = _autoText
+    private var _autoText = MutableLiveData<Resource<List<AutoTextEntity>>>()
+    var autoText: LiveData<Resource<List<AutoTextEntity>>> = _autoText
 
     protected var _eventFailed = MutableLiveData<String>()
     var eventFailed: LiveData<String> = _eventFailed
@@ -58,15 +58,15 @@ class AutoTextViewModel @Inject constructor(
             override fun onHideProgress() {}
 
             override fun onFailed(statusCode: Int, errorMessage: String) {
-                _autoText.postValue(FrogoResult.Error(statusCode, errorMessage))
+                _autoText.postValue(Resource.Error(statusCode, errorMessage))
             }
 
             override fun onShowProgress() {
-                _autoText.postValue(FrogoResult.Loading())
+                _autoText.postValue(Resource.Loading())
             }
 
             override fun onSuccess(data: List<AutoTextEntity>) {
-                _autoText.postValue(FrogoResult.Success(data))
+                _autoText.postValue(Resource.Success(data))
             }
 
         })
@@ -76,7 +76,7 @@ class AutoTextViewModel @Inject constructor(
         val data = AutoTextEntity(
             title = title,
             label = AutoTextLabelType.DEFAULT,
-            date = FrogoDate.getTimeNow(),
+            date = getTimeNow(),
             body = body,
             isActive = true
         )
@@ -135,7 +135,7 @@ class AutoTextViewModel @Inject constructor(
             id = id,
             title = title,
             label = AutoTextLabelType.DEFAULT,
-            date = FrogoDate.getTimeNow(),
+            date = getTimeNow(),
             body = body,
             isActive = true
         )

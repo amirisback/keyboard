@@ -1,14 +1,12 @@
 package com.frogobox.appkeyboard.services
 
 import android.content.Intent
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.annotation.RequiresApi
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.databinding.ItemKeyboardHeaderBinding
 import com.frogobox.appkeyboard.databinding.KeyboardImeBinding
@@ -82,7 +80,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     }
 
     override fun invalidateKeyboard() {
-        binding?.keyboardAutotext?.setupData()
+        binding?.keyboardAutotext?.initData()
         setupFeatureKeyboard()
     }
 
@@ -119,7 +117,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
             keyboardWebview.gone()
             keyboardForm.gone()
             keyboardEmoji.gone()
-            keyboardEmoji.binding?.emojiList?.scrollToPosition(0)
+            keyboardEmoji.binding.emojiList.scrollToPosition(0)
         }
     }
 
@@ -144,38 +142,38 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun initBackToMainKeyboard() {
         binding?.apply {
-            keyboardAutotext.binding?.toolbarBack?.setOnClickListener {
+            keyboardAutotext.binding.toolbarBack.setOnClickListener {
                 keyboardAutotext.gone()
                 showMainKeyboard()
             }
 
-            keyboardNews.binding?.toolbarBack?.setOnClickListener {
+            keyboardNews.binding.toolbarBack.setOnClickListener {
                 keyboardNews.gone()
                 showMainKeyboard()
             }
 
-            keyboardMoview.binding?.toolbarBack?.setOnClickListener {
+            keyboardMoview.binding.toolbarBack.setOnClickListener {
                 keyboardMoview.gone()
                 showMainKeyboard()
             }
 
-            keyboardWebview.binding?.toolbarBack?.setOnClickListener {
+            keyboardWebview.binding.toolbarBack.setOnClickListener {
                 keyboardWebview.gone()
                 showMainKeyboard()
             }
 
-            keyboardForm.binding?.toolbarBack?.setOnClickListener {
+            keyboardForm.binding.toolbarBack.setOnClickListener {
                 keyboardForm.gone()
                 showMainKeyboard()
             }
 
-            keyboardEmoji.binding?.toolbarBack?.setOnClickListener {
+            keyboardEmoji.binding.toolbarBack.setOnClickListener {
                 keyboardEmoji.gone()
-                keyboardEmoji.binding?.emojiList?.scrollToPosition(0)
+                keyboardEmoji.binding.emojiList.scrollToPosition(0)
                 showMainKeyboard()
             }
 
-            keyboardTemplateText.binding?.toolbarBack?.setOnClickListener {
+            keyboardTemplateText.binding.toolbarBack.setOnClickListener {
                 keyboardTemplateText.gone()
                 showMainKeyboard()
             }
@@ -265,9 +263,9 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                                 KeyboardFeatureType.FORM -> {
                                     keyboardHeader.gone()
                                     keyboardForm.visible()
-                                    keyboardForm.binding?.etText?.showKeyboardExt()
-                                    keyboardForm.binding?.etText2?.showKeyboardExt()
-                                    keyboardForm.binding?.etText3?.showKeyboardExt()
+                                    keyboardForm.binding.etText.showKeyboardExt()
+                                    keyboardForm.binding.etText2.showKeyboardExt()
+                                    keyboardForm.binding.etText3.showKeyboardExt()
 
                                     keyboardForm.setOnClickListener {
                                         hideOnlyKeyboard()
@@ -330,26 +328,26 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     override fun onKey(code: Int) {
         val formView = binding?.keyboardForm
         var inputConnection = currentInputConnection
 
         if (formView?.visibility == View.VISIBLE) {
-            val et1 = formView.binding?.etText
-            val et1Connection = et1?.onCreateInputConnection(EditorInfo())
+            val et1 = formView.binding.etText
+            val et1Connection = et1.onCreateInputConnection(EditorInfo())
 
-            val et2 = formView.binding?.etText2
-            val et2Connection = et2?.onCreateInputConnection(EditorInfo())
+            val et2 = formView.binding.etText2
+            val et2Connection = et2.onCreateInputConnection(EditorInfo())
 
-            val et3 = formView.binding?.etText3
-            val et3Connection = et3?.onCreateInputConnection(EditorInfo())
+            val et3 = formView.binding.etText3
+            val et3Connection = et3.onCreateInputConnection(EditorInfo())
 
-            if (et1?.isFocused == true) {
+            if (et1.isFocused) {
                 inputConnection = et1Connection
-            } else if (et2?.isFocused == true) {
+            } else if (et2.isFocused) {
                 inputConnection = et2Connection
-            } else if (et3?.isFocused == true) {
+            } else if (et3.isFocused) {
                 inputConnection = et3Connection
             }
 
@@ -371,7 +369,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         binding?.keyboardMain?.invalidateAllKeys()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    
     override fun runEmojiBoard() {
         binding?.keyboardEmoji?.visible()
         binding?.keyboardMain?.invisible()

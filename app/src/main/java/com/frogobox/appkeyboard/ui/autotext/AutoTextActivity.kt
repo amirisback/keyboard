@@ -9,7 +9,7 @@ import com.frogobox.appkeyboard.common.base.BaseActivity
 import com.frogobox.appkeyboard.databinding.ActivityAutotextBinding
 import com.frogobox.appkeyboard.databinding.ItemAutotextBinding
 import com.frogobox.appkeyboard.model.AutoTextEntity
-import com.frogobox.coresdk.source.FrogoResult
+import com.frogobox.coresdk.source.Resource
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -41,9 +41,9 @@ class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
                 showLogD("${it}", "AutoText")
 
                 when (it) {
-                    is FrogoResult.Error -> {}
-                    is FrogoResult.Loading -> {}
-                    is FrogoResult.Success -> {
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
                         if (it.result.isEmpty()) {
                             binding.emptyView.root.visible()
                             binding.rvAutotext.gone()

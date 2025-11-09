@@ -526,7 +526,7 @@ class KeyboardIME : BaseKeyboardIME<YourIMELayoutBinding>() {
 
 ### if your feature is using a textfield, add below code to your KeyboardIME class
 ```kotlin
-@RequiresApi(Build.VERSION_CODES.M)
+
     override fun onKey(code: Int) {
         val formView = binding?.keyboardForm
         var inputConnection = currentInputConnection

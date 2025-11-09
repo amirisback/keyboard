@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.bumptech.glide.Glide
 import com.frogobox.api.movie.ConsumeMovieApi
 import com.frogobox.appkeyboard.databinding.ItemKeyboardMovieBinding
@@ -35,7 +36,7 @@ class MovieKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardGridBinding>(context, attrs) {
 
-    override fun setupViewBinding(): KeyboardGridBinding {
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardGridBinding {
         return KeyboardGridBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
@@ -45,7 +46,7 @@ class MovieKeyboard(
     }
 
     private fun initView() {
-        binding?.apply {
+        binding.apply {
             tvToolbarTitle.text = "Movie Api"
         }
     }
@@ -57,11 +58,11 @@ class MovieKeyboard(
             override fun onFinish() {}
 
             override fun onHideProgress() {
-                binding?.progressBar?.gone()
+                binding.progressBar.gone()
             }
 
             override fun onShowProgress() {
-                binding?.progressBar?.visible()
+                binding.progressBar.visible()
             }
 
             override fun onSuccess(data: Trending<TrendingMovie>) {
@@ -72,7 +73,7 @@ class MovieKeyboard(
     }
 
     private fun setupRv(data: List<TrendingMovie>) {
-        binding?.apply {
+        binding.apply {
 
             val adapterCallback =
                 object : IFrogoBindingAdapter<TrendingMovie, ItemKeyboardMovieBinding> {

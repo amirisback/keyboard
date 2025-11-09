@@ -1,7 +1,6 @@
 package com.frogobox.libkeyboard.common.core
 
 import android.inputmethodservice.InputMethodService
-import android.os.Build
 import android.text.InputType
 import android.text.InputType.TYPE_CLASS_DATETIME
 import android.text.InputType.TYPE_CLASS_NUMBER
@@ -17,7 +16,6 @@ import android.view.inputmethod.EditorInfo.IME_MASK_ACTION
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.widget.EditText
-import androidx.annotation.RequiresApi
 import androidx.viewbinding.ViewBinding
 import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard
@@ -109,7 +107,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         updateShiftKeyState()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    
     override fun onKey(code: Int) {
         var inputConnection = currentInputConnection
         onKeyExt(code, inputConnection)
@@ -179,26 +177,17 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         }
     }
 
-    override fun initBackToMainKeyboard() {
+    override fun initBackToMainKeyboard() {}
 
-    }
-
-    override fun setupFeatureKeyboard() {
-
-    }
+    override fun setupFeatureKeyboard() {}
 
     override fun initView() {
         setupFeatureKeyboard()
         initBackToMainKeyboard()
     }
 
-    override fun invalidateAllKeys() {
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun runEmojiBoard() {
-    }
+    override fun invalidateAllKeys() {}
+    override fun runEmojiBoard() {}
 
     override fun updateShiftKeyState() {
         if (keyboardMode == KEYBOARD_LETTERS) {
@@ -212,7 +201,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    
     override fun onKeyExt(code: Int, inputConnection: InputConnection) {
         if (keyboard == null) {
             return

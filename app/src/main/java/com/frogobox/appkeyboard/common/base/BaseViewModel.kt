@@ -1,6 +1,6 @@
 package com.frogobox.appkeyboard.common.base
 
-import com.frogobox.sdk.view.FrogoViewModel2
+import com.frogobox.sdk.view.FrogoViewModel
 
 /**
  * Created by Faisal Amir on 09/02/23
@@ -8,6 +8,6 @@ import com.frogobox.sdk.view.FrogoViewModel2
  */
 
 
-abstract class BaseViewModel : FrogoViewModel2() {
+abstract class BaseViewModel : FrogoViewModel() {
 
 }

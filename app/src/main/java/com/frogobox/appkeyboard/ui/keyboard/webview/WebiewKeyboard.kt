@@ -3,6 +3,7 @@ package com.frogobox.appkeyboard.ui.keyboard.webview
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import com.frogobox.appkeyboard.databinding.KeyboardWebviewBinding
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.sdk.ext.loadUrlFrogoExt
@@ -22,7 +23,7 @@ class WebiewKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardWebviewBinding>(context, attrs) {
 
-    override fun setupViewBinding(): KeyboardWebviewBinding {
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardWebviewBinding {
         return KeyboardWebviewBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
@@ -31,7 +32,7 @@ class WebiewKeyboard(
     }
 
     private fun initView() {
-        binding?.apply {
+        binding.apply {
             webview.loadUrlFrogoExt("https://www.google.com")
         }
     }

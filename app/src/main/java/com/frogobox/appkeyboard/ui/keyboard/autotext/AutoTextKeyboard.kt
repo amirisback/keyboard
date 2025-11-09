@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
 import com.frogobox.appkeyboard.databinding.KeyboardAutotextBinding
 import com.frogobox.appkeyboard.model.AutoTextEntity
@@ -22,7 +23,7 @@ class AutoTextKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardAutotextBinding>(context, attrs) {
 
-    override fun setupViewBinding(): KeyboardAutotextBinding {
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardAutotextBinding {
         return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
@@ -32,7 +33,7 @@ class AutoTextKeyboard(
     }
 
     private fun initView() {
-        binding?.apply {
+        binding.apply {
             tvToolbarTitle.text = "Auto Text"
         }
     }
@@ -45,7 +46,7 @@ class AutoTextKeyboard(
     }
 
     private fun setupRv(data: List<AutoTextEntity>) {
-        binding?.apply {
+        binding.apply {
 
             val adapterCallback = object : IFrogoBindingAdapter<AutoTextEntity, ItemKeyboardNewsBinding> {
                 override fun onItemClicked(

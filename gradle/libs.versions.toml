@@ -1,16 +1,16 @@
 [versions]
-agp = "8.12.2"
-kotlin = "2.2.10"
-ksp = "2.2.10-2.0.2"
-liveCycle = "2.9.3"
+agp = "8.13.0"
+kotlin = "2.2.21"
+ksp = "2.2.21-2.0.4"
+liveCycle = "2.9.4"
 
-roomKtx = "2.7.2"
-work = "2.10.3"
-glideCompiler = "4.16.0"
+roomKtx = "2.8.3"
+work = "2.11.0"
+glideCompiler = "5.0.5"
 
-hilt = "2.57.1"
-emoji2 = "1.5.0"
-frogoAndroid = "2.3.2"
+hilt = "2.57.2"
+emoji2 = "1.6.0"
+frogoAndroid = "2.3.6"
 frogoconsumeapi = "2.6.1"
 
 [libraries]

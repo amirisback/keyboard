@@ -1,9 +1,7 @@
 package com.frogobox.libkeyboard.common.core
 
-import android.os.Build
 import android.view.inputmethod.InputConnection
 import android.widget.EditText
-import androidx.annotation.RequiresApi
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -46,12 +44,12 @@ interface IKeyboardIME {
 
     fun invalidateAllKeys()
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    
     fun runEmojiBoard()
 
     fun updateShiftKeyState()
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    
     fun onKeyExt(code: Int, inputConnection: InputConnection)
 
     fun moveCursor(moveRight: Boolean)

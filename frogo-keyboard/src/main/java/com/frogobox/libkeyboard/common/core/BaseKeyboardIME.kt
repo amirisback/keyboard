@@ -27,13 +27,15 @@ import com.frogobox.libkeyboard.ui.main.OnKeyboardActionListener
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
 abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeyboardActionListener, IKeyboardIME {
 
-    // how quickly do we have to doubletap shift to enable permanent caps lock
-    var SHIFT_PERM_TOGGLE_SPEED = 500
-    val KEYBOARD_LETTERS = 0
-    val KEYBOARD_SYMBOLS = 1
-    val KEYBOARD_SYMBOLS_SHIFT = 2
-    val KEYBOARD_NUMBER = 3
-    val KEYCODE_EMOJI = -6
+    companion object {
+        // How quickly do we have to doubletap shift to enable permanent caps lock
+        const val SHIFT_PERM_TOGGLE_SPEED = 500L
+
+        const val KEYBOARD_LETTERS = 0
+        const val KEYBOARD_SYMBOLS = 1
+        const val KEYBOARD_SYMBOLS_SHIFT = 2
+        const val KEYBOARD_NUMBER = 3
+    }
 
     var keyboard: ItemMainKeyboard? = null
 
@@ -77,7 +79,6 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     }
 
     override fun onPress(primaryCode: Int) {
-
     }
 
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
@@ -108,7 +109,6 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         updateShiftKeyState()
     }
 
-    
     override fun onKey(code: Int) {
         val inputConnection = currentInputConnection ?: return
         onKeyExt(code, inputConnection)
@@ -121,7 +121,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
             val editorInfo = currentInputEditorInfo
             if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
-                if (currentInputConnection.getCursorCapsMode(editorInfo.inputType) != 0) {
+                if (currentInputConnection?.getCursorCapsMode(editorInfo.inputType) != 0) {
                     keyboard?.setShifted(SHIFT_ON_ONE_CHAR)
                 }
             }
@@ -140,7 +140,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     }
 
     override fun onText(text: String) {
-        currentInputConnection?.commitText(text, 0)
+        currentInputConnection?.commitText(text, 1)
     }
 
     override fun initialSetupKeyboard() {}
@@ -194,7 +194,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         if (keyboardMode == KEYBOARD_LETTERS) {
             val editorInfo = currentInputEditorInfo
             if (editorInfo != null && editorInfo.inputType != InputType.TYPE_NULL && keyboard?.mShiftState != SHIFT_ON_PERMANENT) {
-                if (currentInputConnection.getCursorCapsMode(editorInfo.inputType) != 0) {
+                if (currentInputConnection?.getCursorCapsMode(editorInfo.inputType) != 0) {
                     keyboard?.setShifted(SHIFT_ON_ONE_CHAR)
                     invalidateAllKeys()
                 }
@@ -202,11 +202,8 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         }
     }
 
-    
     override fun onKeyExt(code: Int, inputConnection: InputConnection) {
-        if (keyboard == null) {
-            return
-        }
+        val kb = keyboard ?: return
 
         if (code != ItemMainKeyboard.KEYCODE_SHIFT) {
             lastShiftPressTS = 0
@@ -214,19 +211,18 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
         when (code) {
             ItemMainKeyboard.KEYCODE_DELETE -> {
-                if (keyboard!!.mShiftState == SHIFT_ON_ONE_CHAR) {
-                    keyboard!!.mShiftState = SHIFT_OFF
+                if (kb.mShiftState == SHIFT_ON_ONE_CHAR) {
+                    kb.mShiftState = SHIFT_OFF
                 }
 
                 val selectedText = inputConnection.getSelectedText(0)
                 if (TextUtils.isEmpty(selectedText)) {
                     inputConnection.sendKeyEvent(
-                        KeyEvent(
-                            KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_DEL
-                        )
+                        KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL)
                     )
-                    inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
+                    inputConnection.sendKeyEvent(
+                        KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL)
+                    )
                 } else {
                     inputConnection.commitText("", 1)
                 }
@@ -240,14 +236,10 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
             ItemMainKeyboard.KEYCODE_SHIFT -> {
                 if (keyboardMode == KEYBOARD_LETTERS) {
                     when {
-                        keyboard!!.mShiftState == SHIFT_ON_PERMANENT -> keyboard!!.mShiftState =
-                            SHIFT_OFF
-                        System.currentTimeMillis() - lastShiftPressTS < SHIFT_PERM_TOGGLE_SPEED -> keyboard!!.mShiftState =
-                            SHIFT_ON_PERMANENT
-                        keyboard!!.mShiftState == SHIFT_ON_ONE_CHAR -> keyboard!!.mShiftState =
-                            SHIFT_OFF
-                        keyboard!!.mShiftState == SHIFT_OFF -> keyboard!!.mShiftState =
-                            SHIFT_ON_ONE_CHAR
+                        kb.mShiftState == SHIFT_ON_PERMANENT -> kb.mShiftState = SHIFT_OFF
+                        System.currentTimeMillis() - lastShiftPressTS < SHIFT_PERM_TOGGLE_SPEED -> kb.mShiftState = SHIFT_ON_PERMANENT
+                        kb.mShiftState == SHIFT_ON_ONE_CHAR -> kb.mShiftState = SHIFT_OFF
+                        kb.mShiftState == SHIFT_OFF -> kb.mShiftState = SHIFT_ON_ONE_CHAR
                     }
 
                     lastShiftPressTS = System.currentTimeMillis()
@@ -270,23 +262,16 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                     inputConnection.performEditorAction(imeOptionsActionId)
                 } else {
                     inputConnection.sendKeyEvent(
-                        KeyEvent(
-                            KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_ENTER
-                        )
+                        KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)
                     )
                     inputConnection.sendKeyEvent(
-                        KeyEvent(
-                            KeyEvent.ACTION_UP,
-                            KeyEvent.KEYCODE_ENTER
-                        )
+                        KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)
                     )
                 }
 
                 if (inputConnection != currentInputConnection) {
                     inputConnection.commitText("\n", 1)
                 }
-
             }
             ItemMainKeyboard.KEYCODE_MODE_CHANGE -> {
                 val keyboardXml = if (keyboardMode == KEYBOARD_LETTERS) {
@@ -304,7 +289,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
             }
             else -> {
                 var codeChar = code.toChar()
-                if (Character.isLetter(codeChar) && keyboard!!.mShiftState > SHIFT_OFF) {
+                if (Character.isLetter(codeChar) && kb.mShiftState > SHIFT_OFF) {
                     codeChar = Character.toUpperCase(codeChar)
                 }
 
@@ -321,8 +306,8 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                     inputConnection.commitText(codeChar.toString(), 1)
                 }
 
-                if (keyboard!!.mShiftState == SHIFT_ON_ONE_CHAR && keyboardMode == KEYBOARD_LETTERS) {
-                    keyboard!!.mShiftState = SHIFT_OFF
+                if (kb.mShiftState == SHIFT_ON_ONE_CHAR && keyboardMode == KEYBOARD_LETTERS) {
+                    kb.mShiftState = SHIFT_OFF
                     invalidateAllKeys()
                 }
             }

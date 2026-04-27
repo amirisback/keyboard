@@ -1,6 +1,7 @@
 package com.frogobox.libkeyboard.common.ext
 
 import android.graphics.Color
+import kotlin.math.roundToInt
 
 fun hsl2hsv(hsl: FloatArray): FloatArray {
     val hue = hsl[0]
@@ -28,39 +29,30 @@ fun hsv2hsl(hsv: FloatArray): FloatArray {
     return floatArrayOf(hue, newSat, newHue / 2f)
 }
 
-fun Int.lightenColor(factor: Int = 8): Int {
+/**
+ * Adjusts the lightness of a color by a given factor (in percent).
+ * Positive factor lightens, negative factor darkens.
+ */
+private fun Int.adjustLightness(factor: Int): Int {
     if (this == Color.WHITE || this == Color.BLACK) {
         return this
     }
 
-    val LIGHT_FACTOR = factor
     var hsv = FloatArray(3)
     Color.colorToHSV(this, hsv)
     val hsl = hsv2hsl(hsv)
-    hsl[2] += LIGHT_FACTOR / 100f
-    if (hsl[2] < 0) hsl[2] = 0f
+    hsl[2] = (hsl[2] + factor / 100f).coerceIn(0f, 1f)
     hsv = hsl2hsv(hsl)
     return Color.HSVToColor(hsv)
 }
+
+fun Int.lightenColor(factor: Int = 8): Int = adjustLightness(factor)
 
 // taken from https://stackoverflow.com/a/40964456/1967672
-fun Int.darkenColor(factor: Int = 8): Int {
-    if (this == Color.WHITE || this == Color.BLACK) {
-        return this
-    }
-
-    val DARK_FACTOR = factor
-    var hsv = FloatArray(3)
-    Color.colorToHSV(this, hsv)
-    val hsl = hsv2hsl(hsv)
-    hsl[2] -= DARK_FACTOR / 100f
-    if (hsl[2] < 0) hsl[2] = 0f
-    hsv = hsl2hsv(hsl)
-    return Color.HSVToColor(hsv)
-}
+fun Int.darkenColor(factor: Int = 8): Int = adjustLightness(-factor)
 
 fun Int.adjustAlpha(factor: Float): Int {
-    val alpha = Math.round(Color.alpha(this) * factor)
+    val alpha = (Color.alpha(this) * factor).roundToInt()
     val red = Color.red(this)
     val green = Color.green(this)
     val blue = Color.blue(this)
@@ -72,4 +64,3 @@ fun Int.getContrastColor(): Int {
     val y = (299 * Color.red(this) + 587 * Color.green(this) + 114 * Color.blue(this)) / 1000
     return if (y >= 149 && this != Color.BLACK) DARK_GREY else Color.WHITE
 }
-

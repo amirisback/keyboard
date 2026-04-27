@@ -9,8 +9,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
-import com.frogobox.libkeyboard.R
-import com.frogobox.sdk.ext.getColorExt
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -43,4 +41,4 @@ fun ImageView.applyColorFilter(color: Int) {
         @Suppress("DEPRECATION")
         setColorFilter(color, PorterDuff.Mode.SRC_IN)
     }
-}
+}

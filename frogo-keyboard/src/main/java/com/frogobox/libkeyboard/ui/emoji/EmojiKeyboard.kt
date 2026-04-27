@@ -36,6 +36,14 @@ class EmojiKeyboard(
 
     private var emojiCompatMetadataVersion = 0
 
+    /** Cache parsed emoji lists to avoid re-parsing files on category switch */
+    private val emojiCache = mutableMapOf<String, List<String>>()
+
+    /** Reusable Paint for glyph checking — avoid allocating every time */
+    private val systemFontPaint = Paint().apply {
+        typeface = Typeface.DEFAULT
+    }
+
     var mOnKeyboardActionListener: OnKeyboardActionListener? = null
 
     override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardEmojiBinding {
@@ -48,6 +56,11 @@ class EmojiKeyboard(
     fun openEmojiPalette() {
         setupEmojis(EmojiCategoryType.GENERAL.path)
         setupEmojiCategory()
+    }
+
+    /** Clears the emoji cache. Call this if emoji assets are updated. */
+    fun clearEmojiCache() {
+        emojiCache.clear()
     }
 
     private fun setupEmojiCategory() {
@@ -106,11 +119,15 @@ class EmojiKeyboard(
     }
 
     private fun setupEmojis(path: String) {
+        // Check cache first
+        val cachedEmojis = emojiCache[path]
+        if (cachedEmojis != null) {
+            setupEmojiAdapter(cachedEmojis)
+            return
+        }
+
         ensureBackgroundThread {
             val fullEmojiList = parseRawEmojiSpecsFile(context, path)
-            val systemFontPaint = Paint().apply {
-                typeface = Typeface.DEFAULT
-            }
 
             val emojis = fullEmojiList.filter { emoji ->
                 systemFontPaint.hasGlyph(emoji) || (EmojiCompat.get().loadState == EmojiCompat.LOAD_STATE_SUCCEEDED
@@ -120,10 +137,12 @@ class EmojiKeyboard(
                 ) == EmojiCompat.EMOJI_SUPPORTED)
             }
 
+            // Store in cache
+            emojiCache[path] = emojis
+
             Handler(Looper.getMainLooper()).post {
                 setupEmojiAdapter(emojis)
             }
-
         }
     }
 
@@ -145,7 +164,7 @@ class EmojiKeyboard(
                 position: Int,
                 notifyListener: FrogoRecyclerNotifyListener<String>
             ) {
-                mOnKeyboardActionListener!!.onText(data)
+                mOnKeyboardActionListener?.onText(data)
             }
 
             override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
@@ -153,7 +172,7 @@ class EmojiKeyboard(
             }
 
             override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem == newItem
             }
 
             override fun setViewBinding(parent: ViewGroup): ItemKeyboardEmojiBinding {

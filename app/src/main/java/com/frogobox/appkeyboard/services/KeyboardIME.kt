@@ -357,7 +357,8 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         } else {
             inputConnection = currentInputConnection
         }
-        onKeyExt(code, inputConnection)
+        val ic = inputConnection ?: return
+        onKeyExt(code, ic)
     }
 
     override fun initView() {

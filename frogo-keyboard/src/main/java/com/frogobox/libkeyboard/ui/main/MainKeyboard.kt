@@ -11,12 +11,15 @@ import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
+import android.media.AudioManager
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -116,6 +119,22 @@ class MainKeyboard @JvmOverloads constructor(
     private val mSpaceMoveThreshold: Int
     private var ignoreTouches = false
 
+    /** Reusable Paint for top small numbers — avoids per-frame allocation */
+    private val mSmallLetterPaint = Paint()
+
+    /** Audio manager for key click sound feedback */
+    private val mAudioManager: AudioManager?
+
+    /** Whether haptic feedback is enabled — can be toggled at runtime */
+    var vibrateOnKeypress: Boolean
+        get() = ItemMainKeyboard.VIBRATE_ON_KEYPRESS
+        set(value) { ItemMainKeyboard.VIBRATE_ON_KEYPRESS = value }
+
+    /** Whether key click sound is enabled — can be toggled at runtime */
+    var soundOnKeypress: Boolean
+        get() = ItemMainKeyboard.SOUND_ON_KEYPRESS
+        set(value) { ItemMainKeyboard.SOUND_ON_KEYPRESS = value }
+
     // For multi-tap
     private var mLastTapTime = 0L
 
@@ -205,6 +224,7 @@ class MainKeyboard @JvmOverloads constructor(
 
         mMiniKeyboardCache = HashMap()
         mAccessibilityManager = (context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager)
+        mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
 
         mPopupMaxMoveDistance = resources.getDimension(R.dimen.popup_max_move_distance)
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
@@ -212,14 +232,13 @@ class MainKeyboard @JvmOverloads constructor(
         mTopSmallNumberMarginHeight = resources.getDimension(R.dimen.top_small_number_margin_height)
     }
 
-    @SuppressLint("HandlerLeak")
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (mHandler == null) {
-            mHandler = object : Handler() {
+            mHandler = object : Handler(Looper.getMainLooper()) {
                 override fun handleMessage(msg: Message) {
                     when (msg.what) {
-                        MSG_REMOVE_PREVIEW -> mPreviewText!!.visibility = INVISIBLE
+                        MSG_REMOVE_PREVIEW -> mPreviewText?.visibility = INVISIBLE
                         MSG_REPEAT -> if (repeatKey(false)) {
                             val repeat = Message.obtain(this, MSG_REPEAT)
                             sendMessageDelayed(repeat, REPEAT_INTERVAL.toLong())
@@ -267,8 +286,7 @@ class MainKeyboard @JvmOverloads constructor(
         }
         removeMessages()
         mKeyboard = keyboard
-        val keys = mKeyboard!!.mKeys
-        mKeys = keys!!.toMutableList() as ArrayList<ItemMainKeyboard.Key>
+        mKeys = ArrayList(keyboard.mKeys)
         requestLayout()
         mKeyboardChanged = true
         invalidateAllKeys()
@@ -282,10 +300,14 @@ class MainKeyboard @JvmOverloads constructor(
 
     fun vibrateIfNeeded() {
         if (ItemMainKeyboard.VIBRATE_ON_KEYPRESS) {
-            performHapticFeedback(
-                HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-            )
+            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        }
+    }
+
+    /** Plays a standard key click sound if sound feedback is enabled. */
+    fun playSoundIfNeeded() {
+        if (ItemMainKeyboard.SOUND_ON_KEYPRESS) {
+            mAudioManager?.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD)
         }
     }
 
@@ -317,8 +339,9 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     private fun adjustCase(label: CharSequence): CharSequence? {
+        val kb = mKeyboard ?: return label
         var newLabel: CharSequence? = label
-        if (!newLabel.isNullOrEmpty() && mKeyboard!!.mShiftState > SHIFT_OFF && newLabel.length < 3 && Character.isLowerCase(
+        if (!newLabel.isNullOrEmpty() && kb.mShiftState > SHIFT_OFF && newLabel.length < 3 && Character.isLowerCase(
                 newLabel[0]
             )
         ) {
@@ -328,14 +351,15 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     public override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (mKeyboard == null) {
+        val kb = mKeyboard
+        if (kb == null) {
             setMeasuredDimension(0, 0)
         } else {
-            var width = mKeyboard!!.mMinWidth
+            var width = kb.mMinWidth
             if (MeasureSpec.getSize(widthMeasureSpec) < width + 10) {
                 width = MeasureSpec.getSize(widthMeasureSpec)
             }
-            setMeasuredDimension(width, mKeyboard!!.mHeight)
+            setMeasuredDimension(width, kb.mHeight)
         }
     }
 
@@ -397,12 +421,14 @@ class MainKeyboard @JvmOverloads constructor(
         val paint = mPaint
         val keys = mKeys
         paint.color = mTextColor
-        val smallLetterPaint = Paint().apply {
+        // Reuse class-level paint instead of allocating each frame
+        mSmallLetterPaint.apply {
             set(paint)
             color = paint.color.adjustAlpha(0.8f)
             textSize = mTopSmallNumberSize
             typeface = Typeface.DEFAULT
         }
+        val smallLetterPaint = mSmallLetterPaint
 
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
@@ -468,8 +494,9 @@ class MainKeyboard @JvmOverloads constructor(
                 // Turn off drop shadow
                 paint.setShadowLayer(0f, 0f, 0f, 0)
             } else if (key.icon != null && mKeyboard != null) {
+                val kb = mKeyboard!!
                 if (code == KEYCODE_SHIFT) {
-                    val drawableId = when (mKeyboard!!.mShiftState) {
+                    val drawableId = when (kb.mShiftState) {
                         SHIFT_OFF -> R.drawable.ic_keyboard_caps_outline
                         SHIFT_ON_ONE_CHAR -> R.drawable.ic_keyboard_caps
                         else -> R.drawable.ic_keyboard_caps_underlined
@@ -477,16 +504,18 @@ class MainKeyboard @JvmOverloads constructor(
                     key.icon = ResourcesCompat.getDrawable(resources, drawableId, null)
                 }
 
-                if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER) {
-                    key.icon!!.applyColorFilter(mTextColor)
-                }
+                key.icon?.let { icon ->
+                    if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER) {
+                        icon.applyColorFilter(mTextColor)
+                    }
 
-                val drawableX = (key.width - key.icon!!.intrinsicWidth) / 2
-                val drawableY = (key.height - key.icon!!.intrinsicHeight) / 2
-                canvas.translate(drawableX.toFloat(), drawableY.toFloat())
-                key.icon!!.setBounds(0, 0, key.icon!!.intrinsicWidth, key.icon!!.intrinsicHeight)
-                key.icon!!.draw(canvas)
-                canvas.translate(-drawableX.toFloat(), -drawableY.toFloat())
+                    val drawableX = (key.width - icon.intrinsicWidth) / 2
+                    val drawableY = (key.height - icon.intrinsicHeight) / 2
+                    canvas.translate(drawableX.toFloat(), drawableY.toFloat())
+                    icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+                    icon.draw(canvas)
+                    canvas.translate(-drawableX.toFloat(), -drawableY.toFloat())
+                }
             }
             canvas.translate(-key.x.toFloat(), -key.y.toFloat())
         }
@@ -512,7 +541,9 @@ class MainKeyboard @JvmOverloads constructor(
         if (index != NOT_A_KEY && index < mKeys.size) {
             val key = mKeys[index]
             getPressedKeyIndex(x, y)
-            mOnKeyboardActionListener!!.onKey(key.code)
+            vibrateIfNeeded()
+            playSoundIfNeeded()
+            mOnKeyboardActionListener?.onKey(key.code)
             mLastTapTime = eventTime
         }
     }
@@ -704,10 +735,7 @@ class MainKeyboard @JvmOverloads constructor(
             key.x + key.width, key.y + key.height
         )
         onBufferDraw()
-        invalidate(
-            key.x, key.y,
-            key.x + key.width, key.y + key.height
-        )
+        invalidate()
     }
 
     private fun openPopupIfRequired(me: MotionEvent): Boolean {
@@ -756,28 +784,28 @@ class MainKeyboard @JvmOverloads constructor(
 
                 mMiniKeyboard!!.mOnKeyboardActionListener = object : OnKeyboardActionListener {
                     override fun onKey(code: Int) {
-                        mOnKeyboardActionListener!!.onKey(code)
+                        mOnKeyboardActionListener?.onKey(code)
                         dismissPopupKeyboard()
                     }
 
                     override fun onPress(primaryCode: Int) {
-                        mOnKeyboardActionListener!!.onPress(primaryCode)
+                        mOnKeyboardActionListener?.onPress(primaryCode)
                     }
 
                     override fun onActionUp() {
-                        mOnKeyboardActionListener!!.onActionUp()
+                        mOnKeyboardActionListener?.onActionUp()
                     }
 
                     override fun moveCursorLeft() {
-                        mOnKeyboardActionListener!!.moveCursorLeft()
+                        mOnKeyboardActionListener?.moveCursorLeft()
                     }
 
                     override fun moveCursorRight() {
-                        mOnKeyboardActionListener!!.moveCursorRight()
+                        mOnKeyboardActionListener?.moveCursorRight()
                     }
 
                     override fun onText(text: String) {
-                        mOnKeyboardActionListener!!.onText(text)
+                        mOnKeyboardActionListener?.onText(text)
                     }
                 }
 
@@ -918,7 +946,7 @@ class MainKeyboard @JvmOverloads constructor(
 
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     mMiniKeyboard?.mKeys?.firstOrNull { it.focused }?.apply {
-                        mOnKeyboardActionListener!!.onKey(code)
+                        mOnKeyboardActionListener?.onKey(code)
                     }
                     mMiniKeyboardSelectedKeyIndex = -1
                     dismissPopupKeyboard()
@@ -967,7 +995,7 @@ class MainKeyboard @JvmOverloads constructor(
 
                 val secondKeyCode = mKeys.getOrNull(secondKeyIndex)?.code
                 if (secondKeyCode != null) {
-                    mOnKeyboardActionListener!!.onPress(secondKeyCode)
+                    mOnKeyboardActionListener?.onPress(secondKeyCode)
                 }
 
                 showPreview(NOT_A_KEY)
@@ -992,7 +1020,7 @@ class MainKeyboard @JvmOverloads constructor(
                     0
                 }
 
-                mOnKeyboardActionListener!!.onPress(onPressKey)
+                mOnKeyboardActionListener?.onPress(onPressKey)
 
                 var wasHandled = false
                 if (mCurrentKey >= 0 && mKeys[mCurrentKey].repeatable) {
@@ -1107,7 +1135,7 @@ class MainKeyboard @JvmOverloads constructor(
 
                 invalidateKey(keyIndex)
                 mRepeatKeyIndex = NOT_A_KEY
-                mOnKeyboardActionListener!!.onActionUp()
+                mOnKeyboardActionListener?.onActionUp()
                 mIsLongPressingSpace = false
             }
 

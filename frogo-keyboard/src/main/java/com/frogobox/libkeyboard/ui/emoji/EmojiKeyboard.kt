@@ -136,7 +136,7 @@ class EmojiKeyboard(
                 position: Int,
                 notifyListener: FrogoRecyclerNotifyListener<String>
             ) {
-                mOnKeyboardActionListener!!.onText(data)
+                mOnKeyboardActionListener?.onText(data)
             }
 
             override fun onItemLongClicked(

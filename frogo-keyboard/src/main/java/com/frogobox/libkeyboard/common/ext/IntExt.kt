@@ -7,7 +7,12 @@ fun hsl2hsv(hsl: FloatArray): FloatArray {
     var sat = hsl[1]
     val light = hsl[2]
     sat *= if (light < .5) light else 1 - light
-    return floatArrayOf(hue, 2f * sat / (light + sat), light + sat)
+    val denominator = light + sat
+    return if (denominator == 0f) {
+        floatArrayOf(hue, 0f, 0f)
+    } else {
+        floatArrayOf(hue, 2f * sat / denominator, denominator)
+    }
 }
 
 fun hsv2hsl(hsv: FloatArray): FloatArray {
@@ -16,7 +21,8 @@ fun hsv2hsl(hsv: FloatArray): FloatArray {
     val value = hsv[2]
 
     val newHue = (2f - sat) * value
-    var newSat = sat * value / if (newHue < 1f) newHue else 2f - newHue
+    val denominator = if (newHue < 1f) newHue else 2f - newHue
+    var newSat = if (denominator == 0f) 0f else sat * value / denominator
     if (newSat > 1f) newSat = 1f
 
     return floatArrayOf(hue, newSat, newHue / 2f)

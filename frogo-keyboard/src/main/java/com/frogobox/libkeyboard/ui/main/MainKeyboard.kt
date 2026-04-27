@@ -1100,9 +1100,8 @@ class MainKeyboard @JvmOverloads constructor(
                 // If we're not on a repeating key (which sends on a DOWN event)
                 if (mRepeatKeyIndex == NOT_A_KEY && !mMiniKeyboardOnScreen && !mAbortKey) {
                     detectAndSendKey(mCurrentKey, touchX, touchY, eventTime)
-                }
-
-                if (mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE && !mIsLongPressingSpace) {
+                } else if (mRepeatKeyIndex != NOT_A_KEY && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE && !mIsLongPressingSpace) {
+                    // Space key was in repeat mode but user released before long-press activated
                     detectAndSendKey(mCurrentKey, touchX, touchY, eventTime)
                 }
 

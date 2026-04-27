@@ -1,5 +1,6 @@
 package com.frogobox.libkeyboard.ui.main
 
+import android.util.Log
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
@@ -42,7 +43,7 @@ class ItemMainKeyboard {
     var mMinWidth = 0
 
     /** List of keys in this keyboard  */
-    var mKeys: MutableList<Key?>? = null
+    var mKeys: MutableList<Key>? = null
 
     /** Width of the screen available to fit the keyboard  */
     private var mDisplayWidth = 0
@@ -415,6 +416,7 @@ class ItemMainKeyboard {
                 }
             }
         } catch (e: Exception) {
+            Log.e("ItemMainKeyboard", "Error loading keyboard XML", e)
         }
         mHeight = y
     }

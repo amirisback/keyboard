@@ -82,7 +82,8 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
-        inputTypeClass = attribute!!.inputType and TYPE_MASK_CLASS
+        if (attribute == null) return
+        inputTypeClass = attribute.inputType and TYPE_MASK_CLASS
         enterKeyType = attribute.imeOptions and (IME_MASK_ACTION or IME_FLAG_NO_ENTER_ACTION)
 
         val keyboardXml = when (inputTypeClass) {
@@ -109,7 +110,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
     
     override fun onKey(code: Int) {
-        var inputConnection = currentInputConnection
+        val inputConnection = currentInputConnection ?: return
         onKeyExt(code, inputConnection)
     }
 
@@ -314,8 +315,8 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                     val originalText =
                         inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text ?: return
                     inputConnection.commitText(codeChar.toString(), 1)
-                    val newText = inputConnection.getExtractedText(ExtractedTextRequest(), 0).text
-                    switchToLetters = originalText != newText
+                    val newText = inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text
+                    switchToLetters = newText != null && originalText != newText
                 } else {
                     inputConnection.commitText(codeChar.toString(), 1)
                 }
@@ -336,10 +337,11 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
         val extractedText =
             currentInputConnection?.getExtractedText(ExtractedTextRequest(), 0) ?: return
         var newCursorPosition = extractedText.selectionStart
+        val textLength = extractedText.text?.length ?: return
         newCursorPosition = if (moveRight) {
-            newCursorPosition + 1
+            (newCursorPosition + 1).coerceAtMost(textLength)
         } else {
-            newCursorPosition - 1
+            (newCursorPosition - 1).coerceAtLeast(0)
         }
 
         currentInputConnection?.setSelection(newCursorPosition, newCursorPosition)

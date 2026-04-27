@@ -67,7 +67,7 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
             Gson().fromJson(
                 intent.extras?.getString(EXTRA_AUTO_TEXT),
                 AutoTextEntity::class.java
-            )
+            ) ?: AutoTextEntity()
         } else {
             AutoTextEntity()
         }

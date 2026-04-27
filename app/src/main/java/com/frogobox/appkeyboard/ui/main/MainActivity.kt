@@ -54,9 +54,9 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (mState === PICKING) {
+        if (mState == PICKING) {
             mState = CHOSEN
-        } else if (mState === CHOSEN) {
+        } else if (mState == CHOSEN) {
             handlingState()
         }
     }

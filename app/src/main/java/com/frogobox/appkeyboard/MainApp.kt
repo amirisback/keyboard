@@ -31,6 +31,7 @@ class MainApp : FrogoApplication() {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 instance.resources.configuration.locales[0]
             } else {
+                @Suppress("DEPRECATION")
                 instance.resources.configuration.locale
             }
         }
@@ -43,6 +44,7 @@ class MainApp : FrogoApplication() {
         setupEmojiCompat()
     }
 
+    @Suppress("DEPRECATION")
     private fun setupEmojiCompat() {
         val config = BundledEmojiCompatConfig(this)
         EmojiCompat.init(config)

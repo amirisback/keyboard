@@ -40,6 +40,134 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         return KeyboardImeBinding.inflate(LayoutInflater.from(this), null, false)
     }
 
+    private val featureKeyboardCallback = object :
+        IFrogoBindingAdapter<KeyboardFeatureModel, ItemKeyboardHeaderBinding> {
+
+        override fun areContentsTheSame(
+            oldItem: KeyboardFeatureModel,
+            newItem: KeyboardFeatureModel
+        ): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areItemsTheSame(
+            oldItem: KeyboardFeatureModel,
+            newItem: KeyboardFeatureModel
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
+            return ItemKeyboardHeaderBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        }
+
+        override fun setupInitComponent(
+            binding: ItemKeyboardHeaderBinding,
+            data: KeyboardFeatureModel,
+            position: Int,
+            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
+        ) {
+            binding.ivIcon.setImageResource(data.icon)
+            binding.tvTitle.text = data.text
+
+            if (getStateToggle(data.id)) {
+                binding.root.visible()
+            } else {
+                binding.root.gone()
+            }
+
+        }
+
+        override fun onItemClicked(
+            binding: ItemKeyboardHeaderBinding,
+            data: KeyboardFeatureModel,
+            position: Int,
+            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
+        ) {
+
+            when (KeyboardFeatureType.from(data.id)) {
+                KeyboardFeatureType.NEWS -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardNews?.visible()
+                }
+
+                KeyboardFeatureType.MOVIE -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardMoview?.visible()
+                }
+
+                KeyboardFeatureType.WEB -> {
+                    this@KeyboardIME.binding?.keyboardHeader?.gone()
+                    this@KeyboardIME.binding?.keyboardWebview?.visible()
+                }
+
+                KeyboardFeatureType.FORM -> {
+                    this@KeyboardIME.binding?.keyboardHeader?.gone()
+                    this@KeyboardIME.binding?.keyboardForm?.visible()
+                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText?.showKeyboardExt()
+                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText2?.showKeyboardExt()
+                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText3?.showKeyboardExt()
+
+                    this@KeyboardIME.binding?.keyboardForm?.setOnClickListener {
+                        hideOnlyKeyboard()
+                    }
+                }
+
+                KeyboardFeatureType.AUTO_TEXT -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardAutotext?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.CHANGE_KEYBOARD -> {
+                    (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+                }
+
+                KeyboardFeatureType.SETTING -> {
+                    binding.root.context.startActivity(Intent(
+                        binding.root.context, MainActivity::class.java
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                }
+
+            }
+
+        }
+
+    }
+
     override fun setupTheme() {
         binding?.apply {
 
@@ -197,133 +325,9 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
             } else {
                 keyboardHeader.visible()
                 keyboardHeader.injectorBinding<KeyboardFeatureModel, ItemKeyboardHeaderBinding>()
-                    .addData(keyboardUtil.menuKeyboard()).addCallback(object :
-                        IFrogoBindingAdapter<KeyboardFeatureModel, ItemKeyboardHeaderBinding> {
-
-                            override fun areContentsTheSame(
-                            oldItem: KeyboardFeatureModel,
-                            newItem: KeyboardFeatureModel
-                        ): Boolean {
-                            return oldItem == newItem
-                        }
-
-                        override fun areItemsTheSame(
-                            oldItem: KeyboardFeatureModel,
-                            newItem: KeyboardFeatureModel
-                        ): Boolean {
-                            return oldItem.id == newItem.id
-                        }
-
-                        override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
-                            return ItemKeyboardHeaderBinding.inflate(
-                                LayoutInflater.from(parent.context), parent, false
-                            )
-                        }
-
-                        override fun setupInitComponent(
-                            binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeatureModel,
-                            position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
-                        ) {
-                            binding.ivIcon.setImageResource(data.icon)
-                            binding.tvTitle.text = data.text
-
-                            if (getStateToggle(data.id)) {
-                                binding.root.visible()
-                            } else {
-                                binding.root.gone()
-                            }
-
-                        }
-
-                        override fun onItemClicked(
-                            binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeatureModel,
-                            position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
-                        ) {
-
-                            when (KeyboardFeatureType.from(data.id)) {
-                                KeyboardFeatureType.NEWS -> {
-                                    hideMainKeyboard()
-                                    keyboardNews.visible()
-                                }
-
-                                KeyboardFeatureType.MOVIE -> {
-                                    hideMainKeyboard()
-                                    keyboardMoview.visible()
-                                }
-
-                                KeyboardFeatureType.WEB -> {
-                                    keyboardHeader.gone()
-                                    keyboardWebview.visible()
-                                }
-
-                                KeyboardFeatureType.FORM -> {
-                                    keyboardHeader.gone()
-                                    keyboardForm.visible()
-                                    keyboardForm.binding.etText.showKeyboardExt()
-                                    keyboardForm.binding.etText2.showKeyboardExt()
-                                    keyboardForm.binding.etText3.showKeyboardExt()
-
-                                    keyboardForm.setOnClickListener {
-                                        hideOnlyKeyboard()
-                                    }
-                                }
-
-                                KeyboardFeatureType.AUTO_TEXT -> {
-                                    hideMainKeyboard()
-                                    keyboardAutotext.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.CHANGE_KEYBOARD -> {
-                                    (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
-                                }
-
-                                KeyboardFeatureType.SETTING -> {
-                                    binding.root.context.startActivity(Intent(
-                                        binding.root.context, MainActivity::class.java
-                                    ).apply {
-                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    })
-                                }
-
-                            }
-
-                        }
-
-                    }).createLayoutGrid(gridSize).build()
+                    .addData(keyboardUtil.menuKeyboard())
+                    .addCallback(featureKeyboardCallback)
+                    .createLayoutGrid(gridSize).build()
             }
         }
     }

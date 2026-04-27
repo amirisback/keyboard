@@ -82,7 +82,7 @@ class AutoTextEditorActivity : BaseActivity<ActivityAutotextEditorBinding>() {
         return Gson().fromJson(
             intent.extras?.getString(EXTRA_AUTO_TEXT_EDIT),
             AutoTextEntity::class.java
-        )
+        ) ?: AutoTextEntity()
     }
 
     private fun hasExtraDetail() : Boolean {

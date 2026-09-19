@@ -287,7 +287,43 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
             ItemMainKeyboard.KEYCODE_EMOJI -> {
                 runEmojiBoard()
             }
+            ItemMainKeyboard.KEYCODE_TAB -> {
+                val isMultiline = (currentInputEditorInfo?.inputType ?: 0) and InputType.TYPE_TEXT_FLAG_MULTI_LINE != 0
+                if (isMultiline) {
+                    inputConnection.commitText("\t", 1)
+                } else {
+                    inputConnection.sendKeyEvent(
+                        KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB)
+                    )
+                    inputConnection.sendKeyEvent(
+                        KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB)
+                    )
+                }
+            }
+            ItemMainKeyboard.KEYCODE_ARROW_LEFT -> {
+                moveCursor(false)
+            }
+            ItemMainKeyboard.KEYCODE_ARROW_RIGHT -> {
+                moveCursor(true)
+            }
+            ItemMainKeyboard.KEYCODE_ARROW_UP -> {
+                inputConnection.sendKeyEvent(
+                    KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP)
+                )
+                inputConnection.sendKeyEvent(
+                    KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_UP)
+                )
+            }
+            ItemMainKeyboard.KEYCODE_ARROW_DOWN -> {
+                inputConnection.sendKeyEvent(
+                    KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN)
+                )
+                inputConnection.sendKeyEvent(
+                    KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_DOWN)
+                )
+            }
             else -> {
+                if (code <= 0) return
                 var codeChar = code.toChar()
                 if (Character.isLetter(codeChar) && kb.mShiftState > SHIFT_OFF) {
                     codeChar = Character.toUpperCase(codeChar)

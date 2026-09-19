@@ -23,6 +23,12 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <com.frogobox.appkeyboard.suggestion.KeyboardSuggestionView
+            android:id="@+id/keyboard_suggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"

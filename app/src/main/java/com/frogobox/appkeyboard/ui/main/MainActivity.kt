@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import com.frogobox.appkeyboard.common.base.BaseComposeMainActivity
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
 import com.frogobox.appkeyboard.ui.language.KeyboardLanguageActivity
+import com.frogobox.appkeyboard.ui.sound.SoundActivity
 import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.theme.ThemeActivity
 import com.frogobox.appkeyboard.ui.toggle.ToggleActivity
@@ -89,6 +90,7 @@ class MainActivity : BaseComposeMainActivity() {
             onNavigateToggle = { startActivityExt<ToggleActivity>() },
             onNavigateLanguage = { startActivityExt<KeyboardLanguageActivity>() },
             onNavigateTheme = { startActivityExt<ThemeActivity>() },
+            onNavigateSound = { startActivityExt<SoundActivity>() },
             onNavigateTest = { startActivityExt<TestActivity>() }
         )
     }

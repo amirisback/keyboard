@@ -90,6 +90,7 @@ fun MainScreen(
     onNavigateToggle: () -> Unit,
     onNavigateLanguage: () -> Unit,
     onNavigateTheme: () -> Unit,
+    onNavigateSound: () -> Unit,
     onNavigateTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -252,9 +253,16 @@ fun MainScreen(
 
                 MainMenuItemCard(
                     title = "Toggle Function",
-                    subtitle = "Sound, vibration & auto-capitalization switches",
+                    subtitle = "Keyboard shortcuts & toolbar switches",
                     iconRes = R.drawable.ic_menu_form,
                     onClick = onNavigateToggle
+                )
+
+                MainMenuItemCard(
+                    title = "Sound & Haptics",
+                    subtitle = "Mechanical switch sounds & key vibration",
+                    iconRes = R.drawable.ic_menu_sound,
+                    onClick = onNavigateSound
                 )
 
                 MainMenuItemCard(
@@ -440,6 +448,7 @@ fun MainScreenActivePreview() {
             onNavigateToggle = {},
             onNavigateLanguage = {},
             onNavigateTheme = {},
+            onNavigateSound = {},
             onNavigateTest = {}
         )
     }
@@ -457,6 +466,7 @@ fun MainScreenInactiveDarkPreview() {
             onNavigateToggle = {},
             onNavigateLanguage = {},
             onNavigateTheme = {},
+            onNavigateSound = {},
             onNavigateTest = {}
         )
     }

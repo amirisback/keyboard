@@ -68,12 +68,23 @@ class ItemMainKeyboard {
         const val KEYCODE_DELETE = -5
         const val KEYCODE_SPACE = 32
         const val KEYCODE_EMOJI = -6
+        const val KEYCODE_TAB = -7
+        const val KEYCODE_ARROW_LEFT = -8
+        const val KEYCODE_ARROW_RIGHT = -9
+        const val KEYCODE_ARROW_UP = -10
+        const val KEYCODE_ARROW_DOWN = -11
 
         /** Whether haptic feedback is enabled on key press. Set via [MainKeyboard.vibrateOnKeypress]. */
-        var VIBRATE_ON_KEYPRESS = false
+        var VIBRATE_ON_KEYPRESS = true
 
         /** Whether key sound feedback is enabled on key press. Set via [MainKeyboard.soundOnKeypress]. */
-        var SOUND_ON_KEYPRESS = false
+        var SOUND_ON_KEYPRESS = true
+
+        /** Selected mechanical switch sound profile id. Default is Cherry MX Blue */
+        var MECHANICAL_SOUND_TYPE = "cherry_mx_blue"
+
+        /** Sound volume multiplier (0.05f to 1.0f) */
+        var SOUND_VOLUME = 0.8f
 
         const val SHOW_POPUP_ON_KEYPRESS = true
 

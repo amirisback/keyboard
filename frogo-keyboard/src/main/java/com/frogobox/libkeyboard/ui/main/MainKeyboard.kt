@@ -32,12 +32,19 @@ import androidx.core.content.res.ResourcesCompat
 import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.common.ext.adjustAlpha
 import com.frogobox.libkeyboard.common.ext.applyColorFilter
+import com.frogobox.libkeyboard.common.sound.MechanicalSoundManager
+import com.frogobox.libkeyboard.common.sound.MechanicalSoundType
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ARROW_DOWN
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ARROW_LEFT
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ARROW_RIGHT
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ARROW_UP
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_DELETE
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_EMOJI
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_ENTER
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_MODE_CHANGE
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_SHIFT
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_SPACE
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.KEYCODE_TAB
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.MAX_KEYS_PER_MINI_ROW
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_OFF
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_ONE_CHAR
@@ -304,10 +311,11 @@ class MainKeyboard @JvmOverloads constructor(
         }
     }
 
-    /** Plays a standard key click sound if sound feedback is enabled. */
+    /** Plays mechanical keyboard sound if sound feedback is enabled. */
     fun playSoundIfNeeded() {
         if (ItemMainKeyboard.SOUND_ON_KEYPRESS) {
-            mAudioManager?.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD)
+            val soundType = MechanicalSoundType.fromId(ItemMainKeyboard.MECHANICAL_SOUND_TYPE)
+            MechanicalSoundManager.getInstance(context).playKeySound(soundType, ItemMainKeyboard.SOUND_VOLUME)
         }
     }
 
@@ -442,7 +450,12 @@ class MainKeyboard @JvmOverloads constructor(
                 KEYCODE_SHIFT,
                 KEYCODE_DELETE,
                 KEYCODE_ENTER,
-                KEYCODE_MODE_CHANGE -> {
+                KEYCODE_MODE_CHANGE,
+                KEYCODE_TAB,
+                KEYCODE_ARROW_LEFT,
+                KEYCODE_ARROW_RIGHT,
+                KEYCODE_ARROW_UP,
+                KEYCODE_ARROW_DOWN -> {
                     keyBackground = resources.getDrawable(R.drawable.keypad_action, context.theme)
                 }
 
@@ -505,7 +518,9 @@ class MainKeyboard @JvmOverloads constructor(
                 }
 
                 key.icon?.let { icon ->
-                    if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER) {
+                    if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER ||
+                        code == KEYCODE_TAB || code == KEYCODE_ARROW_LEFT || code == KEYCODE_ARROW_RIGHT ||
+                        code == KEYCODE_ARROW_UP || code == KEYCODE_ARROW_DOWN) {
                         icon.applyColorFilter(mTextColor)
                     }
 
@@ -572,16 +587,17 @@ class MainKeyboard @JvmOverloads constructor(
 
             if (mCurrentKeyIndex != NOT_A_KEY && keys.size > mCurrentKeyIndex) {
                 val newKey = keys[mCurrentKeyIndex]
+                val keyCode = newKey.code
 
-                val code = newKey.code
-                if (code == KEYCODE_SHIFT || code == KEYCODE_MODE_CHANGE || code == KEYCODE_DELETE || code == KEYCODE_ENTER || code == KEYCODE_SPACE) {
+                if (keyCode == KEYCODE_SHIFT || keyCode == KEYCODE_MODE_CHANGE || keyCode == KEYCODE_DELETE || keyCode == KEYCODE_ENTER || keyCode == KEYCODE_SPACE ||
+                    keyCode == KEYCODE_TAB || keyCode == KEYCODE_ARROW_LEFT || keyCode == KEYCODE_ARROW_RIGHT || keyCode == KEYCODE_ARROW_UP || keyCode == KEYCODE_ARROW_DOWN) {
                     newKey.pressed = true
                 }
 
                 invalidateKey(mCurrentKeyIndex)
                 sendAccessibilityEventForUnicodeCharacter(
                     AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED,
-                    code
+                    keyCode
                 )
             }
         }
@@ -704,6 +720,11 @@ class MainKeyboard @JvmOverloads constructor(
                 KEYCODE_ENTER -> context.getString(R.string.keycode_enter)
                 KEYCODE_MODE_CHANGE -> context.getString(R.string.keycode_mode_change)
                 KEYCODE_SHIFT -> context.getString(R.string.keycode_shift)
+                KEYCODE_TAB -> "Tab"
+                KEYCODE_ARROW_LEFT -> "Left Arrow"
+                KEYCODE_ARROW_RIGHT -> "Right Arrow"
+                KEYCODE_ARROW_UP -> "Up Arrow"
+                KEYCODE_ARROW_DOWN -> "Down Arrow"
                 else -> code.toChar().toString()
             }
             event.text.add(text)

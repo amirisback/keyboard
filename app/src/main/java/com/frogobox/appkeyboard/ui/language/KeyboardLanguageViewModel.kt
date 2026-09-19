@@ -45,6 +45,15 @@ class KeyboardLanguageViewModel @Inject constructor(
         )
         list.add(
             KeyboardLanguage(
+                name = "Programmer / Coding (QWERTY)",
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_programmer,
+                layoutType = "Codeboard",
+                code = "DEV",
+                script = "Code & Symbols"
+            )
+        )
+        list.add(
+            KeyboardLanguage(
                 name = "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (QWERTZ)",
                 xml = com.frogobox.libkeyboard.R.xml.keys_letters_english_qwertz,
                 layoutType = "QWERTZ",

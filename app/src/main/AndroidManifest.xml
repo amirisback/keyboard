@@ -41,6 +41,10 @@
             android:name=".ui.theme.ThemeActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.sound.SoundActivity"
+            android:exported="false" />
+
         <activity android:name=".ui.language.KeyboardLanguageActivity"
             android:exported="false" />
 

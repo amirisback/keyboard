@@ -695,7 +695,9 @@ class MainKeyboard @JvmOverloads constructor(
 
     private fun sendAccessibilityEventForUnicodeCharacter(eventType: Int, code: Int) {
         if (mAccessibilityManager.isEnabled) {
-            val event = AccessibilityEvent.obtain(eventType)
+            val event = AccessibilityEvent().apply {
+                this.eventType = eventType
+            }
             onInitializeAccessibilityEvent(event)
             val text: String = when (code) {
                 KEYCODE_DELETE -> context.getString(R.string.keycode_delete)

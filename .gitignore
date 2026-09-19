@@ -50,14 +50,14 @@ app.*.map.json
 /android/app/release
 
 # Miscellaneous
-build application files
+# build application files
 *.apk
 *.ap_
 *.aab
 
 build/
 
-Local configuration file (sdk path, etc)
+# Local configuration file (sdk path, etc)
 app/version.properties
 
 # Flutter Modules
@@ -79,10 +79,13 @@ build
 /captures
 .externalNativeBuild
 
-generated files
+# generated files
 bin/
 gen/
 .externalNativeBuild/
 
 # SonarQube
 .sonar/
+buildSrc/.kotlin
+.kotlin
+workflow

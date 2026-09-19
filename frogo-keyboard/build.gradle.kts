@@ -2,14 +2,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin.android)
     `maven-publish`
 }
 
 android {
 
     namespace = ProjectSetting.PROJECT_NAME_SPACE_LIB_FROGO_KEYBOARD
-    compileSdk = ProjectSetting.PROJECT_TARGET_SDK
+    compileSdk = ProjectSetting.PROJECT_COMPILE_SDK
 
     defaultConfig {
 
@@ -38,6 +37,13 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 
 }

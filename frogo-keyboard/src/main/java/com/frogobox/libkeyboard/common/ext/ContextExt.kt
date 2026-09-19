@@ -3,12 +3,10 @@ package com.frogobox.libkeyboard.common.ext
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.widget.ImageView
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -26,19 +24,9 @@ fun Context.isDarkThemeOn(): Boolean {
 
 fun Drawable.applyColorFilter(color: Int) {
     mutate()
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
-    } else {
-        @Suppress("DEPRECATION")
-        setColorFilter(color, PorterDuff.Mode.SRC_IN)
-    }
+    colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
 }
 
 fun ImageView.applyColorFilter(color: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
-    } else {
-        @Suppress("DEPRECATION")
-        setColorFilter(color, PorterDuff.Mode.SRC_IN)
-    }
+    colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
 }

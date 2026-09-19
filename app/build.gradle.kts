@@ -1,10 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.text.SimpleDateFormat
-import java.util.Date
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     id("kotlin-parcelize")
@@ -15,15 +13,14 @@ ksp {
 }
 
 base {
-    // Naming APK // AAB
-    val timestamp = SimpleDateFormat("dd-MM-yyyy_hh-mm").format(Date())
-    archivesName = "${ProjectSetting.NAME_APK}-${ProjectSetting.PROJECT_VERSION_CODE}-[${ProjectSetting.PROJECT_VERSION_NAME}]-$timestamp"
+    // Naming APK // AAB (stable name avoids invalidating incremental tasks every minute)
+    archivesName = "${ProjectSetting.NAME_APK}-${ProjectSetting.PROJECT_VERSION_CODE}-[${ProjectSetting.PROJECT_VERSION_NAME}]"
 }
 
 android {
 
     namespace = ProjectSetting.PROJECT_NAME_SPACE_APP
-    compileSdk = ProjectSetting.PROJECT_TARGET_SDK
+    compileSdk = ProjectSetting.PROJECT_COMPILE_SDK
 
     defaultConfig {
         applicationId = ProjectSetting.PROJECT_APP_ID
@@ -97,6 +94,8 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+        compose = true
+        resValues = true
     }
 
     compileOptions {
@@ -115,10 +114,26 @@ kotlin {
 
 dependencies {
 
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     implementation(project(DependencyGradle.MODULE_LIB_FROGO_KEYBOARD))
 
     implementation(libs.androidx.work.ktx)
     implementation(libs.google.hilt)
+
+    // Room & Coroutines
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
 
     ksp(libs.github.glide.compiler)
     ksp(libs.google.hilt.compiler)

@@ -27,11 +27,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoTopAppBar
 
 /**
  * TestScreen Composable
@@ -42,6 +44,7 @@ import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 @Composable
 fun TestScreen(
     dummyOptions: List<String> = emptyList(),
+    onBackClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var fullText by remember { mutableStateOf("") }
@@ -59,13 +62,23 @@ fun TestScreen(
 
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
-            .padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp)
-    ) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            FrogoTopAppBar(
+                title = "Test Area",
+                onBackClick = onBackClick
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(scrollState)
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp)
+        ) {
         Text(
             text = "Let's Do Some Test",
             style = MaterialTheme.typography.titleLarge.copy(
@@ -154,6 +167,7 @@ fun TestScreen(
             }
         }
     }
+}
 }
 
 @Preview(showBackground = true, name = "TestScreen Light")

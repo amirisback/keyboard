@@ -2,22 +2,19 @@ package com.frogobox.appkeyboard.ui.autotext
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.frogobox.appkeyboard.common.base.BaseActivity
-import com.frogobox.appkeyboard.databinding.ActivityAutotextDetailBinding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.frogobox.appkeyboard.common.base.BaseComposeActivity
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
-/**
- * Created by Faisal Amir on 11/03/23
- * https://github.com/amirisback
- */
-
-
 @AndroidEntryPoint
-class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
+class AutoTextDetailActivity : BaseComposeActivity() {
 
     companion object {
         const val EXTRA_AUTO_TEXT = "EXTRA_AUTO_TEXT"
@@ -26,33 +23,29 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
 
     private val viewModel: AutoTextViewModel by viewModels()
 
-    override fun setupViewModel() {
-        super.setupViewModel()
-        viewModel.eventSuccessState.observe(this) {
-            setResult(RESULT_CODE_DELETE)
-            finish()
-        }
-    }
+    private var currentData by mutableStateOf(AutoTextEntity())
 
-    override fun setupViewBinding(): ActivityAutotextDetailBinding {
-        return ActivityAutotextDetailBinding.inflate(layoutInflater)
+    private val editLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == AutoTextEditorActivity.RESULT_CODE_UPDATE) {
+            val json = result.data?.getStringExtra(AutoTextEditorActivity.EXTRA_AUTO_TEXT_EDIT_RESULT)
+            if (!json.isNullOrBlank()) {
+                val updatedData = Gson().fromJson(json, AutoTextEntity::class.java)
+                if (updatedData != null) {
+                    currentData = updatedData
+                }
+            }
+        }
     }
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
-        setupDetailActivity("Detail Auto Text")
-        setupUI(autoText())
-    }
+        currentData = extractAutoText()
 
-    override fun setupActivityResultExt(result: ActivityResult) {
-        super.setupActivityResultExt(result)
-        if (result.resultCode == AutoTextEditorActivity.RESULT_CODE_UPDATE) {
-            result.data?.getStringExtra(AutoTextEditorActivity.EXTRA_AUTO_TEXT_EDIT_RESULT)
-            val data = Gson().fromJson(
-                result.data?.getStringExtra(AutoTextEditorActivity.EXTRA_AUTO_TEXT_EDIT_RESULT),
-                AutoTextEntity::class.java
-            )
-            setupUI(data)
+        viewModel.eventSuccessState.observe(this) {
+            setResult(RESULT_CODE_DELETE)
+            finish()
         }
     }
 
@@ -61,8 +54,7 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
         super.doOnBackPressedExt()
     }
 
-
-    private fun autoText(): AutoTextEntity {
+    private fun extractAutoText(): AutoTextEntity {
         return if (intent.hasExtra(EXTRA_AUTO_TEXT)) {
             Gson().fromJson(
                 intent.extras?.getString(EXTRA_AUTO_TEXT),
@@ -73,30 +65,26 @@ class AutoTextDetailActivity : BaseActivity<ActivityAutotextDetailBinding>() {
         }
     }
 
-    private fun setupUI(data: AutoTextEntity) {
-        binding.apply {
-
-            tvTitle.text = data.title
-            tvContent.text = data.body
-
-            btnDelete.setOnClickListener {
-                viewModel.deleteAutoText(data)
-            }
-
-            btnEdit.setOnClickListener {
-                startActivityResultExt(
-                    Intent(
-                        this@AutoTextDetailActivity,
-                        AutoTextEditorActivity::class.java
-                    ).apply {
+    @Composable
+    override fun Content() {
+        AutoTextDetailScreen(
+            data = currentData,
+            onEditClick = {
+                editLauncher.launch(
+                    Intent(this@AutoTextDetailActivity, AutoTextEditorActivity::class.java).apply {
                         putExtra(
                             AutoTextEditorActivity.EXTRA_AUTO_TEXT_EDIT,
-                            Gson().toJson(data)
+                            Gson().toJson(currentData)
                         )
                     }
                 )
+            },
+            onDeleteClick = {
+                viewModel.deleteAutoText(currentData)
+            },
+            onBackClick = {
+                doOnBackPressedExt()
             }
-        }
+        )
     }
-
 }

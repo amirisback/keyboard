@@ -176,18 +176,22 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                 R.color.color_bg_keyboard_default
             )
 
-            val backgroundType = ThemeType.valueOf(
-                pref.getPrefString(
-                    KeyboardUtil.KEYBOARD_COLOR_TYPE,
-                    ThemeType.COLOR.name
-                )
+            val typeString = pref.getPrefString(
+                KeyboardUtil.KEYBOARD_COLOR_TYPE,
+                ThemeType.COLOR.name
             )
+
+            val backgroundType = runCatching {
+                ThemeType.valueOf(typeString)
+            }.getOrDefault(ThemeType.COLOR)
 
             when (backgroundType) {
                 ThemeType.COLOR -> {
+                    ivBackgroundKeyboard.setImageDrawable(null)
                     ivBackgroundKeyboard.setBackgroundColor(getColorExt(background))
                 }
                 ThemeType.IMAGE -> {
+                    ivBackgroundKeyboard.setBackgroundColor(android.graphics.Color.TRANSPARENT)
                     ivBackgroundKeyboard.setImageResource(background)
                 }
             }

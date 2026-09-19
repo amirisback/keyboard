@@ -2,141 +2,76 @@ package com.frogobox.appkeyboard.ui.autotext
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewGroup
-import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.frogobox.appkeyboard.common.base.BaseActivity
-import com.frogobox.appkeyboard.databinding.ActivityAutotextBinding
-import com.frogobox.appkeyboard.databinding.ItemAutotextBinding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.frogobox.appkeyboard.common.base.BaseComposeActivity
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.coresdk.source.Resource
-import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
-import com.frogobox.recycler.core.IFrogoBindingAdapter
-import com.frogobox.recycler.ext.injectorBinding
-import com.frogobox.sdk.ext.gone
-import com.frogobox.sdk.ext.showLogD
-import com.frogobox.sdk.ext.visible
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
-/**
- * Created by Faisal Amir on 11/03/23
- * https://github.com/amirisback
- */
-
-
 @AndroidEntryPoint
-class AutoTextActivity : BaseActivity<ActivityAutotextBinding>() {
+class AutoTextActivity : BaseComposeActivity() {
 
     private val viewModel: AutoTextViewModel by viewModels()
 
-    override fun setupViewBinding(): ActivityAutotextBinding {
-        return ActivityAutotextBinding.inflate(layoutInflater)
-    }
+    private var autoTextList by mutableStateOf<List<AutoTextEntity>>(emptyList())
+    private var isLoading by mutableStateOf(false)
 
-    override fun setupViewModel() {
-        viewModel.apply {
-            autoText.observe(this@AutoTextActivity) {
-
-                showLogD("${it}", "AutoText")
-
-                when (it) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {}
-                    is Resource.Success -> {
-                        if (it.result.isEmpty()) {
-                            binding.emptyView.root.visible()
-                            binding.rvAutotext.gone()
-                        } else {
-                            binding.emptyView.root.gone()
-                            binding.rvAutotext.visible()
-                            setupRvAutoText(it.result)
-                        }
-                    }
-                }
+    private val activityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        when (result.resultCode) {
+            AutoTextDetailActivity.RESULT_CODE_DELETE,
+            AutoTextEditorActivity.RESULT_CODE_UPDATE,
+            AutoTextEditorActivity.RESULT_CODE_ADD -> {
+                viewModel.getAutoText()
             }
         }
     }
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
-        setupDetailActivity("Auto Text")
-        setupUI()
+        viewModel.autoText.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    isLoading = true
+                }
+                is Resource.Success -> {
+                    isLoading = false
+                    autoTextList = resource.result
+                }
+                is Resource.Error -> {
+                    isLoading = false
+                }
+            }
+        }
         viewModel.getAutoText()
     }
 
-    override fun setupActivityResultExt(result: ActivityResult) {
-        super.setupActivityResultExt(result)
-
-        when (result.resultCode) {
-
-            AutoTextDetailActivity.RESULT_CODE_DELETE,
-            AutoTextEditorActivity.RESULT_CODE_UPDATE,
-            AutoTextEditorActivity.RESULT_CODE_ADD,
-            -> {
-                viewModel.getAutoText()
-            }
-
-        }
+    @Composable
+    override fun Content() {
+        AutoTextScreen(
+            autoTextList = autoTextList,
+            isLoading = isLoading,
+            onItemClick = { data ->
+                val extra = Gson().toJson(data)
+                activityResultLauncher.launch(
+                    Intent(this@AutoTextActivity, AutoTextDetailActivity::class.java).apply {
+                        putExtra(AutoTextDetailActivity.EXTRA_AUTO_TEXT, extra)
+                    }
+                )
+            },
+            onAddClick = {
+                activityResultLauncher.launch(
+                    Intent(this@AutoTextActivity, AutoTextEditorActivity::class.java)
+                )
+            },
+            onBackClick = { finish() }
+        )
     }
-
-    private fun setupUI() {
-        binding.apply {
-            btnAdd.setOnClickListener {
-                startActivityResultExt(Intent(this@AutoTextActivity, AutoTextEditorActivity::class.java))
-            }
-        }
-    }
-
-    private fun setupRvAutoText(data: List<AutoTextEntity>) {
-        binding.rvAutotext.injectorBinding<AutoTextEntity, ItemAutotextBinding>()
-            .addData(data)
-            .addCallback(object : IFrogoBindingAdapter<AutoTextEntity, ItemAutotextBinding> {
-                override fun areContentsTheSame(
-                    oldItem: AutoTextEntity,
-                    newItem: AutoTextEntity,
-                ): Boolean {
-                    return oldItem == newItem
-                }
-
-                override fun areItemsTheSame(
-                    oldItem: AutoTextEntity,
-                    newItem: AutoTextEntity,
-                ): Boolean {
-                    return oldItem.id == newItem.id
-                }
-
-                override fun setViewBinding(parent: ViewGroup): ItemAutotextBinding {
-                    return ItemAutotextBinding.inflate(layoutInflater, parent, false)
-                }
-
-                override fun setupInitComponent(
-                    binding: ItemAutotextBinding,
-                    data: AutoTextEntity,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
-                ) {
-                    binding.tvAutotextTitle.text = data.title
-                    binding.tvAutotextContent.text = data.body
-                }
-
-                override fun onItemClicked(
-                    binding: ItemAutotextBinding,
-                    data: AutoTextEntity,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<AutoTextEntity>,
-                ) {
-                    val extra = Gson().toJson(data)
-                    startActivityResultExt(
-                        Intent(this@AutoTextActivity, AutoTextDetailActivity::class.java).apply {
-                            putExtra(AutoTextDetailActivity.EXTRA_AUTO_TEXT, extra)
-                        }
-                    )
-                }
-
-            })
-            .createLayoutLinearVertical(false)
-            .build()
-    }
-
 }

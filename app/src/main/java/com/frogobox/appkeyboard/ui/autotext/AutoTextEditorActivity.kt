@@ -3,21 +3,14 @@ package com.frogobox.appkeyboard.ui.autotext
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.frogobox.appkeyboard.common.base.BaseActivity
-import com.frogobox.appkeyboard.databinding.ActivityAutotextEditorBinding
+import androidx.compose.runtime.Composable
+import com.frogobox.appkeyboard.common.base.BaseComposeActivity
 import com.frogobox.appkeyboard.model.AutoTextEntity
-import com.frogobox.sdk.ext.toText
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
-/**
- * Created by Faisal Amir on 11/03/23
- * https://github.com/amirisback
- */
-
-
 @AndroidEntryPoint
-class AutoTextEditorActivity : BaseActivity<ActivityAutotextEditorBinding>() {
+class AutoTextEditorActivity : BaseComposeActivity() {
 
     companion object {
         const val EXTRA_AUTO_TEXT_EDIT = "EXTRA_AUTO_TEXT_EDIT"
@@ -28,77 +21,59 @@ class AutoTextEditorActivity : BaseActivity<ActivityAutotextEditorBinding>() {
 
     private val viewModel: AutoTextViewModel by viewModels()
 
-    override fun setupViewBinding(): ActivityAutotextEditorBinding {
-        return ActivityAutotextEditorBinding.inflate(layoutInflater)
-    }
-
-    override fun setupViewModel() {
-        super.setupViewModel()
-        viewModel.apply {
-            eventSuccessState.observe(this@AutoTextEditorActivity) {
-                if (hasExtraDetail()) {
-                    setResult(RESULT_CODE_UPDATE, Intent().apply {
-                        val extra = AutoTextEntity(
-                            id = autoText().id,
-                            title = binding.etTitle.toText(),
-                            body = binding.etContent.toText()
-                        )
-                        putExtra(EXTRA_AUTO_TEXT_EDIT_RESULT, Gson().toJson(extra))
-                    })
-                } else {
-                    setResult(RESULT_CODE_ADD)
-                }
-                finish()
-            }
-        }
-    }
+    private var lastSavedTitle: String = ""
+    private var lastSavedBody: String = ""
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
-        setupDetailActivity("Editor Auto Text")
-        setupUI()
-    }
 
-    private fun setupUI() {
-        binding.apply {
-
+        viewModel.eventSuccessState.observe(this) {
             if (hasExtraDetail()) {
-                btnSave.text = "Update"
-                etTitle.setText(autoText().title)
-                etContent.setText(autoText().body)
+                setResult(RESULT_CODE_UPDATE, Intent().apply {
+                    val extra = AutoTextEntity(
+                        id = autoText().id,
+                        title = lastSavedTitle,
+                        body = lastSavedBody
+                    )
+                    putExtra(EXTRA_AUTO_TEXT_EDIT_RESULT, Gson().toJson(extra))
+                })
+            } else {
+                setResult(RESULT_CODE_ADD)
             }
-
-            btnSave.setOnClickListener {
-                if (hasExtraDetail()) {
-                    setupUpdate()
-                } else {
-                    setupInsert()
-                }
-            }
+            finish()
         }
     }
 
-    private fun autoText() : AutoTextEntity {
+    private fun autoText(): AutoTextEntity {
         return Gson().fromJson(
             intent.extras?.getString(EXTRA_AUTO_TEXT_EDIT),
             AutoTextEntity::class.java
         ) ?: AutoTextEntity()
     }
 
-    private fun hasExtraDetail() : Boolean {
+    private fun hasExtraDetail(): Boolean {
         return intent.hasExtra(EXTRA_AUTO_TEXT_EDIT)
     }
 
-    private fun setupInsert() {
-        val title = binding.etTitle.text.toString()
-        val body = binding.etContent.text.toString()
-        viewModel.insertAutoText(title, body)
-    }
+    @Composable
+    override fun Content() {
+        val detail = autoText()
+        val isEdit = hasExtraDetail()
 
-    private fun setupUpdate() {
-        val title = binding.etTitle.toText()
-        val body = binding.etContent.toText()
-        viewModel.updateAutoText(autoText().id, title, body)
+        AutoTextEditorScreen(
+            initialTitle = if (isEdit) detail.title else "",
+            initialBody = if (isEdit) detail.body else "",
+            isEditMode = isEdit,
+            onSave = { title, body ->
+                lastSavedTitle = title
+                lastSavedBody = body
+                if (isEdit) {
+                    viewModel.updateAutoText(detail.id, title, body)
+                } else {
+                    viewModel.insertAutoText(title, body)
+                }
+            },
+            onBackClick = { finish() }
+        )
     }
-
 }

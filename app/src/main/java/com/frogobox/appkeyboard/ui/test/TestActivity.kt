@@ -29,7 +29,6 @@ class TestActivity : BaseComposeActivity() {
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
-        setupDetailActivity("Test Area")
         if (savedInstanceState == null) {
             // Call View Model Here
             Log.d(TAG, "View Model : ${viewModel::class.java.simpleName}")
@@ -39,7 +38,8 @@ class TestActivity : BaseComposeActivity() {
     @Composable
     override fun Content() {
         TestScreen(
-            dummyOptions = dummyOptions
+            dummyOptions = dummyOptions,
+            onBackClick = { finish() }
         )
     }
 

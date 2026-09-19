@@ -24,7 +24,7 @@ class FormKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardFormBinding>(context, attrs) {
 
-    private val destinationKeyboard = MovieKeyboard(context, attrs)
+    private val destinationKeyboard by lazy { MovieKeyboard(context, attrs) }
 
     override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardFormBinding {
         return KeyboardFormBinding.inflate(LayoutInflater.from(context), this, true)

@@ -141,5 +141,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     ksp(libs.androidx.lifecycle.compiler)
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
 }

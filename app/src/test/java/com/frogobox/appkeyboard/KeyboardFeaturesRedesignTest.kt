@@ -2,6 +2,7 @@ package com.frogobox.appkeyboard
 
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateCategoryItem
+import com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextKeyboard
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -9,6 +10,15 @@ import org.junit.Test
 import java.net.URLEncoder
 
 class KeyboardFeaturesRedesignTest {
+
+    @Test
+    fun testTemplateCategoriesStaticInitialization() {
+        assertFalse(TemplateTextKeyboard.CATEGORIES.isEmpty())
+        assertEquals(5, TemplateTextKeyboard.CATEGORIES.size)
+        assertEquals(KeyboardFeatureType.TEMPLATE_TEXT_GAME, TemplateTextKeyboard.CATEGORIES[0].first)
+        assertEquals("🎮", TemplateTextKeyboard.CATEGORIES[0].second.first)
+        assertEquals("Game", TemplateTextKeyboard.CATEGORIES[0].second.second)
+    }
 
     @Test
     fun testTemplateCategoriesCoverage() {

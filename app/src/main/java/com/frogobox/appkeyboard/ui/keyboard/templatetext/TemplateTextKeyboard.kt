@@ -34,15 +34,17 @@ class TemplateTextKeyboard(
     attrs: AttributeSet?,
 ) : BaseKeyboard<KeyboardTemplateTextBinding>(context, attrs) {
 
-    private var currentType: KeyboardFeatureType = TEMPLATE_TEXT_GAME
+    companion object {
+        val CATEGORIES = listOf(
+            Pair(TEMPLATE_TEXT_GAME, Pair("🎮", "Game")),
+            Pair(TEMPLATE_TEXT_APP, Pair("📱", "App")),
+            Pair(TEMPLATE_TEXT_SALE, Pair("💰", "Sale")),
+            Pair(TEMPLATE_TEXT_GREETING, Pair("👋", "Greeting")),
+            Pair(TEMPLATE_TEXT_LOVE, Pair("❤️", "Love"))
+        )
+    }
 
-    private val categories = listOf(
-        Pair(TEMPLATE_TEXT_GAME, Pair("🎮", "Game")),
-        Pair(TEMPLATE_TEXT_APP, Pair("📱", "App")),
-        Pair(TEMPLATE_TEXT_SALE, Pair("💰", "Sale")),
-        Pair(TEMPLATE_TEXT_GREETING, Pair("👋", "Greeting")),
-        Pair(TEMPLATE_TEXT_LOVE, Pair("❤️", "Love"))
-    )
+    private var currentType: KeyboardFeatureType? = null
 
     override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardTemplateTextBinding {
         return KeyboardTemplateTextBinding.inflate(LayoutInflater.from(context), this, true)
@@ -50,23 +52,25 @@ class TemplateTextKeyboard(
 
     override fun initUI() {
         super.initUI()
-        setupCategories()
-        setupContent(currentType)
+        val type = currentType ?: TEMPLATE_TEXT_GAME
+        currentType = type
+        setupCategories(type)
+        setupContent(type)
     }
 
     fun setupTemplateTextType(templateTextType: KeyboardFeatureType) {
         this.currentType = templateTextType
-        setupCategories()
+        setupCategories(templateTextType)
         setupContent(templateTextType)
     }
 
-    private fun setupCategories() {
-        val categoryData = categories.map { (type, meta) ->
+    private fun setupCategories(selectedType: KeyboardFeatureType) {
+        val categoryData = CATEGORIES.map { (type, meta) ->
             TemplateCategoryItem(
                 type = type,
                 icon = meta.first,
                 title = meta.second,
-                isSelected = type == currentType
+                isSelected = type == selectedType
             )
         }
 
@@ -111,7 +115,7 @@ class TemplateTextKeyboard(
             ) {
                 if (currentType != data.type) {
                     currentType = data.type
-                    setupCategories()
+                    setupCategories(data.type)
                     setupContent(data.type)
                 }
             }

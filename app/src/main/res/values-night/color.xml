@@ -2,5 +2,14 @@
 <resources>
 
     <color name="color_bg_keyboard_default">@color/keyboard_background</color>
+    <color name="color_bg_keyboard_purple">#7C4DFF</color>
+    <color name="color_bg_keyboard_dark">#000000</color>
+    <color name="color_bg_keyboard_blue">#1E88E5</color>
+    <color name="color_bg_keyboard_green">#388E3C</color>
+    <color name="color_bg_keyboard_red">#E53935</color>
+    <color name="color_bg_keyboard_orange">#F57C00</color>
+    <color name="color_bg_keyboard_cyan">#00ACC1</color>
+    <color name="color_bg_keyboard_pink">#D81B60</color>
+    <color name="color_bg_keyboard_yellow">#FDD835</color>
 
 </resources>

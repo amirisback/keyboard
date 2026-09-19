@@ -2,9 +2,14 @@
 <resources>
 
     <color name="color_bg_keyboard_default">@color/keyboard_background</color>
-    <color name="color_bg_keyboard_red">#F44336</color>
-    <color name="color_bg_keyboard_green">#4CAF50</color>
-    <color name="color_bg_keyboard_blue">#3F51B5</color>
-    <color name="color_bg_keyboard_yellow">#FFEB3B</color>
+    <color name="color_bg_keyboard_purple">#6200EE</color>
+    <color name="color_bg_keyboard_dark">#121212</color>
+    <color name="color_bg_keyboard_blue">#1976D2</color>
+    <color name="color_bg_keyboard_green">#2E7D32</color>
+    <color name="color_bg_keyboard_red">#C62828</color>
+    <color name="color_bg_keyboard_orange">#EF6C00</color>
+    <color name="color_bg_keyboard_cyan">#00838F</color>
+    <color name="color_bg_keyboard_pink">#C2185B</color>
+    <color name="color_bg_keyboard_yellow">#FBC02D</color>
 
 </resources>

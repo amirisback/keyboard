@@ -17,13 +17,17 @@ class ThemeTest {
     @Test
     fun testKeyboardThemeTypeMapping() {
         val themes = KeyboardThemeType.entries.map { it.mapToModel() }
-        assertEquals(6, themes.size)
+        assertEquals(11, themes.size)
 
         val defaultTheme = themes.first { it.name == "Default" }
         assertEquals(ThemeType.COLOR, defaultTheme.themType)
         assertTrue(defaultTheme.background != 0)
 
-        val imageTheme = themes.first { it.name == "Image" }
+        val purpleTheme = themes.first { it.name == "Frogo Purple" }
+        assertEquals(ThemeType.COLOR, purpleTheme.themType)
+        assertTrue(purpleTheme.background != 0)
+
+        val imageTheme = themes.first { it.name == "Wallpaper" }
         assertEquals(ThemeType.IMAGE, imageTheme.themType)
         assertTrue(imageTheme.background != 0)
     }
@@ -31,10 +35,15 @@ class ThemeTest {
     @Test
     fun testKeyboardThemeTypeFrom() {
         assertEquals(KeyboardThemeType.DEFAULT, KeyboardThemeType from "DEFAULT")
-        assertEquals(KeyboardThemeType.RED, KeyboardThemeType from "RED")
-        assertEquals(KeyboardThemeType.GREEN, KeyboardThemeType from "GREEN")
-        assertEquals(KeyboardThemeType.YELLOW, KeyboardThemeType from "YELLOW")
+        assertEquals(KeyboardThemeType.PURPLE, KeyboardThemeType from "PURPLE")
+        assertEquals(KeyboardThemeType.DARK, KeyboardThemeType from "DARK")
         assertEquals(KeyboardThemeType.BLUE, KeyboardThemeType from "BLUE")
+        assertEquals(KeyboardThemeType.GREEN, KeyboardThemeType from "GREEN")
+        assertEquals(KeyboardThemeType.RED, KeyboardThemeType from "RED")
+        assertEquals(KeyboardThemeType.ORANGE, KeyboardThemeType from "ORANGE")
+        assertEquals(KeyboardThemeType.CYAN, KeyboardThemeType from "CYAN")
+        assertEquals(KeyboardThemeType.PINK, KeyboardThemeType from "PINK")
+        assertEquals(KeyboardThemeType.YELLOW, KeyboardThemeType from "YELLOW")
         assertEquals(KeyboardThemeType.IMAGE_BG_DARK, KeyboardThemeType from "IMAGE_BG_DARK")
         // Unknown fallback to DEFAULT
         assertEquals(KeyboardThemeType.DEFAULT, KeyboardThemeType from "UNKNOWN_THEME")

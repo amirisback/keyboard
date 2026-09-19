@@ -55,14 +55,7 @@ class KeyboardUtil @Inject constructor(
     }
 
     fun keyboardTheme(): List<KeyboardThemeModel> {
-        return listOf(
-            KeyboardThemeType.DEFAULT.mapToModel(),
-            KeyboardThemeType.RED.mapToModel(),
-            KeyboardThemeType.GREEN.mapToModel(),
-            KeyboardThemeType.YELLOW.mapToModel(),
-            KeyboardThemeType.BLUE.mapToModel(),
-            KeyboardThemeType.IMAGE_BG_DARK.mapToModel()
-        )
+        return KeyboardThemeType.entries.map { it.mapToModel() }
     }
 
 }

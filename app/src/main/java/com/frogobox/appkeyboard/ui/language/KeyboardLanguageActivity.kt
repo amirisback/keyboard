@@ -32,6 +32,7 @@ class KeyboardLanguageActivity : BaseComposeActivity() {
     override fun Content() {
         KeyboardLanguageScreen(
             languageList = languageList,
+            activeLanguageXml = activeLanguageXml,
             checkIsSelected = { xml -> xml == activeLanguageXml },
             onApplyLanguage = { language ->
                 viewModel.setKeyboard(language.xml) {

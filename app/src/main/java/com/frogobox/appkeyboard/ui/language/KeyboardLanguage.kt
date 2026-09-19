@@ -14,4 +14,8 @@ package com.frogobox.appkeyboard.ui.language
 data class KeyboardLanguage(
     val name: String,
     val xml: Int,
+    val layoutType: String = "Standard",
+    val code: String = "EN",
+    val script: String = "Latin",
+    val isRtl: Boolean = false
 )

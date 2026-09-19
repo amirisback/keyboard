@@ -36,88 +36,149 @@ class KeyboardLanguageViewModel @Inject constructor(
         val list = mutableListOf<KeyboardLanguage>()
         list.add(
             KeyboardLanguage(
-                "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (QWERTY)",
-                com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
+                name = "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (QWERTY)",
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_qwerty,
+                layoutType = "QWERTY",
+                code = "EN",
+                script = "Latin"
             )
         )
         list.add(
             KeyboardLanguage(
-                "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (QWERTZ)",
-                com.frogobox.libkeyboard.R.xml.keys_letters_english_qwertz
+                name = "Programmer / Coding (QWERTY)",
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_programmer,
+                layoutType = "Codeboard",
+                code = "DEV",
+                script = "Code & Symbols"
             )
         )
         list.add(
             KeyboardLanguage(
-                "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (DVORAK)",
-                com.frogobox.libkeyboard.R.xml.keys_letters_english_dvorak
+                name = "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (QWERTZ)",
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_english_qwertz,
+                layoutType = "QWERTZ",
+                code = "EN",
+                script = "Latin"
+            )
+        )
+        list.add(
+            KeyboardLanguage(
+                name = "${context.getString(com.frogobox.libkeyboard.R.string.translation_english)} (DVORAK)",
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_english_dvorak,
+                layoutType = "DVORAK",
+                code = "EN",
+                script = "Latin"
             )
         )
 
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_bengali),
-                com.frogobox.libkeyboard.R.xml.keys_letters_bengali
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_bengali),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_bengali,
+                layoutType = "Standard",
+                code = "BN",
+                script = "বাংলা (Bengali)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_bulgarian),
-                com.frogobox.libkeyboard.R.xml.keys_letters_bulgarian
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_bulgarian),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_bulgarian,
+                layoutType = "Standard",
+                code = "BG",
+                script = "Български (Cyrillic)"
             )
         )
 
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_french),
-                com.frogobox.libkeyboard.R.xml.keys_letters_french
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_french),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_french,
+                layoutType = "AZERTY",
+                code = "FR",
+                script = "Français (Latin)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_german),
-                com.frogobox.libkeyboard.R.xml.keys_letters_german
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_german),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_german,
+                layoutType = "QWERTZ",
+                code = "DE",
+                script = "Deutsch (Latin)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_greek),
-                com.frogobox.libkeyboard.R.xml.keys_letters_greek
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_greek),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_greek,
+                layoutType = "Standard",
+                code = "EL",
+                script = "Ελληνικά (Greek)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_lithuanian),
-                com.frogobox.libkeyboard.R.xml.keys_letters_lithuanian
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_lithuanian),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_lithuanian,
+                layoutType = "ĄŽERTY",
+                code = "LT",
+                script = "Lietuvių (Baltic)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_romanian),
-                com.frogobox.libkeyboard.R.xml.keys_letters_romanian
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_romanian),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_romanian,
+                layoutType = "QWERTY",
+                code = "RO",
+                script = "Română (Latin)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_slovenian),
-                com.frogobox.libkeyboard.R.xml.keys_letters_slovenian
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_russian),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_russian,
+                layoutType = "ЙЦУКЕН",
+                code = "RU",
+                script = "Русский (Cyrillic)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_spanish),
-                com.frogobox.libkeyboard.R.xml.keys_letters_spanish_qwerty
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_slovenian),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_slovenian,
+                layoutType = "QWERTZ",
+                code = "SL",
+                script = "Slovenščina (Latin)"
             )
         )
         list.add(
             KeyboardLanguage(
-                "${context.getString(com.frogobox.libkeyboard.R.string.translation_turkish)} (Q)",
-                com.frogobox.libkeyboard.R.xml.keys_letters_turkish_q
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_spanish),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_spanish_qwerty,
+                layoutType = "QWERTY",
+                code = "ES",
+                script = "Español (Latin)"
             )
         )
         list.add(
             KeyboardLanguage(
-                context.getString(com.frogobox.libkeyboard.R.string.translation_persian),
-                com.frogobox.libkeyboard.R.xml.keys_letter_persian
+                name = "${context.getString(com.frogobox.libkeyboard.R.string.translation_turkish)} (Q)",
+                xml = com.frogobox.libkeyboard.R.xml.keys_letters_turkish_q,
+                layoutType = "QWERTY",
+                code = "TR",
+                script = "Türkçe (Latin)"
+            )
+        )
+        list.add(
+            KeyboardLanguage(
+                name = context.getString(com.frogobox.libkeyboard.R.string.translation_persian),
+                xml = com.frogobox.libkeyboard.R.xml.keys_letter_persian,
+                layoutType = "Standard",
+                code = "FA",
+                script = "فارسی (Perso-Arabic)",
+                isRtl = true
             )
         )
         _keyboardLanguage.postValue(list)
@@ -135,6 +196,13 @@ class KeyboardLanguageViewModel @Inject constructor(
             KeyboardUtil.KEYBOARD_TYPE,
             com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
         ) == xml
+    }
+
+    fun getActiveKeyboardXml(): Int {
+        return pref.getPrefInt(
+            KeyboardUtil.KEYBOARD_TYPE,
+            com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
+        )
     }
 
 }

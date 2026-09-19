@@ -87,7 +87,7 @@ class MovieKeyboard(
                         val output = "Movie: ${data.title} - ${data.release_date} \n " +
                                 "Overview: ${data.overview} \n " +
                                 "Vote: ${data.vote_average} \n " +
-                                "${MovieUrl.BASE_URL_IMAGE_ORIGNAL}${data.poster_path}" +
+                                "${MovieUrl.BASE_URL_IMAGE_ORIGINAL}${data.poster_path}" +
                                 "\n" +
                                 "Terima Kasih"
                         currentInputConnection?.commitText(output, 1)
@@ -131,7 +131,7 @@ class MovieKeyboard(
                             frogoRvGridType6TvTitle.text = data.title
                             frogoRvGridType6TvSubtitle.text = data.release_date
                             frogoRvGridType6TvDesc.text = data.overview
-                            Glide.with(context).load("${MovieUrl.BASE_URL_IMAGE_ORIGNAL}${data.poster_path}").into(frogoRvGridType6CivPoster)
+                            Glide.with(context).load("${MovieUrl.BASE_URL_IMAGE_ORIGINAL}${data.poster_path}").into(frogoRvGridType6CivPoster)
                         }
                     }
                 }

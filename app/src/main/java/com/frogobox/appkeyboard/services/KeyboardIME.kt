@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.frogobox.appkeyboard.R
@@ -15,6 +16,9 @@ import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.ui.main.MainActivity
 import com.frogobox.libkeyboard.common.core.BaseKeyboardIME
+import com.frogobox.libkeyboard.common.sound.MechanicalSoundManager
+import com.frogobox.libkeyboard.common.sound.MechanicalSoundType
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
@@ -22,6 +26,7 @@ import com.frogobox.sdk.delegate.preference.PreferenceDelegates
 import com.frogobox.sdk.ext.getColorExt
 import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.invisible
+import com.frogobox.appkeyboard.suggestion.WordSuggestionEngine
 import com.frogobox.sdk.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,8 +41,143 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
 
+    @Inject
+    lateinit var suggestionEngine: WordSuggestionEngine
+
     override fun setupViewBinding(): KeyboardImeBinding {
         return KeyboardImeBinding.inflate(LayoutInflater.from(this), null, false)
+    }
+
+    private val featureKeyboardCallback = object :
+        IFrogoBindingAdapter<KeyboardFeatureModel, ItemKeyboardHeaderBinding> {
+
+        override fun areContentsTheSame(
+            oldItem: KeyboardFeatureModel,
+            newItem: KeyboardFeatureModel
+        ): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areItemsTheSame(
+            oldItem: KeyboardFeatureModel,
+            newItem: KeyboardFeatureModel
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
+            return ItemKeyboardHeaderBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        }
+
+        override fun setupInitComponent(
+            binding: ItemKeyboardHeaderBinding,
+            data: KeyboardFeatureModel,
+            position: Int,
+            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
+        ) {
+            binding.ivIcon.setImageResource(data.icon)
+            binding.tvTitle.text = data.text
+
+            if (getStateToggle(data.id)) {
+                binding.root.visible()
+            } else {
+                binding.root.gone()
+            }
+
+        }
+
+        override fun onItemClicked(
+            binding: ItemKeyboardHeaderBinding,
+            data: KeyboardFeatureModel,
+            position: Int,
+            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
+        ) {
+
+            when (KeyboardFeatureType.from(data.id)) {
+                KeyboardFeatureType.NEWS -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardNews?.visible()
+                }
+
+                KeyboardFeatureType.MOVIE -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardMoview?.visible()
+                }
+
+                KeyboardFeatureType.WEB -> {
+                    this@KeyboardIME.binding?.keyboardHeader?.gone()
+                    this@KeyboardIME.binding?.keyboardWebview?.visible()
+                }
+
+                KeyboardFeatureType.FORM -> {
+                    this@KeyboardIME.binding?.keyboardHeader?.gone()
+                    this@KeyboardIME.binding?.keyboardForm?.visible()
+                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText?.showKeyboardExt()
+                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText2?.showKeyboardExt()
+                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText3?.showKeyboardExt()
+
+                    this@KeyboardIME.binding?.keyboardForm?.setOnClickListener {
+                        hideOnlyKeyboard()
+                    }
+                }
+
+                KeyboardFeatureType.AUTO_TEXT -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardAutotext?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
+                    hideMainKeyboard()
+                    this@KeyboardIME.binding?.keyboardTemplateText?.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
+                    this@KeyboardIME.binding?.keyboardTemplateText?.visible()
+                }
+
+                KeyboardFeatureType.SUGGESTION -> {
+                    this@KeyboardIME.showSuggestionBar()
+                }
+
+                KeyboardFeatureType.CHANGE_KEYBOARD -> {
+                    (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+                }
+
+                KeyboardFeatureType.SETTING -> {
+                    binding.root.context.startActivity(Intent(
+                        binding.root.context, MainActivity::class.java
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                }
+
+            }
+
+        }
+
     }
 
     override fun setupTheme() {
@@ -48,25 +188,35 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                 R.color.color_bg_keyboard_default
             )
 
-            val backgroundType = ThemeType.valueOf(
-                pref.getPrefString(
-                    KeyboardUtil.KEYBOARD_COLOR_TYPE,
-                    ThemeType.COLOR.name
-                )
+            val typeString = pref.getPrefString(
+                KeyboardUtil.KEYBOARD_COLOR_TYPE,
+                ThemeType.COLOR.name
             )
+
+            val backgroundType = runCatching {
+                ThemeType.valueOf(typeString)
+            }.getOrDefault(ThemeType.COLOR)
 
             when (backgroundType) {
                 ThemeType.COLOR -> {
+                    ivBackgroundKeyboard.setImageDrawable(null)
                     ivBackgroundKeyboard.setBackgroundColor(getColorExt(background))
                 }
                 ThemeType.IMAGE -> {
+                    ivBackgroundKeyboard.setBackgroundColor(android.graphics.Color.TRANSPARENT)
                     ivBackgroundKeyboard.setImageResource(background)
                 }
             }
         }
     }
 
+    override fun onWindowShown() {
+        super.onWindowShown()
+        applySoundAndHapticSettings()
+    }
+
     override fun initialSetupKeyboard() {
+        applySoundAndHapticSettings()
         binding?.keyboardMain?.setKeyboard(keyboard!!)
     }
 
@@ -100,12 +250,14 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         binding?.apply {
             keyboardMain.invisible()
             keyboardHeader.invisible()
+            keyboardSuggestion.gone()
         }
     }
 
     override fun showMainKeyboard() {
         binding?.apply {
             keyboardMain.visible()
+            keyboardSuggestion.gone()
             if (keyboardUtil.menuKeyboard().isEmpty()) {
                 keyboardHeader.gone()
             } else {
@@ -197,170 +349,107 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
             } else {
                 keyboardHeader.visible()
                 keyboardHeader.injectorBinding<KeyboardFeatureModel, ItemKeyboardHeaderBinding>()
-                    .addData(keyboardUtil.menuKeyboard()).addCallback(object :
-                        IFrogoBindingAdapter<KeyboardFeatureModel, ItemKeyboardHeaderBinding> {
-
-                            override fun areContentsTheSame(
-                            oldItem: KeyboardFeatureModel,
-                            newItem: KeyboardFeatureModel
-                        ): Boolean {
-                            return oldItem == newItem
-                        }
-
-                        override fun areItemsTheSame(
-                            oldItem: KeyboardFeatureModel,
-                            newItem: KeyboardFeatureModel
-                        ): Boolean {
-                            return oldItem.id == newItem.id
-                        }
-
-                        override fun setViewBinding(parent: ViewGroup): ItemKeyboardHeaderBinding {
-                            return ItemKeyboardHeaderBinding.inflate(
-                                LayoutInflater.from(parent.context), parent, false
-                            )
-                        }
-
-                        override fun setupInitComponent(
-                            binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeatureModel,
-                            position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
-                        ) {
-                            binding.ivIcon.setImageResource(data.icon)
-                            binding.tvTitle.text = data.text
-
-                            if (getStateToggle(data.id)) {
-                                binding.root.visible()
-                            } else {
-                                binding.root.gone()
-                            }
-
-                        }
-
-                        override fun onItemClicked(
-                            binding: ItemKeyboardHeaderBinding,
-                            data: KeyboardFeatureModel,
-                            position: Int,
-                            notifyListener: FrogoRecyclerNotifyListener<KeyboardFeatureModel>,
-                        ) {
-
-                            when (KeyboardFeatureType.from(data.id)) {
-                                KeyboardFeatureType.NEWS -> {
-                                    hideMainKeyboard()
-                                    keyboardNews.visible()
-                                }
-
-                                KeyboardFeatureType.MOVIE -> {
-                                    hideMainKeyboard()
-                                    keyboardMoview.visible()
-                                }
-
-                                KeyboardFeatureType.WEB -> {
-                                    keyboardHeader.gone()
-                                    keyboardWebview.visible()
-                                }
-
-                                KeyboardFeatureType.FORM -> {
-                                    keyboardHeader.gone()
-                                    keyboardForm.visible()
-                                    keyboardForm.binding.etText.showKeyboardExt()
-                                    keyboardForm.binding.etText2.showKeyboardExt()
-                                    keyboardForm.binding.etText3.showKeyboardExt()
-
-                                    keyboardForm.setOnClickListener {
-                                        hideOnlyKeyboard()
-                                    }
-                                }
-
-                                KeyboardFeatureType.AUTO_TEXT -> {
-                                    hideMainKeyboard()
-                                    keyboardAutotext.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_GAME -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GAME)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_APP -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_APP)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_SALE -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_SALE)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> {
-                                    hideMainKeyboard()
-                                    keyboardTemplateText.setupTemplateTextType(KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
-                                    keyboardTemplateText.visible()
-                                }
-
-                                KeyboardFeatureType.CHANGE_KEYBOARD -> {
-                                    (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
-                                }
-
-                                KeyboardFeatureType.SETTING -> {
-                                    binding.root.context.startActivity(Intent(
-                                        binding.root.context, MainActivity::class.java
-                                    ).apply {
-                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    })
-                                }
-
-                            }
-
-                        }
-
-                    }).createLayoutGrid(gridSize).build()
+                    .addData(keyboardUtil.menuKeyboard())
+                    .addCallback(featureKeyboardCallback)
+                    .createLayoutGrid(gridSize).build()
             }
         }
     }
 
 
-    override fun onKey(code: Int) {
+    private fun getActiveInputConnection(): InputConnection? {
         val formView = binding?.keyboardForm
-        var inputConnection = currentInputConnection
-
         if (formView?.visibility == View.VISIBLE) {
             val et1 = formView.binding.etText
-            val et1Connection = et1.onCreateInputConnection(EditorInfo())
-
             val et2 = formView.binding.etText2
-            val et2Connection = et2.onCreateInputConnection(EditorInfo())
-
             val et3 = formView.binding.etText3
-            val et3Connection = et3.onCreateInputConnection(EditorInfo())
 
             if (et1.isFocused) {
-                inputConnection = et1Connection
+                return et1.onCreateInputConnection(EditorInfo())
             } else if (et2.isFocused) {
-                inputConnection = et2Connection
+                return et2.onCreateInputConnection(EditorInfo())
             } else if (et3.isFocused) {
-                inputConnection = et3Connection
+                return et3.onCreateInputConnection(EditorInfo())
+            }
+        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
+            return binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
+        }
+        return currentInputConnection
+    }
+
+    private fun getWordBeforeCursor(ic: InputConnection): String {
+        val text = ic.getTextBeforeCursor(40, 0)?.toString() ?: ""
+        return text.takeLastWhile { it.isLetterOrDigit() || it == '\'' }
+    }
+
+    private fun setupSuggestionBar() {
+        binding?.keyboardSuggestion?.apply {
+            onCandidateSelected = { selectedWord, _ ->
+                val ic = getActiveInputConnection()
+                if (ic != null) {
+                    val currentWord = getWordBeforeCursor(ic)
+                    if (currentWord.isNotEmpty()) {
+                        ic.deleteSurroundingText(currentWord.length, 0)
+                    }
+                    ic.commitText("$selectedWord ", 1)
+                    clearSuggestions()
+                    showFeatureHeader()
+                }
             }
 
-        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
-            inputConnection =
-                binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
-        } else {
-            inputConnection = currentInputConnection
+            onSwitchMenuClicked = {
+                showFeatureHeader()
+            }
+
+            onCloseClicked = {
+                clearSuggestions()
+                showFeatureHeader()
+            }
         }
-        onKeyExt(code, inputConnection)
+    }
+
+    private fun showSuggestionBar() {
+        binding?.apply {
+            keyboardHeader.gone()
+            keyboardSuggestion.visible()
+        }
+    }
+
+    private fun showFeatureHeader() {
+        binding?.apply {
+            keyboardSuggestion.gone()
+            if (keyboardUtil.menuKeyboard().isEmpty()) {
+                keyboardHeader.gone()
+            } else {
+                keyboardHeader.visible()
+            }
+        }
+    }
+
+    override fun onKey(code: Int) {
+        val ic = getActiveInputConnection() ?: return
+        onKeyExt(code, ic)
+
+        if (keyboardUtil.isSuggestionEnabled()) {
+            val word = getWordBeforeCursor(ic)
+            if (word.isNotEmpty()) {
+                val suggestions = suggestionEngine.getSuggestions(word)
+                binding?.keyboardSuggestion?.setSuggestions(suggestions)
+                showSuggestionBar()
+            } else {
+                binding?.keyboardSuggestion?.clearSuggestions()
+                if (code == ItemMainKeyboard.KEYCODE_SPACE ||
+                    code == ItemMainKeyboard.KEYCODE_ENTER ||
+                    code == ItemMainKeyboard.KEYCODE_DELETE) {
+                    showFeatureHeader()
+                }
+            }
+        }
     }
 
     override fun initView() {
+        suggestionEngine.loadDictionaryFromAsset(this)
+        setupSuggestionBar()
         setupFeatureKeyboard()
         initBackToMainKeyboard()
     }
@@ -385,6 +474,26 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     private fun getStateToggle(key: String): Boolean {
         return pref.getPrefBoolean(key, true)
+    }
+
+    private fun applySoundAndHapticSettings() {
+        val soundEnabled = pref.getPrefBoolean(MechanicalSoundManager.PREF_KEYBOARD_SOUND_ENABLED, true)
+        val soundType = pref.getPrefString(
+            MechanicalSoundManager.PREF_KEYBOARD_SOUND_TYPE,
+            MechanicalSoundType.CHERRY_MX_BLUE.id
+        )
+        val soundVolumeInt = pref.getPrefInt(MechanicalSoundManager.PREF_KEYBOARD_SOUND_VOLUME, 80)
+        val vibrateEnabled = pref.getPrefBoolean(MechanicalSoundManager.PREF_KEYBOARD_VIBRATE_ENABLED, true)
+
+        ItemMainKeyboard.SOUND_ON_KEYPRESS = soundEnabled
+        ItemMainKeyboard.MECHANICAL_SOUND_TYPE = soundType
+        ItemMainKeyboard.SOUND_VOLUME = (soundVolumeInt / 100f).coerceIn(0.05f, 1.0f)
+        ItemMainKeyboard.VIBRATE_ON_KEYPRESS = vibrateEnabled
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MechanicalSoundManager.getInstance(this).release()
     }
 
 }

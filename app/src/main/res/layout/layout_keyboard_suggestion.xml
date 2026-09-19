@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_suggestion_bar"
+    android:layout_width="match_parent"
+    android:layout_height="46dp"
+    android:background="@drawable/bg_suggestion_bar"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
+
+    <!-- Quick Switcher to Feature Header Menu -->
+    <ImageView
+        android:id="@+id/btn_switch_menu"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/app_name"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/ic_suggestion_switch" />
+
+    <!-- Section 1: User's Word (Literal Input) -->
+    <LinearLayout
+        android:id="@+id/section_user_word"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/tv_user_word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/color_suggestion_user"
+            android:textSize="13sp"
+            tools:text="“user_word”" />
+
+    </LinearLayout>
+
+    <!-- Vertical Separator 1 -->
+    <View
+        android:id="@+id/divider_1"
+        android:layout_width="1dp"
+        android:layout_height="22dp"
+        android:background="@color/color_suggestion_divider" />
+
+    <!-- Section 2: Predicted Word (Center Hero Candidate) -->
+    <LinearLayout
+        android:id="@+id/section_predicted_word"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
+        android:layout_weight="1.2"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_suggestion_pill"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp">
+
+        <TextView
+            android:id="@+id/tv_predicted_word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/color_suggestion_predicted"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="predicted_word" />
+
+    </LinearLayout>
+
+    <!-- Vertical Separator 2 -->
+    <View
+        android:id="@+id/divider_2"
+        android:layout_width="1dp"
+        android:layout_height="22dp"
+        android:background="@color/color_suggestion_divider" />
+
+    <!-- Section 3: Auto-Correct Word (Typo Fix / Alternative Candidate) -->
+    <LinearLayout
+        android:id="@+id/section_autocorrect_word"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/tv_autocorrect_word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/color_suggestion_autocorrect"
+            android:textSize="13sp"
+            tools:text="autocorrect_word" />
+
+    </LinearLayout>
+
+    <!-- Close / Clear Button -->
+    <ImageView
+        android:id="@+id/btn_clear_suggestion"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/app_name"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/ic_close_suggestion" />
+
+</LinearLayout>

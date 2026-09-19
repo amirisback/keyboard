@@ -66,9 +66,10 @@ const val DAY_WITH_DATE_TIME_LOCALE_FULL = "EEEE, dd MMMM yyyy HH:mm" // Senin, 
 
     if (date != null) {
         try {
-            timestamp = df.parse(date).time / 1000
+            timestamp = df.parse(date)?.time?.div(1000) ?: (Date().time / 1000)
         } catch (e: ParseException) {
             e.printStackTrace()
+            timestamp = Date().time / 1000
         }
 
     } else {
@@ -98,25 +99,39 @@ const val DAY_WITH_DATE_TIME_LOCALE_FULL = "EEEE, dd MMMM yyyy HH:mm" // Senin, 
 }
 
  fun convertDateNewFormat(string: String?): String {
-    val formatter = SimpleDateFormat(DATE_ENGLISH_YYYY_MM_DD, Locale.getDefault())
-    val date = formatter.parse(string) as Date
-    val newFormat = SimpleDateFormat(DATE_DD_MM_YYYY, Locale("EN"))
-    return newFormat.format(date)
+    if (string == null) return ""
+    return try {
+        val formatter = SimpleDateFormat(DATE_ENGLISH_YYYY_MM_DD, Locale.getDefault())
+        val date = formatter.parse(string) ?: return ""
+        val newFormat = SimpleDateFormat(DATE_DD_MM_YYYY, Locale.ENGLISH)
+        newFormat.format(date)
+    } catch (e: Exception) {
+        ""
+    }
 }
 
  fun convertLongDateNewFormat(string: String?): String {
-    val formatter = SimpleDateFormat(DATE_TIME_STANDARD, Locale.getDefault())
-    val date = formatter.parse(string) as Date
-    val newFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale("EN"))
-    return newFormat.format(date)
+    if (string == null) return ""
+    return try {
+        val formatter = SimpleDateFormat(DATE_TIME_STANDARD, Locale.getDefault())
+        val date = formatter.parse(string) ?: return ""
+        val newFormat = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.ENGLISH)
+        newFormat.format(date)
+    } catch (e: Exception) {
+        ""
+    }
 }
 
  fun revertFromLongDateNewFormat(string: String?): String {
-    val formatter = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale("EN"))
-    val date = formatter.parse(string) as Date
-    val newFormat = SimpleDateFormat(DATE_TIME_STANDARD, Locale.getDefault())
-    val finalString = newFormat.format(date)
-    return finalString
+    if (string == null) return ""
+    return try {
+        val formatter = SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.ENGLISH)
+        val date = formatter.parse(string) ?: return ""
+        val newFormat = SimpleDateFormat(DATE_TIME_STANDARD, Locale.getDefault())
+        newFormat.format(date)
+    } catch (e: Exception) {
+        ""
+    }
 }
 
  fun convertTargetDate(string: String?): String {

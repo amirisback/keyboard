@@ -22,14 +22,20 @@ class KeyboardUtil @Inject constructor(
         const val KEYBOARD_TYPE = "KEYBOARD_TYPE"
         const val KEYBOARD_COLOR = "KEYBOARD_COLOR"
         const val KEYBOARD_COLOR_TYPE = "KEYBOARD_COLOR_TYPE"
+        const val KEYBOARD_SUGGESTION_ENABLED = "KEYBOARD_SUGGESTION_ENABLED"
     }
 
     private fun getStateToggle(key: String) : Boolean {
         return pref.getPrefBoolean(key, true)
     }
 
+    fun isSuggestionEnabled(): Boolean {
+        return getStateToggle(KeyboardFeatureType.SUGGESTION.id)
+    }
+
     fun menuToggle(): List<KeyboardFeatureModel> {
         return listOf(
+            KeyboardFeatureType.SUGGESTION.mapToModel(),
             KeyboardFeatureType.AUTO_TEXT.mapToModel(),
             KeyboardFeatureType.TEMPLATE_TEXT_APP.mapToModel(),
             KeyboardFeatureType.TEMPLATE_TEXT_GAME.mapToModel(),
@@ -55,14 +61,7 @@ class KeyboardUtil @Inject constructor(
     }
 
     fun keyboardTheme(): List<KeyboardThemeModel> {
-        return listOf(
-            KeyboardThemeType.DEFAULT.mapToModel(),
-            KeyboardThemeType.RED.mapToModel(),
-            KeyboardThemeType.GREEN.mapToModel(),
-            KeyboardThemeType.YELLOW.mapToModel(),
-            KeyboardThemeType.BLUE.mapToModel(),
-            KeyboardThemeType.IMAGE_BG_DARK.mapToModel()
-        )
+        return KeyboardThemeType.entries.map { it.mapToModel() }
     }
 
 }

@@ -2,15 +2,17 @@ package com.frogobox.appkeyboard.ui.autotext
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.frogobox.appkeyboard.common.base.BaseViewModel
-import com.frogobox.appkeyboard.common.callback.DataResponseCallback
-import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.common.ext.getTimeNow
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.AutoTextLabelType
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
 import com.frogobox.coresdk.source.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -53,23 +55,18 @@ class AutoTextViewModel @Inject constructor(
 
 
     fun getAutoText() {
-        repository.getAutoText(object : DataResponseCallback<List<AutoTextEntity>> {
-            override fun onFinish() {}
-            override fun onHideProgress() {}
-
-            override fun onFailed(statusCode: Int, errorMessage: String) {
-                _autoText.postValue(Resource.Error(statusCode, errorMessage))
-            }
-
-            override fun onShowProgress() {
-                _autoText.postValue(Resource.Loading())
-            }
-
-            override fun onSuccess(data: List<AutoTextEntity>) {
-                _autoText.postValue(Resource.Success(data))
-            }
-
-        })
+        viewModelScope.launch {
+            repository.getAutoText()
+                .onStart {
+                    _autoText.postValue(Resource.Loading())
+                }
+                .catch { e ->
+                    _autoText.postValue(Resource.Error(-1, e.localizedMessage ?: "Unknown Error"))
+                }
+                .collect { data ->
+                    _autoText.postValue(Resource.Success(data))
+                }
+        }
     }
 
     fun insertAutoText(title: String, body: String) {
@@ -80,54 +77,35 @@ class AutoTextViewModel @Inject constructor(
             body = body,
             isActive = true
         )
-        repository.insertAutoText(data, object : StateResponseCallback {
-            override fun onFailed(statusCode: Int, errorMessage: String) {
-                _eventFailed.postValue(errorMessage)
-            }
-
-            override fun onFinish() {
+        viewModelScope.launch {
+            _eventShowProgressState.postValue(true)
+            try {
+                repository.insertAutoText(data)
+                _eventShowProgressState.postValue(false)
+                _eventSuccessState.postValue(true)
+                _eventFinishState.postValue(true)
+            } catch (e: Exception) {
+                _eventShowProgressState.postValue(false)
+                _eventFailed.postValue(e.localizedMessage ?: "Failed to insert AutoText")
                 _eventFinishState.postValue(true)
             }
-
-            override fun onHideProgress() {
-                _eventShowProgressState.postValue(false)
-
-            }
-
-            override fun onShowProgress() {
-                _eventShowProgressState.postValue(true)
-
-            }
-
-            override fun onSuccess() {
-                _eventSuccessState.postValue(true)
-            }
         }
-        )
     }
 
     fun deleteAutoText(data: AutoTextEntity) {
-        repository.deleteAutoText(data, object : StateResponseCallback {
-            override fun onFailed(statusCode: Int, errorMessage: String) {
-                _eventFailed.postValue(errorMessage)
-            }
-
-            override fun onFinish() {
+        viewModelScope.launch {
+            _eventShowProgressState.postValue(true)
+            try {
+                repository.deleteAutoText(data)
+                _eventShowProgressState.postValue(false)
+                _eventSuccessState.postValue(true)
+                _eventFinishState.postValue(true)
+            } catch (e: Exception) {
+                _eventShowProgressState.postValue(false)
+                _eventFailed.postValue(e.localizedMessage ?: "Failed to delete AutoText")
                 _eventFinishState.postValue(true)
             }
-
-            override fun onHideProgress() {
-                _eventShowProgressState.postValue(false)
-            }
-
-            override fun onShowProgress() {
-                _eventShowProgressState.postValue(true)
-            }
-
-            override fun onSuccess() {
-                _eventSuccessState.postValue(true)
-            }
-        })
+        }
     }
 
     fun updateAutoText(id: Int, title: String, body: String) {
@@ -139,27 +117,19 @@ class AutoTextViewModel @Inject constructor(
             body = body,
             isActive = true
         )
-        repository.updateAutoText(data, object : StateResponseCallback {
-            override fun onFailed(statusCode: Int, errorMessage: String) {
-                _eventFailed.postValue(errorMessage)
-            }
-
-            override fun onFinish() {
+        viewModelScope.launch {
+            _eventShowProgressState.postValue(true)
+            try {
+                repository.updateAutoText(data)
+                _eventShowProgressState.postValue(false)
+                _eventSuccessState.postValue(true)
+                _eventFinishState.postValue(true)
+            } catch (e: Exception) {
+                _eventShowProgressState.postValue(false)
+                _eventFailed.postValue(e.localizedMessage ?: "Failed to update AutoText")
                 _eventFinishState.postValue(true)
             }
-
-            override fun onHideProgress() {
-                _eventShowProgressState.postValue(false)
-            }
-
-            override fun onShowProgress() {
-                _eventShowProgressState.postValue(true)
-            }
-
-            override fun onSuccess() {
-                _eventSuccessState.postValue(true)
-            }
-        })
+        }
     }
 
 }

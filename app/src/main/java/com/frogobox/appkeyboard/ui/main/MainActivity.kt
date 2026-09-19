@@ -3,106 +3,50 @@ package com.frogobox.appkeyboard.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
-import com.frogobox.appkeyboard.databinding.ActivityMainBinding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.frogobox.appkeyboard.common.base.BaseComposeMainActivity
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
 import com.frogobox.appkeyboard.ui.language.KeyboardLanguageActivity
+import com.frogobox.appkeyboard.ui.sound.SoundActivity
 import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.theme.ThemeActivity
 import com.frogobox.appkeyboard.ui.toggle.ToggleActivity
-import com.frogobox.sdk.ext.getColorExt
 import com.frogobox.sdk.ext.startActivityExt
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseMainActivity<ActivityMainBinding>() {
+class MainActivity : BaseComposeMainActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
 
     private val NONE = 0
     private val PICKING = 1
     private val CHOSEN = 2
-
     private var mState = 0
 
-    companion object {
-        private val TAG: String = MainActivity::class.java.simpleName
-    }
-
-    private val viewModel: MainViewModel by viewModels()
-
-    override fun setupViewBinding(): ActivityMainBinding {
-        return ActivityMainBinding.inflate(layoutInflater)
-    }
-
-    override fun setupViewModel() {
-        super.setupViewModel()
-        viewModel.apply {
-
-        }
-    }
+    private var keyboardStatus by mutableStateOf(KeyboardStatus.NOT_ENABLED)
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
-        if (savedInstanceState == null) {
-            // Call View Model Here
-            Log.d(TAG, "View Model : ${viewModel::class.java.simpleName}")
-        }
-        // TODO : Add your code here
-        initView()
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (mState === PICKING) {
-            mState = CHOSEN
-        } else if (mState === CHOSEN) {
-            handlingState()
-        }
+        updateKeyboardStatus()
     }
 
     override fun onResume() {
         super.onResume()
-        handlingState()
+        updateKeyboardStatus()
     }
 
-    override fun initView() {
-        super.initView()
-        binding.apply {
-            handlingState()
-
-            btnChangeKeyboard.setOnClickListener {
-                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
-                mState = PICKING
-            }
-
-            btnGoToSetting.setOnClickListener {
-                Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(this)
-                }
-            }
-
-            btnDoSomeTest.setOnClickListener {
-                startActivityExt<TestActivity>()
-            }
-
-            btnAutoText.setOnClickListener {
-                startActivityExt<AutoTextActivity>()
-            }
-
-            btnToggle.setOnClickListener {
-                startActivityExt<ToggleActivity>()
-            }
-
-            btnMultiLanguage.setOnClickListener {
-                startActivityExt<KeyboardLanguageActivity>()
-            }
-
-            btnTheme.setOnClickListener {
-                startActivityExt<ThemeActivity>()
-            }
-
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (mState == PICKING) {
+            mState = CHOSEN
+        } else if (mState == CHOSEN) {
+            updateKeyboardStatus()
         }
     }
 
@@ -120,21 +64,34 @@ class MainActivity : BaseMainActivity<ActivityMainBinding>() {
         }
     }
 
-    private fun handlingState() {
-        binding.titleState.apply {
-            if (!isKeyboardEnabled()) {
-                text = "Frogo Keyboard Not Active"
-                setTextColor(getColorExt(com.frogobox.libkeyboard.R.color.status_failed))
-            } else {
-                if (isUsingKeyboard()) {
-                    text = "Frogo Keyboard Active"
-                    setTextColor(getColorExt(com.frogobox.libkeyboard.R.color.status_success))
-                } else {
-                    text = "Not Using Frogo Keyboard"
-                    setTextColor(getColorExt(com.frogobox.libkeyboard.R.color.status_warning))
-                }
-            }
+    private fun updateKeyboardStatus() {
+        keyboardStatus = when {
+            !isKeyboardEnabled() -> KeyboardStatus.NOT_ENABLED
+            isUsingKeyboard() -> KeyboardStatus.ACTIVE
+            else -> KeyboardStatus.NOT_DEFAULT
         }
     }
 
+    @Composable
+    override fun Content() {
+        MainScreen(
+            status = keyboardStatus,
+            onGoToSettings = {
+                Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(this)
+                }
+            },
+            onChangeKeyboard = {
+                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+                mState = PICKING
+            },
+            onNavigateAutoText = { startActivityExt<AutoTextActivity>() },
+            onNavigateToggle = { startActivityExt<ToggleActivity>() },
+            onNavigateLanguage = { startActivityExt<KeyboardLanguageActivity>() },
+            onNavigateTheme = { startActivityExt<ThemeActivity>() },
+            onNavigateSound = { startActivityExt<SoundActivity>() },
+            onNavigateTest = { startActivityExt<TestActivity>() }
+        )
+    }
 }

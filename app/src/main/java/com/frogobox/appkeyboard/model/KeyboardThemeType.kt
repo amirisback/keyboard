@@ -21,12 +21,17 @@ enum class KeyboardThemeType(
     private val themeType: ThemeType,
     private val background: Int,
 ) {
-    DEFAULT("Default", "Default Color", ThemeType.COLOR, R.color.color_bg_keyboard_default),
-    RED("Red", "Red Color", ThemeType.COLOR, R.color.color_bg_keyboard_red),
-    GREEN("Green", "Green Color", ThemeType.COLOR, R.color.color_bg_keyboard_green),
-    YELLOW("Yellow", "Yellow Color", ThemeType.COLOR, R.color.color_bg_keyboard_yellow),
-    BLUE("Blue", "Blue Color", ThemeType.COLOR, R.color.color_bg_keyboard_blue),
-    IMAGE_BG_DARK("Image", "Sample Wallpaper", ThemeType.IMAGE, R.drawable.ic_wallpaper_dummy);
+    DEFAULT("Default", "Classic Adaptive", ThemeType.COLOR, R.color.color_bg_keyboard_default),
+    PURPLE("Frogo Purple", "Signature Brand", ThemeType.COLOR, R.color.color_bg_keyboard_purple),
+    DARK("Midnight AMOLED", "Deep OLED Black", ThemeType.COLOR, R.color.color_bg_keyboard_dark),
+    BLUE("Ocean Blue", "Calm & Focused", ThemeType.COLOR, R.color.color_bg_keyboard_blue),
+    GREEN("Forest Emerald", "Natural Harmony", ThemeType.COLOR, R.color.color_bg_keyboard_green),
+    RED("Crimson Sunset", "Vibrant Warmth", ThemeType.COLOR, R.color.color_bg_keyboard_red),
+    ORANGE("Sunset Orange", "Energetic Twilight", ThemeType.COLOR, R.color.color_bg_keyboard_orange),
+    CYAN("Nordic Cyan", "Fresh & Clean", ThemeType.COLOR, R.color.color_bg_keyboard_cyan),
+    PINK("Sakura Pink", "Aesthetic Pastel", ThemeType.COLOR, R.color.color_bg_keyboard_pink),
+    YELLOW("Amber Gold", "Golden Accent", ThemeType.COLOR, R.color.color_bg_keyboard_yellow),
+    IMAGE_BG_DARK("Wallpaper", "Sample Artwork", ThemeType.IMAGE, R.drawable.ic_wallpaper_dummy);
 
     fun mapToModel(): KeyboardThemeModel {
         return KeyboardThemeModel(

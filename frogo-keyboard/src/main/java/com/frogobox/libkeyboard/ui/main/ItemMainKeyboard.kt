@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.content.res.TypedArray
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.util.TypedValue
 import android.util.Xml
 import android.view.inputmethod.EditorInfo
@@ -42,7 +43,7 @@ class ItemMainKeyboard {
     var mMinWidth = 0
 
     /** List of keys in this keyboard  */
-    var mKeys: MutableList<Key?>? = null
+    val mKeys = mutableListOf<Key>()
 
     /** Width of the screen available to fit the keyboard  */
     private var mDisplayWidth = 0
@@ -51,9 +52,10 @@ class ItemMainKeyboard {
     private var mEnterKeyType = IME_ACTION_NONE
 
     /** Keyboard rows  */
-    private val mRows = ArrayList<Row?>()
+    private val mRows = ArrayList<Row>()
 
     companion object {
+        private const val TAG = "ItemMainKeyboard"
         private const val TAG_KEYBOARD = "Keyboard"
         private const val TAG_ROW = "Row"
         private const val TAG_KEY = "Key"
@@ -66,8 +68,24 @@ class ItemMainKeyboard {
         const val KEYCODE_DELETE = -5
         const val KEYCODE_SPACE = 32
         const val KEYCODE_EMOJI = -6
+        const val KEYCODE_TAB = -7
+        const val KEYCODE_ARROW_LEFT = -8
+        const val KEYCODE_ARROW_RIGHT = -9
+        const val KEYCODE_ARROW_UP = -10
+        const val KEYCODE_ARROW_DOWN = -11
 
-        const val VIBRATE_ON_KEYPRESS = false
+        /** Whether haptic feedback is enabled on key press. Set via [MainKeyboard.vibrateOnKeypress]. */
+        var VIBRATE_ON_KEYPRESS = true
+
+        /** Whether key sound feedback is enabled on key press. Set via [MainKeyboard.soundOnKeypress]. */
+        var SOUND_ON_KEYPRESS = true
+
+        /** Selected mechanical switch sound profile id. Default is Cherry MX Blue */
+        var MECHANICAL_SOUND_TYPE = "cherry_mx_blue"
+
+        /** Sound volume multiplier (0.05f to 1.0f) */
+        var SOUND_VOLUME = 0.8f
+
         const val SHOW_POPUP_ON_KEYPRESS = true
 
         const val SHIFT_OFF = 0
@@ -85,10 +103,7 @@ class ItemMainKeyboard {
             val value = a.peekValue(index) ?: return defValue
             return when (value.type) {
                 TypedValue.TYPE_DIMENSION -> a.getDimensionPixelOffset(index, defValue)
-                TypedValue.TYPE_FRACTION -> Math.round(a.getFraction(index,
-                    base,
-                    base,
-                    defValue.toFloat()))
+                TypedValue.TYPE_FRACTION -> a.getFraction(index, base, base, defValue.toFloat()).roundToInt()
                 else -> defValue
             }
         }
@@ -233,7 +248,9 @@ class ItemMainKeyboard {
             repeatable = a.getBoolean(R.styleable.FrogoKeyboard_Key_isRepeatable, false)
             edgeFlags = a.getInt(R.styleable.FrogoKeyboard_Key_keyEdgeFlags, 0)
             icon = a.getDrawable(R.styleable.FrogoKeyboard_Key_keyIcon)
-            icon?.setBounds(0, 0, icon!!.intrinsicWidth, icon!!.intrinsicHeight)
+            icon?.let { ic ->
+                ic.setBounds(0, 0, ic.intrinsicWidth, ic.intrinsicHeight)
+            }
 
             label = a.getText(R.styleable.FrogoKeyboard_Key_keyLabel) ?: ""
             topSmallNumber = a.getString(R.styleable.FrogoKeyboard_Key_topSmallNumber) ?: ""
@@ -261,10 +278,9 @@ class ItemMainKeyboard {
         fun isInside(x: Int, y: Int): Boolean {
             val leftEdge = edgeFlags and EDGE_LEFT > 0
             val rightEdge = edgeFlags and EDGE_RIGHT > 0
-            return ((x >= this.x || leftEdge && x <= this.x + width)
-                    && (x < this.x + width || rightEdge && x >= this.x)
-                    && (y >= this.y && y <= this.y + height)
-                    && (y < this.y + height && y >= this.y))
+            val isInsideX = (x >= this.x || leftEdge) && (x < this.x + width || rightEdge)
+            val isInsideY = y >= this.y && y < this.y + height
+            return isInsideX && isInsideY
         }
     }
 
@@ -280,7 +296,23 @@ class ItemMainKeyboard {
         mDefaultWidth = mDisplayWidth / 10
         mDefaultHeight = mDefaultWidth
         mKeyboardHeightMultiplier = getKeyboardHeightMultiplier()
-        mKeys = ArrayList()
+        mEnterKeyType = enterKeyType
+        loadKeyboard(context, context.resources.getXml(xmlLayoutResId))
+    }
+
+    /**
+     * Creates a keyboard from the given xml key layout file with a custom height multiplier.
+     * @param context the application or service context
+     * @param xmlLayoutResId the resource file that contains the keyboard layout and keys.
+     * @param enterKeyType determines what icon should we show on Enter key
+     * @param heightMultiplier multiplier for keyboard height (1.0 = default, 1.2 = 20% taller)
+     */
+    constructor(context: Context, @XmlRes xmlLayoutResId: Int, enterKeyType: Int, heightMultiplier: Float) {
+        mDisplayWidth = context.resources.displayMetrics.widthPixels
+        mDefaultHorizontalGap = 0
+        mDefaultWidth = mDisplayWidth / 10
+        mDefaultHeight = mDefaultWidth
+        mKeyboardHeightMultiplier = heightMultiplier
         mEnterKeyType = enterKeyType
         loadKeyboard(context, context.resources.getXml(xmlLayoutResId))
     }
@@ -326,7 +358,7 @@ class ItemMainKeyboard {
             key.code = character.code
             column++
             x += key.width + key.gap
-            mKeys!!.add(key)
+            mKeys.add(key)
             row.mKeys.add(key)
             if (x > mMinWidth) {
                 mMinWidth = x
@@ -383,7 +415,7 @@ class ItemMainKeyboard {
                         TAG_KEY -> {
                             inKey = true
                             key = createKeyFromXml(res, currentRow!!, x, y, parser)
-                            mKeys!!.add(key)
+                            mKeys.add(key)
                             if (key.code == KEYCODE_ENTER) {
                                 val enterResourceId = when (mEnterKeyType) {
                                     EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_keyboard_search
@@ -415,6 +447,7 @@ class ItemMainKeyboard {
                 }
             }
         } catch (e: Exception) {
+            Log.e(TAG, "Error loading keyboard XML", e)
         }
         mHeight = y
     }

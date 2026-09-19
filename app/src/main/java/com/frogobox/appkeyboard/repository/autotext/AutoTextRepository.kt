@@ -4,7 +4,7 @@ import com.frogobox.appkeyboard.common.callback.DataResponseCallback
 import com.frogobox.appkeyboard.common.callback.StateResponseCallback
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.AutoTextLabelType
-
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Faisal Amir on 25/11/22
@@ -12,6 +12,28 @@ import com.frogobox.appkeyboard.model.AutoTextLabelType
  */
 
 interface AutoTextRepository {
+
+    fun getAutoText(): Flow<List<AutoTextEntity>>
+
+    fun getAutoTextByLabel(label: AutoTextLabelType): Flow<List<AutoTextEntity>>
+
+    fun getAutoTextByTitle(title: String): Flow<List<AutoTextEntity>>
+
+    fun getAutoTextByBody(body: String): Flow<List<AutoTextEntity>>
+
+    fun getAutoTextByTitleOrBody(keyword: String): Flow<List<AutoTextEntity>>
+
+    suspend fun insertAutoText(autoText: AutoTextEntity)
+
+    suspend fun insertAutoText(autoTexts: List<AutoTextEntity>)
+
+    suspend fun updateAutoText(autoText: AutoTextEntity)
+
+    suspend fun deleteAutoText(autoText: AutoTextEntity)
+
+    suspend fun deleteAutoText(idList: List<Int>)
+
+    suspend fun nukeAutoText()
 
     fun getAutoText(callback: DataResponseCallback<List<AutoTextEntity>>)
 

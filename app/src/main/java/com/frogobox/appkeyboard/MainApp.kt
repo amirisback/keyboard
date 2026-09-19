@@ -1,12 +1,13 @@
 package com.frogobox.appkeyboard
 
 import android.content.Context
-import android.os.Build
+import androidx.core.os.ConfigurationCompat
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.text.EmojiCompat
 import com.frogobox.sdk.FrogoApplication
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Locale
+import java.util.concurrent.Executors
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -28,11 +29,7 @@ class MainApp : FrogoApplication() {
         fun getContext(): Context = instance.applicationContext
 
         fun getCurrentLocale(): Locale? {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                instance.resources.configuration.locales[0]
-            } else {
-                instance.resources.configuration.locale
-            }
+            return ConfigurationCompat.getLocales(instance.resources.configuration)[0]
         }
 
     }
@@ -44,7 +41,7 @@ class MainApp : FrogoApplication() {
     }
 
     private fun setupEmojiCompat() {
-        val config = BundledEmojiCompatConfig(this)
+        val config = BundledEmojiCompatConfig(this, Executors.newSingleThreadExecutor())
         EmojiCompat.init(config)
     }
 

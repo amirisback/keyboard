@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.common.base.BaseViewModel
 import com.frogobox.appkeyboard.model.KeyboardThemeModel
+import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.services.KeyboardUtil
-import com.frogobox.coresdk.response.FrogoStateResponse
 import com.frogobox.sdk.delegate.preference.PreferenceDelegates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,7 +19,6 @@ import javax.inject.Inject
  * Github   : github.com/amirisback
  * -----------------------------------------
  */
-
 
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
@@ -36,6 +35,14 @@ class ThemeViewModel @Inject constructor(
 
     fun getThemeColor(): Int {
         return pref.getPrefInt(KeyboardUtil.KEYBOARD_COLOR, R.color.color_bg_keyboard_default)
+    }
+
+    fun getThemeType(): String {
+        return pref.getPrefString(KeyboardUtil.KEYBOARD_COLOR_TYPE, ThemeType.COLOR.name)
+    }
+
+    fun isThemeActive(data: KeyboardThemeModel): Boolean {
+        return data.background == getThemeColor() && data.themType.name == getThemeType()
     }
 
     fun setThemeColor(data: KeyboardThemeModel, onSuccess: () -> Unit) {

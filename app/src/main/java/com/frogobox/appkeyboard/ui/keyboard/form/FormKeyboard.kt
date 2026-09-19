@@ -34,7 +34,26 @@ class FormKeyboard(
         super.initUI()
         binding.apply {
             btnSubmit.setOnClickListener {
+                val title = etText.text?.toString()?.trim()
+                val details = etText2.text?.toString()?.trim()
+                val number = etText3.text?.toString()?.trim()
+
+                val sb = StringBuilder()
+                if (!title.isNullOrBlank()) sb.append("Subject: $title\n")
+                if (!details.isNullOrBlank()) sb.append("Details: $details\n")
+                if (!number.isNullOrBlank()) sb.append("Ref/No: $number\n")
+
+                if (sb.isNotEmpty()) {
+                    currentInputConnection?.commitText(sb.toString(), 1)
+                }
+
                 KeyboardNavigationHelper.navigateTo(this@FormKeyboard, destinationKeyboard)
+            }
+
+            btnClear.setOnClickListener {
+                etText.setText("")
+                etText2.setText("")
+                etText3.setText("")
             }
         }
     }

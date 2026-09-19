@@ -36,7 +36,12 @@ abstract class BaseKeyboard<VB : ViewBinding> @JvmOverloads constructor(
     // Backing property for view binding
     private var _binding: VB? = null
     val binding: VB
-        get() = _binding ?: throw IllegalStateException("Binding is accessed before setup or after onDestroy()")
+        get() {
+            if (_binding == null) {
+                _binding = setupViewBinding(LayoutInflater.from(context), this)
+            }
+            return _binding!!
+        }
 
     // Current input connection to communicate with the EditText / InputMethod
     var currentInputConnection: InputConnection? = null
@@ -72,8 +77,10 @@ abstract class BaseKeyboard<VB : ViewBinding> @JvmOverloads constructor(
     }
 
     private fun initialize() {
-        _binding = setupViewBinding(LayoutInflater.from(context), this)
-        onCreate()
+        if (_binding == null) {
+            _binding = setupViewBinding(LayoutInflater.from(context), this)
+            onCreate()
+        }
     }
 
     /**
@@ -87,7 +94,6 @@ abstract class BaseKeyboard<VB : ViewBinding> @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         onDestroy()
-        _binding = null
         currentInputConnection = null
     }
 }

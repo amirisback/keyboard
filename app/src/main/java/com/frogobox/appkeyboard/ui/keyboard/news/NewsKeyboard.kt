@@ -16,6 +16,7 @@ import com.frogobox.coreutil.news.NewsUrl
 import com.frogobox.coreutil.news.model.Article
 import com.frogobox.coreutil.news.response.ArticleResponse
 
+import com.bumptech.glide.Glide
 import com.frogobox.libkeyboard.common.core.BaseKeyboard
 import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
@@ -49,7 +50,7 @@ class NewsKeyboard(
 
     private fun initView() {
         binding.apply {
-            tvToolbarTitle.text = "News Api"
+            tvToolbarTitle.text = "Top Headlines"
         }
     }
 
@@ -144,6 +145,15 @@ class NewsKeyboard(
                 ) {
                     binding.apply {
                         tvItemKeyboardMain.text = data.title
+                        tvItemKeyboardDesc.text = data.description ?: ""
+                        tvItemKeyboardSource.text = if (!data.author.isNullOrBlank()) data.author else "News"
+                        if (!data.urlToImage.isNullOrBlank()) {
+                            Glide.with(context)
+                                .load(data.urlToImage)
+                                .into(ivItemKeyboardNews)
+                        } else {
+                            ivItemKeyboardNews.setImageResource(com.frogobox.appkeyboard.R.drawable.ic_menu_news)
+                        }
                     }
                 }
             }

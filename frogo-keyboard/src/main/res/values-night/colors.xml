@@ -13,10 +13,12 @@
 
     <color name="keypad_text">#F9FCFF</color>
     <color name="keypad">#80232427</color>
+    <color name="keypad_pressed">#3F4347</color>
     <color name="keypad_mini">#232427</color>
     <color name="keypad_stroke">#80232427</color>
 
     <color name="keypad_action_icon">#181921</color>
     <color name="keypad_action_background">#80B1BEFF</color>
+    <color name="keypad_action_pressed">#808595D6</color>
 
 </resources>

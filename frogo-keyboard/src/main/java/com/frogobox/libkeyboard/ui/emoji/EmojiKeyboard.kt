@@ -203,11 +203,16 @@ class EmojiKeyboard(
         }
     }
 
+    private val backgroundExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        backgroundExecutor.shutdown()
+    }
+
     private fun ensureBackgroundThread(callback: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            Thread {
-                callback()
-            }.start()
+            backgroundExecutor.execute(callback)
         } else {
             callback()
         }

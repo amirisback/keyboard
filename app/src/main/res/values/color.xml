@@ -20,4 +20,20 @@
     <color name="color_suggestion_autocorrect">#37474F</color>
     <color name="color_suggestion_divider">#E0E0E0</color>
 
+    <!-- Modern Keyboard Feature UI Tokens -->
+    <color name="color_feature_card_bg">@color/bg_card</color>
+    <color name="color_feature_card_stroke">#18000000</color>
+    <color name="color_feature_icon_bg">#0D000000</color>
+    <color name="color_feature_icon_tint">@color/tv_text</color>
+    <color name="color_feature_chip_bg">#F1F3F4</color>
+    <color name="color_feature_chip_active_bg">#E1F5FE</color>
+    <color name="color_feature_chip_active_text">#0288D1</color>
+    <color name="color_feature_chip_text">#4A5568</color>
+    <color name="color_feature_subtext">#718096</color>
+    <color name="color_feature_action_pill">#EBF8FF</color>
+    <color name="color_feature_action_text">#0288D1</color>
+    <color name="color_feature_rating_amber">#FFB300</color>
+    <color name="color_feature_rating_badge_bg">#B3000000</color>
+    <color name="color_feature_accent">#0288D1</color>
+
 </resources>

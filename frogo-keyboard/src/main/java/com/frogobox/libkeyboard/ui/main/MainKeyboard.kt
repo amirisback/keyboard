@@ -124,7 +124,21 @@ class MainKeyboard @JvmOverloads constructor(
     private var mTopSmallNumberMarginWidth = 0f
     private var mTopSmallNumberMarginHeight = 0f
     private val mSpaceMoveThreshold: Int
+    private var mDeleteSwipeThreshold = 0
     private var ignoreTouches = false
+
+    // Instant Gboard gestures
+    private var mSpaceStartX = 0
+    private var mIsSlidingSpace = false
+    private var mDeleteStartX = 0
+    private var mIsSlidingDelete = false
+
+    // Cached drawables for zero per-frame allocation
+    private var mKeypadDefaultDrawable: android.graphics.drawable.Drawable? = null
+    private var mKeypadActionDrawable: android.graphics.drawable.Drawable? = null
+    private var mShiftOffDrawable: android.graphics.drawable.Drawable? = null
+    private var mShiftOneCharDrawable: android.graphics.drawable.Drawable? = null
+    private var mShiftPermDrawable: android.graphics.drawable.Drawable? = null
 
     /** Reusable Paint for top small numbers — avoids per-frame allocation */
     private val mSmallLetterPaint = Paint()
@@ -209,6 +223,7 @@ class MainKeyboard @JvmOverloads constructor(
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
         mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
+        mDeleteSwipeThreshold = (resources.getDimension(R.dimen.key_height) * 0.6f).toInt()
 
         mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
         mPreviewTextSizeLarge = resources.getDimension(R.dimen.preview_text_size).toInt()
@@ -237,6 +252,16 @@ class MainKeyboard @JvmOverloads constructor(
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
         mTopSmallNumberMarginWidth = resources.getDimension(R.dimen.top_small_number_margin_width)
         mTopSmallNumberMarginHeight = resources.getDimension(R.dimen.top_small_number_margin_height)
+
+        initCachedDrawables()
+    }
+
+    fun initCachedDrawables() {
+        mKeypadDefaultDrawable = resources.getDrawable(R.drawable.keypad_default, context.theme)
+        mKeypadActionDrawable = resources.getDrawable(R.drawable.keypad_action, context.theme)
+        mShiftOffDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_outline, null)
+        mShiftOneCharDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps, null)
+        mShiftPermDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_underlined, null)
     }
 
     override fun onAttachedToWindow() {
@@ -265,6 +290,7 @@ class MainKeyboard @JvmOverloads constructor(
         if (visibility == VISIBLE) {
             mTextColor = context.getColorExt(R.color.keypad_text)
             mBackgroundColor = context.getColorExt(R.color.keyboard_board)
+            initCachedDrawables()
 
             val strokeColor = context.getColorExt(R.color.keypad_mini_stroke)
             val miniKeyboardBackgroundColor = context.getColorExt(R.color.keypad)
@@ -441,12 +467,14 @@ class MainKeyboard @JvmOverloads constructor(
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
         val keyCount = keys.size
+        val kb = mKeyboard
+        val defaultBg = mKeypadDefaultDrawable ?: resources.getDrawable(R.drawable.keypad_default, context.theme)
+        val actionBg = mKeypadActionDrawable ?: resources.getDrawable(R.drawable.keypad_action, context.theme)
+
         for (i in 0 until keyCount) {
             val key = keys[i]
             val code = key.code
-            var keyBackground = resources.getDrawable(R.drawable.keypad_default, context.theme)
-            when (code) {
-
+            val keyBackground = when (code) {
                 KEYCODE_SHIFT,
                 KEYCODE_DELETE,
                 KEYCODE_ENTER,
@@ -455,15 +483,13 @@ class MainKeyboard @JvmOverloads constructor(
                 KEYCODE_ARROW_LEFT,
                 KEYCODE_ARROW_RIGHT,
                 KEYCODE_ARROW_UP,
-                KEYCODE_ARROW_DOWN -> {
-                    keyBackground = resources.getDrawable(R.drawable.keypad_action, context.theme)
-                }
-
+                KEYCODE_ARROW_DOWN -> actionBg
+                else -> defaultBg
             }
 
             // Switch the character to uppercase if shift is pressed
             val label = adjustCase(key.label)?.toString()
-            val bounds = keyBackground!!.bounds
+            val bounds = keyBackground.bounds
             if (key.width != bounds.right || key.height != bounds.bottom) {
                 keyBackground.setBounds(0, 0, key.width, key.height)
             }
@@ -506,15 +532,13 @@ class MainKeyboard @JvmOverloads constructor(
 
                 // Turn off drop shadow
                 paint.setShadowLayer(0f, 0f, 0f, 0)
-            } else if (key.icon != null && mKeyboard != null) {
-                val kb = mKeyboard!!
+            } else if (key.icon != null && kb != null) {
                 if (code == KEYCODE_SHIFT) {
-                    val drawableId = when (kb.mShiftState) {
-                        SHIFT_OFF -> R.drawable.ic_keyboard_caps_outline
-                        SHIFT_ON_ONE_CHAR -> R.drawable.ic_keyboard_caps
-                        else -> R.drawable.ic_keyboard_caps_underlined
+                    key.icon = when (kb.mShiftState) {
+                        SHIFT_OFF -> mShiftOffDrawable
+                        SHIFT_ON_ONE_CHAR -> mShiftOneCharDrawable
+                        else -> mShiftPermDrawable
                     }
-                    key.icon = ResourcesCompat.getDrawable(resources, drawableId, null)
                 }
 
                 key.icon?.let { icon ->
@@ -1037,6 +1061,19 @@ class MainKeyboard @JvmOverloads constructor(
                 mDownTime = me.eventTime
                 mLastMoveTime = mDownTime
 
+                val isSpaceKey = mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE
+                val isDeleteKey = mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_DELETE
+
+                if (isSpaceKey) {
+                    mSpaceStartX = touchX
+                    mLastSpaceMoveX = touchX
+                    mIsSlidingSpace = false
+                }
+                if (isDeleteKey) {
+                    mDeleteStartX = touchX
+                    mIsSlidingDelete = false
+                }
+
                 val onPressKey = if (keyIndex != NOT_A_KEY) {
                     mKeys[keyIndex].code
                 } else {
@@ -1051,9 +1088,8 @@ class MainKeyboard @JvmOverloads constructor(
 
                     val msg = mHandler!!.obtainMessage(MSG_REPEAT)
                     mHandler!!.sendMessageDelayed(msg, REPEAT_START_DELAY.toLong())
-                    // if the user long presses Space, move the cursor after swipine left/right
                     if (mKeys[mCurrentKey].code == KEYCODE_SPACE) {
-                        mLastSpaceMoveX = -1
+                        mLastSpaceMoveX = touchX
                     } else {
                         repeatKey(true)
                     }
@@ -1096,7 +1132,45 @@ class MainKeyboard @JvmOverloads constructor(
                     }
                 }
 
-                if (mIsLongPressingSpace) {
+                // Instant Gboard spacebar swipe cursor control (without 400ms delay)
+                if (mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE) {
+                    val totalDiffX = touchX - mSpaceStartX
+                    if (kotlin.math.abs(totalDiffX) > mSpaceMoveThreshold) {
+                        if (!mIsSlidingSpace) {
+                            mIsSlidingSpace = true
+                            mHandler?.removeMessages(MSG_REPEAT)
+                            mHandler?.removeMessages(MSG_LONGPRESS)
+                            showPreview(NOT_A_KEY)
+                        }
+
+                        val diff = touchX - mLastSpaceMoveX
+                        if (diff < -mSpaceMoveThreshold) {
+                            val steps = (-diff) / mSpaceMoveThreshold
+                            for (i in 0 until steps) {
+                                mOnKeyboardActionListener?.moveCursorLeft()
+                                vibrateIfNeeded()
+                            }
+                            mLastSpaceMoveX -= steps * mSpaceMoveThreshold
+                        } else if (diff > mSpaceMoveThreshold) {
+                            val steps = diff / mSpaceMoveThreshold
+                            for (i in 0 until steps) {
+                                mOnKeyboardActionListener?.moveCursorRight()
+                                vibrateIfNeeded()
+                            }
+                            mLastSpaceMoveX += steps * mSpaceMoveThreshold
+                        }
+                    }
+                } else if (mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_DELETE) {
+                    val swipeLeftDist = mDeleteStartX - touchX
+                    if (swipeLeftDist > mDeleteSwipeThreshold) {
+                        if (!mIsSlidingDelete) {
+                            mIsSlidingDelete = true
+                            mHandler?.removeMessages(MSG_REPEAT)
+                            mHandler?.removeMessages(MSG_LONGPRESS)
+                            showPreview(NOT_A_KEY)
+                        }
+                    }
+                } else if (mIsLongPressingSpace) {
                     if (mLastSpaceMoveX == -1) {
                         mLastSpaceMoveX = mLastX
                     }
@@ -1148,12 +1222,28 @@ class MainKeyboard @JvmOverloads constructor(
                 }
                 showPreview(NOT_A_KEY)
                 Arrays.fill(mKeyIndices, NOT_A_KEY)
-                // If we're not on a repeating key (which sends on a DOWN event)
-                if (mRepeatKeyIndex == NOT_A_KEY && !mMiniKeyboardOnScreen && !mAbortKey) {
-                    detectAndSendKey(mCurrentKey, touchX, touchY, eventTime)
-                } else if (mRepeatKeyIndex != NOT_A_KEY && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE && !mIsLongPressingSpace) {
-                    // Space key was in repeat mode but user released before long-press activated
-                    detectAndSendKey(mCurrentKey, touchX, touchY, eventTime)
+
+                val wasSlidingSpace = mIsSlidingSpace
+                val wasSlidingDelete = mIsSlidingDelete
+                mIsSlidingSpace = false
+                mIsSlidingDelete = false
+
+                if (wasSlidingSpace) {
+                    // Sliding space gesture consumed - do not send space character
+                } else if (wasSlidingDelete) {
+                    // Sliding delete gesture consumed - delete words
+                    val swipeLeftDist = mDeleteStartX - touchX
+                    val wordsToDelete = max(1, swipeLeftDist / (mDeleteSwipeThreshold * 2))
+                    mOnKeyboardActionListener?.deleteWordsBeforeCursor(wordsToDelete)
+                    vibrateIfNeeded()
+                } else {
+                    // If we're not on a repeating key (which sends on a DOWN event)
+                    if (mRepeatKeyIndex == NOT_A_KEY && !mMiniKeyboardOnScreen && !mAbortKey) {
+                        detectAndSendKey(mCurrentKey, touchX, touchY, eventTime)
+                    } else if (mRepeatKeyIndex != NOT_A_KEY && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE && !mIsLongPressingSpace) {
+                        // Space key was in repeat mode but user released before long-press activated
+                        detectAndSendKey(mCurrentKey, touchX, touchY, eventTime)
+                    }
                 }
 
                 invalidateKey(keyIndex)
@@ -1164,6 +1254,8 @@ class MainKeyboard @JvmOverloads constructor(
 
             MotionEvent.ACTION_CANCEL -> {
                 mIsLongPressingSpace = false
+                mIsSlidingSpace = false
+                mIsSlidingDelete = false
                 mLastSpaceMoveX = 0
                 removeMessages()
                 dismissPopupKeyboard()

@@ -4,5 +4,7 @@
     android:background="@drawable/keypad_pop_up"
     android:gravity="center"
     android:includeFontPadding="false"
-    android:textColor="#FFFFFF"
-    android:textSize="24sp" />
+    android:padding="@dimen/key_margin"
+    android:textColor="@color/keypad_text"
+    android:textStyle="bold"
+    android:textSize="@dimen/preview_text_size" />

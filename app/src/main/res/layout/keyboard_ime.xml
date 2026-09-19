@@ -33,7 +33,7 @@
             android:id="@+id/keyboard_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/frogo_dimen_64dp"
+            android:minHeight="54dp"
             tools:itemCount="1"
             tools:listitem="@layout/item_keyboard_header" />
 

@@ -50,7 +50,7 @@
                     android:id="@+id/tv_toolbar_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Trending Movies"
+                    android:text="Quick Templates"
                     android:textColor="@color/tv_text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -59,7 +59,7 @@
                     android:id="@+id/tv_toolbar_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tap to share movie recommendation"
+                    android:text="Tap any template to paste into chat"
                     android:textColor="@color/color_feature_subtext"
                     android:textSize="10.5sp" />
 
@@ -67,9 +67,22 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_template_categories"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="3dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_keyboard_template_category" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
+            android:layout_marginTop="3dp"
             android:background="@color/color_feature_card_stroke" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -77,23 +90,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingHorizontal="8dp"
+            android:paddingHorizontal="12dp"
             android:paddingTop="8dp"
             android:paddingBottom="12dp"
-            tools:itemCount="6"
-            tools:listitem="@layout/item_keyboard_movie" />
+            tools:itemCount="5"
+            tools:listitem="@layout/item_keyboard_template_text" />
 
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateTint="@color/color_feature_accent"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,52 +17,132 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="50dp"
+            android:paddingHorizontal="10dp">
 
             <ImageView
                 android:id="@+id/toolbar_back"
-                android:layout_width="@dimen/frogo_dimen_24dp"
-                android:layout_height="@dimen/frogo_dimen_24dp"
-                android:layout_margin="@dimen/frogo_dimen_16dp"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_feature_toolbar_button"
+                android:clickable="true"
+                android:contentDescription="Back"
+                android:focusable="true"
+                android:padding="7dp"
                 android:src="@drawable/ic_keyboard_arrow_left"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/tv_text" />
 
-            <TextView
-                android:id="@+id/tv_toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/frogo_dimen_16dp"
-                android:text="Webview"
-                android:textColor="@color/tv_text"
-                android:textStyle="bold"
+            <LinearLayout
+                android:id="@+id/ll_search_container"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_feature_chip_inactive"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_reload"
                 app:layout_constraintStart_toEndOf="@id/toolbar_back"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_feature_search"
+                    app:tint="@color/color_feature_subtext" />
+
+                <EditText
+                    android:id="@+id/et_search_url"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="Search or type URL..."
+                    android:imeOptions="actionSearch"
+                    android:inputType="textUri"
+                    android:maxLines="1"
+                    android:textColor="@color/tv_text"
+                    android:textColorHint="@color/color_feature_subtext"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btn_reload"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_feature_toolbar_button"
+                android:clickable="true"
+                android:contentDescription="Reload"
+                android:focusable="true"
+                android:padding="7dp"
+                android:src="@drawable/ic_feature_refresh"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_insert_link"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/tv_text" />
+
+            <LinearLayout
+                android:id="@+id/btn_insert_link"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_feature_action_pill"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_feature_insert"
+                    app:tint="@color/color_feature_action_text" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="Paste"
+                    android:textColor="@color/color_feature_action_text"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
+        <ProgressBar
+            android:id="@+id/pb_web_loading"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/frogo_dimen_200dp">
+            android:layout_height="2.5dp"
+            android:indeterminateTint="@color/color_feature_accent"
+            android:progressTint="@color/color_feature_accent"
+            android:visibility="gone" />
 
-            <WebView
-                android:id="@+id/webview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:longClickable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/container_toolbar"
-                tools:itemCount="10"
-                tools:listitem="@layout/item_keyboard_news" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/color_feature_card_stroke" />
 
-        </ScrollView>
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
     </LinearLayout>
 

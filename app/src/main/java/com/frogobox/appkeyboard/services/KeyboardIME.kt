@@ -447,6 +447,38 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         }
     }
 
+    override fun deleteWordsBeforeCursor(count: Int) {
+        val ic = getActiveInputConnection() ?: return
+        if (count <= 0) return
+        val textBefore = ic.getTextBeforeCursor(120, 0)?.toString() ?: return
+        if (textBefore.isEmpty()) return
+
+        var remainingWords = count
+        var deleteLen = 0
+        var inWord = false
+
+        for (i in textBefore.length - 1 downTo 0) {
+            val ch = textBefore[i]
+            if (ch.isWhitespace() || !ch.isLetterOrDigit()) {
+                if (inWord) {
+                    remainingWords--
+                    if (remainingWords <= 0) {
+                        deleteLen++
+                        break
+                    }
+                    inWord = false
+                }
+            } else {
+                inWord = true
+            }
+            deleteLen++
+        }
+
+        if (deleteLen > 0) {
+            ic.deleteSurroundingText(deleteLen, 0)
+        }
+    }
+
     override fun initView() {
         suggestionEngine.loadDictionaryFromAsset(this)
         setupSuggestionBar()

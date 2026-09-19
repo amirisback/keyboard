@@ -54,6 +54,8 @@ interface IKeyboardIME {
 
     fun moveCursor(moveRight: Boolean)
 
+    fun deleteWordsBeforeCursor(count: Int)
+
     fun getImeOptionsActionId(): Int
 
     fun getKeyboardLayoutXML(): Int

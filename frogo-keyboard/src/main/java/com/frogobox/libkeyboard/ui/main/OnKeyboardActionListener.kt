@@ -43,4 +43,9 @@ interface OnKeyboardActionListener {
      * @param text the string to be displayed.
      */
     fun onText(text: String)
+
+    /**
+     * Called when the user swipes left on Backspace to delete words
+     */
+    fun deleteWordsBeforeCursor(count: Int) {}
 }

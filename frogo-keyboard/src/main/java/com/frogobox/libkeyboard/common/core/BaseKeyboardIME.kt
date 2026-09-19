@@ -30,6 +30,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     companion object {
         // How quickly do we have to doubletap shift to enable permanent caps lock
         const val SHIFT_PERM_TOGGLE_SPEED = 500L
+        const val DOUBLE_SPACE_PERIOD_TIMEOUT = 350L
 
         const val KEYBOARD_LETTERS = 0
         const val KEYBOARD_SYMBOLS = 1
@@ -40,6 +41,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     var keyboard: ItemMainKeyboard? = null
 
     var lastShiftPressTS = 0L
+    var lastSpacePressTS = 0L
     var keyboardMode = KEYBOARD_LETTERS
     var inputTypeClass = InputType.TYPE_CLASS_TEXT
     var enterKeyType = IME_ACTION_NONE
@@ -211,6 +213,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
         when (code) {
             ItemMainKeyboard.KEYCODE_DELETE -> {
+                lastSpacePressTS = 0L
                 if (kb.mShiftState == SHIFT_ON_ONE_CHAR) {
                     kb.mShiftState = SHIFT_OFF
                 }
@@ -227,13 +230,10 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                     inputConnection.commitText("", 1)
                 }
 
-                if (inputConnection != currentInputConnection) {
-                    inputConnection.deleteSurroundingText(1, 0)
-                }
-
                 invalidateAllKeys()
             }
             ItemMainKeyboard.KEYCODE_SHIFT -> {
+                lastSpacePressTS = 0L
                 if (keyboardMode == KEYBOARD_LETTERS) {
                     when {
                         kb.mShiftState == SHIFT_ON_PERMANENT -> kb.mShiftState = SHIFT_OFF
@@ -257,6 +257,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                 invalidateAllKeys()
             }
             ItemMainKeyboard.KEYCODE_ENTER -> {
+                lastSpacePressTS = 0L
                 val imeOptionsActionId = getImeOptionsActionId()
                 if (imeOptionsActionId != IME_ACTION_NONE) {
                     inputConnection.performEditorAction(imeOptionsActionId)
@@ -268,12 +269,9 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                         KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)
                     )
                 }
-
-                if (inputConnection != currentInputConnection) {
-                    inputConnection.commitText("\n", 1)
-                }
             }
             ItemMainKeyboard.KEYCODE_MODE_CHANGE -> {
+                lastSpacePressTS = 0L
                 val keyboardXml = if (keyboardMode == KEYBOARD_LETTERS) {
                     keyboardMode = KEYBOARD_SYMBOLS
                     R.xml.keys_symbols
@@ -285,9 +283,11 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                 initialSetupKeyboard()
             }
             ItemMainKeyboard.KEYCODE_EMOJI -> {
+                lastSpacePressTS = 0L
                 runEmojiBoard()
             }
             ItemMainKeyboard.KEYCODE_TAB -> {
+                lastSpacePressTS = 0L
                 val isMultiline = (currentInputEditorInfo?.inputType ?: 0) and InputType.TYPE_TEXT_FLAG_MULTI_LINE != 0
                 if (isMultiline) {
                     inputConnection.commitText("\t", 1)
@@ -301,12 +301,15 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                 }
             }
             ItemMainKeyboard.KEYCODE_ARROW_LEFT -> {
+                lastSpacePressTS = 0L
                 moveCursor(false)
             }
             ItemMainKeyboard.KEYCODE_ARROW_RIGHT -> {
+                lastSpacePressTS = 0L
                 moveCursor(true)
             }
             ItemMainKeyboard.KEYCODE_ARROW_UP -> {
+                lastSpacePressTS = 0L
                 inputConnection.sendKeyEvent(
                     KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP)
                 )
@@ -315,6 +318,7 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                 )
             }
             ItemMainKeyboard.KEYCODE_ARROW_DOWN -> {
+                lastSpacePressTS = 0L
                 inputConnection.sendKeyEvent(
                     KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN)
                 )
@@ -329,16 +333,35 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
                     codeChar = Character.toUpperCase(codeChar)
                 }
 
-                // If the keyboard is set to symbols and the user presses space, we usually should switch back to the letters keyboard.
-                // However, avoid doing that in cases when the EditText for example requires numbers as the input.
-                // We can detect that by the text not changing on pressing Space.
-                if (keyboardMode != KEYBOARD_LETTERS && code == ItemMainKeyboard.KEYCODE_SPACE) {
-                    val originalText =
-                        inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text ?: return
-                    inputConnection.commitText(codeChar.toString(), 1)
-                    val newText = inputConnection.getExtractedText(ExtractedTextRequest(), 0)?.text
-                    switchToLetters = newText != null && originalText != newText
+                if (code == ItemMainKeyboard.KEYCODE_SPACE) {
+                    val now = System.currentTimeMillis()
+                    // Gboard behavior: Double tap space -> insert ". " and auto-shift
+                    if (keyboardMode == KEYBOARD_LETTERS && (now - lastSpacePressTS) < DOUBLE_SPACE_PERIOD_TIMEOUT) {
+                        val textBefore = inputConnection.getTextBeforeCursor(2, 0)
+                        if (textBefore != null && textBefore.length >= 1 && textBefore.endsWith(" ") && !textBefore.endsWith(". ")) {
+                            inputConnection.deleteSurroundingText(1, 0)
+                            inputConnection.commitText(". ", 1)
+                            lastSpacePressTS = 0L
+                            if (kb.mShiftState == SHIFT_OFF) {
+                                kb.mShiftState = SHIFT_ON_ONE_CHAR
+                                invalidateAllKeys()
+                            }
+                            updateShiftKeyState()
+                            return
+                        }
+                    }
+                    lastSpacePressTS = now
+
+                    inputConnection.commitText(" ", 1)
+
+                    if (keyboardMode != KEYBOARD_LETTERS &&
+                        inputTypeClass != TYPE_CLASS_NUMBER &&
+                        inputTypeClass != TYPE_CLASS_PHONE &&
+                        inputTypeClass != TYPE_CLASS_DATETIME) {
+                        switchToLetters = true
+                    }
                 } else {
+                    lastSpacePressTS = 0L
                     inputConnection.commitText(codeChar.toString(), 1)
                 }
 
@@ -355,24 +378,63 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     }
 
     override fun moveCursor(moveRight: Boolean) {
-        val extractedText =
-            currentInputConnection?.getExtractedText(ExtractedTextRequest(), 0) ?: return
-        var newCursorPosition = extractedText.selectionStart
-        val textLength = extractedText.text?.length ?: return
-        newCursorPosition = if (moveRight) {
-            (newCursorPosition + 1).coerceAtMost(textLength)
+        val ic = currentInputConnection ?: return
+        val extractedText = ic.getExtractedText(ExtractedTextRequest(), 0)
+        if (extractedText != null && extractedText.text != null) {
+            var newCursorPosition = extractedText.selectionStart
+            val textLength = extractedText.text.length
+            newCursorPosition = if (moveRight) {
+                (newCursorPosition + 1).coerceAtMost(textLength)
+            } else {
+                (newCursorPosition - 1).coerceAtLeast(0)
+            }
+            ic.setSelection(newCursorPosition, newCursorPosition)
         } else {
-            (newCursorPosition - 1).coerceAtLeast(0)
+            // Fallback for custom editors or WebViews that don't support ExtractedText
+            val keyCode = if (moveRight) KeyEvent.KEYCODE_DPAD_RIGHT else KeyEvent.KEYCODE_DPAD_LEFT
+            ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
+            ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
+        }
+    }
+
+    override fun deleteWordsBeforeCursor(count: Int) {
+        val ic = currentInputConnection ?: return
+        if (count <= 0) return
+        val textBefore = ic.getTextBeforeCursor(120, 0)?.toString() ?: return
+        if (textBefore.isEmpty()) return
+
+        var remainingWords = count
+        var deleteLen = 0
+        var inWord = false
+
+        for (i in textBefore.length - 1 downTo 0) {
+            val ch = textBefore[i]
+            if (ch.isWhitespace() || !ch.isLetterOrDigit()) {
+                if (inWord) {
+                    remainingWords--
+                    if (remainingWords <= 0) {
+                        deleteLen++
+                        break
+                    }
+                    inWord = false
+                }
+            } else {
+                inWord = true
+            }
+            deleteLen++
         }
 
-        currentInputConnection?.setSelection(newCursorPosition, newCursorPosition)
+        if (deleteLen > 0) {
+            ic.deleteSurroundingText(deleteLen, 0)
+        }
     }
 
     override fun getImeOptionsActionId(): Int {
-        return if (currentInputEditorInfo.imeOptions and IME_FLAG_NO_ENTER_ACTION != 0) {
+        val editorInfo = currentInputEditorInfo ?: return IME_ACTION_NONE
+        return if (editorInfo.imeOptions and IME_FLAG_NO_ENTER_ACTION != 0) {
             IME_ACTION_NONE
         } else {
-            currentInputEditorInfo.imeOptions and IME_MASK_ACTION
+            editorInfo.imeOptions and IME_MASK_ACTION
         }
     }
 

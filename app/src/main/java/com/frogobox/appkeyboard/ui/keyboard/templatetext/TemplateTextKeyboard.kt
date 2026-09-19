@@ -5,8 +5,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
-import com.frogobox.appkeyboard.databinding.KeyboardAutotextBinding
+import androidx.core.content.ContextCompat
+import com.frogobox.appkeyboard.R
+import com.frogobox.appkeyboard.databinding.ItemKeyboardTemplateCategoryBinding
+import com.frogobox.appkeyboard.databinding.ItemKeyboardTemplateTextBinding
+import com.frogobox.appkeyboard.databinding.KeyboardTemplateTextBinding
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_APP
 import com.frogobox.appkeyboard.model.KeyboardFeatureType.TEMPLATE_TEXT_GAME
@@ -19,25 +22,106 @@ import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
 import com.frogobox.recycler.core.IFrogoBindingAdapter
 import com.frogobox.recycler.ext.injectorBinding
 
+data class TemplateCategoryItem(
+    val type: KeyboardFeatureType,
+    val icon: String,
+    val title: String,
+    val isSelected: Boolean
+)
+
 class TemplateTextKeyboard(
     context: Context,
     attrs: AttributeSet?,
-) : BaseKeyboard<KeyboardAutotextBinding>(context, attrs) {
+) : BaseKeyboard<KeyboardTemplateTextBinding>(context, attrs) {
 
-    private var typePlayStore: KeyboardFeatureType? = null
+    private var currentType: KeyboardFeatureType = TEMPLATE_TEXT_GAME
 
-    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardAutotextBinding {
-        return KeyboardAutotextBinding.inflate(LayoutInflater.from(context), this, true)
+    private val categories = listOf(
+        Pair(TEMPLATE_TEXT_GAME, Pair("🎮", "Game")),
+        Pair(TEMPLATE_TEXT_APP, Pair("📱", "App")),
+        Pair(TEMPLATE_TEXT_SALE, Pair("💰", "Sale")),
+        Pair(TEMPLATE_TEXT_GREETING, Pair("👋", "Greeting")),
+        Pair(TEMPLATE_TEXT_LOVE, Pair("❤️", "Love"))
+    )
+
+    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardTemplateTextBinding {
+        return KeyboardTemplateTextBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     override fun initUI() {
         super.initUI()
-        typePlayStore?.let { setupContent(it) }
+        setupCategories()
+        setupContent(currentType)
     }
 
     fun setupTemplateTextType(templateTextType: KeyboardFeatureType) {
-        this.typePlayStore = templateTextType
+        this.currentType = templateTextType
+        setupCategories()
         setupContent(templateTextType)
+    }
+
+    private fun setupCategories() {
+        val categoryData = categories.map { (type, meta) ->
+            TemplateCategoryItem(
+                type = type,
+                icon = meta.first,
+                title = meta.second,
+                isSelected = type == currentType
+            )
+        }
+
+        val callback = object : IFrogoBindingAdapter<TemplateCategoryItem, ItemKeyboardTemplateCategoryBinding> {
+            override fun areContentsTheSame(oldItem: TemplateCategoryItem, newItem: TemplateCategoryItem): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areItemsTheSame(oldItem: TemplateCategoryItem, newItem: TemplateCategoryItem): Boolean {
+                return oldItem.type == newItem.type
+            }
+
+            override fun setViewBinding(parent: ViewGroup): ItemKeyboardTemplateCategoryBinding {
+                return ItemKeyboardTemplateCategoryBinding.inflate(LayoutInflater.from(context), parent, false)
+            }
+
+            override fun setupInitComponent(
+                binding: ItemKeyboardTemplateCategoryBinding,
+                data: TemplateCategoryItem,
+                position: Int,
+                notifyListener: FrogoRecyclerNotifyListener<TemplateCategoryItem>
+            ) {
+                binding.apply {
+                    tvCategoryIcon.text = data.icon
+                    tvCategoryName.text = data.title
+
+                    if (data.isSelected) {
+                        llCategoryContainer.setBackgroundResource(R.drawable.bg_feature_chip_active)
+                        tvCategoryName.setTextColor(ContextCompat.getColor(context, R.color.color_feature_chip_active_text))
+                    } else {
+                        llCategoryContainer.setBackgroundResource(R.drawable.bg_feature_chip_inactive)
+                        tvCategoryName.setTextColor(ContextCompat.getColor(context, R.color.color_feature_chip_text))
+                    }
+                }
+            }
+
+            override fun onItemClicked(
+                binding: ItemKeyboardTemplateCategoryBinding,
+                data: TemplateCategoryItem,
+                position: Int,
+                notifyListener: FrogoRecyclerNotifyListener<TemplateCategoryItem>
+            ) {
+                if (currentType != data.type) {
+                    currentType = data.type
+                    setupCategories()
+                    setupContent(data.type)
+                }
+            }
+        }
+
+        binding.rvTemplateCategories.injectorBinding<TemplateCategoryItem, ItemKeyboardTemplateCategoryBinding>()
+            .addData(categoryData)
+            .createLayoutLinearHorizontal(false)
+            .addCallback(callback)
+            .build()
     }
 
     private fun setupContent(templateTextType: KeyboardFeatureType) {
@@ -46,68 +130,59 @@ class TemplateTextKeyboard(
 
         when (templateTextType) {
             TEMPLATE_TEXT_GAME -> {
-                title = getTitleText(TEMPLATE_TEXT_GAME.name)
+                title = "Game Templates"
                 list = TemplateTextUtils.getTextGame(context)
             }
 
             TEMPLATE_TEXT_APP -> {
-                title = getTitleText(TEMPLATE_TEXT_APP.name)
+                title = "App Templates"
                 list = TemplateTextUtils.getTextApp(context)
             }
 
             TEMPLATE_TEXT_SALE -> {
-                title = getTitleText(TEMPLATE_TEXT_SALE.name)
+                title = "Sale / Store Templates"
                 list = TemplateTextUtils.getTextSale(context)
             }
 
             TEMPLATE_TEXT_GREETING -> {
-                title = getTitleText(TEMPLATE_TEXT_GREETING.name)
+                title = "Greeting Templates"
                 list = TemplateTextUtils.getTextGreeting(context)
             }
 
             TEMPLATE_TEXT_LOVE -> {
-                title = getTitleText(TEMPLATE_TEXT_LOVE.name)
+                title = "Love & Sweet Templates"
                 list = TemplateTextUtils.getTextLove(context)
             }
 
             else -> {
-                title = ""
+                title = "Quick Templates"
                 list = listOf()
             }
-
         }
 
         binding.tvToolbarTitle.text = title
         setupRv(list)
     }
 
-    private fun getTitleText(title: String): String {
-        return title.replace("TEMPLATE_TEXT_", "")
-    }
-
     private fun setupRv(data: List<TemplateText>) {
         binding.apply {
-
             val adapterCallback = object :
-                IFrogoBindingAdapter<TemplateText, ItemKeyboardNewsBinding> {
+                IFrogoBindingAdapter<TemplateText, ItemKeyboardTemplateTextBinding> {
                 override fun onItemClicked(
-                    binding: ItemKeyboardNewsBinding,
+                    binding: ItemKeyboardTemplateTextBinding,
                     data: TemplateText,
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<TemplateText>,
                 ) {
-                    // Your Clicked
-                    val output = data.text
-                    currentInputConnection?.commitText(output, 1)
+                    currentInputConnection?.commitText(data.text, 1)
                 }
 
                 override fun onItemLongClicked(
-                    binding: ItemKeyboardNewsBinding,
+                    binding: ItemKeyboardTemplateTextBinding,
                     data: TemplateText,
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<TemplateText>,
-                ) {
-                }
+                ) {}
 
                 override fun areContentsTheSame(
                     oldItem: TemplateText,
@@ -123,8 +198,8 @@ class TemplateTextKeyboard(
                     return oldItem.id == newItem.id
                 }
 
-                override fun setViewBinding(parent: ViewGroup): ItemKeyboardNewsBinding {
-                    return ItemKeyboardNewsBinding.inflate(
+                override fun setViewBinding(parent: ViewGroup): ItemKeyboardTemplateTextBinding {
+                    return ItemKeyboardTemplateTextBinding.inflate(
                         LayoutInflater.from(context),
                         parent,
                         false
@@ -132,18 +207,16 @@ class TemplateTextKeyboard(
                 }
 
                 override fun setupInitComponent(
-                    binding: ItemKeyboardNewsBinding,
+                    binding: ItemKeyboardTemplateTextBinding,
                     data: TemplateText,
                     position: Int,
                     notifyListener: FrogoRecyclerNotifyListener<TemplateText>,
                 ) {
-                    binding.apply {
-                        tvItemKeyboardMain.text = data.text
-                    }
+                    binding.tvItemTemplateText.text = data.text
                 }
             }
 
-            rvKeyboardMain.injectorBinding<TemplateText, ItemKeyboardNewsBinding>()
+            rvKeyboardMain.injectorBinding<TemplateText, ItemKeyboardTemplateTextBinding>()
                 .addData(data)
                 .createLayoutLinearVertical(false)
                 .addCallback(adapterCallback)

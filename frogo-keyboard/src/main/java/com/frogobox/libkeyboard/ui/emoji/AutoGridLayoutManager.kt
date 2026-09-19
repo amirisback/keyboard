@@ -31,7 +31,10 @@ class AutoGridLayoutManager(
             } else {
                 height - paddingTop - paddingBottom
             }
-            spanCount = max(1, totalSpace / itemWidth)
+            val calculatedSpan = max(1, totalSpace / itemWidth)
+            if (spanCount != calculatedSpan) {
+                spanCount = calculatedSpan
+            }
         }
         super.onLayoutChildren(recycler, state)
     }

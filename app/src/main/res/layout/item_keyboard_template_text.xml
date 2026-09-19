@@ -13,58 +13,32 @@
     android:paddingHorizontal="12dp"
     android:paddingVertical="10dp">
 
-    <FrameLayout
-        android:id="@+id/fl_icon_badge"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="@drawable/bg_feature_icon_container"
+    <View
+        android:id="@+id/view_accent_bar"
+        android:layout_width="3dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_feature_action_pill"
+        android:backgroundTint="@color/color_feature_accent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_menu_auto_text"
-            app:tint="@color/color_feature_accent" />
-
-    </FrameLayout>
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_item_template_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="8dp"
-        android:orientation="vertical"
+        android:ellipsize="end"
+        android:lineSpacingExtra="2dp"
+        android:maxLines="3"
+        android:textColor="@color/tv_text"
+        android:textSize="12.5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/ll_insert_action"
-        app:layout_constraintStart_toEndOf="@id/fl_icon_badge"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tv_item_keyboard_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@color/tv_text"
-            android:textSize="13.5sp"
-            android:textStyle="bold"
-            tools:text="Halo Pelanggan" />
-
-        <TextView
-            android:id="@+id/tv_item_keyboard_body"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/color_feature_subtext"
-            android:textSize="11.5sp"
-            tools:text="Halo kak, terima kasih telah menghubungi kami. Pesanan kakak sedang diproses." />
-
-    </LinearLayout>
+        app:layout_constraintStart_toEndOf="@id/view_accent_bar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Halo! Terima kasih atas pertanyaannya. Kami akan segera merespons dalam beberapa saat." />
 
     <LinearLayout
         android:id="@+id/ll_insert_action"
@@ -88,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
-            android:text="Insert"
+            android:text="Paste"
             android:textColor="@color/color_feature_action_text"
             android:textSize="10.5sp"
             android:textStyle="bold" />

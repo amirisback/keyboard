@@ -43,7 +43,7 @@ class MovieKeyboard(
     override fun initUI() {
         super.initUI()
         binding.apply {
-            tvToolbarTitle.text = "Movie Api"
+            tvToolbarTitle.text = "Trending Movies"
         }
     }
 
@@ -131,6 +131,7 @@ class MovieKeyboard(
                             frogoRvGridType6TvTitle.text = data.title
                             frogoRvGridType6TvSubtitle.text = data.release_date
                             frogoRvGridType6TvDesc.text = data.overview
+                            frogoRvGridType6TvRating.text = String.format("%.1f", data.vote_average)
                             Glide.with(context).load("${MovieUrl.BASE_URL_IMAGE_ORIGINAL}${data.poster_path}").into(frogoRvGridType6CivPoster)
                         }
                     }

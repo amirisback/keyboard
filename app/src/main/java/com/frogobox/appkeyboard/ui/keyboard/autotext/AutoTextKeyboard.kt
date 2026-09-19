@@ -34,12 +34,14 @@ class AutoTextKeyboard(
         super.initUI()
         binding.apply {
             tvToolbarTitle.text = "Auto Text"
-            toolbarManage.setOnClickListener {
+            val openManage = {
                 val intent = Intent(context, AutoTextActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 context.startActivity(intent)
             }
+            toolbarManage.setOnClickListener { openManage() }
+            btnAddAutotext.setOnClickListener { openManage() }
         }
     }
 

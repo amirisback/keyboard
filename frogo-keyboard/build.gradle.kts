@@ -61,6 +61,8 @@ dependencies {
     api(libs.frogo.consume.api)
     api(libs.androidx.emoji2)
 
+    testImplementation(libs.junit)
+
 }
 
 afterEvaluate {

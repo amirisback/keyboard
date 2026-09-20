@@ -82,7 +82,6 @@ class TestActivity : BaseComposeActivity() {
         val metrics by viewModel.metrics.collectAsState()
         val activeTab by viewModel.activeTab.collectAsState()
         val autoTextList by viewModel.autoTextList.collectAsState()
-        val remoteApiUiState by viewModel.remoteApiUiState.collectAsState()
 
         TestScreen(
             sandboxText = sandboxText,
@@ -90,15 +89,12 @@ class TestActivity : BaseComposeActivity() {
             activeTab = activeTab,
             autoTextList = autoTextList,
             isKeyboardActive = isUsingFrogoKeyboard,
-            remoteApiUiState = remoteApiUiState,
             dummyOptions = dummyOptions,
             onTextChanged = viewModel::onTextChanged,
             onInsertText = viewModel::onInsertText,
             onClearText = viewModel::onClearText,
             onResetTimer = viewModel::onResetTimer,
             onTabSelected = viewModel::onTabSelected,
-            onFetchRemoteData = viewModel::fetchRemoteData,
-            onResetRemoteData = viewModel::resetRemoteData,
             onChangeKeyboard = {
                 (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
             },

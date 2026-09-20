@@ -4,7 +4,6 @@ import com.frogobox.appkeyboard.ui.language.KeyboardLanguage
 import com.frogobox.libkeyboard.common.sound.MechanicalSoundType
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

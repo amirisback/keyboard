@@ -2,9 +2,7 @@ package com.frogobox.appkeyboard.services
 
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -28,12 +26,17 @@ import com.frogobox.sdk.ext.gone
 import com.frogobox.sdk.ext.invisible
 import com.frogobox.appkeyboard.suggestion.WordSuggestionEngine
 import com.frogobox.sdk.ext.visible
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
+
+    private val imeLifecycleOwner = ImeLifecycleOwner()
 
     @Inject
     lateinit var pref: PreferenceDelegates
@@ -114,13 +117,6 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                 KeyboardFeatureType.FORM -> {
                     this@KeyboardIME.binding?.keyboardHeader?.gone()
                     this@KeyboardIME.binding?.keyboardForm?.visible()
-                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText?.showKeyboardExt()
-                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText2?.showKeyboardExt()
-                    this@KeyboardIME.binding?.keyboardForm?.binding?.etText3?.showKeyboardExt()
-
-                    this@KeyboardIME.binding?.keyboardForm?.setOnClickListener {
-                        hideOnlyKeyboard()
-                    }
                 }
 
                 KeyboardFeatureType.AUTO_TEXT -> {
@@ -210,9 +206,22 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        imeLifecycleOwner.onCreate()
+    }
+
     override fun onWindowShown() {
         super.onWindowShown()
+        imeLifecycleOwner.onStart()
+        imeLifecycleOwner.onResume()
         applySoundAndHapticSettings()
+    }
+
+    override fun onWindowHidden() {
+        super.onWindowHidden()
+        imeLifecycleOwner.onPause()
+        imeLifecycleOwner.onStop()
     }
 
     override fun initialSetupKeyboard() {
@@ -225,8 +234,16 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
         binding?.apply {
             keyboardMain.mOnKeyboardActionListener = this@KeyboardIME
             keyboardEmoji.mOnKeyboardActionListener = this@KeyboardIME
-        }
 
+            root.setViewTreeLifecycleOwner(imeLifecycleOwner)
+            root.setViewTreeViewModelStoreOwner(imeLifecycleOwner)
+            root.setViewTreeSavedStateRegistryOwner(imeLifecycleOwner)
+        }
+        window?.window?.decorView?.let { decor ->
+            decor.setViewTreeLifecycleOwner(imeLifecycleOwner)
+            decor.setViewTreeViewModelStoreOwner(imeLifecycleOwner)
+            decor.setViewTreeSavedStateRegistryOwner(imeLifecycleOwner)
+        }
     }
 
     override fun invalidateKeyboard() {
@@ -294,27 +311,27 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun initBackToMainKeyboard() {
         binding?.apply {
-            keyboardAutotext.binding.toolbarBack.setOnClickListener {
+            keyboardAutotext.setOnBackClickListener {
                 keyboardAutotext.gone()
                 showMainKeyboard()
             }
 
-            keyboardNews.binding.toolbarBack.setOnClickListener {
+            keyboardNews.setOnBackClickListener {
                 keyboardNews.gone()
                 showMainKeyboard()
             }
 
-            keyboardMoview.binding.toolbarBack.setOnClickListener {
+            keyboardMoview.setOnBackClickListener {
                 keyboardMoview.gone()
                 showMainKeyboard()
             }
 
-            keyboardWebview.binding.toolbarBack.setOnClickListener {
+            keyboardWebview.setOnBackClickListener {
                 keyboardWebview.gone()
                 showMainKeyboard()
             }
 
-            keyboardForm.binding.toolbarBack.setOnClickListener {
+            keyboardForm.setOnBackClickListener {
                 keyboardForm.gone()
                 showMainKeyboard()
             }
@@ -325,7 +342,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                 showMainKeyboard()
             }
 
-            keyboardTemplateText.binding.toolbarBack.setOnClickListener {
+            keyboardTemplateText.setOnBackClickListener {
                 keyboardTemplateText.gone()
                 showMainKeyboard()
             }
@@ -358,22 +375,6 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
 
     private fun getActiveInputConnection(): InputConnection? {
-        val formView = binding?.keyboardForm
-        if (formView?.visibility == View.VISIBLE) {
-            val et1 = formView.binding.etText
-            val et2 = formView.binding.etText2
-            val et3 = formView.binding.etText3
-
-            if (et1.isFocused) {
-                return et1.onCreateInputConnection(EditorInfo())
-            } else if (et2.isFocused) {
-                return et2.onCreateInputConnection(EditorInfo())
-            } else if (et3.isFocused) {
-                return et3.onCreateInputConnection(EditorInfo())
-            }
-        } else if (binding?.keyboardWebview?.visibility == View.VISIBLE) {
-            return binding?.keyboardWebview?.binding?.webview?.onCreateInputConnection(EditorInfo())
-        }
         return currentInputConnection
     }
 
@@ -525,6 +526,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
+        imeLifecycleOwner.onDestroy()
         MechanicalSoundManager.getInstance(this).release()
     }
 

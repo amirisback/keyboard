@@ -19,7 +19,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View

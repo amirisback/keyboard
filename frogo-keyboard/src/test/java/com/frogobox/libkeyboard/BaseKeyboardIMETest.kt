@@ -1,14 +1,9 @@
 package com.frogobox.libkeyboard
 
 import com.frogobox.libkeyboard.common.core.BaseKeyboardIME
-import com.frogobox.libkeyboard.common.ext.adjustAlpha
-import com.frogobox.libkeyboard.common.ext.darkenColor
-import com.frogobox.libkeyboard.common.ext.getContrastColor
-import com.frogobox.libkeyboard.common.ext.lightenColor
 import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

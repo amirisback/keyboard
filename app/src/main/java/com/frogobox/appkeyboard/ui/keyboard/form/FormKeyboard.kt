@@ -2,60 +2,50 @@ package com.frogobox.appkeyboard.ui.keyboard.form
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import com.frogobox.appkeyboard.databinding.KeyboardFormBinding
-import com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboard
-import com.frogobox.appkeyboard.util.KeyboardNavigationHelper
-import com.frogobox.libkeyboard.common.core.BaseKeyboard
+import android.view.inputmethod.InputConnection
+import android.widget.FrameLayout
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 
 /**
- * Created by Faisal Amir on 07/11/22
- * -----------------------------------------
- * E-mail   : faisalamircs@gmail.com
- * Github   : github.com/amirisback
- * -----------------------------------------
- * Copyright (C) Frogobox ID / amirisback
- * All rights reserved
+ * Modern Jetpack Compose-based Quick Form Keyboard panel.
  */
-
-class FormKeyboard(
+class FormKeyboard @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-) : BaseKeyboard<KeyboardFormBinding>(context, attrs) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val destinationKeyboard by lazy { MovieKeyboard(context, attrs) }
+    var currentInputConnection: InputConnection? = null
+    var onBackClick: (() -> Unit)? = null
 
-    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardFormBinding {
-        return KeyboardFormBinding.inflate(LayoutInflater.from(context), this, true)
-    }
-
-    override fun initUI() {
-        super.initUI()
-        binding.apply {
-            btnSubmit.setOnClickListener {
-                val title = etText.text?.toString()?.trim()
-                val details = etText2.text?.toString()?.trim()
-                val number = etText3.text?.toString()?.trim()
-
-                val sb = StringBuilder()
-                if (!title.isNullOrBlank()) sb.append("Subject: $title\n")
-                if (!details.isNullOrBlank()) sb.append("Details: $details\n")
-                if (!number.isNullOrBlank()) sb.append("Ref/No: $number\n")
-
-                if (sb.isNotEmpty()) {
-                    currentInputConnection?.commitText(sb.toString(), 1)
-                }
-
-                KeyboardNavigationHelper.navigateTo(this@FormKeyboard, destinationKeyboard)
-            }
-
-            btnClear.setOnClickListener {
-                etText.setText("")
-                etText2.setText("")
-                etText3.setText("")
+    private val composeView = ComposeView(context).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+        setContent {
+            FrogoKeyboardTheme {
+                FormKeyboardScreen(
+                    onCommitText = { text ->
+                        currentInputConnection?.commitText(text, 1)
+                    },
+                    onBackClick = {
+                        onBackClick?.invoke()
+                    }
+                )
             }
         }
+    }
+
+    init {
+        addView(composeView)
+    }
+
+    fun setInputConnection(inputConnection: InputConnection?) {
+        currentInputConnection = inputConnection
+    }
+
+    fun setOnBackClickListener(listener: () -> Unit) {
+        onBackClick = listener
     }
 
 }

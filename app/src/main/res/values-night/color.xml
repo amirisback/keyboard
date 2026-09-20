@@ -21,19 +21,7 @@
     <color name="color_suggestion_divider">#37474F</color>
 
     <!-- Modern Keyboard Feature UI Tokens (Dark Theme) -->
-    <color name="color_feature_card_bg">#21262D</color>
-    <color name="color_feature_card_stroke">#30363D</color>
     <color name="color_feature_icon_bg">#21262D</color>
     <color name="color_feature_icon_tint">#F0F6FC</color>
-    <color name="color_feature_chip_bg">#21262D</color>
-    <color name="color_feature_chip_active_bg">#0D47A1</color>
-    <color name="color_feature_chip_active_text">#4FC3F7</color>
-    <color name="color_feature_chip_text">#C9D1D9</color>
-    <color name="color_feature_subtext">#8B949E</color>
-    <color name="color_feature_action_pill">#16253B</color>
-    <color name="color_feature_action_text">#4FC3F7</color>
-    <color name="color_feature_rating_amber">#FFCA28</color>
-    <color name="color_feature_rating_badge_bg">#CC000000</color>
-    <color name="color_feature_accent">#4FC3F7</color>
 
 </resources>

@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.sp
  */
 @Composable
 fun FrogoEmptyView(
+    modifier: Modifier = Modifier,
     title: String = "NO DATA FOUND",
-    subtitle: String = "Please insert data",
-    modifier: Modifier = Modifier
+    subtitle: String = "Please insert data"
 ) {
     Column(
         modifier = modifier

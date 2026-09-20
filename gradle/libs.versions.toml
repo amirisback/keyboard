@@ -21,6 +21,7 @@ junit = "4.13.2"
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 androidx-lifecycle-compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "liveCycle" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "liveCycle" }
 androidx-emoji2 = { group = "androidx.emoji2", name = "emoji2-bundled", version.ref = "emoji2"}
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomKtx" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }

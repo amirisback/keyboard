@@ -2,61 +2,74 @@ package com.frogobox.appkeyboard.ui.keyboard.news
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.view.inputmethod.InputConnection
+import android.widget.FrameLayout
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.frogobox.api.news.ConsumeNewsApi
-import com.frogobox.appkeyboard.databinding.ItemKeyboardNewsBinding
-import com.frogobox.appkeyboard.databinding.KeyboardListBinding
 import com.frogobox.coreapi.ConsumeApiResponse
 import com.frogobox.coreutil.news.NewsConstant.CATEGORY_HEALTH
 import com.frogobox.coreutil.news.NewsConstant.COUNTRY_ID
 import com.frogobox.coreutil.news.NewsUrl
 import com.frogobox.coreutil.news.model.Article
 import com.frogobox.coreutil.news.response.ArticleResponse
-
-import com.bumptech.glide.Glide
-import com.frogobox.libkeyboard.common.core.BaseKeyboard
-import com.frogobox.recycler.core.FrogoRecyclerNotifyListener
-import com.frogobox.recycler.core.IFrogoBindingAdapter
-import com.frogobox.recycler.ext.injectorBinding
-import com.frogobox.sdk.ext.gone
-import com.frogobox.sdk.ext.visible
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
- * Created by Faisal Amir on 07/11/22
- * -----------------------------------------
- * E-mail   : faisalamircs@gmail.com
- * Github   : github.com/amirisback
- * -----------------------------------------
- * Copyright (C) Frogobox ID / amirisback
- * All rights reserved
+ * Modern Jetpack Compose-based News Headlines Keyboard panel.
  */
-
-class NewsKeyboard(
+class NewsKeyboard @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-) : BaseKeyboard<KeyboardListBinding>(context, attrs) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardListBinding {
-        return KeyboardListBinding.inflate(LayoutInflater.from(context), this, true)
-    }
+    private val articleListState = MutableStateFlow<List<Article>>(emptyList())
+    private val isLoadingState = MutableStateFlow(false)
 
-    override fun onCreate() {
-        setupData()
-        initView()
-    }
+    var currentInputConnection: InputConnection? = null
+    var onBackClick: (() -> Unit)? = null
 
-    private fun initView() {
-        binding.apply {
-            tvToolbarTitle.text = "Top Headlines"
+    private val composeView = ComposeView(context).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+        setContent {
+            FrogoKeyboardTheme {
+                val articles by articleListState.collectAsState()
+                val loading by isLoadingState.collectAsState()
+
+                NewsKeyboardScreen(
+                    articles = articles,
+                    isLoading = loading,
+                    onCommitText = { text ->
+                        currentInputConnection?.commitText(text, 1)
+                    },
+                    onBackClick = {
+                        onBackClick?.invoke()
+                    }
+                )
+            }
         }
     }
 
-    private fun setupData() {
-        val consumeNewsApi = ConsumeNewsApi(NewsUrl.API_KEY) // Your API_KEY
-        consumeNewsApi.getTopHeadline( // Adding Base Parameter on main function
+    init {
+        addView(composeView)
+        fetchNews()
+    }
+
+    fun setInputConnection(inputConnection: InputConnection?) {
+        currentInputConnection = inputConnection
+    }
+
+    fun setOnBackClickListener(listener: () -> Unit) {
+        onBackClick = listener
+    }
+
+    fun fetchNews() {
+        val consumeNewsApi = ConsumeNewsApi(NewsUrl.API_KEY)
+        consumeNewsApi.getTopHeadline(
             null,
             null,
             CATEGORY_HEALTH,
@@ -65,105 +78,27 @@ class NewsKeyboard(
             null,
             object : ConsumeApiResponse<ArticleResponse> {
                 override fun onSuccess(data: ArticleResponse) {
-                    // Your Ui or data
-                    data.articles?.let { setupRv(it) }
+                    isLoadingState.value = false
+                    data.articles?.let { articleListState.value = it }
                 }
 
                 override fun onFailed(statusCode: Int, errorMessage: String) {
-                    // Your failed to do
+                    isLoadingState.value = false
                 }
 
                 override fun onFinish() {
-                    // Your finish to do
+                    isLoadingState.value = false
                 }
 
                 override fun onShowProgress() {
-                    // Your Progress Show
-                    binding.progressBar.visible()
+                    isLoadingState.value = true
                 }
 
                 override fun onHideProgress() {
-                    // Your Progress Hide
-                    binding.progressBar.gone()
-                }
-
-            })
-
-    }
-
-    private fun setupRv(data: List<Article>) {
-        binding.apply {
-
-            val adapterCallback = object : IFrogoBindingAdapter<Article, ItemKeyboardNewsBinding> {
-                override fun onItemClicked(
-                    binding: ItemKeyboardNewsBinding,
-                    data: Article,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<Article>,
-                ) {
-                    // Your Clicked
-                    Log.d("NewsKeyboard", "onItemClicked: ${data.title}")
-                    Log.d("FrogoKeyboard", "currentInputConnection: $currentInputConnection")
-                    val output = "${data.title}\n" +
-                            "${data.author}\n" +
-                            "\n" +
-                            "${data.description}\n" +
-                            "\n" +
-                            "Sumber : ${data.url}" +
-                            "\n" +
-                            "Terima Kasih"
-                    currentInputConnection?.commitText(output, 1)
-                }
-
-                override fun onItemLongClicked(
-                    binding: ItemKeyboardNewsBinding,
-                    data: Article,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<Article>,
-                ) {
-                }
-
-                override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
-                    return oldItem == newItem
-                }
-
-                override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
-                    return oldItem.title == newItem.title
-                }
-
-                override fun setViewBinding(parent: ViewGroup): ItemKeyboardNewsBinding {
-                    return ItemKeyboardNewsBinding.inflate(LayoutInflater.from(context),
-                        parent,
-                        false)
-                }
-
-                override fun setupInitComponent(
-                    binding: ItemKeyboardNewsBinding,
-                    data: Article,
-                    position: Int,
-                    notifyListener: FrogoRecyclerNotifyListener<Article>,
-                ) {
-                    binding.apply {
-                        tvItemKeyboardMain.text = data.title
-                        tvItemKeyboardDesc.text = data.description ?: ""
-                        tvItemKeyboardSource.text = if (!data.author.isNullOrBlank()) data.author else "News"
-                        if (!data.urlToImage.isNullOrBlank()) {
-                            Glide.with(context)
-                                .load(data.urlToImage)
-                                .into(ivItemKeyboardNews)
-                        } else {
-                            ivItemKeyboardNews.setImageResource(com.frogobox.appkeyboard.R.drawable.ic_menu_news)
-                        }
-                    }
+                    isLoadingState.value = false
                 }
             }
-
-            rvKeyboardMain.injectorBinding<Article, ItemKeyboardNewsBinding>()
-                .addData(data)
-                .createLayoutLinearVertical(false)
-                .addCallback(adapterCallback)
-                .build()
-        }
+        )
     }
 
 }

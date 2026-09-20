@@ -1,6 +1,7 @@
 package com.frogobox.appkeyboard.ui.keyboard.movie
 
 import java.util.Locale
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -90,7 +91,7 @@ fun MovieKeyboardScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .clickable {
                                 val output = "Movie: ${movie.title ?: ""} - ${movie.release_date ?: ""} \n " +
                                         "Overview: ${movie.overview ?: ""} \n " +
@@ -100,10 +101,11 @@ fun MovieKeyboardScreen(
                                         "Terima Kasih"
                                 onCommitText(output)
                             },
-                        shape = RoundedCornerShape(10.dp),
+                        shape = RoundedCornerShape(8.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
-                        )
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
                     ) {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             // Poster

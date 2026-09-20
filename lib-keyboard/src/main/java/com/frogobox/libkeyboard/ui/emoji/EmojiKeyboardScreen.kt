@@ -1,5 +1,6 @@
 package com.frogobox.libkeyboard.ui.emoji
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -251,14 +252,17 @@ fun EmojiCategoryBar(
 
             Surface(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(8.dp))
                     .clickable { onCategorySelected(type) },
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(8.dp),
                 color = if (isSelected) {
                     MaterialTheme.colorScheme.primaryContainer
                 } else {
                     Color.Transparent
-                }
+                },
+                border = if (isSelected) {
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                } else null
             ) {
                 Box(
                     modifier = Modifier

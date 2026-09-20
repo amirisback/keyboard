@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusSuccess
 
 /**
  * Candidate types corresponding to the 3 predictive word strip sections.
@@ -136,12 +137,12 @@ fun KeyboardSuggestionBar(
                     modifier = Modifier
                         .weight(1.2f)
                         .height(32.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(8.dp))
                         .clickable { onCandidateSelected(result.predictedWord, CandidateType.PREDICTED_WORD) },
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
-                    shadowElevation = 1.dp
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
+                    shadowElevation = 0.dp
                 ) {
                     Box(
                         modifier = Modifier
@@ -192,7 +193,7 @@ fun KeyboardSuggestionBar(
                         text = result.autoCorrectWord,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF2E7D32),
+                        color = FrogoStatusSuccess,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center

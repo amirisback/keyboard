@@ -1,5 +1,6 @@
 package com.frogobox.libkeyboard.ui.main
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -193,6 +194,7 @@ private fun KeyItemView(
             ),
         shape = RoundedCornerShape(6.dp),
         color = backgroundColor,
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         shadowElevation = if (isActionKey) 1.dp else 1.5.dp
     ) {
         Box(

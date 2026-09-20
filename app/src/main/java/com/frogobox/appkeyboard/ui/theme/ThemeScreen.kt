@@ -75,6 +75,7 @@ import com.frogobox.appkeyboard.model.KeyboardThemeModel
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoPrimary
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusSuccess
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoTopAppBar
 
 enum class ThemeCategory(val title: String) {
@@ -260,10 +261,10 @@ fun ThemeScreen(
                         previewedTheme = current
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = "Apply Now",
+                        text = "Terapkan Sekarang",
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -272,10 +273,10 @@ fun ThemeScreen(
                 TextButton(
                     onClick = { confirmApplyDialogTheme = null }
                 ) {
-                    Text("Cancel")
+                    Text("Batal")
                 }
             },
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
@@ -312,14 +313,14 @@ private fun ThemePreviewHero(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         border = BorderStroke(
-            width = if (isActive) 2.dp else 1.dp,
-            color = if (isActive) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            width = if (isActive) 1.5.dp else 1.dp,
+            color = if (isActive) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant
         )
     ) {
         Column(
@@ -387,9 +388,9 @@ private fun ThemePreviewHero(
 
                 if (isActive) {
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0xFF41AF60).copy(alpha = 0.12f),
-                        border = BorderStroke(1.dp, Color(0xFF41AF60).copy(alpha = 0.4f))
+                        shape = RoundedCornerShape(8.dp),
+                        color = FrogoStatusSuccess.copy(alpha = 0.12f),
+                        border = BorderStroke(1.dp, FrogoStatusSuccess.copy(alpha = 0.4f))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -397,16 +398,16 @@ private fun ThemePreviewHero(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Active",
-                                tint = Color(0xFF41AF60),
+                                contentDescription = "Aktif",
+                                tint = FrogoStatusSuccess,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Active",
+                                text = "Aktif",
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF41AF60),
+                                    color = FrogoStatusSuccess,
                                     fontSize = 12.sp
                                 )
                             )
@@ -416,12 +417,12 @@ private fun ThemePreviewHero(
                     Button(
                         onClick = onApplyClick,
                         colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                         modifier = Modifier.height(34.dp)
                     ) {
                         Text(
-                            text = "Apply",
+                            text = "Terapkan",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -605,7 +606,7 @@ private fun ThemeCategoryFilterRow(
                     selectedLabelColor = FrogoPrimary,
                     selectedLeadingIconColor = FrogoPrimary
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(8.dp)
             )
         }
     }
@@ -627,7 +628,7 @@ private fun ThemeGridCard(
         targetValue = when {
             isActive -> FrogoPrimary
             isPreviewed -> FrogoPrimary.copy(alpha = 0.6f)
-            else -> MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            else -> MaterialTheme.colorScheme.outlineVariant
         },
         animationSpec = tween(durationMillis = 200),
         label = "cardBorderColor"
@@ -636,15 +637,15 @@ private fun ThemeGridCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(12.dp))
             .clickable { onCardClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isPreviewed || isActive) 3.dp else 1.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         border = BorderStroke(
-            width = if (isActive || isPreviewed) 2.dp else 1.dp,
+            width = if (isActive || isPreviewed) 1.5.dp else 1.dp,
             color = borderColor
         )
     ) {
@@ -772,8 +773,8 @@ private fun ThemeGridCard(
                 // Floating Active Badge (Top Right)
                 if (isActive) {
                     Surface(
-                        shape = RoundedCornerShape(bottomStart = 10.dp),
-                        color = Color(0xFF41AF60),
+                        shape = RoundedCornerShape(bottomStart = 8.dp),
+                        color = FrogoStatusSuccess,
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Row(
@@ -782,13 +783,13 @@ private fun ThemeGridCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Active",
+                                contentDescription = "Aktif",
                                 tint = Color.White,
                                 modifier = Modifier.size(12.dp)
                             )
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
-                                text = "Active",
+                                text = "Aktif",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 10.sp,
@@ -799,12 +800,12 @@ private fun ThemeGridCard(
                     }
                 } else if (isPreviewed) {
                     Surface(
-                        shape = RoundedCornerShape(bottomStart = 10.dp),
+                        shape = RoundedCornerShape(bottomStart = 8.dp),
                         color = FrogoPrimary,
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Text(
-                            text = "Previewing",
+                            text = "Preview",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 9.sp,

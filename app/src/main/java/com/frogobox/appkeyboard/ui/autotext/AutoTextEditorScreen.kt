@@ -2,6 +2,7 @@ package com.frogobox.appkeyboard.ui.autotext
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,13 +82,14 @@ fun AutoTextEditorScreen(
         bottomBar = {
             Surface(
                 color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 3.dp,
-                shadowElevation = 8.dp
+                tonalElevation = 0.dp,
+                shadowElevation = 0.dp,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Button(
                         onClick = {
@@ -97,8 +99,8 @@ fun AutoTextEditorScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .height(48.dp),
+                        shape = RoundedCornerShape(8.dp),
                         enabled = isFormValid,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = FrogoPrimary
@@ -108,13 +110,13 @@ fun AutoTextEditorScreen(
                             imageVector = Icons.Default.Check,
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (isEditMode) "Update Template" else "Save Template",
+                            text = if (isEditMode) "Simpan Perubahan" else "Simpan Template",
                             style = MaterialTheme.typography.labelLarge.copy(
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold
                             ),
                             color = Color.White
@@ -144,8 +146,8 @@ fun AutoTextEditorScreen(
                 value = title,
                 onValueChange = { if (it.length <= 50) title = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Shortcut Title") },
-                placeholder = { Text("e.g. Greeting, BCA Rekening, Email") },
+                label = { Text("Judul Pintasan") },
+                placeholder = { Text("Contoh: Sapaan Pagi, Rekening BCA, Email Kantor") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ShortText,
@@ -158,7 +160,7 @@ fun AutoTextEditorScreen(
                         IconButton(onClick = { title = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear Title",
+                                contentDescription = "Hapus Judul",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -169,17 +171,18 @@ fun AutoTextEditorScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Appears in keyboard quick bar")
+                        Text("Tampil pada bilah cepat keyboard")
                         Text("${title.length} / 50")
                     }
                 },
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(8.dp),
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = FrogoPrimary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     focusedLabelColor = FrogoPrimary,
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface
@@ -191,8 +194,8 @@ fun AutoTextEditorScreen(
                 value = body,
                 onValueChange = { body = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Template Content") },
-                placeholder = { Text("Enter the full text that will be inserted when tapped...") },
+                label = { Text("Isi Template") },
+                placeholder = { Text("Tulis teks lengkap yang akan disisipkan saat tombol diketuk...") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Notes,
@@ -205,7 +208,7 @@ fun AutoTextEditorScreen(
                         IconButton(onClick = { body = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear Content",
+                                contentDescription = "Hapus Isi",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -216,17 +219,18 @@ fun AutoTextEditorScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Will be committed to input field")
-                        Text("${body.length} characters")
+                        Text("Akan langsung dimasukkan ke input teks")
+                        Text("${body.length} karakter")
                     }
                 },
-                minLines = 6,
-                shape = RoundedCornerShape(16.dp),
+                minLines = 5,
+                shape = RoundedCornerShape(8.dp),
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = FrogoPrimary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     focusedLabelColor = FrogoPrimary,
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface
@@ -236,11 +240,12 @@ fun AutoTextEditorScreen(
             // Helper Guidance Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = FrogoPrimary.copy(alpha = 0.07f)
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
                 ),
-                border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.20f))
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
                     modifier = Modifier
@@ -251,8 +256,8 @@ fun AutoTextEditorScreen(
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .clip(CircleShape)
-                            .background(FrogoPrimary.copy(alpha = 0.16f)),
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(FrogoPrimary.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -267,7 +272,7 @@ fun AutoTextEditorScreen(
 
                     Column {
                         Text(
-                            text = "Keyboard Tip",
+                            text = "Tips Keyboard",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -275,7 +280,7 @@ fun AutoTextEditorScreen(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Short, distinct titles make it effortless to select snippets directly from the Frogo Keyboard while chatting or filling forms.",
+                            text = "Judul yang ringkas dan jelas mempermudah pemilihan template langsung dari keyboard Frogo saat sedang mengetik pesan atau mengisi formulir.",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 lineHeight = 16.sp
                             ),
@@ -298,17 +303,17 @@ private fun LiveKeyboardPreviewCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(14.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -324,11 +329,10 @@ private fun LiveKeyboardPreviewCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "LIVE KEYBOARD PREVIEW",
+                        text = "Pratinjau Keyboard",
                         style = MaterialTheme.typography.labelMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.8.sp,
-                            fontSize = 11.sp
+                            fontSize = 12.sp
                         ),
                         color = FrogoPrimary
                     )
@@ -336,10 +340,11 @@ private fun LiveKeyboardPreviewCard(
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = FrogoPrimary.copy(alpha = 0.12f)
+                    color = FrogoPrimary.copy(alpha = 0.12f),
+                    border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.25f))
                 ) {
                     Text(
-                        text = "Interactive",
+                        text = "Interaktif",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 10.sp,
@@ -350,32 +355,36 @@ private fun LiveKeyboardPreviewCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Simulated Keyboard Item Box
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                    .padding(12.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .border(
+                        BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(10.dp)
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 10.dp)
+                            .padding(horizontal = 12.dp, vertical = 10.dp)
                     ) {
                         Text(
-                            text = if (title.isBlank()) "Template Title" else title,
+                            text = if (title.isBlank()) "Judul Template" else title,
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -388,7 +397,7 @@ private fun LiveKeyboardPreviewCard(
                         Spacer(modifier = Modifier.height(2.dp))
 
                         Text(
-                            text = if (body.isBlank()) "Expanded text preview will appear here..." else body,
+                            text = if (body.isBlank()) "Isi teks template akan ditampilkan di sini..." else body,
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontSize = 12.sp
                             ),

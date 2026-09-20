@@ -198,14 +198,14 @@ fun KeyboardLanguageScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Are you sure you want to switch your active typing layout?",
+                        text = "Apakah Anda yakin ingin mengganti tata letak keyboard aktif?",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     // Selected Language Preview Box
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(8.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -219,7 +219,7 @@ fun KeyboardLanguageScreen(
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(FrogoPrimary.copy(alpha = 0.2f)),
+                                    .background(FrogoPrimary.copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -261,10 +261,10 @@ fun KeyboardLanguageScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = FrogoPrimary
                     ),
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = "Apply Layout",
+                        text = "Terapkan Layout",
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -273,10 +273,10 @@ fun KeyboardLanguageScreen(
                 TextButton(
                     onClick = { selectedLanguageForDialog = null }
                 ) {
-                    Text("Cancel")
+                    Text("Batal")
                 }
             },
-            shape = RoundedCornerShape(18.dp)
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
@@ -312,11 +312,11 @@ private fun ActiveLanguageHeroCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = FrogoPrimary.copy(alpha = 0.08f)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.5.dp, FrogoPrimary.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -332,8 +332,8 @@ private fun ActiveLanguageHeroCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = FrogoStatusSuccess.copy(alpha = 0.15f)
+                    shape = RoundedCornerShape(6.dp),
+                    color = FrogoStatusSuccess.copy(alpha = 0.12f)
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -347,7 +347,7 @@ private fun ActiveLanguageHeroCard(
                                 .background(FrogoStatusSuccess)
                         )
                         Text(
-                            text = "CURRENT ACTIVE",
+                            text = "LAYOUT AKTIF",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 10.sp,
@@ -358,7 +358,7 @@ private fun ActiveLanguageHeroCard(
                 }
 
                 Text(
-                    text = "Default Input Method",
+                    text = "Input Default",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -448,10 +448,10 @@ private fun SearchAndFilterHeader(
             value = query,
             onValueChange = onQueryChange,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(8.dp),
             placeholder = {
                 Text(
-                    text = "Search language, code, or layout...",
+                    text = "Cari bahasa, kode, atau tata letak...",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -459,7 +459,7 @@ private fun SearchAndFilterHeader(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
+                    contentDescription = "Cari",
                     tint = FrogoPrimary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -469,7 +469,7 @@ private fun SearchAndFilterHeader(
                     IconButton(onClick = { onQueryChange("") }) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Clear Search",
+                            contentDescription = "Hapus Pencarian",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp)
                         )
@@ -479,7 +479,7 @@ private fun SearchAndFilterHeader(
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = FrogoPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
@@ -494,7 +494,7 @@ private fun SearchAndFilterHeader(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = if (query.isBlank()) "Available Languages" else "Search Results",
+                text = if (query.isBlank()) "Daftar Bahasa Tersedia" else "Hasil Pencarian",
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -502,11 +502,11 @@ private fun SearchAndFilterHeader(
             )
 
             Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                shape = RoundedCornerShape(6.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Text(
-                    text = if (query.isBlank()) "$totalLanguages available" else "$filteredCount found",
+                    text = if (query.isBlank()) "$totalLanguages bahasa" else "$filteredCount ditemukan",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Medium
                     ),
@@ -531,11 +531,10 @@ private fun LanguageCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 3.dp else 1.dp
-        ),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) {
                 FrogoPrimary.copy(alpha = 0.04f)
@@ -544,11 +543,11 @@ private fun LanguageCard(
             }
         ),
         border = BorderStroke(
-            width = if (isSelected) 2.dp else 1.dp,
+            width = if (isSelected) 1.5.dp else 1.dp,
             color = if (isSelected) {
                 FrogoPrimary
             } else {
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
+                MaterialTheme.colorScheme.outlineVariant
             }
         )
     ) {
@@ -657,11 +656,11 @@ private fun LanguageCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = FrogoStatusSuccess.copy(alpha = 0.15f)
+                        shape = RoundedCornerShape(6.dp),
+                        color = FrogoStatusSuccess.copy(alpha = 0.12f)
                     ) {
                         Text(
-                            text = "ACTIVE",
+                            text = "Aktif",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 10.sp,

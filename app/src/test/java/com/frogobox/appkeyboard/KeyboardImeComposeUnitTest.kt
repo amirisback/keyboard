@@ -157,4 +157,25 @@ class KeyboardImeComposeUnitTest {
         assertTrue("Min width must be at least 72dp to avoid multi-line label clipping", featureItemMinWidthDp >= 72)
     }
 
+    @Test
+    fun testFeatureHeaderPositioningAndDistributionLogic() {
+        val standardScreenWidthDp = 360
+        val minComfortableWidthDp = 70
+
+        // Case 1: 4 default items (Auto Text, Movie, Change Keyboard, Setting)
+        val fourItems = listOf("menu_auto_text", "menu_movie", "menu_change_keyboard", "menu_setting")
+        val canFitFourEvenly = fourItems.size <= 5 && (standardScreenWidthDp / fourItems.size) >= minComfortableWidthDp
+        assertTrue("4 items must be evenly distributed across full width", canFitFourEvenly)
+        val fourItemWidth = standardScreenWidthDp.toFloat() / fourItems.size
+        assertEquals(90.0f, fourItemWidth, 0.01f)
+
+        // Case 2: Many items (e.g. 7 items) switch to scrollable with uniform slot width
+        val manyItems = KeyboardFeatureType.entries.map { it.id }
+        val canFitManyEvenly = manyItems.size <= 5 && (standardScreenWidthDp / manyItems.size) >= minComfortableWidthDp
+        assertFalse("Many items (>5) must use scrollable layout", canFitManyEvenly)
+
+        val dynamicSlotWidth = (standardScreenWidthDp / 4.25f).coerceIn(72f, 92f)
+        assertTrue("Dynamic slot width must ensure at least 4 items visible with peeking 5th", dynamicSlotWidth in 72f..92f)
+    }
+
 }

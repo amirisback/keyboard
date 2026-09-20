@@ -6,7 +6,6 @@ liveCycle = "2.11.0"
 
 roomKtx = "2.8.5"
 work = "2.11.2"
-glideCompiler = "5.0.9"
 
 hilt = "2.60.1"
 emoji2 = "1.6.0"
@@ -41,7 +40,6 @@ google-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref 
 google-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
 # --------------------------------------------------------------------------------------------------
-github-glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glideCompiler" }
 frogo-android = { group = "com.github.frogobox", name = "frogo-sdk", version.ref = "frogoAndroid" }
 frogo-consume-api = { group = "com.github.frogobox", name = "frogo-consume-api", version.ref = "frogoconsumeapi" }
 # --------------------------------------------------------------------------------------------------

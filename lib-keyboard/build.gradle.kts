@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.jetbrains.kotlin.compose)
     `maven-publish`
 }
 
@@ -32,6 +33,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 
     compileOptions {
@@ -57,11 +59,27 @@ kotlin {
 
 dependencies {
 
+    val composeBom = platform(libs.androidx.compose.bom)
+    api(composeBom)
+
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.ui.graphics)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.material.icons.extended)
+
+    api(libs.androidx.activity.compose)
+    api(libs.androidx.lifecycle.runtime.ktx)
+    api(libs.androidx.lifecycle.viewmodel.compose)
+
     api(libs.frogo.android)
     api(libs.frogo.consume.api)
     api(libs.androidx.emoji2)
 
+    androidTestImplementation(composeBom)
     testImplementation(libs.junit)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
 
 }
 

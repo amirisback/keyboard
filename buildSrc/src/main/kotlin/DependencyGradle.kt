@@ -1,5 +1,5 @@
 object DependencyGradle {
 
-    const val MODULE_LIB_FROGO_KEYBOARD = ":frogo-keyboard"
+    const val MODULE_LIB_KEYBOARD = ":lib-keyboard"
 
 }

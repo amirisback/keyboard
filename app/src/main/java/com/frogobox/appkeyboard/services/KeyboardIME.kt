@@ -286,7 +286,7 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
             keyboardWebview.gone()
             keyboardForm.gone()
             keyboardEmoji.gone()
-            keyboardEmoji.binding.emojiList.scrollToPosition(0)
+            keyboardEmoji.resetScroll()
         }
     }
 
@@ -336,9 +336,9 @@ class KeyboardIME : BaseKeyboardIME<KeyboardImeBinding>() {
                 showMainKeyboard()
             }
 
-            keyboardEmoji.binding.toolbarBack.setOnClickListener {
+            keyboardEmoji.setOnBackClickListener {
                 keyboardEmoji.gone()
-                keyboardEmoji.binding.emojiList.scrollToPosition(0)
+                keyboardEmoji.resetScroll()
                 showMainKeyboard()
             }
 

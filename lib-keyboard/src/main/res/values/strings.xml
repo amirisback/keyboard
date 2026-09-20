@@ -6,6 +6,7 @@
     <string name="keycode_shift">Shift</string>
     <string name="keycode_enter">Enter</string>
 
+    <string name="back">Back</string>
     <string name="emojis">Emojis</string>
 
     <string name="welcome">Welcome to Frogo Keyboard</string>

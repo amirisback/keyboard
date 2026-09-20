@@ -88,6 +88,7 @@ fun MainScreen(
     onGoToSettings: () -> Unit,
     onChangeKeyboard: () -> Unit,
     onNavigateAutoText: () -> Unit,
+    onNavigateProductRemote: () -> Unit,
     onNavigateToggle: () -> Unit,
     onNavigateLanguage: () -> Unit,
     onNavigateTheme: () -> Unit,
@@ -247,6 +248,13 @@ fun MainScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                MainMenuItemCard(
+                    title = "Product Remote",
+                    subtitle = "Katalog data produk remote dari API server",
+                    iconRes = R.drawable.ic_menu_ps_sale,
+                    onClick = onNavigateProductRemote
+                )
+
                 MainMenuItemCard(
                     title = "Auto Text",
                     subtitle = "Template teks cepat dan pintasan ketikan berulang",
@@ -451,6 +459,7 @@ fun MainScreenActivePreview() {
             onGoToSettings = {},
             onChangeKeyboard = {},
             onNavigateAutoText = {},
+            onNavigateProductRemote = {},
             onNavigateToggle = {},
             onNavigateLanguage = {},
             onNavigateTheme = {},
@@ -469,6 +478,7 @@ fun MainScreenInactiveDarkPreview() {
             onGoToSettings = {},
             onChangeKeyboard = {},
             onNavigateAutoText = {},
+            onNavigateProductRemote = {},
             onNavigateToggle = {},
             onNavigateLanguage = {},
             onNavigateTheme = {},

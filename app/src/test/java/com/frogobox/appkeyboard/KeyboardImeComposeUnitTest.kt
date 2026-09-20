@@ -25,6 +25,7 @@ class KeyboardImeComposeUnitTest {
             KeyboardPanelState.MAIN,
             KeyboardPanelState.EMOJI,
             KeyboardPanelState.AUTO_TEXT,
+            KeyboardPanelState.PRODUCT_REMOTE,
             KeyboardPanelState.TEMPLATE_TEXT_GAME,
             KeyboardPanelState.TEMPLATE_TEXT_APP,
             KeyboardPanelState.TEMPLATE_TEXT_SALE,
@@ -36,7 +37,7 @@ class KeyboardImeComposeUnitTest {
             KeyboardPanelState.FORM
         )
 
-        assertEquals(12, KeyboardPanelState.entries.size)
+        assertEquals(13, KeyboardPanelState.entries.size)
         expectedPanels.forEach { panel ->
             assertTrue(KeyboardPanelState.entries.contains(panel))
         }
@@ -45,6 +46,7 @@ class KeyboardImeComposeUnitTest {
     @Test
     fun testKeyboardPanelStateFromFeatureMapping() {
         assertEquals(KeyboardPanelState.AUTO_TEXT, KeyboardPanelState.fromFeature(KeyboardFeatureType.AUTO_TEXT))
+        assertEquals(KeyboardPanelState.PRODUCT_REMOTE, KeyboardPanelState.fromFeature(KeyboardFeatureType.PRODUCT_REMOTE))
         assertEquals(KeyboardPanelState.TEMPLATE_TEXT_GAME, KeyboardPanelState.fromFeature(KeyboardFeatureType.TEMPLATE_TEXT_GAME))
         assertEquals(KeyboardPanelState.TEMPLATE_TEXT_APP, KeyboardPanelState.fromFeature(KeyboardFeatureType.TEMPLATE_TEXT_APP))
         assertEquals(KeyboardPanelState.TEMPLATE_TEXT_SALE, KeyboardPanelState.fromFeature(KeyboardFeatureType.TEMPLATE_TEXT_SALE))
@@ -79,6 +81,7 @@ class KeyboardImeComposeUnitTest {
         assertFalse(KeyboardPanelState.MAIN.isTemplate)
         assertFalse(KeyboardPanelState.EMOJI.isTemplate)
         assertFalse(KeyboardPanelState.AUTO_TEXT.isTemplate)
+        assertFalse(KeyboardPanelState.PRODUCT_REMOTE.isTemplate)
         assertFalse(KeyboardPanelState.NEWS.isTemplate)
         assertFalse(KeyboardPanelState.MOVIE.isTemplate)
         assertFalse(KeyboardPanelState.WEBVIEW.isTemplate)
@@ -87,6 +90,7 @@ class KeyboardImeComposeUnitTest {
         assertNull(KeyboardPanelState.MAIN.templateFeatureType)
         assertNull(KeyboardPanelState.EMOJI.templateFeatureType)
         assertNull(KeyboardPanelState.AUTO_TEXT.templateFeatureType)
+        assertNull(KeyboardPanelState.PRODUCT_REMOTE.templateFeatureType)
         assertNull(KeyboardPanelState.NEWS.templateFeatureType)
     }
 

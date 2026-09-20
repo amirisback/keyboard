@@ -25,6 +25,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.productremote.ProductRemoteActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.autotext.AutoTextActivity"
             android:exported="false" />
 

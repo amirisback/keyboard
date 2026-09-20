@@ -50,8 +50,10 @@ object ApiService {
             .addInterceptor(chuckInterceptor)
             .build()
 
+        val normalizedBaseUrl = if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/"
+
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(normalizedBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

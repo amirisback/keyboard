@@ -4,75 +4,100 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 /**
- * Data model for individual items returned from remote API.
+ * Data model for individual items returned from remote API matching data.json.
+ * Strictly adheres to Google Sheets feed schema.
  * Annotated with @Keep and @SerializedName to ensure ProGuard obfuscation safety.
  */
 @Keep
 data class DataItemResponse(
     @SerializedName("id")
-    val id: Int? = null,
-
-    @SerializedName("title")
-    val title: String? = null,
-
-    @SerializedName("body")
-    val body: String? = null,
-
-    @SerializedName("description")
-    val description: String? = null,
-
-    @SerializedName("category")
-    val category: String? = null,
-
-    @SerializedName("createdAt")
-    val createdAt: String? = null,
-
-    @SerializedName("isActive")
-    val isActive: Boolean? = null,
-
-    @SerializedName("rowIndex")
-    val rowIndex: Int? = null,
-
-    @SerializedName("isVideo")
-    val isVideo: Boolean? = null,
-
-    @SerializedName("fileSize")
-    val fileSize: String? = null,
-
-    @SerializedName("caption")
-    val caption: String? = null,
-
-    @SerializedName("uploaderName")
-    val uploaderName: String? = null,
+    val id: String? = null,
 
     @SerializedName("uploadTimestamp")
     val uploadTimestamp: String? = null,
 
+    @SerializedName("productName")
+    val productName: String? = null,
+
+    @SerializedName("caption")
+    val caption: String? = null,
+
+    @SerializedName("originalFileName")
+    val originalFileName: String? = null,
+
+    @SerializedName("fileSize")
+    val fileSize: String? = null,
+
+    @SerializedName("fileType")
+    val fileType: String? = null,
+
     @SerializedName("driveLink")
     val driveLink: String? = null,
 
+    @SerializedName("driveFileId")
+    val driveFileId: String? = null,
+
     @SerializedName("thumbnailUrl")
-    val thumbnailUrl: String? = null
+    val thumbnailUrl: String? = null,
+
+    @SerializedName("previewUrl")
+    val previewUrl: String? = null,
+
+    @SerializedName("isVideo")
+    val isVideo: Boolean? = null,
+
+    @SerializedName("statusDownload")
+    val statusDownload: String? = null,
+
+    @SerializedName("rowIndex")
+    val rowIndex: Int? = null
 ) {
+    constructor(
+        id: Int,
+        uploadTimestamp: String? = null,
+        productName: String? = null,
+        caption: String? = null,
+        originalFileName: String? = null,
+        fileSize: String? = null,
+        fileType: String? = null,
+        driveLink: String? = null,
+        driveFileId: String? = null,
+        thumbnailUrl: String? = null,
+        previewUrl: String? = null,
+        isVideo: Boolean? = null,
+        statusDownload: String? = null,
+        rowIndex: Int? = null
+    ) : this(
+        id = id.toString(),
+        uploadTimestamp = uploadTimestamp,
+        productName = productName,
+        caption = caption,
+        originalFileName = originalFileName,
+        fileSize = fileSize,
+        fileType = fileType,
+        driveLink = driveLink,
+        driveFileId = driveFileId,
+        thumbnailUrl = thumbnailUrl,
+        previewUrl = previewUrl,
+        isVideo = isVideo,
+        statusDownload = statusDownload,
+        rowIndex = rowIndex ?: id
+    )
+
     val displayIndex: Int
-        get() = rowIndex ?: id ?: 0
+        get() = rowIndex ?: id?.filter { it.isDigit() }?.toIntOrNull() ?: (id?.hashCode() ?: 0).let { if (it < 0) -it else it }
 
     val displayTitle: String
-        get() = caption?.takeIf { it.isNotBlank() }
-            ?: title?.takeIf { it.isNotBlank() }
-            ?: uploaderName?.takeIf { it.isNotBlank() }
+        get() = productName?.takeIf { it.isNotBlank() }
+            ?: caption?.takeIf { it.isNotBlank() }
             ?: "Item #$displayIndex"
 
-    val displaySubtitle: String?
-        get() = uploaderName?.takeIf { it.isNotBlank() }
-            ?: category?.takeIf { it.isNotBlank() }
-
     val displayBody: String?
-        get() = body?.takeIf { it.isNotBlank() }
-            ?: description?.takeIf { it.isNotBlank() }
-            ?: caption?.takeIf { it.isNotBlank() }
+        get() = caption?.takeIf { it.isNotBlank() && it != displayTitle }
 
     val displayTimestamp: String?
         get() = uploadTimestamp?.takeIf { it.isNotBlank() }
-            ?: createdAt?.takeIf { it.isNotBlank() }
+
+    val isDownloaded: Boolean
+        get() = statusDownload.equals("Sudah", ignoreCase = true)
 }

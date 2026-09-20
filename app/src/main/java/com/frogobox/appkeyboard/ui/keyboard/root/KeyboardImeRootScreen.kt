@@ -23,12 +23,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardScreen
+import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.news.NewsKeyboardScreen
@@ -67,6 +69,10 @@ fun KeyboardImeRootScreen(
     onMainKeyboardInit: (MainKeyboard) -> Unit,
     autoTextList: List<AutoTextEntity>,
     onManageAutoText: () -> Unit,
+    productRemoteItems: List<DataItemResponse> = emptyList(),
+    isProductRemoteLoading: Boolean = false,
+    productRemoteError: String? = null,
+    onRefreshProductRemote: () -> Unit = {},
     newsArticles: List<Article>,
     isNewsLoading: Boolean,
     movieList: List<TrendingMovie>,
@@ -191,6 +197,19 @@ fun KeyboardImeRootScreen(
                                 onCommitText = onCommitText,
                                 onBackClick = onBackToMain,
                                 onManageClick = onManageAutoText
+                            )
+                        }
+                    }
+
+                    KeyboardPanelState.PRODUCT_REMOTE -> {
+                        Box(modifier = Modifier.fillMaxWidth().height(270.dp)) {
+                            ProductRemoteKeyboardScreen(
+                                items = productRemoteItems,
+                                isLoading = isProductRemoteLoading,
+                                errorMessage = productRemoteError,
+                                onCommitText = onCommitText,
+                                onBackClick = onBackToMain,
+                                onRefresh = onRefreshProductRemote
                             )
                         }
                     }

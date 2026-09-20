@@ -37,6 +37,7 @@ class KeyboardUtil @Inject constructor(
         return listOf(
             KeyboardFeatureType.SUGGESTION.mapToModel(),
             KeyboardFeatureType.AUTO_TEXT.mapToModel(),
+            KeyboardFeatureType.PRODUCT_REMOTE.mapToModel(),
             KeyboardFeatureType.TEMPLATE_TEXT_APP.mapToModel(),
             KeyboardFeatureType.TEMPLATE_TEXT_GAME.mapToModel(),
             KeyboardFeatureType.TEMPLATE_TEXT_LOVE.mapToModel(),

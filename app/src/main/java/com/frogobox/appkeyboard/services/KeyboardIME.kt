@@ -18,9 +18,12 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.frogobox.api.movie.ConsumeMovieApi
 import com.frogobox.api.news.ConsumeNewsApi
 import com.frogobox.appkeyboard.R
+import com.frogobox.appkeyboard.common.core.Resource
+import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
+import com.frogobox.appkeyboard.repository.data.DataApiRepository
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.suggestion.WordSuggestionEngine
@@ -77,6 +80,9 @@ class KeyboardIME : BaseKeyboardIME() {
     @Inject
     lateinit var suggestionEngine: WordSuggestionEngine
 
+    @Inject
+    lateinit var dataApiRepository: DataApiRepository
+
     // Reactive State Holders
     private val activePanelStateFlow = MutableStateFlow(KeyboardPanelState.MAIN)
     private val themeTypeFlow = MutableStateFlow(ThemeType.COLOR)
@@ -87,6 +93,9 @@ class KeyboardIME : BaseKeyboardIME() {
 
     // Sub-Screen Reactive Data Flows
     private val autoTextListFlow = MutableStateFlow<List<AutoTextEntity>>(emptyList())
+    private val productRemoteItemsFlow = MutableStateFlow<List<DataItemResponse>>(emptyList())
+    private val isProductRemoteLoadingFlow = MutableStateFlow(false)
+    private val productRemoteErrorFlow = MutableStateFlow<String?>(null)
     private val newsArticlesFlow = MutableStateFlow<List<Article>>(emptyList())
     private val isNewsLoadingFlow = MutableStateFlow(false)
     private val movieListFlow = MutableStateFlow<List<TrendingMovie>>(emptyList())
@@ -161,6 +170,9 @@ class KeyboardIME : BaseKeyboardIME() {
                     val currentKeyboard by currentKeyboardFlow.collectAsState()
 
                     val autoTextList by autoTextListFlow.collectAsState()
+                    val productRemoteItems by productRemoteItemsFlow.collectAsState()
+                    val isProductRemoteLoading by isProductRemoteLoadingFlow.collectAsState()
+                    val productRemoteError by productRemoteErrorFlow.collectAsState()
                     val newsArticles by newsArticlesFlow.collectAsState()
                     val isNewsLoading by isNewsLoadingFlow.collectAsState()
                     val movieList by movieListFlow.collectAsState()
@@ -198,6 +210,12 @@ class KeyboardIME : BaseKeyboardIME() {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             }
                             startActivity(intent)
+                        },
+                        productRemoteItems = productRemoteItems,
+                        isProductRemoteLoading = isProductRemoteLoading,
+                        productRemoteError = productRemoteError,
+                        onRefreshProductRemote = {
+                            fetchProductRemote()
                         },
                         newsArticles = newsArticles,
                         isNewsLoading = isNewsLoading,
@@ -408,6 +426,13 @@ class KeyboardIME : BaseKeyboardIME() {
                 activePanelStateFlow.value = KeyboardPanelState.AUTO_TEXT
             }
 
+            KeyboardFeatureType.PRODUCT_REMOTE -> {
+                if (productRemoteItemsFlow.value.isEmpty()) {
+                    fetchProductRemote()
+                }
+                activePanelStateFlow.value = KeyboardPanelState.PRODUCT_REMOTE
+            }
+
             KeyboardFeatureType.TEMPLATE_TEXT_GAME,
             KeyboardFeatureType.TEMPLATE_TEXT_APP,
             KeyboardFeatureType.TEMPLATE_TEXT_SALE,
@@ -455,6 +480,30 @@ class KeyboardIME : BaseKeyboardIME() {
     private fun loadAutoText() {
         autoTextViewModel.getAutoText { items ->
             autoTextListFlow.value = items
+        }
+    }
+
+    private fun fetchProductRemote() {
+        isProductRemoteLoadingFlow.value = true
+        productRemoteErrorFlow.value = null
+        serviceScope.launch {
+            dataApiRepository.fetchDataStream().collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        isProductRemoteLoadingFlow.value = true
+                    }
+                    is Resource.Success -> {
+                        isProductRemoteLoadingFlow.value = false
+                        productRemoteErrorFlow.value = null
+                        val activeItems = resource.data.items.orEmpty()
+                        productRemoteItemsFlow.value = activeItems
+                    }
+                    is Resource.Error -> {
+                        isProductRemoteLoadingFlow.value = false
+                        productRemoteErrorFlow.value = resource.message
+                    }
+                }
+            }
         }
     }
 

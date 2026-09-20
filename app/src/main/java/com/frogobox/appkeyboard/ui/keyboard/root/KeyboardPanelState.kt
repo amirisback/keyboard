@@ -9,6 +9,7 @@ enum class KeyboardPanelState {
     MAIN,
     EMOJI,
     AUTO_TEXT,
+    PRODUCT_REMOTE,
     TEMPLATE_TEXT_GAME,
     TEMPLATE_TEXT_APP,
     TEMPLATE_TEXT_SALE,
@@ -44,6 +45,7 @@ enum class KeyboardPanelState {
         fun fromFeature(featureType: KeyboardFeatureType): KeyboardPanelState? {
             return when (featureType) {
                 KeyboardFeatureType.AUTO_TEXT -> AUTO_TEXT
+                KeyboardFeatureType.PRODUCT_REMOTE -> PRODUCT_REMOTE
                 KeyboardFeatureType.TEMPLATE_TEXT_GAME -> TEMPLATE_TEXT_GAME
                 KeyboardFeatureType.TEMPLATE_TEXT_APP -> TEMPLATE_TEXT_APP
                 KeyboardFeatureType.TEMPLATE_TEXT_SALE -> TEMPLATE_TEXT_SALE

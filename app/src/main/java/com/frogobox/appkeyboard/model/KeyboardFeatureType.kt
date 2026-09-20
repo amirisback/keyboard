@@ -15,6 +15,7 @@ enum class KeyboardFeatureType(val id: String, val text: String, val icon: Int) 
     WEB("menu_web", "Search Website", R.drawable.ic_menu_website),
     FORM("menu_form", "Form", R.drawable.ic_menu_form),
     AUTO_TEXT("menu_auto_text", "Auto Text", R.drawable.ic_menu_auto_text),
+    PRODUCT_REMOTE("menu_product_remote", "Product Remote", R.drawable.ic_menu_ps_sale),
     TEMPLATE_TEXT_APP("menu_play_store_app", "App Review", R.drawable.ic_menu_ps_app),
     TEMPLATE_TEXT_GAME("menu_play_store_game", "Game Review", R.drawable.ic_menu_ps_game),
     TEMPLATE_TEXT_SALE("menu_template_text_sale", "Sale Admin", R.drawable.ic_menu_ps_sale),

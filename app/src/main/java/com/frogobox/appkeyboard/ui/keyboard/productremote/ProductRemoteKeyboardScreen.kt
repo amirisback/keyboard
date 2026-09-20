@@ -22,7 +22,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.WifiOff
@@ -68,6 +68,7 @@ fun ProductRemoteKeyboardScreen(
     onCommitText: (String) -> Unit,
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
+    onManageClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -78,31 +79,55 @@ fun ProductRemoteKeyboardScreen(
         // 1. Fixed Height Toolbar Header (50.dp)
         KeyboardFeatureToolbar(
             title = "Product Remote",
-            subtitle = "Katalog data produk remote dari API server",
+            subtitle = "Katalog produk tersimpan di Room DB",
             onBackClick = onBackClick,
             action = {
-                Box(
-                    modifier = Modifier
-                        .size(34.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                        .clickable(enabled = !isLoading) { onRefresh() }
-                        .padding(6.dp),
-                    contentAlignment = Alignment.Center
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh product remote data",
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
+                    if (onManageClick != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                .clickable { onManageClick() }
+                                .padding(6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Inventory2,
+                                contentDescription = "Buka Katalog",
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                            .clickable(enabled = !isLoading) { onRefresh() }
+                            .padding(6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Refresh product remote data",
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
@@ -161,10 +186,10 @@ fun ProductRemoteKeyboardScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         FrogoEmptyView(
-                            title = "Belum Ada Produk Remote",
-                            subtitle = "Server belum memiliki data katalog produk aktif.",
-                            actionButtonText = "Segarkan",
-                            onActionClick = onRefresh
+                            title = "Belum Ada Produk Tersimpan",
+                            subtitle = "Simpan produk di katalog remote agar muncul di keyboard.",
+                            actionButtonText = if (onManageClick != null) "Buka Katalog" else "Segarkan",
+                            onActionClick = { onManageClick?.invoke() ?: onRefresh() }
                         )
                     }
                 }

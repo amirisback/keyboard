@@ -32,9 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frogobox.coreutil.news.model.Article
 import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
+import com.frogobox.coreutil.news.model.Article
 
 @Composable
 fun NewsKeyboardScreen(

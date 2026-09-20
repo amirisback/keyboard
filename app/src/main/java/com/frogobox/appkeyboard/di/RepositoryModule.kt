@@ -4,6 +4,8 @@ import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepositoryImpl
 import com.frogobox.appkeyboard.repository.data.DataApiRepository
 import com.frogobox.appkeyboard.repository.data.DataApiRepositoryImpl
+import com.frogobox.appkeyboard.repository.productremote.ProductRemoteRepository
+import com.frogobox.appkeyboard.repository.productremote.ProductRemoteRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,5 +29,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindDataApiRepository(repository: DataApiRepositoryImpl): DataApiRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductRemoteRepository(repository: ProductRemoteRepositoryImpl): ProductRemoteRepository
 
 }

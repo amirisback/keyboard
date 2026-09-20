@@ -6,6 +6,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,26 +20,38 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,9 +62,14 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,7 +81,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
+import com.frogobox.appkeyboard.model.ProductEntity
 import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toFormattedCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductCaptionCommitText
@@ -82,19 +102,40 @@ fun ProductRemoteScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val products by viewModel.products.collectAsState()
     val filteredProducts by viewModel.filteredProducts.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val statusFilter by viewModel.downloadStatusFilter.collectAsState()
+    val savedRemoteIds by viewModel.savedRemoteIds.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val isSyncing by viewModel.isSyncing.collectAsState()
+    val syncMessage by viewModel.syncMessage.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+
+    LaunchedEffect(syncMessage) {
+        syncMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearSyncMessage()
+        }
+    }
 
     ProductRemoteScreen(
         products = products,
         filteredProducts = filteredProducts,
         searchQuery = searchQuery,
+        statusFilter = statusFilter,
+        savedRemoteIds = savedRemoteIds,
         isLoading = isLoading,
+        isSyncing = isSyncing,
         errorMessage = errorMessage,
         onSearchQueryChange = viewModel::onSearchQueryChanged,
+        onStatusFilterChange = viewModel::onDownloadStatusFilterChanged,
+        onSyncAllToRoomDb = viewModel::syncAllToRoomDb,
+        onToggleSave = viewModel::toggleSaveProduct,
+        onCreateProduct = viewModel::createProduct,
+        onUpdateProduct = viewModel::updateProduct,
+        onDeleteProduct = viewModel::deleteProduct,
         onRefresh = viewModel::fetchProducts,
         onBackClick = onBackClick,
         modifier = modifier
@@ -103,20 +144,34 @@ fun ProductRemoteScreen(
 
 /**
  * Dedicated In-App screen for inspecting, searching, and managing Product Remote items.
+ * Includes Download Status Filter (Sudah/Belum), Room DB Sync, and full CRUD.
  */
 @Composable
 fun ProductRemoteScreen(
     products: List<DataItemResponse>,
     filteredProducts: List<DataItemResponse>,
     searchQuery: String,
+    statusFilter: DownloadStatusFilter,
+    savedRemoteIds: Set<String>,
     isLoading: Boolean,
+    isSyncing: Boolean,
     errorMessage: String?,
     onSearchQueryChange: (String) -> Unit,
+    onStatusFilterChange: (DownloadStatusFilter) -> Unit,
+    onSyncAllToRoomDb: () -> Unit,
+    onToggleSave: (DataItemResponse) -> Unit,
+    onCreateProduct: (ProductEntity) -> Unit,
+    onUpdateProduct: (ProductEntity) -> Unit,
+    onDeleteProduct: (DataItemResponse) -> Unit,
     onRefresh: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+
+    var isAddDialogOpen by remember { mutableStateOf(false) }
+    var editingItem by remember { mutableStateOf<DataItemResponse?>(null) }
+    var itemToDelete by remember { mutableStateOf<DataItemResponse?>(null) }
 
     val onCopyCaption: (DataItemResponse) -> Unit = { item ->
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -191,6 +246,31 @@ fun ProductRemoteScreen(
                 }
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { isAddDialogOpen = true },
+                containerColor = FrogoPrimary,
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Tambah Produk Baru",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Tambah Produk",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+            }
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
@@ -198,11 +278,11 @@ fun ProductRemoteScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // 1. Sticky Search Bar Container
+            // 1. Sticky Search Bar Container & Filter Chips
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 6.dp)
             ) {
                 OutlinedTextField(
                     value = searchQuery,
@@ -243,19 +323,33 @@ fun ProductRemoteScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // 2. Metric / Summary Banner
+                // 2. Download Status Filter Chips (Semua, Sudah, Belum)
+                DownloadStatusFilterChips(
+                    selectedFilter = statusFilter,
+                    totalCount = products.size,
+                    downloadedCount = products.count { it.isDownloaded },
+                    notDownloadedCount = products.count { !it.isDownloaded },
+                    onFilterSelected = onStatusFilterChange
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 3. Metric & Sync Summary Banner
                 if (products.isNotEmpty()) {
                     ProductRemoteSummaryBanner(
                         totalCount = products.size,
                         filteredCount = filteredProducts.size,
-                        isSearching = searchQuery.isNotBlank()
+                        savedCount = savedRemoteIds.size,
+                        isSearching = searchQuery.isNotBlank(),
+                        isSyncing = isSyncing,
+                        onSyncAll = onSyncAllToRoomDb
                     )
                 }
             }
 
-            // 3. Main Content Area (State Management)
+            // 4. Main Content Area (State Management)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -301,7 +395,10 @@ fun ProductRemoteScreen(
                     filteredProducts.isEmpty() -> {
                         ProductRemoteEmptySearchState(
                             query = searchQuery,
-                            onResetSearch = { onSearchQueryChange("") },
+                            onResetSearch = {
+                                onSearchQueryChange("")
+                                onStatusFilterChange(DownloadStatusFilter.ALL)
+                            },
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
@@ -309,15 +406,20 @@ fun ProductRemoteScreen(
                     else -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 80.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
                                 items = filteredProducts,
                                 key = { it.displayIndex }
                             ) { item ->
+                                val isSaved = savedRemoteIds.contains(item.id)
                                 ProductRemoteInAppCard(
                                     item = item,
+                                    isSavedInRoomDb = isSaved,
+                                    onToggleSave = { onToggleSave(item) },
+                                    onEditClick = { editingItem = item },
+                                    onDeleteClick = { itemToDelete = item },
                                     onCopyCaption = { onCopyCaption(item) },
                                     onCopyTitle = { onCopyTitle(item) },
                                     onCopySnippet = { onCopySnippet(item) },
@@ -330,16 +432,190 @@ fun ProductRemoteScreen(
             }
         }
     }
+
+    // Modal Form Dialog for Create / Edit Product
+    if (isAddDialogOpen) {
+        ProductFormDialog(
+            initialProduct = null,
+            onDismiss = { isAddDialogOpen = false },
+            onSave = { newProduct ->
+                onCreateProduct(newProduct)
+                isAddDialogOpen = false
+            }
+        )
+    }
+
+    editingItem?.let { item ->
+        ProductFormDialog(
+            initialProduct = item,
+            onDismiss = { editingItem = null },
+            onSave = { updatedProduct ->
+                onUpdateProduct(updatedProduct)
+                editingItem = null
+            }
+        )
+    }
+
+    // Delete Confirmation Dialog
+    itemToDelete?.let { item ->
+        AlertDialog(
+            onDismissRequest = { itemToDelete = null },
+            title = {
+                Text(
+                    text = "Hapus Produk?",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Apakah Anda yakin ingin menghapus \"${item.displayTitle}\" dari database lokal? Produk ini tidak akan tampil lagi di keyboard.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDeleteProduct(item)
+                        itemToDelete = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Hapus", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { itemToDelete = null }) {
+                    Text("Batal")
+                }
+            }
+        )
+    }
 }
 
 /**
- * Metric summary banner showing catalog status and item count.
+ * Filter Chips Bar for download status filtering.
+ */
+@Composable
+private fun DownloadStatusFilterChips(
+    selectedFilter: DownloadStatusFilter,
+    totalCount: Int,
+    downloadedCount: Int,
+    notDownloadedCount: Int,
+    onFilterSelected: (DownloadStatusFilter) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            val isSelected = selectedFilter == DownloadStatusFilter.ALL
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = if (isSelected) FrogoPrimary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                border = BorderStroke(
+                    1.dp,
+                    if (isSelected) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant
+                ),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onFilterSelected(DownloadStatusFilter.ALL) }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Semua ($totalCount)",
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        item {
+            val isSelected = selectedFilter == DownloadStatusFilter.DOWNLOADED
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = if (isSelected) Color(0xFF1B5E20) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                border = BorderStroke(
+                    1.dp,
+                    if (isSelected) Color(0xFF81C784) else MaterialTheme.colorScheme.outlineVariant
+                ),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onFilterSelected(DownloadStatusFilter.DOWNLOADED) }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = if (isSelected) Color.White else Color(0xFF2E7D32)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Sudah Diunduh ($downloadedCount)",
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        item {
+            val isSelected = selectedFilter == DownloadStatusFilter.NOT_DOWNLOADED
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = if (isSelected) Color(0xFFE65100) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                border = BorderStroke(
+                    1.dp,
+                    if (isSelected) Color(0xFFFFB74D) else MaterialTheme.colorScheme.outlineVariant
+                ),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onFilterSelected(DownloadStatusFilter.NOT_DOWNLOADED) }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.HourglassEmpty,
+                        contentDescription = null,
+                        modifier = Modifier.size(13.dp),
+                        tint = if (isSelected) Color.White else Color(0xFFE65100)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Belum Diunduh ($notDownloadedCount)",
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Metric summary banner showing catalog status, item count, and Room DB sync trigger.
  */
 @Composable
 private fun ProductRemoteSummaryBanner(
     totalCount: Int,
     filteredCount: Int,
+    savedCount: Int,
     isSearching: Boolean,
+    isSyncing: Boolean,
+    onSyncAll: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -377,50 +653,74 @@ private fun ProductRemoteSummaryBanner(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Column {
                     Text(
-                        text = if (isSearching) "Hasil Pencarian" else "Katalog Server",
+                        text = if (isSearching) "Hasil Pencarian ($filteredCount/$totalCount)" else "Katalog Server",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontSize = 13.5.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Endpoint: 192.168.100.6:3000",
+                        text = "Endpoint: 192.168.100.6:3000 • $savedCount di DB",
                         style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            Surface(
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(
+                onClick = onSyncAll,
+                enabled = !isSyncing,
                 shape = RoundedCornerShape(8.dp),
-                color = FrogoPrimary.copy(alpha = 0.12f),
-                border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.25f))
+                colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
             ) {
-                Text(
-                    text = if (isSearching) "$filteredCount / $totalCount Produk" else "$totalCount Produk",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
+                if (isSyncing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(13.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        text = "Sync...",
                         fontSize = 11.sp,
-                        color = FrogoPrimary
-                    ),
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                )
+                        fontWeight = FontWeight.Bold
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.CloudDownload,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        text = "Sync ke DB",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
 }
 
 /**
- * Rich In-App Product Card with media thumbnail, video badge, metadata, and dual copy actions.
+ * Rich In-App Product Card with media thumbnail, status badges, Room DB indicator, and CRUD controls.
  */
 @Composable
 private fun ProductRemoteInAppCard(
     item: DataItemResponse,
+    isSavedInRoomDb: Boolean,
+    onToggleSave: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onCopyCaption: () -> Unit,
     onCopyTitle: () -> Unit,
     onCopySnippet: () -> Unit,
@@ -440,7 +740,7 @@ private fun ProductRemoteInAppCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Media Header (140.dp - 160.dp)
+            // Media Header
             if (hasThumbnail) {
                 Box(
                     modifier = Modifier
@@ -494,7 +794,7 @@ private fun ProductRemoteInAppCard(
                     .fillMaxWidth()
                     .padding(14.dp)
             ) {
-                // Category & Index Row
+                // Status Badges & Room DB Indicator Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -504,6 +804,7 @@ private fun ProductRemoteInAppCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
+                        // Download Status Badge
                         if (!item.statusDownload.isNullOrBlank()) {
                             val isDownloaded = item.isDownloaded
                             Surface(
@@ -521,6 +822,34 @@ private fun ProductRemoteInAppCard(
                                     color = if (isDownloaded) Color(0xFF1B5E20) else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
+                            }
+                        }
+
+                        // Room DB Saved Badge
+                        if (isSavedInRoomDb) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = FrogoPrimary.copy(alpha = 0.12f),
+                                border = BorderStroke(0.5.dp, FrogoPrimary.copy(alpha = 0.35f))
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Bookmark,
+                                        contentDescription = null,
+                                        tint = FrogoPrimary,
+                                        modifier = Modifier.size(11.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(3.dp))
+                                    Text(
+                                        text = "Tersimpan di DB",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = FrogoPrimary
+                                    )
+                                }
                             }
                         }
                     }
@@ -549,7 +878,7 @@ private fun ProductRemoteInAppCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Caption (if distinct from Title)
+                // Caption
                 val captionText = item.caption
                 if (!captionText.isNullOrBlank() && captionText != item.displayTitle) {
                     Spacer(modifier = Modifier.height(4.dp))
@@ -565,7 +894,7 @@ private fun ProductRemoteInAppCard(
                     )
                 }
 
-                // Body Description (only if distinct from Title and Caption)
+                // Body Description
                 val bodyText = item.displayBody
                 if (!bodyText.isNullOrBlank() && bodyText != item.displayTitle && bodyText != captionText) {
                     Spacer(modifier = Modifier.height(4.dp))
@@ -583,7 +912,7 @@ private fun ProductRemoteInAppCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Metadata Info Row (File & Timestamp) with adaptive non-wrapping constraints
+                // Metadata Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -633,16 +962,16 @@ private fun ProductRemoteInAppCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 HorizontalDivider(
                     thickness = 0.5.dp,
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // Primary Output Options Row: Salin Caption & Salin Judul
+                // Primary Output Row: Salin Caption & Salin Judul
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -687,7 +1016,7 @@ private fun ProductRemoteInAppCard(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Secondary Actions Row: Format Chat & Link Drive
+                // Secondary Row: Format Chat & Link Drive
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -718,9 +1047,7 @@ private fun ProductRemoteInAppCard(
                             onClick = onCopyDriveLink,
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = FrogoPrimary
-                            ),
+                            colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
                             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 10.dp)
                         ) {
                             Icon(
@@ -736,6 +1063,303 @@ private fun ProductRemoteInAppCard(
                                 maxLines = 1
                             )
                         }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                // Room DB Sync & CRUD Operations Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Toggle Save / Unsave Room DB Button
+                    OutlinedButton(
+                        onClick = onToggleSave,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (isSavedInRoomDb) FrogoPrimary.copy(alpha = 0.1f) else Color.Transparent,
+                            contentColor = if (isSavedInRoomDb) FrogoPrimary else MaterialTheme.colorScheme.onSurface
+                        ),
+                        border = BorderStroke(
+                            1.dp,
+                            if (isSavedInRoomDb) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant
+                        ),
+                        contentPadding = PaddingValues(vertical = 7.dp, horizontal = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isSavedInRoomDb) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp),
+                            tint = if (isSavedInRoomDb) FrogoPrimary else MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (isSavedInRoomDb) "Tersimpan di DB" else "Simpan ke DB",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1
+                        )
+                    }
+
+                    // Edit Button
+                    IconButton(
+                        onClick = onEditClick,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit produk",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+
+                    // Delete Button
+                    IconButton(
+                        onClick = onDeleteClick,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteOutline,
+                            contentDescription = "Hapus produk",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Product Form Dialog for Create & Update operations.
+ */
+@Composable
+private fun ProductFormDialog(
+    initialProduct: DataItemResponse?,
+    onDismiss: () -> Unit,
+    onSave: (ProductEntity) -> Unit
+) {
+    var productName by remember { mutableStateOf(initialProduct?.productName ?: initialProduct?.displayTitle ?: "") }
+    var caption by remember { mutableStateOf(initialProduct?.caption ?: "") }
+    var statusDownload by remember { mutableStateOf(initialProduct?.statusDownload ?: "Belum") }
+    var driveLink by remember { mutableStateOf(initialProduct?.driveLink ?: "") }
+    var originalFileName by remember { mutableStateOf(initialProduct?.originalFileName ?: "") }
+    var fileSize by remember { mutableStateOf(initialProduct?.fileSize ?: "") }
+
+    var isError by remember { mutableStateOf(false) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = if (initialProduct == null) "Tambah Produk Baru" else "Edit Produk",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                OutlinedTextField(
+                    value = productName,
+                    onValueChange = {
+                        productName = it
+                        if (it.isNotBlank()) isError = false
+                    },
+                    label = { Text("Nama Produk *") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = isError && productName.isBlank(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = caption,
+                    onValueChange = {
+                        caption = it
+                        if (it.isNotBlank()) isError = false
+                    },
+                    label = { Text("Caption Promosi *") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = isError && caption.isBlank(),
+                    minLines = 3,
+                    maxLines = 5,
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Download Status Selection
+                Text(
+                    text = "Status Unduh",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val isBelum = statusDownload.equals("Belum", ignoreCase = true)
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (isBelum) Color(0xFFE65100) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        border = BorderStroke(1.dp, if (isBelum) Color(0xFFFFB74D) else MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { statusDownload = "Belum" }
+                    ) {
+                        Text(
+                            text = "Belum Diunduh",
+                            fontSize = 12.sp,
+                            fontWeight = if (isBelum) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isBelum) Color.White else MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+
+                    val isSudah = statusDownload.equals("Sudah", ignoreCase = true)
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (isSudah) Color(0xFF1B5E20) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        border = BorderStroke(1.dp, if (isSudah) Color(0xFF81C784) else MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { statusDownload = "Sudah" }
+                    ) {
+                        Text(
+                            text = "✓ Sudah Diunduh",
+                            fontSize = 12.sp,
+                            fontWeight = if (isSudah) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSudah) Color.White else MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = driveLink,
+                    onValueChange = { driveLink = it },
+                    label = { Text("Link Google Drive (Opsional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = originalFileName,
+                        onValueChange = { originalFileName = it },
+                        label = { Text("Nama File") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = fileSize,
+                        onValueChange = { fileSize = it },
+                        label = { Text("Ukuran File") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                }
+
+                if (isError) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Nama produk dan caption wajib diisi",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Batal")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            if (productName.isBlank() || caption.isBlank()) {
+                                isError = true
+                                return@Button
+                            }
+                            val localId = initialProduct?.displayIndex ?: 0
+                            val entity = ProductEntity(
+                                id = localId,
+                                remoteId = initialProduct?.id,
+                                uploadTimestamp = initialProduct?.uploadTimestamp,
+                                productName = productName.trim(),
+                                caption = caption.trim(),
+                                originalFileName = originalFileName.takeIf { it.isNotBlank() },
+                                fileSize = fileSize.takeIf { it.isNotBlank() },
+                                fileType = initialProduct?.fileType,
+                                driveLink = driveLink.takeIf { it.isNotBlank() },
+                                driveFileId = initialProduct?.driveFileId,
+                                thumbnailUrl = initialProduct?.thumbnailUrl,
+                                previewUrl = initialProduct?.previewUrl,
+                                isVideo = initialProduct?.isVideo ?: false,
+                                statusDownload = statusDownload,
+                                rowIndex = initialProduct?.rowIndex
+                            )
+                            onSave(entity)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Simpan ke DB",
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -788,7 +1412,7 @@ private fun ProductRemoteEmptySearchState(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Tidak ada produk yang cocok dengan kata kunci \"$query\". Periksa ejaan Anda atau coba kata kunci lain.",
+            text = if (query.isNotBlank()) "Tidak ada produk yang cocok dengan kata kunci \"$query\"." else "Tidak ada produk dengan filter ini.",
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontSize = 13.sp,
                 lineHeight = 18.sp

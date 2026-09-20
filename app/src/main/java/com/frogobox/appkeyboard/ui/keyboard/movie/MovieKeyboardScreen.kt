@@ -1,6 +1,5 @@
 package com.frogobox.appkeyboard.ui.keyboard.movie
 
-import java.util.Locale
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,10 +37,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frogobox.coreutil.movie.MovieUrl
-import com.frogobox.coreutil.movie.model.TrendingMovie
 import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
+import com.frogobox.coreutil.movie.MovieUrl
+import com.frogobox.coreutil.movie.model.TrendingMovie
+import java.util.Locale
 
 @Composable
 fun MovieKeyboardScreen(

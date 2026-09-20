@@ -30,10 +30,10 @@ import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardScreen
-import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.news.NewsKeyboardScreen
+import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.webview.WebviewKeyboardScreen
 import com.frogobox.coreutil.movie.model.TrendingMovie
@@ -73,6 +73,7 @@ fun KeyboardImeRootScreen(
     isProductRemoteLoading: Boolean = false,
     productRemoteError: String? = null,
     onRefreshProductRemote: () -> Unit = {},
+    onManageProductRemote: () -> Unit = {},
     newsArticles: List<Article>,
     isNewsLoading: Boolean,
     movieList: List<TrendingMovie>,
@@ -209,7 +210,8 @@ fun KeyboardImeRootScreen(
                                 errorMessage = productRemoteError,
                                 onCommitText = onCommitText,
                                 onBackClick = onBackToMain,
-                                onRefresh = onRefreshProductRemote
+                                onRefresh = onRefreshProductRemote,
+                                onManageClick = onManageProductRemote
                             )
                         }
                     }

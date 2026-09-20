@@ -23,11 +23,13 @@ import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
-import com.frogobox.appkeyboard.repository.data.DataApiRepository
 import com.frogobox.appkeyboard.model.ThemeType
+import com.frogobox.appkeyboard.repository.data.DataApiRepository
+import com.frogobox.appkeyboard.repository.productremote.ProductRemoteRepository
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.suggestion.WordSuggestionEngine
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
+import com.frogobox.appkeyboard.ui.productremote.ProductRemoteActivity
 import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardViewModel
 import com.frogobox.appkeyboard.ui.keyboard.root.KeyboardImeRootScreen
 import com.frogobox.appkeyboard.ui.keyboard.root.KeyboardPanelState
@@ -83,6 +85,9 @@ class KeyboardIME : BaseKeyboardIME() {
     @Inject
     lateinit var dataApiRepository: DataApiRepository
 
+    @Inject
+    lateinit var productRemoteRepository: ProductRemoteRepository
+
     // Reactive State Holders
     private val activePanelStateFlow = MutableStateFlow(KeyboardPanelState.MAIN)
     private val themeTypeFlow = MutableStateFlow(ThemeType.COLOR)
@@ -131,6 +136,7 @@ class KeyboardIME : BaseKeyboardIME() {
         setupTheme()
         setupFeatureKeyboard()
         loadAutoText()
+        loadProductRemote()
         showMainKeyboard()
     }
 
@@ -216,6 +222,12 @@ class KeyboardIME : BaseKeyboardIME() {
                         productRemoteError = productRemoteError,
                         onRefreshProductRemote = {
                             fetchProductRemote()
+                        },
+                        onManageProductRemote = {
+                            val intent = Intent(this@KeyboardIME, ProductRemoteActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            startActivity(intent)
                         },
                         newsArticles = newsArticles,
                         isNewsLoading = isNewsLoading,
@@ -316,6 +328,7 @@ class KeyboardIME : BaseKeyboardIME() {
         setupTheme()
         setupFeatureKeyboard()
         loadAutoText()
+        loadProductRemote()
     }
 
     override fun initView() {
@@ -323,6 +336,7 @@ class KeyboardIME : BaseKeyboardIME() {
         setupTheme()
         setupFeatureKeyboard()
         loadAutoText()
+        loadProductRemote()
         openEmojiPalette()
     }
 
@@ -427,9 +441,7 @@ class KeyboardIME : BaseKeyboardIME() {
             }
 
             KeyboardFeatureType.PRODUCT_REMOTE -> {
-                if (productRemoteItemsFlow.value.isEmpty()) {
-                    fetchProductRemote()
-                }
+                loadProductRemote()
                 activePanelStateFlow.value = KeyboardPanelState.PRODUCT_REMOTE
             }
 
@@ -483,11 +495,20 @@ class KeyboardIME : BaseKeyboardIME() {
         }
     }
 
+    private fun loadProductRemote() {
+        serviceScope.launch {
+            productRemoteRepository.getSavedProductsStream().collect { savedList ->
+                productRemoteItemsFlow.value = savedList.map { it.toDataItemResponse() }
+                isProductRemoteLoadingFlow.value = false
+            }
+        }
+    }
+
     private fun fetchProductRemote() {
         isProductRemoteLoadingFlow.value = true
         productRemoteErrorFlow.value = null
         serviceScope.launch {
-            dataApiRepository.fetchDataStream().collect { resource ->
+            productRemoteRepository.syncAllFromRemote().collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
                         isProductRemoteLoadingFlow.value = true
@@ -495,8 +516,6 @@ class KeyboardIME : BaseKeyboardIME() {
                     is Resource.Success -> {
                         isProductRemoteLoadingFlow.value = false
                         productRemoteErrorFlow.value = null
-                        val activeItems = resource.data.items.orEmpty()
-                        productRemoteItemsFlow.value = activeItems
                     }
                     is Resource.Error -> {
                         isProductRemoteLoadingFlow.value = false

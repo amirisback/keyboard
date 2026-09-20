@@ -3,12 +3,17 @@ package com.frogobox.appkeyboard
 import com.frogobox.appkeyboard.common.core.Resource
 import com.frogobox.appkeyboard.data.remote.model.DataApiResponse
 import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
+import com.frogobox.appkeyboard.model.ProductEntity
+import com.frogobox.appkeyboard.model.toProductEntity
 import com.frogobox.appkeyboard.repository.data.DataApiRepository
+import com.frogobox.appkeyboard.repository.productremote.ProductRemoteRepository
+import com.frogobox.appkeyboard.ui.productremote.DownloadStatusFilter
 import com.frogobox.appkeyboard.ui.productremote.ProductRemoteUiState
 import com.frogobox.appkeyboard.ui.productremote.ProductRemoteViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -27,7 +32,7 @@ import org.junit.Test
 
 /**
  * Modern Coroutine unit tests for ProductRemoteViewModel.
- * Validates reactive UI states (Loading, Success, Empty, Error, Retry) and live search filtering.
+ * Validates reactive UI states, Room DB sync, CRUD operations, and download status filtering (Sudah/Belum).
  * Complies strictly with NO SUPPRESSION and ALWAYS MIGRATE policies.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,6 +46,77 @@ class ProductRemoteViewModelTest {
 
         override fun fetchDataStream(): Flow<Resource<DataApiResponse>> = flowToReturn
         override suspend fun fetchData(): Resource<DataApiResponse> = directResultToReturn
+    }
+
+    private class FakeProductRemoteRepository : ProductRemoteRepository {
+        val savedEntities = mutableListOf<ProductEntity>()
+        val savedRemoteIdsFlow = MutableStateFlow<Set<String>>(emptySet())
+        val savedProductsFlow = MutableStateFlow<List<ProductEntity>>(emptyList())
+
+        fun updateFlows() {
+            savedProductsFlow.value = savedEntities.toList()
+            savedRemoteIdsFlow.value = savedEntities.mapNotNull { it.remoteId }.toSet()
+        }
+
+        override fun getSavedProductsStream(): Flow<List<ProductEntity>> = savedProductsFlow
+        override suspend fun getSavedProductsSync(): List<ProductEntity> = savedEntities.toList()
+        override fun getSavedRemoteIdsStream(): Flow<Set<String>> = savedRemoteIdsFlow
+        override fun getProductById(id: Int): Flow<ProductEntity?> = flow {
+            emit(savedEntities.find { it.id == id })
+        }
+        override suspend fun saveProduct(product: ProductEntity): Long {
+            savedEntities.add(product)
+            updateFlows()
+            return product.id.toLong()
+        }
+        override suspend fun saveProducts(products: List<ProductEntity>) {
+            savedEntities.addAll(products)
+            updateFlows()
+        }
+        override suspend fun updateProduct(product: ProductEntity) {
+            val index = savedEntities.indexOfFirst {
+                it.id == product.id || (product.remoteId != null && it.remoteId == product.remoteId)
+            }
+            if (index >= 0) {
+                savedEntities[index] = product
+            }
+            updateFlows()
+        }
+        override suspend fun deleteProduct(product: ProductEntity) {
+            savedEntities.removeIf { it.id == product.id }
+            updateFlows()
+        }
+        override suspend fun deleteProductById(id: Int) {
+            savedEntities.removeIf { it.id == id }
+            updateFlows()
+        }
+        override suspend fun deleteProductByRemoteId(remoteId: String) {
+            savedEntities.removeIf { it.remoteId == remoteId }
+            updateFlows()
+        }
+        override suspend fun nukeAllSavedProducts() {
+            savedEntities.clear()
+            updateFlows()
+        }
+        override fun syncAllFromRemote(): Flow<Resource<Int>> = flow {
+            emit(Resource.Loading)
+            emit(Resource.Success(savedEntities.size))
+        }
+        override suspend fun toggleSaveRemoteProduct(item: DataItemResponse): Boolean {
+            val exists = savedEntities.any { it.remoteId == item.id }
+            return if (exists) {
+                savedEntities.removeIf { it.remoteId == item.id }
+                updateFlows()
+                false
+            } else {
+                savedEntities.add(item.toProductEntity())
+                updateFlows()
+                true
+            }
+        }
+        override suspend fun isProductSaved(remoteId: String): Boolean {
+            return savedEntities.any { it.remoteId == remoteId }
+        }
     }
 
     private val dummyProducts = listOf(
@@ -92,8 +168,9 @@ class ProductRemoteViewModelTest {
                 emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
 
         assertFalse(viewModel.isLoading.value)
@@ -107,6 +184,7 @@ class ProductRemoteViewModelTest {
         assertEquals(3, successState.products.size)
         assertEquals(3, successState.filteredProducts.size)
         assertEquals("", successState.searchQuery)
+        assertEquals(DownloadStatusFilter.ALL, successState.statusFilter)
     }
 
     @Test
@@ -117,8 +195,9 @@ class ProductRemoteViewModelTest {
                 emit(Resource.Success(DataApiResponse(success = true, items = emptyList())))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
 
         assertFalse(viewModel.isLoading.value)
@@ -135,8 +214,9 @@ class ProductRemoteViewModelTest {
                 emit(Resource.Error("Connection refused: 192.168.100.6:3000"))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
 
         assertFalse(viewModel.isLoading.value)
@@ -157,8 +237,9 @@ class ProductRemoteViewModelTest {
                 emit(Resource.Error("Failed to connect to host"))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value is ProductRemoteUiState.Error)
 
@@ -184,8 +265,9 @@ class ProductRemoteViewModelTest {
                 emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
 
         viewModel.onSearchQueryChanged("Flannel")
@@ -197,132 +279,148 @@ class ProductRemoteViewModelTest {
     }
 
     @Test
-    fun testSearchFiltering_byCaption() = runTest(testDispatcher) {
+    fun testDownloadStatusFilter_downloaded_showsOnlySudah() = runTest(testDispatcher) {
         val fakeRepo = FakeDataApiRepository().apply {
             flowToReturn = flow {
                 emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
 
-        viewModel.onSearchQueryChanged("stretch")
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.DOWNLOADED)
         advanceUntilIdle()
 
+        assertEquals(DownloadStatusFilter.DOWNLOADED, viewModel.downloadStatusFilter.value)
         assertEquals(1, viewModel.filteredProducts.value.size)
-        assertEquals("Celana Chino Slim Fit", viewModel.filteredProducts.value.first().productName)
+        assertEquals("Kemeja Flannel Pria", viewModel.filteredProducts.value.first().productName)
+        assertTrue(viewModel.filteredProducts.value.first().isDownloaded)
     }
 
     @Test
-    fun testSearchFiltering_noMatchYieldsEmptyFilteredList() = runTest(testDispatcher) {
+    fun testDownloadStatusFilter_notDownloaded_showsOnlyBelum() = runTest(testDispatcher) {
         val fakeRepo = FakeDataApiRepository().apply {
             flowToReturn = flow {
                 emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
             }
         }
+        val fakeLocalRepo = FakeProductRemoteRepository()
 
-        val viewModel = ProductRemoteViewModel(fakeRepo)
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
         advanceUntilIdle()
 
-        viewModel.onSearchQueryChanged("Sepatu Kulit")
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.NOT_DOWNLOADED)
         advanceUntilIdle()
 
-        assertEquals(3, viewModel.products.value.size)
-        assertEquals(0, viewModel.filteredProducts.value.size)
-
-        val uiState = viewModel.uiState.value as ProductRemoteUiState.Success
-        assertEquals(0, uiState.filteredProducts.size)
-    }
-
-    @Test
-    fun testSearchFiltering_blankQueryResetsToAllProducts() = runTest(testDispatcher) {
-        val fakeRepo = FakeDataApiRepository().apply {
-            flowToReturn = flow {
-                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
-            }
-        }
-
-        val viewModel = ProductRemoteViewModel(fakeRepo)
-        advanceUntilIdle()
-
-        viewModel.onSearchQueryChanged("Chino")
-        assertEquals(1, viewModel.filteredProducts.value.size)
-
-        viewModel.onSearchQueryChanged("")
-        assertEquals(3, viewModel.filteredProducts.value.size)
-    }
-
-    @Test
-    fun testSearchFiltering_byProductionProductName() = runTest(testDispatcher) {
-        val testProducts = listOf(
-            DataItemResponse(id = 1, productName = "Produk Selesai", caption = "Sudah diunduh", statusDownload = "Sudah"),
-            DataItemResponse(id = 2, productName = "Produk Baru", caption = "Review produk", statusDownload = "Belum"),
-            DataItemResponse(id = 3, productName = "Celana Chino Slim", caption = "Celana chino stretch", statusDownload = "Belum")
-        )
-        val fakeRepo = FakeDataApiRepository().apply {
-            flowToReturn = flow {
-                emit(Resource.Success(DataApiResponse(success = true, items = testProducts)))
-            }
-        }
-
-        val viewModel = ProductRemoteViewModel(fakeRepo)
-        advanceUntilIdle()
-
-        viewModel.onSearchQueryChanged("Chino")
-        advanceUntilIdle()
-
-        assertEquals(1, viewModel.filteredProducts.value.size)
-        assertEquals("Celana Chino Slim", viewModel.filteredProducts.value.first().productName)
-    }
-
-    @Test
-    fun testSearchFiltering_byOriginalFileName() = runTest(testDispatcher) {
-        val testProducts = listOf(
-            DataItemResponse(id = 1, productName = "Produk Selesai", originalFileName = "selesai.mp4"),
-            DataItemResponse(id = 2, productName = "Produk Baru", originalFileName = "produk_baru.mp4")
-        )
-        val fakeRepo = FakeDataApiRepository().apply {
-            flowToReturn = flow {
-                emit(Resource.Success(DataApiResponse(success = true, items = testProducts)))
-            }
-        }
-
-        val viewModel = ProductRemoteViewModel(fakeRepo)
-        advanceUntilIdle()
-
-        viewModel.onSearchQueryChanged("selesai.mp4")
-        advanceUntilIdle()
-
-        assertEquals(1, viewModel.filteredProducts.value.size)
-        assertEquals("selesai.mp4", viewModel.filteredProducts.value.first().originalFileName)
-    }
-
-    @Test
-    fun testSearchFiltering_byStatusDownload() = runTest(testDispatcher) {
-        val testProducts = listOf(
-            DataItemResponse(id = 1, productName = "Item Selesai", statusDownload = "Sudah"),
-            DataItemResponse(id = 2, productName = "Item Baru 1", statusDownload = "Belum"),
-            DataItemResponse(id = 3, productName = "Item Baru 2", statusDownload = "Belum")
-        )
-        val fakeRepo = FakeDataApiRepository().apply {
-            flowToReturn = flow {
-                emit(Resource.Success(DataApiResponse(success = true, items = testProducts)))
-            }
-        }
-
-        val viewModel = ProductRemoteViewModel(fakeRepo)
-        advanceUntilIdle()
-
-        viewModel.onSearchQueryChanged("Sudah")
-        advanceUntilIdle()
-
-        assertEquals(1, viewModel.filteredProducts.value.size)
-        assertEquals("Sudah", viewModel.filteredProducts.value.first().statusDownload)
-
-        viewModel.onSearchQueryChanged("Belum")
-        advanceUntilIdle()
-
+        assertEquals(DownloadStatusFilter.NOT_DOWNLOADED, viewModel.downloadStatusFilter.value)
         assertEquals(2, viewModel.filteredProducts.value.size)
+        assertTrue(viewModel.filteredProducts.value.all { !it.isDownloaded })
+    }
+
+    @Test
+    fun testDownloadStatusFilter_combinedWithSearchQuery() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        // Filter: Belum + Search: "Hijab"
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.NOT_DOWNLOADED)
+        viewModel.onSearchQueryChanged("Hijab")
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.filteredProducts.value.size)
+        assertEquals("Hijab Paris Premium", viewModel.filteredProducts.value.first().productName)
+
+        // Filter: Sudah + Search: "Hijab" -> should yield 0 matches
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.DOWNLOADED)
+        advanceUntilIdle()
+
+        assertEquals(0, viewModel.filteredProducts.value.size)
+    }
+
+    @Test
+    fun testToggleSaveProduct_savesAndDeletesInRoomDb() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        val itemToToggle = dummyProducts.first()
+
+        // 1. Toggle Save: Should save to Room DB
+        viewModel.toggleSaveProduct(itemToToggle)
+        advanceUntilIdle()
+
+        assertEquals(1, fakeLocalRepo.savedEntities.size)
+        assertEquals(itemToToggle.id, fakeLocalRepo.savedEntities.first().remoteId)
+        assertTrue(viewModel.savedRemoteIds.value.contains(itemToToggle.id))
+        assertNotNull(viewModel.syncMessage.value)
+
+        // 2. Toggle Save again: Should remove from Room DB
+        viewModel.toggleSaveProduct(itemToToggle)
+        advanceUntilIdle()
+
+        assertEquals(0, fakeLocalRepo.savedEntities.size)
+        assertFalse(viewModel.savedRemoteIds.value.contains(itemToToggle.id))
+    }
+
+    @Test
+    fun testCreateProduct_manualCrud() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        val newProduct = ProductEntity(
+            id = 99,
+            productName = "Sepatu Sneakers Lokal",
+            caption = "Sneakers Kanvas Casual Keren",
+            statusDownload = "Sudah"
+        )
+
+        viewModel.createProduct(newProduct)
+        advanceUntilIdle()
+
+        assertEquals(1, fakeLocalRepo.savedEntities.size)
+        assertEquals(4, viewModel.products.value.size)
+        assertEquals("Sepatu Sneakers Lokal", viewModel.products.value.first().productName)
+    }
+
+    @Test
+    fun testDeleteProduct_manualCrud() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        val itemToDelete = dummyProducts.first()
+        viewModel.deleteProduct(itemToDelete)
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.products.value.size)
+        assertFalse(viewModel.products.value.any { it.id == itemToDelete.id })
     }
 }

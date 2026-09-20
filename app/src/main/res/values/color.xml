@@ -12,16 +12,4 @@
     <color name="color_bg_keyboard_pink">#C2185B</color>
     <color name="color_bg_keyboard_yellow">#FBC02D</color>
 
-    <!-- Suggestion Bar Colors -->
-    <color name="color_suggestion_bg">#F4F6F8</color>
-    <color name="color_suggestion_user">#546E7A</color>
-    <color name="color_suggestion_predicted">#0288D1</color>
-    <color name="color_suggestion_pill">#E1F5FE</color>
-    <color name="color_suggestion_autocorrect">#37474F</color>
-    <color name="color_suggestion_divider">#E0E0E0</color>
-
-    <!-- Modern Keyboard Feature UI Tokens -->
-    <color name="color_feature_icon_bg">#0D000000</color>
-    <color name="color_feature_icon_tint">@color/tv_text</color>
-
 </resources>

@@ -2,8 +2,6 @@
 <resources>
 
     <color name="tv_text">#FFFFFF</color>
-    <color name="bg_card">#000000</color>
-    <color name="bg_card_reverse">#FFFFFF</color>
 
     <!--  For Testing and Dev  -->
 <!--    <color name="keyboard_background">#FF03DAC5</color>-->

@@ -11,18 +11,9 @@
     <dimen name="popup_max_move_distance">60dp</dimen>
     <dimen name="vertical_correction">-10dp</dimen>
 
-    <!-- Emoji -->
-    <dimen name="toolbar_height">46dp</dimen>
-    <dimen name="toolbar_icon_height">32dp</dimen>
-    <dimen name="emoji_item_size">46dp</dimen>
-    <dimen name="emoji_palette_btn_size">42dp</dimen>
-    <dimen name="dragselect_hotspot_height">56dp</dimen>
-    <dimen name="normal_margin">12dp</dimen>
-
     <!-- Text Size -->
     <dimen name="keyboard_text_size">22sp</dimen>
     <dimen name="preview_text_size">26sp</dimen>
     <dimen name="label_text_size">16sp</dimen>
-    <dimen name="emoji_text_size">28sp</dimen>
 
 </resources>

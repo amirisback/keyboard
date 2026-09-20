@@ -1,7 +1,8 @@
 package com.frogobox.libkeyboard.ui.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,8 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Popup
 import com.frogobox.libkeyboard.R
-import com.frogobox.libkeyboard.ui.theme.FrogoLibKeyboardTheme
 import com.frogobox.libkeyboard.ui.theme.KeypadActionDark
 import com.frogobox.libkeyboard.ui.theme.KeypadActionLight
 import com.frogobox.libkeyboard.ui.theme.KeypadDark
@@ -79,51 +83,83 @@ fun MainKeyboardComposable(
     val defaultKeyColor = if (isDarkTheme) KeypadDark else KeypadLight
     val actionKeyColor = if (isDarkTheme) KeypadActionDark else KeypadActionLight
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 4.dp, vertical = 6.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        // Group keys by their approximate row position
-        val keys = keyboard.mKeys
-        if (keys.isNotEmpty()) {
-            val rowYPositions = keys.map { it.y }.distinct().sorted()
+    var activePopupKey by remember { mutableStateOf<ItemMainKeyboard.Key?>(null) }
 
-            for (rowY in rowYPositions) {
-                val rowKeys = keys.filter { it.y == rowY }.sortedBy { it.x }
-                val totalRowWidth = rowKeys.sumOf { it.width }.coerceAtLeast(1)
+    Box(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = 4.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            // Group keys by their approximate row position
+            val keys = keyboard.mKeys
+            if (keys.isNotEmpty()) {
+                val rowYPositions = keys.map { it.y }.distinct().sorted()
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    for (key in rowKeys) {
-                        val weight = (key.width.toFloat() / totalRowWidth.toFloat()).coerceAtLeast(0.01f)
-                        val isActionKey = when (key.code) {
-                            ItemMainKeyboard.KEYCODE_SHIFT,
-                            ItemMainKeyboard.KEYCODE_DELETE,
-                            ItemMainKeyboard.KEYCODE_ENTER,
-                            ItemMainKeyboard.KEYCODE_MODE_CHANGE,
-                            ItemMainKeyboard.KEYCODE_TAB -> true
-                            else -> false
+                for (rowY in rowYPositions) {
+                    val rowKeys = keys.filter { it.y == rowY }.sortedBy { it.x }
+                    val totalRowWidth = rowKeys.sumOf { it.width }.coerceAtLeast(1)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(3.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        for (key in rowKeys) {
+                            val weight = (key.width.toFloat() / totalRowWidth.toFloat()).coerceAtLeast(0.01f)
+                            val isActionKey = when (key.code) {
+                                ItemMainKeyboard.KEYCODE_SHIFT,
+                                ItemMainKeyboard.KEYCODE_DELETE,
+                                ItemMainKeyboard.KEYCODE_ENTER,
+                                ItemMainKeyboard.KEYCODE_MODE_CHANGE,
+                                ItemMainKeyboard.KEYCODE_TAB -> true
+                                else -> false
+                            }
+
+                            val keyBackground = if (isActionKey) actionKeyColor else defaultKeyColor
+
+                            KeyItemView(
+                                label = key.label.toString(),
+                                code = key.code,
+                                backgroundColor = keyBackground,
+                                isActionKey = isActionKey,
+                                onClick = {
+                                    onKeyPress(key.code)
+                                    onKeyActionUp()
+                                },
+                                onLongClick = if (key.popupCharacters != null && key.popupCharacters!!.isNotEmpty()) {
+                                    { activePopupKey = key }
+                                } else null,
+                                modifier = Modifier.weight(weight)
+                            )
                         }
+                    }
+                }
+            }
+        }
 
-                        val keyBackground = if (isActionKey) actionKeyColor else defaultKeyColor
-
-                        KeyItemView(
-                            label = key.label.toString(),
-                            code = key.code,
-                            weight = weight,
-                            backgroundColor = keyBackground,
-                            isActionKey = isActionKey,
-                            onClick = {
-                                onKeyPress(key.code)
-                                onKeyActionUp()
+        // Render Compose MiniKeyboardPopup overlay on long-press
+        activePopupKey?.let { popupKey ->
+            val chars = popupKey.popupCharacters?.map { it.toString() } ?: emptyList()
+            if (chars.isNotEmpty()) {
+                Popup(
+                    alignment = Alignment.TopCenter,
+                    onDismissRequest = { activePopupKey = null }
+                ) {
+                    Box(modifier = Modifier.padding(top = 8.dp)) {
+                        MiniKeyboardPopup(
+                            characters = chars,
+                            onKeySelected = { selectedChar ->
+                                val code = selectedChar.firstOrNull()?.code ?: 0
+                                if (code != 0) {
+                                    onKeyPress(code)
+                                    onKeyActionUp()
+                                }
+                                activePopupKey = null
                             },
-                            modifier = Modifier.weight(weight)
+                            isDarkTheme = isDarkTheme
                         )
                     }
                 }
@@ -132,14 +168,15 @@ fun MainKeyboardComposable(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun KeyItemView(
     label: String,
     code: Int,
-    weight: Float,
     backgroundColor: Color,
     isActionKey: Boolean,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -148,10 +185,11 @@ private fun KeyItemView(
         modifier = modifier
             .height(46.dp)
             .clip(RoundedCornerShape(6.dp))
-            .clickable(
+            .combinedClickable(
                 interactionSource = interactionSource,
                 indication = ripple(bounded = true),
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             ),
         shape = RoundedCornerShape(6.dp),
         color = backgroundColor,

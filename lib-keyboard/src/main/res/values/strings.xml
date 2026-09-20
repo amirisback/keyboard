@@ -1,6 +1,4 @@
 <resources>
-    <string name="change_keyboard">Change Keyboard</string>
-
     <string name="keycode_delete">Delete</string>
     <string name="keycode_mode_change">Change keyboard type</string>
     <string name="keycode_shift">Shift</string>
@@ -8,10 +6,6 @@
 
     <string name="back">Back</string>
     <string name="emojis">Emojis</string>
-
-    <string name="welcome">Welcome to Frogo Keyboard</string>
-    <string name="enable_and_set_for_default">For using this Frogo Keyboard you need to go to your settings and enable the Frogo Keyboard. After that, when you want to use this Frogo Keyboard, you need to set it for default keyboard.</string>
-    <string name="description_for_sharing">After that, go to any chat application and share content :)</string>
 
     <string name="translation_bengali">Bengali</string>
     <string name="translation_bulgarian">Bulgarian</string>

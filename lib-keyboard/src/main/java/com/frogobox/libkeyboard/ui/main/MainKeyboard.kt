@@ -19,10 +19,10 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.PopupWindow
@@ -54,6 +54,8 @@ import java.util.Locale
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withSave
 
 @SuppressLint("UseCompatLoadingForDrawables", "ClickableViewAccessibility")
 class MainKeyboard @JvmOverloads constructor(
@@ -114,7 +116,6 @@ class MainKeyboard @JvmOverloads constructor(
     private var mPopupX = 0
     private var mPopupY = 0
     private var mRepeatKeyIndex = NOT_A_KEY
-    private var mPopupLayout = 0
     private var mAbortKey = false
     private var mIsLongPressingSpace = false
     private var mLastSpaceMoveX = 0
@@ -200,7 +201,6 @@ class MainKeyboard @JvmOverloads constructor(
 
         val attributes =
             context.obtainStyledAttributes(attrs, R.styleable.FrogoKeyboardView, 0, defStyleRes)
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val indexCnt = attributes.indexCount
 
         try {
@@ -221,14 +221,13 @@ class MainKeyboard @JvmOverloads constructor(
             setBackgroundColor(mBackgroundColor)
         }
 
-        mPopupLayout = R.layout.keyboard_main_mini
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
         mLabelTextSize = resources.getDimension(R.dimen.label_text_size).toInt()
         mPreviewHeight = resources.getDimension(R.dimen.key_height).toInt()
         mSpaceMoveThreshold = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_8dp).toInt()
         mDeleteSwipeThreshold = (resources.getDimension(R.dimen.key_height) * 0.6f).toInt()
 
-        mPreviewText = inflater.inflate(resources.getLayout(R.layout.item_keyboard_main), null) as TextView
+        mPreviewText = createPreviewTextView()
         mPreviewTextSizeLarge = resources.getDimension(R.dimen.preview_text_size).toInt()
 
         mPreviewPopup = PopupWindow(context)
@@ -260,6 +259,36 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     fun getKeyTextSize(): Int = mKeyTextSize
+
+    fun setKeyTextSize(size: Int) {
+        mKeyTextSize = size
+        mPaint.textSize = size.toFloat()
+    }
+
+    private fun createPreviewTextView(): TextView {
+        val padding = resources.getDimensionPixelSize(R.dimen.key_margin)
+        return TextView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundResource(R.drawable.keypad_pop_up)
+            gravity = Gravity.CENTER
+            includeFontPadding = false
+            setPadding(padding, padding, padding, padding)
+            setTextColor(context.getColorExt(R.color.keypad_text))
+            typeface = Typeface.DEFAULT_BOLD
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.preview_text_size))
+        }
+    }
+
+    private fun createMiniKeyboard(): MainKeyboard {
+        return MainKeyboard(context, null).apply {
+            id = R.id.mini_keyboard_view
+            setBackgroundResource(R.drawable.keypad_pop_up)
+            setKeyTextSize(resources.getDimensionPixelSize(R.dimen.preview_text_size))
+        }
+    }
 
     fun initCachedDrawables() {
         mKeypadDefaultDrawable = resources.getDrawable(R.drawable.keypad_default, context.theme)
@@ -446,11 +475,11 @@ class MainKeyboard @JvmOverloads constructor(
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun onBufferDraw() {
         if (mBuffer == null || mKeyboardChanged) {
-            if (mBuffer == null || mKeyboardChanged && (mBuffer!!.width != width || mBuffer!!.height != height)) {
+            if (mBuffer == null || (mBuffer!!.width != width || mBuffer!!.height != height)) {
                 // Make sure our bitmap is at least 1x1
                 val width = max(1, width)
                 val height = max(1, height)
-                mBuffer = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                mBuffer = createBitmap(width, height)
                 mCanvas = Canvas(mBuffer!!)
             }
             invalidateAllKeys()
@@ -461,123 +490,133 @@ class MainKeyboard @JvmOverloads constructor(
             return
         }
 
-        mCanvas!!.save()
-        val canvas = mCanvas
-        canvas!!.clipRect(mDirtyRect)
-        val paint = mPaint
-        val keys = mKeys
-        paint.color = mTextColor
-        // Reuse class-level paint instead of allocating each frame
-        mSmallLetterPaint.apply {
-            set(paint)
-            color = paint.color.adjustAlpha(0.8f)
-            textSize = mTopSmallNumberSize
-            typeface = Typeface.DEFAULT
-        }
-        val smallLetterPaint = mSmallLetterPaint
-
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-
-        val keyCount = keys.size
-        val kb = mKeyboard
-        val defaultBg = mKeypadDefaultDrawable ?: resources.getDrawable(R.drawable.keypad_default, context.theme)
-        val actionBg = mKeypadActionDrawable ?: resources.getDrawable(R.drawable.keypad_action, context.theme)
-
-        for (i in 0 until keyCount) {
-            val key = keys[i]
-            val code = key.code
-            val keyBackground = when (code) {
-                KEYCODE_SHIFT,
-                KEYCODE_DELETE,
-                KEYCODE_ENTER,
-                KEYCODE_MODE_CHANGE,
-                KEYCODE_TAB,
-                KEYCODE_ARROW_LEFT,
-                KEYCODE_ARROW_RIGHT,
-                KEYCODE_ARROW_UP,
-                KEYCODE_ARROW_DOWN -> actionBg
-                else -> defaultBg
+        mCanvas!!.withSave {
+            val canvas = mCanvas
+            canvas!!.clipRect(mDirtyRect)
+            val paint = mPaint
+            val keys = mKeys
+            paint.color = mTextColor
+            // Reuse class-level paint instead of allocating each frame
+            mSmallLetterPaint.apply {
+                set(paint)
+                color = paint.color.adjustAlpha(0.8f)
+                textSize = mTopSmallNumberSize
+                typeface = Typeface.DEFAULT
             }
+            val smallLetterPaint = mSmallLetterPaint
 
-            // Switch the character to uppercase if shift is pressed
-            val label = adjustCase(key.label)?.toString()
-            val bounds = keyBackground.bounds
-            if (key.width != bounds.right || key.height != bounds.bottom) {
-                keyBackground.setBounds(0, 0, key.width, key.height)
-            }
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
-            keyBackground.state = when {
-                key.pressed -> intArrayOf(android.R.attr.state_pressed)
-                key.focused -> intArrayOf(android.R.attr.state_focused)
-                else -> intArrayOf()
-            }
+            val keyCount = keys.size
+            val kb = mKeyboard
+            val defaultBg = mKeypadDefaultDrawable ?: resources.getDrawable(
+                R.drawable.keypad_default,
+                context.theme
+            )
+            val actionBg = mKeypadActionDrawable ?: resources.getDrawable(
+                R.drawable.keypad_action,
+                context.theme
+            )
 
-            canvas.translate(key.x.toFloat(), key.y.toFloat())
-            keyBackground.draw(canvas)
-            if (label?.isNotEmpty() == true) {
-                // For characters, use large font. For labels like "Done", use small font.
-                if (label.length > 1) {
-                    paint.textSize = mLabelTextSize.toFloat()
-                    paint.typeface = Typeface.DEFAULT_BOLD
-                } else {
-                    paint.textSize = mKeyTextSize.toFloat()
-                    paint.typeface = Typeface.DEFAULT
+            for (i in 0 until keyCount) {
+                val key = keys[i]
+                val code = key.code
+                val keyBackground = when (code) {
+                    KEYCODE_SHIFT,
+                    KEYCODE_DELETE,
+                    KEYCODE_ENTER,
+                    KEYCODE_MODE_CHANGE,
+                    KEYCODE_TAB,
+                    KEYCODE_ARROW_LEFT,
+                    KEYCODE_ARROW_RIGHT,
+                    KEYCODE_ARROW_UP,
+                    KEYCODE_ARROW_DOWN,
+                        -> actionBg
+
+                    else -> defaultBg
                 }
 
-                paint.color = mTextColor
+                // Switch the character to uppercase if shift is pressed
+                val label = adjustCase(key.label)?.toString()
+                val bounds = keyBackground.bounds
+                if (key.width != bounds.right || key.height != bounds.bottom) {
+                    keyBackground.setBounds(0, 0, key.width, key.height)
+                }
 
-                canvas.drawText(
-                    label,
-                    (key.width / 2).toFloat(),
-                    key.height / 2 + (paint.textSize - paint.descent()) / 2,
-                    paint
-                )
+                keyBackground.state = when {
+                    key.pressed -> intArrayOf(android.R.attr.state_pressed)
+                    key.focused -> intArrayOf(android.R.attr.state_focused)
+                    else -> intArrayOf()
+                }
 
-                if (key.topSmallNumber.isNotEmpty()) {
+                canvas.translate(key.x.toFloat(), key.y.toFloat())
+                keyBackground.draw(canvas)
+                if (label?.isNotEmpty() == true) {
+                    // For characters, use large font. For labels like "Done", use small font.
+                    if (label.length > 1) {
+                        paint.textSize = mLabelTextSize.toFloat()
+                        paint.typeface = Typeface.DEFAULT_BOLD
+                    } else {
+                        paint.textSize = mKeyTextSize.toFloat()
+                        paint.typeface = Typeface.DEFAULT
+                    }
+
+                    paint.color = mTextColor
+
                     canvas.drawText(
-                        key.topSmallNumber,
-                        key.width - mTopSmallNumberMarginWidth,
-                        mTopSmallNumberMarginHeight,
-                        smallLetterPaint
+                        label,
+                        (key.width / 2).toFloat(),
+                        key.height / 2 + (paint.textSize - paint.descent()) / 2,
+                        paint
                     )
-                }
 
-                // Turn off drop shadow
-                paint.setShadowLayer(0f, 0f, 0f, 0)
-            } else if (key.icon != null && kb != null) {
-                if (code == KEYCODE_SHIFT) {
-                    key.icon = when (kb.mShiftState) {
-                        SHIFT_OFF -> mShiftOffDrawable
-                        SHIFT_ON_ONE_CHAR -> mShiftOneCharDrawable
-                        else -> mShiftPermDrawable
-                    }
-                }
-
-                key.icon?.let { icon ->
-                    if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER ||
-                        code == KEYCODE_TAB || code == KEYCODE_ARROW_LEFT || code == KEYCODE_ARROW_RIGHT ||
-                        code == KEYCODE_ARROW_UP || code == KEYCODE_ARROW_DOWN) {
-                        icon.applyColorFilter(mTextColor)
+                    if (key.topSmallNumber.isNotEmpty()) {
+                        canvas.drawText(
+                            key.topSmallNumber,
+                            key.width - mTopSmallNumberMarginWidth,
+                            mTopSmallNumberMarginHeight,
+                            smallLetterPaint
+                        )
                     }
 
-                    val drawableX = (key.width - icon.intrinsicWidth) / 2
-                    val drawableY = (key.height - icon.intrinsicHeight) / 2
-                    canvas.translate(drawableX.toFloat(), drawableY.toFloat())
-                    icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-                    icon.draw(canvas)
-                    canvas.translate(-drawableX.toFloat(), -drawableY.toFloat())
+                    // Turn off drop shadow
+                    paint.setShadowLayer(0f, 0f, 0f, 0)
+                } else if (key.icon != null && kb != null) {
+                    if (code == KEYCODE_SHIFT) {
+                        key.icon = when (kb.mShiftState) {
+                            SHIFT_OFF -> mShiftOffDrawable
+                            SHIFT_ON_ONE_CHAR -> mShiftOneCharDrawable
+                            else -> mShiftPermDrawable
+                        }
+                    }
+
+                    key.icon?.let { icon ->
+                        if (code == KEYCODE_DELETE || code == KEYCODE_SHIFT || code == KEYCODE_EMOJI || code == KEYCODE_ENTER ||
+                            code == KEYCODE_TAB || code == KEYCODE_ARROW_LEFT || code == KEYCODE_ARROW_RIGHT ||
+                            code == KEYCODE_ARROW_UP || code == KEYCODE_ARROW_DOWN
+                        ) {
+                            icon.applyColorFilter(mTextColor)
+                        }
+
+                        val drawableX = (key.width - icon.intrinsicWidth) / 2
+                        val drawableY = (key.height - icon.intrinsicHeight) / 2
+                        canvas.translate(drawableX.toFloat(), drawableY.toFloat())
+                        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+                        icon.draw(canvas)
+                        canvas.translate(-drawableX.toFloat(), -drawableY.toFloat())
+                    }
                 }
+                canvas.translate(-key.x.toFloat(), -key.y.toFloat())
             }
-            canvas.translate(-key.x.toFloat(), -key.y.toFloat())
-        }
 
-        // Overlay a dark rectangle to dim the keyboard
-        if (mMiniKeyboardOnScreen) {
-            paint.color = Color.BLACK.adjustAlpha(0.3f)
-            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
-        }
+            // Overlay a dark rectangle to dim the keyboard
+            if (mMiniKeyboardOnScreen) {
+                paint.color = Color.BLACK.adjustAlpha(0.3f)
+                canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+            }
 
-        mCanvas!!.restore()
+            mCanvas!!
+        }
         mDrawPending = false
         mDirtyRect.setEmpty()
     }
@@ -680,7 +719,7 @@ class MainKeyboard @JvmOverloads constructor(
             mPreviewText!!.setCompoundDrawables(null, null, null, null)
             try {
                 mPreviewText!!.text = adjustCase(key.label)
-            } catch (ignored: Exception) {
+            } catch (_: Exception) {
             }
         }
 
@@ -799,11 +838,6 @@ class MainKeyboard @JvmOverloads constructor(
 
     private fun openPopupIfRequired(me: MotionEvent): Boolean {
         return try {
-            // Check if we have a popup layout specified first.
-            if (mPopupLayout == 0) {
-                return false
-            }
-
             if (mCurrentKey < 0 || mCurrentKey >= mKeys.size) {
                 return false
             }
@@ -819,8 +853,6 @@ class MainKeyboard @JvmOverloads constructor(
             e.printStackTrace()
             false
         }
-
-
     }
 
     /**
@@ -835,11 +867,9 @@ class MainKeyboard @JvmOverloads constructor(
         if (popupKeyboardId != 0) {
             mMiniKeyboardContainer = mMiniKeyboardCache[popupKey]
             if (mMiniKeyboardContainer == null) {
-                val inflater =
-                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                mMiniKeyboardContainer = inflater.inflate(mPopupLayout, null)
-                mMiniKeyboard =
-                    mMiniKeyboardContainer!!.findViewById<View>(R.id.mini_keyboard_view) as MainKeyboard
+                val miniKeyboard = createMiniKeyboard()
+                mMiniKeyboardContainer = miniKeyboard
+                mMiniKeyboard = miniKeyboard
 
                 mMiniKeyboard!!.mOnKeyboardActionListener = object : OnKeyboardActionListener {
                     override fun onKey(code: Int) {
@@ -887,8 +917,8 @@ class MainKeyboard @JvmOverloads constructor(
                 )
                 mMiniKeyboardCache[popupKey] = mMiniKeyboardContainer
             } else {
-                mMiniKeyboard =
-                    mMiniKeyboardContainer!!.findViewById<View>(R.id.mini_keyboard_view) as MainKeyboard
+                mMiniKeyboard = mMiniKeyboardContainer as? MainKeyboard
+                    ?: (mMiniKeyboardContainer!!.findViewById<View>(R.id.mini_keyboard_view) as MainKeyboard)
             }
 
             getLocationInWindow(mCoordinates)
@@ -1158,14 +1188,14 @@ class MainKeyboard @JvmOverloads constructor(
                         val diff = touchX - mLastSpaceMoveX
                         if (diff < -mSpaceMoveThreshold) {
                             val steps = (-diff) / mSpaceMoveThreshold
-                            for (i in 0 until steps) {
+                            repeat((0 until steps).count()) {
                                 mOnKeyboardActionListener?.moveCursorLeft()
                                 vibrateIfNeeded()
                             }
                             mLastSpaceMoveX -= steps * mSpaceMoveThreshold
                         } else if (diff > mSpaceMoveThreshold) {
                             val steps = diff / mSpaceMoveThreshold
-                            for (i in 0 until steps) {
+                            repeat((0 until steps).count()) {
                                 mOnKeyboardActionListener?.moveCursorRight()
                                 vibrateIfNeeded()
                             }
@@ -1189,12 +1219,12 @@ class MainKeyboard @JvmOverloads constructor(
 
                     val diff = mLastX - mLastSpaceMoveX
                     if (diff < -mSpaceMoveThreshold) {
-                        for (i in diff / mSpaceMoveThreshold until 0) {
+                        repeat((diff / mSpaceMoveThreshold until 0).count()) {
                             mOnKeyboardActionListener?.moveCursorLeft()
                         }
                         mLastSpaceMoveX = mLastX
                     } else if (diff > mSpaceMoveThreshold) {
-                        for (i in 0 until diff / mSpaceMoveThreshold) {
+                        repeat((0 until diff / mSpaceMoveThreshold).count()) {
                             mOnKeyboardActionListener?.moveCursorRight()
                         }
                         mLastSpaceMoveX = mLastX

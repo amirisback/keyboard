@@ -61,8 +61,7 @@ import javax.inject.Inject
 
 /**
  * Modern 100% Full Pure Jetpack Compose InputMethodService.
- * Replaces legacy ViewBinding (keyboard_ime.xml, item_keyboard_header.xml, layout_keyboard_suggestion.xml)
- * with a unified ComposeView, reactive panel navigation, and direct Compose feature integrations.
+ * Uses a unified ComposeView, reactive panel navigation, and direct Compose feature integrations.
  */
 @AndroidEntryPoint
 class KeyboardIME : BaseKeyboardIME() {

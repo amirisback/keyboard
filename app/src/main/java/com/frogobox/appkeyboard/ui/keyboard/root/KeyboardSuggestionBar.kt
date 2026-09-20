@@ -47,7 +47,7 @@ enum class CandidateType {
 }
 
 /**
- * Modern Jetpack Compose Candidate Suggestion Bar replacing legacy KeyboardSuggestionView.
+ * Modern Jetpack Compose Candidate Suggestion Bar.
  * Presents 3 distinct candidate sections (literal user input, hero predicted word, auto-correct alternative)
  * along with quick switch and dismiss action controls.
  */

@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,23 +60,23 @@ enum class KeyboardStatus(
     val icon: ImageVector
 ) {
     ACTIVE(
-        title = "Frogo Keyboard Active",
-        description = "Keyboard is activated and set as default input method.",
-        badge = "ACTIVE",
+        title = "Keyboard Siap Digunakan",
+        description = "Frogo Keyboard aktif dan terpilih sebagai metode input utama.",
+        badge = "AKTIF",
         color = FrogoStatusSuccess,
         icon = Icons.Default.CheckCircle
     ),
     NOT_DEFAULT(
-        title = "Not Default Keyboard",
-        description = "Keyboard is enabled, but another keyboard is currently selected.",
-        badge = "SELECT FROGO",
+        title = "Bukan Keyboard Utama",
+        description = "Keyboard sudah aktif di sistem, namun belum dipilih sebagai input default.",
+        badge = "PILIH FROGO",
         color = FrogoStatusWarning,
         icon = Icons.Default.Warning
     ),
     NOT_ENABLED(
-        title = "Frogo Keyboard Inactive",
-        description = "Enable Frogo Keyboard in Android system settings to get started.",
-        badge = "NOT ENABLED",
+        title = "Keyboard Belum Aktif",
+        description = "Aktifkan Frogo Keyboard melalui Pengaturan Sistem Android.",
+        badge = "BELUM AKTIF",
         color = FrogoStatusFailed,
         icon = Icons.Default.Info
     )
@@ -110,26 +111,27 @@ fun MainScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalAlignment = Alignment.Start
         ) {
             // Header Description
             Text(
-                text = "Enable and set as default keyboard to start typing with custom features and personalized tools.",
+                text = "Konfigurasi metode input, kelola pintasan teks cepat, suara mekanik, dan personalisasi tema keyboard Anda.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 20.sp
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Reactive Status Card
+            // Tactile Status Card (Hardware-inspired Precision System Status)
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = status.color.copy(alpha = 0.12f)
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
-                border = BorderStroke(1.dp, status.color.copy(alpha = 0.35f)),
+                border = BorderStroke(1.dp, status.color.copy(alpha = 0.5f)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Row(
@@ -140,16 +142,16 @@ fun MainScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(42.dp)
+                            .size(40.dp)
                             .clip(CircleShape)
-                            .background(status.color.copy(alpha = 0.2f)),
+                            .background(status.color.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = status.icon,
                             contentDescription = null,
                             tint = status.color,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
 
@@ -164,15 +166,15 @@ fun MainScreen(
                             Text(
                                 text = status.title,
                                 style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.Bold,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontSize = 15.sp
                                 ),
-                                color = status.color
+                                color = MaterialTheme.colorScheme.onSurface
                             )
 
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = status.color.copy(alpha = 0.2f)
+                                color = status.color.copy(alpha = 0.12f)
                             ) {
                                 Text(
                                     text = status.badge,
@@ -181,17 +183,18 @@ fun MainScreen(
                                         fontSize = 10.sp
                                     ),
                                     color = status.color,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(3.dp))
 
                         Text(
                             text = status.description,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                lineHeight = 16.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -201,15 +204,15 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Activation Steps Row (Step 1: Settings, Step 2: Switch Keyboard)
+            // Activation Steps Row (Tactile Hardware Steps)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 ActivationCard(
                     stepNumber = "1",
-                    title = "Enable Keyboard",
-                    subtitle = "System Settings",
+                    title = "Aktifkan Keyboard",
+                    subtitle = "Pengaturan Sistem",
                     iconRes = R.drawable.ic_menu_setting,
                     onClick = onGoToSettings,
                     modifier = Modifier.weight(1f)
@@ -217,19 +220,19 @@ fun MainScreen(
 
                 ActivationCard(
                     stepNumber = "2",
-                    title = "Set Default",
-                    subtitle = "Switch Keyboard",
+                    title = "Pilih Default",
+                    subtitle = "Ganti Input Aktif",
                     iconRes = R.drawable.ic_menu_keyboard,
                     onClick = onChangeKeyboard,
                     modifier = Modifier.weight(1f)
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
             // Section Header
             Text(
-                text = "Features & Customization",
+                text = "Fitur dan Personalisasi",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
@@ -237,51 +240,51 @@ fun MainScreen(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Feature Menu List (Material 3 Cards with Icon, Subtitle, and Chevron)
+            // Feature Menu List (Tactile 1dp Border Cards)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 MainMenuItemCard(
                     title = "Auto Text",
-                    subtitle = "Quick snippets & repetitive text templates",
+                    subtitle = "Template teks cepat dan pintasan ketikan berulang",
                     iconRes = R.drawable.ic_menu_auto_text,
                     onClick = onNavigateAutoText
                 )
 
                 MainMenuItemCard(
-                    title = "Toggle Function",
-                    subtitle = "Keyboard shortcuts & toolbar switches",
+                    title = "Toggle Fitur",
+                    subtitle = "Kustomisasi tombol pintas dan toolbar keyboard",
                     iconRes = R.drawable.ic_menu_form,
                     onClick = onNavigateToggle
                 )
 
                 MainMenuItemCard(
-                    title = "Sound & Haptics",
-                    subtitle = "Mechanical switch sounds & key vibration",
+                    title = "Suara dan Haptic",
+                    subtitle = "Suara switch mechanical keyboard dan feedback getaran",
                     iconRes = R.drawable.ic_menu_sound,
                     onClick = onNavigateSound
                 )
 
                 MainMenuItemCard(
-                    title = "Keyboard Language",
-                    subtitle = "Multilingual input languages & layouts",
+                    title = "Bahasa Keyboard",
+                    subtitle = "Dukungan multibahasa dan layout QWERTY internasional",
                     iconRes = R.drawable.ic_menu_website,
                     onClick = onNavigateLanguage
                 )
 
                 MainMenuItemCard(
-                    title = "Keyboard Theme",
-                    subtitle = "Personalized colors, themes & wallpapers",
+                    title = "Tema Keyboard",
+                    subtitle = "Pilihan tema warna solid, wallpaper, dan preview interaktif",
                     iconRes = R.drawable.ic_menu_ps_game,
                     onClick = onNavigateTheme
                 )
 
                 MainMenuItemCard(
-                    title = "Do Some Test",
-                    subtitle = "Interactive typing test & keyboard sandbox",
+                    title = "Playground Uji Coba",
+                    subtitle = "Uji kecepatan ketik (WPM), akurasi, dan sandbox keyboard",
                     iconRes = R.drawable.ic_menu_keyboard,
                     onClick = onNavigateTest
                 )
@@ -303,18 +306,19 @@ private fun ActivationCard(
 ) {
     Card(
         modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(14.dp),
             horizontalAlignment = Alignment.Start
         ) {
             Row(
@@ -325,15 +329,15 @@ private fun ActivationCard(
                 Image(
                     painter = painterResource(id = iconRes),
                     contentDescription = title,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(32.dp)
                 )
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = FrogoPrimary.copy(alpha = 0.1f)
+                    color = FrogoPrimary.copy(alpha = 0.12f)
                 ) {
                     Text(
-                        text = "STEP $stepNumber",
+                        text = "LANGKAH $stepNumber",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
@@ -344,12 +348,12 @@ private fun ActivationCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 ),
                 color = MaterialTheme.colorScheme.onSurface
@@ -379,24 +383,25 @@ private fun MainMenuItemCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                .padding(horizontal = 14.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = iconRes),
                 contentDescription = title,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(32.dp)
             )
 
             Spacer(modifier = Modifier.width(14.dp))
@@ -416,7 +421,8 @@ private fun MainMenuItemCard(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
                     ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,

@@ -6,6 +6,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -108,16 +109,16 @@ fun AutoTextScreen(
                 onClick = onAddClick,
                 containerColor = FrogoPrimary,
                 contentColor = Color.White,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add Template"
+                        contentDescription = "Tambah Template"
                     )
                 },
                 text = {
                     Text(
-                        text = "Add Template",
+                        text = "Tambah Template",
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold
@@ -154,7 +155,7 @@ fun AutoTextScreen(
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
                         Text(
-                            text = "Search templates by title or content...",
+                            text = "Cari template berdasarkan judul atau isi...",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -162,7 +163,7 @@ fun AutoTextScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
+                            contentDescription = "Cari",
                             tint = FrogoPrimary
                         )
                     },
@@ -171,17 +172,17 @@ fun AutoTextScreen(
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear Search",
+                                    contentDescription = "Hapus Pencarian",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
                     },
                     singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = FrogoPrimary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     )
@@ -202,8 +203,10 @@ fun AutoTextScreen(
                     }
                     autoTextList.isEmpty() -> {
                         FrogoEmptyView(
-                            title = "NO AUTO TEXT FOUND",
-                            subtitle = "Tap 'Add Template' below to create a quick template.",
+                            title = "Belum Ada Auto Text",
+                            subtitle = "Buat template pesan cepat untuk mempercepat pengetikan Anda.",
+                            actionButtonText = "Tambah Template",
+                            onActionClick = onAddClick,
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
@@ -223,7 +226,7 @@ fun AutoTextScreen(
                                 top = 4.dp,
                                 bottom = 88.dp // Space for Extended FAB
                             ),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             items(filteredList, key = { it.id }) { item ->
                                 AutoTextCard(
@@ -249,11 +252,12 @@ private fun AutoTextHeaderBanner(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = FrogoPrimary.copy(alpha = 0.08f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
         ),
-        border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.22f))
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(
             modifier = Modifier
@@ -268,14 +272,14 @@ private fun AutoTextHeaderBanner(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(FrogoPrimary.copy(alpha = 0.16f)),
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(FrogoPrimary.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ShortText,
-                        contentDescription = "Templates Icon",
+                        contentDescription = "Ikon Template",
                         tint = FrogoPrimary,
                         modifier = Modifier.size(22.dp)
                     )
@@ -285,7 +289,7 @@ private fun AutoTextHeaderBanner(
 
                 Column {
                     Text(
-                        text = "Quick Templates",
+                        text = "Template Cepat",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
@@ -293,7 +297,7 @@ private fun AutoTextHeaderBanner(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Instant shortcuts on your keyboard",
+                        text = "Pintasan teks instan pada keyboard",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontSize = 12.sp
                         ),
@@ -303,11 +307,12 @@ private fun AutoTextHeaderBanner(
             }
 
             Surface(
-                shape = RoundedCornerShape(10.dp),
-                color = FrogoPrimary.copy(alpha = 0.16f)
+                shape = RoundedCornerShape(8.dp),
+                color = FrogoPrimary.copy(alpha = 0.12f),
+                border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.25f))
             ) {
                 Text(
-                    text = if (isSearching) "$filteredCount / $totalCount" else "$totalCount Saved",
+                    text = if (isSearching) "$filteredCount / $totalCount" else "$totalCount Tersimpan",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
@@ -331,17 +336,17 @@ private fun AutoTextCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(14.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -354,8 +359,8 @@ private fun AutoTextCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
-                            .clip(RoundedCornerShape(10.dp))
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(8.dp))
                             .background(FrogoPrimary.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
@@ -363,17 +368,17 @@ private fun AutoTextCard(
                             imageVector = Icons.AutoMirrored.Filled.Notes,
                             contentDescription = null,
                             tint = FrogoPrimary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
 
                     Text(
                         text = item.title,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            fontSize = 15.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
@@ -383,25 +388,29 @@ private fun AutoTextCard(
 
                 IconButton(
                     onClick = onCopy,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(34.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
-                        contentDescription = "Copy text",
+                        contentDescription = "Salin teks",
                         tint = FrogoPrimary,
                         modifier = Modifier.size(18.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Styled Snippet Container
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .border(
+                        BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
                 Text(
@@ -434,23 +443,23 @@ private fun EmptySearchState(
     ) {
         Box(
             modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .size(56.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.SearchOff,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(28.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Text(
-            text = "No templates found",
+            text = "Template tidak ditemukan",
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold
             ),
@@ -460,7 +469,7 @@ private fun EmptySearchState(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "No template matches \"$query\"",
+            text = "Tidak ada template yang cocok dengan \"$query\"",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -469,7 +478,7 @@ private fun EmptySearchState(
 
         TextButton(onClick = onClearSearch) {
             Text(
-                text = "Clear Search",
+                text = "Hapus Pencarian",
                 color = FrogoPrimary,
                 fontWeight = FontWeight.SemiBold
             )

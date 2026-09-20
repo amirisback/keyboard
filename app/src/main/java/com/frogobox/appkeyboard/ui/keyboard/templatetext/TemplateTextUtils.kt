@@ -4,7 +4,6 @@ import android.content.Context
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.TemplateText
 import com.frogobox.sdk.ext.getDataFromJsonAsset
-import com.frogobox.sdk.util.FrogoFunc
 
 /**
  * Created by Faisal Amir on 24/10/22

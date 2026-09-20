@@ -2,7 +2,6 @@ package com.frogobox.appkeyboard.ui.sound
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
@@ -105,17 +103,16 @@ fun SoundScreen(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Column(modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)) {
                     Text(
-                        text = "MECHANICAL SWITCH PROFILES (MECHVIBES)",
-                        style = MaterialTheme.typography.labelMedium.copy(
+                        text = "Profil Suara Switch Mekanik",
+                        style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            letterSpacing = 0.8.sp
+                            fontSize = 14.sp
                         ),
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Authentic tactile & acoustic mechanical switch models",
+                        text = "Model suara dan karakter akustik mechanical switch autentik",
                         style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -140,11 +137,10 @@ fun SoundScreen(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Column(modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)) {
                     Text(
-                        text = "VOLUME & HAPTIC FEEDBACK",
-                        style = MaterialTheme.typography.labelMedium.copy(
+                        text = "Volume dan Feedback Haptic",
+                        style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            letterSpacing = 0.8.sp
+                            fontSize = 14.sp
                         ),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -205,11 +201,11 @@ private fun MasterSoundCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = cardBackground),
         border = BorderStroke(
             width = 1.dp,
-            color = if (soundEnabled) primaryColor.copy(alpha = 0.4f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+            color = if (soundEnabled) primaryColor.copy(alpha = 0.4f) else MaterialTheme.colorScheme.outlineVariant
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -277,7 +273,7 @@ private fun SoundProfileCard(
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val borderColor by animateColorAsState(
-        targetValue = if (isSelected) primaryColor else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
+        targetValue = if (isSelected) primaryColor else MaterialTheme.colorScheme.outlineVariant,
         label = "border"
     )
     val containerColor by animateColorAsState(
@@ -288,9 +284,9 @@ private fun SoundProfileCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
         border = BorderStroke(if (isSelected) 1.5.dp else 1.dp, borderColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -306,21 +302,21 @@ private fun SoundProfileCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(6.dp),
                     color = if (isSelected) FrogoPrimary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Text(
                         text = when (profile) {
-                            MechanicalSoundType.CHERRY_MX_BLUE -> "CLICKY"
-                            MechanicalSoundType.CHERRY_MX_BROWN -> "TACTILE"
-                            MechanicalSoundType.CHERRY_MX_RED -> "LINEAR"
-                            MechanicalSoundType.TYPEWRITER -> "VINTAGE"
-                            MechanicalSoundType.SYSTEM_CLICK -> "SYSTEM"
-                            MechanicalSoundType.OFF -> "MUTE"
+                            MechanicalSoundType.CHERRY_MX_BLUE -> "Clicky"
+                            MechanicalSoundType.CHERRY_MX_BROWN -> "Tactile"
+                            MechanicalSoundType.CHERRY_MX_RED -> "Linear"
+                            MechanicalSoundType.TYPEWRITER -> "Vintage"
+                            MechanicalSoundType.SYSTEM_CLICK -> "System"
+                            MechanicalSoundType.OFF -> "Mute"
                         },
                         style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 9.sp
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 10.sp
                         ),
                         color = if (isSelected) FrogoPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -372,9 +368,9 @@ private fun VolumeControlCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -427,9 +423,9 @@ private fun HapticVibrationCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
@@ -457,7 +453,7 @@ private fun HapticVibrationCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Keypress Vibration (Haptic)",
+                    text = "Getaran Tombol (Haptic)",
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
@@ -466,7 +462,7 @@ private fun HapticVibrationCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Subtle tactile pulse on key touch",
+                    text = "Getaran tactile halus saat tombol disentuh",
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -493,11 +489,11 @@ private fun LiveSoundPlaygroundCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, FrogoPrimary.copy(alpha = 0.3f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -511,27 +507,26 @@ private fun LiveSoundPlaygroundCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "LIVE MECHANICAL KEYBOARD PLAYGROUND",
-                    style = MaterialTheme.typography.labelSmall.copy(
+                    text = "Playground Suara Mekanik",
+                    style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        letterSpacing = 0.8.sp
+                        fontSize = 14.sp
                     ),
                     color = FrogoPrimary
                 )
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = FrogoPrimary.copy(alpha = 0.15f)
+                    color = FrogoPrimary.copy(alpha = 0.12f)
                 ) {
                     Text(
-                        text = "TEST ACOUSTICS",
+                        text = "Uji Suara",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 9.sp
+                            fontSize = 10.sp
                         ),
                         color = FrogoPrimary,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                     )
                 }
             }
@@ -539,7 +534,7 @@ private fun LiveSoundPlaygroundCard(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Tap keycaps below to experience ${selectedSoundType.title} acoustics and tactile vibration:",
+                text = "Sentuh tombol di bawah untuk mendengarkan karakter suara ${selectedSoundType.title} dan getaran haptic:",
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -561,7 +556,7 @@ private fun LiveSoundPlaygroundCard(
                 }
 
                 PlaygroundKeycap(
-                    label = "SPACE",
+                    label = "SPASI",
                     onClick = onKeyTap,
                     modifier = Modifier.weight(2f)
                 )
@@ -587,15 +582,15 @@ private fun PlaygroundKeycap(
     Surface(
         modifier = modifier
             .height(44.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(10.dp),
-        color = if (isAction) FrogoPrimary else MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(8.dp),
+        color = if (isAction) FrogoPrimary else MaterialTheme.colorScheme.surfaceVariant,
         border = BorderStroke(
             1.dp,
-            if (isAction) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            if (isAction) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant
         ),
-        shadowElevation = 2.dp
+        shadowElevation = 0.dp
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

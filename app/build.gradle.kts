@@ -115,19 +115,7 @@ kotlin {
 dependencies {
 
     val composeBom = platform(libs.androidx.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    implementation(project(DependencyGradle.MODULE_LIB_FROGO_KEYBOARD))
+    implementation(project(DependencyGradle.MODULE_LIB_KEYBOARD))
 
     implementation(libs.androidx.work.ktx)
     implementation(libs.google.hilt)
@@ -136,10 +124,13 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
 
-    ksp(libs.github.glide.compiler)
     ksp(libs.google.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.androidx.lifecycle.compiler)
+
+    androidTestImplementation(composeBom)
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
 }

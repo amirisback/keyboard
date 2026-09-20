@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item
+                android:bottom="@dimen/key_margin"
+                android:left="@dimen/key_margin"
+                android:right="@dimen/key_margin"
+                android:top="@dimen/key_margin">
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/key_action_radius" />
+                    <solid android:color="@color/keypad_action_pressed" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item
+                android:id="@+id/button_background_shape"
+                android:bottom="@dimen/key_margin"
+                android:left="@dimen/key_margin"
+                android:right="@dimen/key_margin"
+                android:top="@dimen/key_margin">
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/key_action_radius" />
+                    <solid android:color="@color/keypad_action_background" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

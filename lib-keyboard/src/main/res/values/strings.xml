@@ -1,0 +1,24 @@
+<resources>
+    <string name="keycode_delete">Delete</string>
+    <string name="keycode_mode_change">Change keyboard type</string>
+    <string name="keycode_shift">Shift</string>
+    <string name="keycode_enter">Enter</string>
+
+    <string name="back">Back</string>
+    <string name="emojis">Emojis</string>
+
+    <string name="translation_bengali">Bengali</string>
+    <string name="translation_bulgarian">Bulgarian</string>
+    <string name="translation_english">English</string>
+    <string name="translation_french">French</string>
+    <string name="translation_german">German</string>
+    <string name="translation_greek">Greek</string>
+    <string name="translation_lithuanian">Lithuanian</string>
+    <string name="translation_romanian">Romanian</string>
+    <string name="translation_russian">Russian</string>
+    <string name="translation_slovenian">Slovenian</string>
+    <string name="translation_spanish">Spanish</string>
+    <string name="translation_turkish">Turkish</string>
+    <string name="translation_persian">فارسی</string>
+
+</resources>

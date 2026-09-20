@@ -2,7 +2,6 @@ package com.frogobox.appkeyboard
 
 import com.frogobox.appkeyboard.suggestion.WordSuggestionEngine
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before

@@ -2,36 +2,50 @@ package com.frogobox.appkeyboard.ui.keyboard.webview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import com.frogobox.appkeyboard.databinding.KeyboardWebviewBinding
-import com.frogobox.libkeyboard.common.core.BaseKeyboard
-import com.frogobox.sdk.ext.loadUrlFrogoExt
+import android.view.inputmethod.InputConnection
+import android.widget.FrameLayout
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 
 /**
- * Created by Faisal Amir on 07/11/22
- * -----------------------------------------
- * E-mail   : faisalamircs@gmail.com
- * Github   : github.com/amirisback
- * -----------------------------------------
- * Copyright (C) Frogobox ID / amirisback
- * All rights reserved
+ * Modern Jetpack Compose-based Webview Keyboard panel.
  */
-
-class WebiewKeyboard(
+class WebiewKeyboard @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-) : BaseKeyboard<KeyboardWebviewBinding>(context, attrs) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    override fun setupViewBinding(inflater: LayoutInflater, parent: LinearLayout): KeyboardWebviewBinding {
-        return KeyboardWebviewBinding.inflate(LayoutInflater.from(context), this, true)
+    var currentInputConnection: InputConnection? = null
+    var onBackClick: (() -> Unit)? = null
+
+    private val composeView = ComposeView(context).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+        setContent {
+            FrogoKeyboardTheme {
+                WebviewKeyboardScreen(
+                    onCommitText = { text ->
+                        currentInputConnection?.commitText(text, 1)
+                    },
+                    onBackClick = {
+                        onBackClick?.invoke()
+                    }
+                )
+            }
+        }
     }
 
-    override fun initUI() {
-        super.initUI()
-        binding.apply {
-            webview.loadUrlFrogoExt("https://www.google.com")
-        }
+    init {
+        addView(composeView)
+    }
+
+    fun setInputConnection(inputConnection: InputConnection?) {
+        currentInputConnection = inputConnection
+    }
+
+    fun setOnBackClickListener(listener: () -> Unit) {
+        onBackClick = listener
     }
 
 }

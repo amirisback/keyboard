@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -40,7 +39,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -51,8 +49,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -71,8 +67,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -137,7 +131,7 @@ fun TestScreen(
             modifier = modifier.fillMaxSize(),
             topBar = {
                 FrogoTopAppBar(
-                    title = "Test Area",
+                    title = "Playground Uji Coba",
                     onBackClick = onBackClick
                 )
             }
@@ -160,9 +154,9 @@ fun TestScreen(
                 // 2. Real-time Live Typing Metrics Card
                 LiveMetricsCard(metrics = metrics)
 
-                // 3. Tab Navigation Row
+                // 3. Tab Navigation Row (3 Tabs)
                 PrimaryTabRow(
-                    selectedTabIndex = activeTab,
+                    selectedTabIndex = activeTab.coerceIn(0, 2),
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = FrogoPrimary
                 ) {
@@ -175,7 +169,7 @@ fun TestScreen(
                     Tab(
                         selected = activeTab == 1,
                         onClick = { onTabSelected(1) },
-                        text = { Text("Inputs", fontWeight = FontWeight.SemiBold) },
+                        text = { Text("Input Khusus", fontWeight = FontWeight.SemiBold) },
                         icon = { Icon(Icons.Default.Keyboard, contentDescription = null, modifier = Modifier.size(20.dp)) }
                     )
                     Tab(
@@ -198,7 +192,7 @@ fun TestScreen(
                             if (sandboxText.isNotEmpty()) {
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 clipboard.setPrimaryClip(ClipData.newPlainText("Sandbox Text", sandboxText))
-                                Toast.makeText(context, "Text copied to clipboard", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Teks disalin ke clipboard", Toast.LENGTH_SHORT).show()
                             }
                         }
                     )
@@ -223,7 +217,7 @@ fun TestScreen(
                         snippets = autoTextList,
                         onSnippetClicked = { snippet ->
                             onInsertText(snippet.body)
-                            Toast.makeText(context, "Inserted '${snippet.title}' to sandbox", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Disisipkan '${snippet.title}' ke sandbox", Toast.LENGTH_SHORT).show()
                             onTabSelected(0)
                         }
                     )
@@ -246,21 +240,22 @@ private fun KeyboardStatusCard(
     modifier: Modifier = Modifier
 ) {
     val statusColor = if (isFrogoActive) FrogoStatusSuccess else FrogoStatusWarning
-    val statusTitle = if (isFrogoActive) "Frogo Keyboard Active" else "Other Keyboard Active"
+    val statusTitle = if (isFrogoActive) "Frogo Keyboard Aktif" else "Keyboard Lain Aktif"
     val statusDesc = if (isFrogoActive) {
-        "Frogo Keyboard is default. Testing real keyboard layouts."
+        "Frogo Keyboard aktif sebagai input default. Anda sedang menguji tata letak asli."
     } else {
-        "External keyboard is active. Switch to test Frogo features."
+        "Metode input lain sedang aktif. Ganti untuk menguji fitur Frogo Keyboard."
     }
     val icon = if (isFrogoActive) Icons.Default.CheckCircle else Icons.Default.Warning
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = statusColor.copy(alpha = 0.08f)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, statusColor.copy(alpha = 0.25f))
+        border = BorderStroke(1.dp, statusColor.copy(alpha = 0.4f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
@@ -276,7 +271,7 @@ private fun KeyboardStatusCard(
                     modifier = Modifier
                         .size(38.dp)
                         .clip(CircleShape)
-                        .background(statusColor.copy(alpha = 0.16f)),
+                        .background(statusColor.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -313,21 +308,21 @@ private fun KeyboardStatusCard(
                 Button(
                     onClick = onChangeKeyboard,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary)
                 ) {
                     Icon(Icons.Default.Keyboard, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Switch Keyboard", fontSize = 13.sp)
+                    Text("Ganti Keyboard", fontSize = 13.sp)
                 }
 
                 OutlinedButton(
                     onClick = onGoToSettings,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Settings", fontSize = 13.sp)
+                    Text("Pengaturan", fontSize = 13.sp)
                 }
             }
         }
@@ -342,13 +337,14 @@ private fun LiveMetricsCard(
     metrics: TypingMetrics,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(
+    Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.elevatedCardColors(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
@@ -473,11 +469,12 @@ private fun SandboxTabContent(
             onValueChange = onTextChanged,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            placeholder = { Text("Type anywhere here with your keyboard to test metrics, latency, and keys...") },
-            shape = RoundedCornerShape(16.dp),
+                .height(180.dp),
+            placeholder = { Text("Ketik di area ini dengan keyboard Anda untuk menguji metrik pengetikan, kecepatan, dan responsivitas tombol...") },
+            shape = RoundedCornerShape(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = FrogoPrimary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
@@ -491,27 +488,27 @@ private fun SandboxTabContent(
             OutlinedButton(
                 onClick = onCopyText,
                 modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Copy", fontSize = 13.sp)
+                Text("Salin", fontSize = 13.sp)
             }
 
             OutlinedButton(
                 onClick = onResetTimer,
                 modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Reset WPM", fontSize = 13.sp)
+                Text("Reset", fontSize = 13.sp)
             }
 
             Button(
                 onClick = onClearText,
                 modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -519,7 +516,7 @@ private fun SandboxTabContent(
             ) {
                 Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Clear", fontSize = 13.sp)
+                Text("Hapus", fontSize = 13.sp)
             }
         }
     }
@@ -568,7 +565,7 @@ private fun SpecializedInputsTabContent(
                 }
             },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search
@@ -580,10 +577,10 @@ private fun SpecializedInputsTabContent(
             value = numberInput,
             onValueChange = onNumberChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Numeric Keypad (KeyboardType.Number)") },
+            label = { Text("Input Angka (KeyboardType.Number)") },
             placeholder = { Text("12345678") },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
@@ -595,10 +592,10 @@ private fun SpecializedInputsTabContent(
             value = phoneInput,
             onValueChange = onPhoneChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Phone Keypad (KeyboardType.Phone)") },
+            label = { Text("Input Telepon (KeyboardType.Phone)") },
             placeholder = { Text("+62 812-3456-7890") },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
@@ -610,10 +607,10 @@ private fun SpecializedInputsTabContent(
             value = passwordInput,
             onValueChange = onPasswordChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Password (Visibility Toggle)") },
-            placeholder = { Text("Enter secret password...") },
+            label = { Text("Password (Toggle Visibilitas)") },
+            placeholder = { Text("Masukkan kata sandi...") },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(8.dp),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
@@ -622,7 +619,7 @@ private fun SpecializedInputsTabContent(
             trailingIcon = {
                 val icon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 IconButton(onClick = onTogglePasswordVisibility) {
-                    Icon(icon, contentDescription = if (passwordVisible) "Hide password" else "Show password")
+                    Icon(icon, contentDescription = if (passwordVisible) "Sembunyikan password" else "Tampilkan password")
                 }
             }
         )
@@ -642,10 +639,10 @@ private fun SpecializedInputsTabContent(
                 modifier = Modifier
                     .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true)
                     .fillMaxWidth(),
-                label = { Text("Searchable Dropdown (Filter Chips)") },
-                placeholder = { Text("Type city name...") },
+                label = { Text("Dropdown Pencarian") },
+                placeholder = { Text("Ketik nama kota...") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(8.dp),
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
             )
 
@@ -684,7 +681,7 @@ private fun AutoTextTabContent(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "Tap any AutoText snippet to insert it into the test sandbox:",
+            text = "Sentuh salah satu template teks untuk menyisipkannya ke sandbox:",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -693,12 +690,14 @@ private fun AutoTextTabContent(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
                     .clickable { onSnippetClicked(snippet) },
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Row(
                     modifier = Modifier

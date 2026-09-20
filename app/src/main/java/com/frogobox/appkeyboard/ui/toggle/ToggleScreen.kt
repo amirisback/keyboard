@@ -242,7 +242,7 @@ private fun ToggleHeaderBanner(
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "Enable All",
+                        text = "Aktifkan Semua",
                         style = MaterialTheme.typography.labelMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 12.sp
@@ -258,7 +258,7 @@ private fun ToggleHeaderBanner(
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "Disable All",
+                        text = "Nonaktifkan Semua",
                         style = MaterialTheme.typography.labelMedium.copy(
                             fontWeight = FontWeight.Normal,
                             fontSize = 12.sp
@@ -288,19 +288,19 @@ private fun ToggleFilterRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ToggleFilterChip(
-            text = "All ($totalCount)",
+            text = "Semua ($totalCount)",
             isSelected = selectedTab == ToggleFilterTab.ALL,
             onClick = { onTabSelected(ToggleFilterTab.ALL) }
         )
 
         ToggleFilterChip(
-            text = "Active ($activeCount)",
+            text = "Aktif ($activeCount)",
             isSelected = selectedTab == ToggleFilterTab.ACTIVE,
             onClick = { onTabSelected(ToggleFilterTab.ACTIVE) }
         )
 
         ToggleFilterChip(
-            text = "Disabled ($disabledCount)",
+            text = "Nonaktif ($disabledCount)",
             isSelected = selectedTab == ToggleFilterTab.DISABLED,
             onClick = { onTabSelected(ToggleFilterTab.DISABLED) }
         )
@@ -316,9 +316,9 @@ private fun ToggleFilterChip(
 ) {
     Surface(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(8.dp),
         color = if (isSelected) {
             MaterialTheme.colorScheme.primary
         } else {
@@ -329,7 +329,7 @@ private fun ToggleFilterChip(
             color = if (isSelected) {
                 MaterialTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                MaterialTheme.colorScheme.outlineVariant
             }
         )
     ) {
@@ -344,7 +344,7 @@ private fun ToggleFilterChip(
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
             },
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
         )
     }
 }
@@ -363,21 +363,21 @@ private fun ToggleFeatureCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(12.dp))
             .clickable { onCheckedChange(!isChecked) },
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = BorderStroke(
-            width = 1.dp,
+            width = if (isChecked) 1.5.dp else 1.dp,
             color = if (isChecked) {
-                primaryColor.copy(alpha = 0.45f)
+                primaryColor.copy(alpha = 0.5f)
             } else {
-                outlineVariant.copy(alpha = 0.35f)
+                outlineVariant
             }
         ),
         colors = CardDefaults.cardColors(
             containerColor = if (isChecked) {
-                primaryColor.copy(alpha = 0.08f)
+                primaryColor.copy(alpha = 0.06f)
             } else {
                 surfaceColor
             }

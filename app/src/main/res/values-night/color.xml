@@ -12,12 +12,4 @@
     <color name="color_bg_keyboard_pink">#D81B60</color>
     <color name="color_bg_keyboard_yellow">#FDD835</color>
 
-    <!-- Suggestion Bar Colors (Dark Theme) -->
-    <color name="color_suggestion_bg">#1E232A</color>
-    <color name="color_suggestion_user">#B0BEC5</color>
-    <color name="color_suggestion_predicted">#4FC3F7</color>
-    <color name="color_suggestion_pill">#0D47A1</color>
-    <color name="color_suggestion_autocorrect">#ECEFF1</color>
-    <color name="color_suggestion_divider">#37474F</color>
-
 </resources>

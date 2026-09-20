@@ -106,13 +106,14 @@ fun AutoTextDetailScreen(
         bottomBar = {
             Surface(
                 color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 3.dp,
-                shadowElevation = 8.dp
+                tonalElevation = 0.dp,
+                shadowElevation = 0.dp,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Delete Button
@@ -120,23 +121,23 @@ fun AutoTextDetailScreen(
                         onClick = { showDeleteDialog = true },
                         modifier = Modifier
                             .weight(1f)
-                            .height(52.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .height(48.dp),
+                        shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = FrogoStatusFailed
                         ),
-                        border = BorderStroke(1.dp, FrogoStatusFailed.copy(alpha = 0.4f))
+                        border = BorderStroke(1.dp, FrogoStatusFailed.copy(alpha = 0.6f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = "Hapus",
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Delete",
+                            text = "Hapus",
                             style = MaterialTheme.typography.labelLarge.copy(
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold
                             ),
                             color = FrogoStatusFailed
@@ -148,8 +149,8 @@ fun AutoTextDetailScreen(
                         onClick = onEditClick,
                         modifier = Modifier
                             .weight(1f)
-                            .height(52.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .height(48.dp),
+                        shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = FrogoPrimary
                         )
@@ -162,9 +163,9 @@ fun AutoTextDetailScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Edit",
+                            text = "Ubah",
                             style = MaterialTheme.typography.labelLarge.copy(
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold
                             ),
                             color = Color.White
@@ -186,17 +187,17 @@ fun AutoTextDetailScreen(
             // Header Hero Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                shape = RoundedCornerShape(12.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -205,8 +206,8 @@ fun AutoTextDetailScreen(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(44.dp)
-                                .clip(RoundedCornerShape(12.dp))
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(8.dp))
                                 .background(FrogoPrimary.copy(alpha = 0.12f)),
                             contentAlignment = Alignment.Center
                         ) {
@@ -214,26 +215,26 @@ fun AutoTextDetailScreen(
                                 imageVector = Icons.AutoMirrored.Filled.ShortText,
                                 contentDescription = null,
                                 tint = FrogoPrimary,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
 
                         IconButton(onClick = onShareSnippet) {
                             Icon(
                                 imageVector = Icons.Default.Share,
-                                contentDescription = "Share",
+                                contentDescription = "Bagikan",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = data.title,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 22.sp
+                            fontSize = 20.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -246,11 +247,12 @@ fun AutoTextDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         ) {
                             Text(
-                                text = "${data.body.length} characters",
+                                text = "${data.body.length} karakter",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 11.sp
@@ -261,11 +263,12 @@ fun AutoTextDetailScreen(
                         }
 
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         ) {
                             Text(
-                                text = "$wordCount words",
+                                text = "$wordCount kata",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 11.sp
@@ -276,15 +279,15 @@ fun AutoTextDetailScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     // Primary Copy Button
                     Button(
                         onClick = onCopySnippet,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(46.dp),
-                        shape = RoundedCornerShape(12.dp),
+                            .height(44.dp),
+                        shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = FrogoPrimary.copy(alpha = 0.12f),
                             contentColor = FrogoPrimary
@@ -293,12 +296,12 @@ fun AutoTextDetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ContentCopy,
-                            contentDescription = "Copy text",
+                            contentDescription = "Salin teks",
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Copy to Clipboard",
+                            text = "Salin ke Clipboard",
                             style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -313,11 +316,10 @@ fun AutoTextDetailScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "EXPANDED CONTENT",
+                    text = "Isi Template",
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        fontSize = 12.sp
+                        fontSize = 13.sp
                     ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
@@ -325,23 +327,23 @@ fun AutoTextDetailScreen(
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp)
+                            .padding(16.dp)
                     ) {
                         Text(
                             text = data.body,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontSize = 15.sp,
-                                lineHeight = 24.sp
+                                lineHeight = 22.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -357,7 +359,7 @@ fun AutoTextDetailScreen(
             icon = {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(44.dp)
                         .clip(CircleShape)
                         .background(FrogoStatusFailed.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
@@ -366,20 +368,20 @@ fun AutoTextDetailScreen(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
                         tint = FrogoStatusFailed,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
             },
             title = {
                 Text(
-                    text = "Delete Template?",
+                    text = "Hapus Template?",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
             },
             text = {
-                Text("Are you sure you want to delete \"${data.title}\"? This action cannot be undone.")
+                Text("Apakah Anda yakin ingin menghapus template \"${data.title}\"? Tindakan ini tidak dapat dibatalkan.")
             },
             confirmButton = {
                 Button(
@@ -390,10 +392,10 @@ fun AutoTextDetailScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = FrogoStatusFailed
                     ),
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = "Delete",
+                        text = "Hapus",
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
@@ -403,7 +405,7 @@ fun AutoTextDetailScreen(
                 TextButton(
                     onClick = { showDeleteDialog = false }
                 ) {
-                    Text("Cancel")
+                    Text("Batal")
                 }
             },
             shape = RoundedCornerShape(16.dp)

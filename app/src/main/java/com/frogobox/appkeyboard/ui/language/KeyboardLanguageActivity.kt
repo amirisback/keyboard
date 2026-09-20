@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.frogobox.appkeyboard.common.base.BaseComposeActivity
@@ -16,7 +17,7 @@ class KeyboardLanguageActivity : BaseComposeActivity() {
     private val viewModel: KeyboardLanguageViewModel by viewModels()
 
     private var languageList by mutableStateOf<List<KeyboardLanguage>>(emptyList())
-    private var activeLanguageXml by mutableStateOf(0)
+    private var activeLanguageXml by mutableIntStateOf(0)
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)

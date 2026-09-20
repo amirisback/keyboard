@@ -2,26 +2,45 @@ package com.frogobox.appkeyboard.ui.theme.compose
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Tactile & Modern Tooling Color Palette (Anti-Slop Design System)
+// Precision Steel Blue as Primary, Deep Slate for Dark Base, Clean Slate-White for Light Base
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Primary Brand
+val FrogoPrimary = Color(0xFF2563EB) // Precision Steel Blue (Light)
+val FrogoPrimaryDark = Color(0xFF3B82F6) // Precision Steel Blue (Dark)
+val FrogoPrimaryVariant = Color(0xFF1D4ED8)
+val FrogoPrimaryContainer = Color(0xFFEFF6FF)
+val FrogoPrimaryContainerDark = Color(0xFF1E3A8A)
 
-// Frogo Keyboard Specific Colors
-val FrogoPrimary = Color(0xFF6200EE)
-val FrogoPrimaryVariant = Color(0xFF3700B3)
-val FrogoSecondary = Color(0xFF03DAC5)
-val FrogoBackground = Color(0xFFFCFCFF)
-val FrogoText = Color(0xFF000000)
-val FrogoTextDark = Color(0xFFFFFFFF)
-val FrogoGrey = Color(0xFF424242)
-val FrogoDivider = Color(0xFFE0E0E0)
-val FrogoBorder = Color(0xFFBDBDBD)
+// Secondary & Accent
+val FrogoSecondary = Color(0xFF0284C7)
+val FrogoSecondaryDark = Color(0xFF38BDF8)
 
-// Status Colors
-val FrogoStatusSuccess = Color(0xFF41AF60)
-val FrogoStatusWarning = Color(0xFFF57C00)
-val FrogoStatusFailed = Color(0xFFC53741)
+// Backgrounds & Surfaces
+val FrogoBackground = Color(0xFFF8FAFC)
+val FrogoBackgroundDark = Color(0xFF0F172A)
+val FrogoSurface = Color(0xFFFFFFFF)
+val FrogoSurfaceDark = Color(0xFF1E293B)
+val FrogoSurfaceVariantLight = Color(0xFFF1F5F9)
+val FrogoSurfaceVariantDark = Color(0xFF334155)
+
+// Typography & Content
+val FrogoText = Color(0xFF0F172A)
+val FrogoTextDark = Color(0xFFF8FAFC)
+val FrogoTextSecondary = Color(0xFF475569)
+val FrogoTextSecondaryDark = Color(0xFF94A3B8)
+val FrogoGrey = Color(0xFF64748B)
+
+// Borders & Tactile Separators
+val FrogoDivider = Color(0xFFE2E8F0)
+val FrogoDividerDark = Color(0xFF334155)
+val FrogoBorder = Color(0xFFCBD5E1)
+val FrogoBorderDark = Color(0xFF475569)
+
+// Semantic Status Colors (WCAG AA Compliant contrast ratio >= 4.5:1)
+val FrogoStatusSuccess = Color(0xFF15803D)
+val FrogoStatusSuccessDark = Color(0xFF22C55E)
+val FrogoStatusWarning = Color(0xFFB45309)
+val FrogoStatusWarningDark = Color(0xFFF59E0B)
+val FrogoStatusFailed = Color(0xFFB91C1C)
+val FrogoStatusFailedDark = Color(0xFFEF4444)

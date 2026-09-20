@@ -2,24 +2,31 @@ package com.frogobox.appkeyboard.ui.test
 
 import androidx.lifecycle.viewModelScope
 import com.frogobox.appkeyboard.common.base.BaseViewModel
+import com.frogobox.appkeyboard.common.core.Resource
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.AutoTextLabelType
 import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
+import com.frogobox.appkeyboard.repository.data.DataApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 
 /**
  * Created by Faisal Amir on 24/10/22
- * Redesigned for TASK-010 by Tim Mobile
+ * Redesigned for TASK-010 and TASK-015 by Tim Mobile
  */
 @HiltViewModel
 class TestViewModel @Inject constructor(
-    private val repository: AutoTextRepository
+    private val repository: AutoTextRepository,
+    private val dataApiRepository: DataApiRepository
 ) : BaseViewModel() {
 
     private val _sandboxText = MutableStateFlow("")
@@ -33,6 +40,9 @@ class TestViewModel @Inject constructor(
 
     private val _autoTextList = MutableStateFlow<List<AutoTextEntity>>(emptyList())
     val autoTextList: StateFlow<List<AutoTextEntity>> = _autoTextList.asStateFlow()
+
+    private val _remoteApiUiState = MutableStateFlow<DataApiUiState>(DataApiUiState.Idle)
+    val remoteApiUiState: StateFlow<DataApiUiState> = _remoteApiUiState.asStateFlow()
 
     private var typingStartTimestamp: Long = 0L
 
@@ -120,5 +130,38 @@ class TestViewModel @Inject constructor(
 
     fun onTabSelected(tabIndex: Int) {
         _activeTab.value = tabIndex
+    }
+
+    fun fetchRemoteData() {
+        viewModelScope.launch {
+            dataApiRepository.fetchDataStream().collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        _remoteApiUiState.value = DataApiUiState.Loading
+                    }
+                    is Resource.Success -> {
+                        val items = resource.data.data ?: emptyList()
+                        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply {
+                            timeZone = TimeZone.getTimeZone("Asia/Jakarta")
+                        }
+                        val nowWib = "${sdf.format(Date())} WIB"
+                        _remoteApiUiState.value = DataApiUiState.Success(
+                            total = resource.data.total ?: items.size,
+                            lastUpdatedWib = resource.data.lastUpdated ?: nowWib,
+                            items = items
+                        )
+                    }
+                    is Resource.Error -> {
+                        _remoteApiUiState.value = DataApiUiState.Error(
+                            message = resource.message
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetRemoteData() {
+        _remoteApiUiState.value = DataApiUiState.Idle
     }
 }

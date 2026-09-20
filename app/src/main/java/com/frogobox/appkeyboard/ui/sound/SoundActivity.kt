@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.frogobox.appkeyboard.common.base.BaseComposeActivity
@@ -17,7 +18,7 @@ class SoundActivity : BaseComposeActivity() {
 
     private var soundEnabled by mutableStateOf(true)
     private var selectedSoundType by mutableStateOf(MechanicalSoundType.CHERRY_MX_BLUE)
-    private var soundVolume by mutableStateOf(80)
+    private var soundVolume by mutableIntStateOf(80)
     private var vibrateEnabled by mutableStateOf(true)
 
     override fun onCreateExt(savedInstanceState: Bundle?) {

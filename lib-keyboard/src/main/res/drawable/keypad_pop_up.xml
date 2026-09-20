@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/button_background_shape">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/keypad_mini" />
+            <corners android:radius="@dimen/key_action_radius" />
+        </shape>
+    </item>
+
+    <item android:id="@+id/button_background_stroke">
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="@dimen/frogo_dimen_1dp"
+                android:color="@color/keypad_mini_stroke" />
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="@dimen/key_action_radius" />
+        </shape>
+    </item>
+</layer-list>

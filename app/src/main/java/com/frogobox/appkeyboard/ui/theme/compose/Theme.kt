@@ -8,29 +8,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    background = Color(0xFF1C1B1F),
-    surface = Color(0xFF1C1B1F),
-    onPrimary = Color(0xFF381E72),
-    onSecondary = Color(0xFF332D41),
-    onTertiary = Color(0xFF492532),
-    onBackground = Color(0xFFE6E1E5),
-    onSurface = Color(0xFFE6E1E5),
+    primary = FrogoPrimaryDark,
+    onPrimary = Color(0xFF0F172A),
+    primaryContainer = FrogoPrimaryContainerDark,
+    onPrimaryContainer = Color(0xFFDBEAFE),
+    secondary = FrogoSecondaryDark,
+    onSecondary = Color(0xFF0F172A),
+    tertiary = FrogoPrimaryDark,
+    onTertiary = Color(0xFF0F172A),
+    background = FrogoBackgroundDark,
+    onBackground = FrogoTextDark,
+    surface = FrogoSurfaceDark,
+    onSurface = FrogoTextDark,
+    surfaceVariant = FrogoSurfaceVariantDark,
+    onSurfaceVariant = FrogoTextSecondaryDark,
+    outline = FrogoBorderDark,
+    outlineVariant = FrogoDividerDark
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = FrogoPrimary,
-    secondary = FrogoSecondary,
-    tertiary = FrogoPrimaryVariant,
-    background = FrogoBackground,
-    surface = Color.White,
     onPrimary = Color.White,
-    onSecondary = Color.Black,
+    primaryContainer = FrogoPrimaryContainer,
+    onPrimaryContainer = Color(0xFF1E3A8A),
+    secondary = FrogoSecondary,
+    onSecondary = Color.White,
+    tertiary = FrogoPrimaryVariant,
     onTertiary = Color.White,
+    background = FrogoBackground,
     onBackground = FrogoText,
+    surface = FrogoSurface,
     onSurface = FrogoText,
+    surfaceVariant = FrogoSurfaceVariantLight,
+    onSurfaceVariant = FrogoTextSecondary,
+    outline = FrogoBorder,
+    outlineVariant = FrogoDivider
 )
 
 @Composable

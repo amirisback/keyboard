@@ -12,6 +12,7 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
 import android.media.AudioManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -786,8 +787,10 @@ class MainKeyboard @JvmOverloads constructor(
 
     private fun sendAccessibilityEventForUnicodeCharacter(eventType: Int, code: Int) {
         if (mAccessibilityManager.isEnabled) {
-            val event = AccessibilityEvent().apply {
-                this.eventType = eventType
+            val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                AccessibilityEvent(eventType)
+            } else {
+                AccessibilityEvent.obtain(eventType)
             }
             onInitializeAccessibilityEvent(event)
             val text: String = when (code) {

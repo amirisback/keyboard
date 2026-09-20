@@ -194,20 +194,20 @@ class MainKeyboard @JvmOverloads constructor(
         private val LONGPRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout()
     }
 
-    // handle system default theme (Material You) specially as the color is taken from the system, not hardcoded by us
-
     init {
+        val defaultKeyTextSize = resources.getDimensionPixelSize(R.dimen.keyboard_text_size)
+        mKeyTextSize = defaultKeyTextSize
+
         val attributes =
             context.obtainStyledAttributes(attrs, R.styleable.FrogoKeyboardView, 0, defStyleRes)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val keyTextSize = 0
         val indexCnt = attributes.indexCount
 
         try {
             for (i in 0 until indexCnt) {
                 when (val attr = attributes.getIndex(i)) {
                     R.styleable.FrogoKeyboardView_keyTextSize -> mKeyTextSize =
-                        attributes.getDimensionPixelSize(attr, 18)
+                        attributes.getDimensionPixelSize(attr, defaultKeyTextSize)
                 }
             }
         } finally {
@@ -216,6 +216,10 @@ class MainKeyboard @JvmOverloads constructor(
 
         mTextColor = context.getColorExt(R.color.keypad_text)
         mBackgroundColor = context.getColorExt(R.color.keyboard_board)
+
+        if (background == null) {
+            setBackgroundColor(mBackgroundColor)
+        }
 
         mPopupLayout = R.layout.keyboard_main_mini
         mVerticalCorrection = resources.getDimension(R.dimen.vertical_correction).toInt()
@@ -238,7 +242,7 @@ class MainKeyboard @JvmOverloads constructor(
 
         mPaint = Paint().apply {
             isAntiAlias = true
-            textSize = keyTextSize.toFloat()
+            textSize = mKeyTextSize.toFloat()
             textAlign = Align.CENTER
             alpha = 255
         }
@@ -254,6 +258,8 @@ class MainKeyboard @JvmOverloads constructor(
 
         initCachedDrawables()
     }
+
+    fun getKeyTextSize(): Int = mKeyTextSize
 
     fun initCachedDrawables() {
         mKeypadDefaultDrawable = resources.getDrawable(R.drawable.keypad_default, context.theme)
@@ -283,7 +289,7 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+    public override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
 
         if (visibility == VISIBLE) {
@@ -295,14 +301,21 @@ class MainKeyboard @JvmOverloads constructor(
             val miniKeyboardBackgroundColor = context.getColorExt(R.color.keypad)
 
             if (changedView == findViewById(R.id.mini_keyboard_view)) {
-                val previewBackground = background as LayerDrawable
-                previewBackground.findDrawableByLayerId(R.id.button_background_shape)
-                    .applyColorFilter(miniKeyboardBackgroundColor)
-                previewBackground.findDrawableByLayerId(R.id.button_background_stroke)
-                    .applyColorFilter(strokeColor)
-                background = previewBackground
+                val previewBackground = background as? LayerDrawable
+                previewBackground?.findDrawableByLayerId(R.id.button_background_shape)
+                    ?.applyColorFilter(miniKeyboardBackgroundColor)
+                previewBackground?.findDrawableByLayerId(R.id.button_background_stroke)
+                    ?.applyColorFilter(strokeColor)
+                if (previewBackground != null) {
+                    background = previewBackground
+                }
             } else {
-                background.applyColorFilter(mBackgroundColor)
+                val currentBg = background
+                if (currentBg != null) {
+                    currentBg.applyColorFilter(mBackgroundColor)
+                } else {
+                    setBackgroundColor(mBackgroundColor)
+                }
             }
 
         }

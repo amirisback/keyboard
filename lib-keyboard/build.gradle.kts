@@ -41,6 +41,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -78,6 +84,8 @@ dependencies {
 
     androidTestImplementation(composeBom)
     testImplementation(libs.junit)
+    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("androidx.test:core:1.7.0")
     debugImplementation(libs.androidx.compose.ui.tooling)
 
 

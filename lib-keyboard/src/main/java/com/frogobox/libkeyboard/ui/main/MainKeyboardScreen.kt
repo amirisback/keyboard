@@ -26,11 +26,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.frogobox.libkeyboard.R
 import com.frogobox.libkeyboard.ui.theme.FrogoLibKeyboardTheme
 import com.frogobox.libkeyboard.ui.theme.KeypadActionDark
 import com.frogobox.libkeyboard.ui.theme.KeypadActionLight
 import com.frogobox.libkeyboard.ui.theme.KeypadDark
 import com.frogobox.libkeyboard.ui.theme.KeypadLight
+import com.frogobox.sdk.ext.getColorExt
 
 /**
  * Jetpack Compose interoperability wrapper for hosting [MainKeyboard] within Compose UI trees.
@@ -46,6 +48,9 @@ fun MainKeyboardView(
         modifier = modifier,
         factory = { context ->
             MainKeyboard(context, null).apply {
+                if (background == null) {
+                    setBackgroundColor(context.getColorExt(R.color.keyboard_board))
+                }
                 this.mOnKeyboardActionListener = onActionListener
                 keyboard?.let { setKeyboard(it) }
                 onInit(this)

@@ -25,7 +25,7 @@ import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard.Companion.SHIFT_ON_PERM
 import com.frogobox.libkeyboard.ui.main.OnKeyboardActionListener
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
-abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeyboardActionListener, IKeyboardIME {
+abstract class BaseKeyboardIME : InputMethodService(), OnKeyboardActionListener, IKeyboardIME {
 
     companion object {
         // How quickly do we have to doubletap shift to enable permanent caps lock
@@ -47,9 +47,9 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     var enterKeyType = IME_ACTION_NONE
     var switchToLetters = false
 
-    var binding: VB? = null
-
-    abstract fun setupViewBinding() : VB
+    open fun setupInputView(): View {
+        return View(this)
+    }
 
     override fun onCreate() {
         setTheme(R.style.Theme_Research)
@@ -73,11 +73,11 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
     }
 
     override fun onCreateInputView(): View {
-        binding = setupViewBinding()
+        val view = setupInputView()
         setupBinding()
         initCurrentInputConnection()
         initView()
-        return binding!!.root
+        return view
     }
 
     override fun onPress(primaryCode: Int) {
@@ -440,6 +440,23 @@ abstract class BaseKeyboardIME<VB : ViewBinding> : InputMethodService(), OnKeybo
 
     override fun getKeyboardLayoutXML(): Int {
         return R.xml.keys_letters_qwerty
+    }
+
+}
+
+/**
+ * Legacy ViewBinding adapter base class for consumers that require [ViewBinding].
+ */
+abstract class BaseViewBindingKeyboardIME<VB : ViewBinding> : BaseKeyboardIME() {
+
+    var binding: VB? = null
+
+    abstract fun setupViewBinding(): VB
+
+    override fun setupInputView(): View {
+        val vb = setupViewBinding()
+        binding = vb
+        return vb.root
     }
 
 }

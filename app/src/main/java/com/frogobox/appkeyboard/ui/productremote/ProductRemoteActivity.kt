@@ -20,8 +20,19 @@ class ProductRemoteActivity : BaseComposeActivity() {
 
     private val viewModel: ProductRemoteViewModel by viewModels()
 
+    companion object {
+        const val EXTRA_INITIAL_FILTER = "extra_initial_filter"
+    }
+
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
+        val initialFilterName = intent.getStringExtra(EXTRA_INITIAL_FILTER)
+        if (initialFilterName != null) {
+            try {
+                val filter = DownloadStatusFilter.valueOf(initialFilterName)
+                viewModel.setInitialFilter(filter)
+            } catch (_: Exception) {}
+        }
         requestNotificationPermissionIfNeeded()
     }
 

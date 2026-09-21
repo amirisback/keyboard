@@ -16,6 +16,7 @@ import javax.inject.Inject
 
 enum class DownloadStatusFilter(val label: String) {
     ALL("Semua"),
+    FAVORITE("Favorit"),
     DOWNLOADED("Sudah"),
     NOT_DOWNLOADED("Belum")
 }
@@ -80,6 +81,10 @@ class ProductRemoteViewModel @Inject constructor(
         viewModelScope.launch {
             productRemoteRepository.getSavedProductsStream().collect { list ->
                 _savedProducts.value = list
+                if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE) {
+                    applyFilter()
+                    updateSuccessUiState()
+                }
             }
         }
         fetchProducts()
@@ -103,11 +108,15 @@ class ProductRemoteViewModel @Inject constructor(
                         _rawProducts.value = rawItems
                         applyFilter()
 
-                        _uiState.value = if (rawItems.isEmpty()) {
+                        _uiState.value = if (rawItems.isEmpty() && _downloadStatusFilter.value != DownloadStatusFilter.FAVORITE) {
                             ProductRemoteUiState.Empty()
                         } else {
                             ProductRemoteUiState.Success(
-                                products = rawItems,
+                                products = if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE) {
+                                    _savedProducts.value.map { it.toDataItemResponse() }
+                                } else {
+                                    rawItems
+                                },
                                 filteredProducts = _filteredProducts.value,
                                 searchQuery = _searchQuery.value,
                                 statusFilter = _downloadStatusFilter.value
@@ -120,10 +129,20 @@ class ProductRemoteViewModel @Inject constructor(
                         val isOffline = resource.message.contains("Connection refused", ignoreCase = true) ||
                                 resource.message.contains("Unable to resolve host", ignoreCase = true) ||
                                 resource.message.contains("timeout", ignoreCase = true)
-                        _uiState.value = ProductRemoteUiState.Error(
-                            message = resource.message,
-                            isOffline = isOffline
-                        )
+                        if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE) {
+                            applyFilter()
+                            _uiState.value = ProductRemoteUiState.Success(
+                                products = _savedProducts.value.map { it.toDataItemResponse() },
+                                filteredProducts = _filteredProducts.value,
+                                searchQuery = _searchQuery.value,
+                                statusFilter = _downloadStatusFilter.value
+                            )
+                        } else {
+                            _uiState.value = ProductRemoteUiState.Error(
+                                message = resource.message,
+                                isOffline = isOffline
+                            )
+                        }
                     }
                 }
             }
@@ -146,10 +165,20 @@ class ProductRemoteViewModel @Inject constructor(
         updateSuccessUiState()
     }
 
+    fun setInitialFilter(filter: DownloadStatusFilter) {
+        _downloadStatusFilter.value = filter
+        applyFilter()
+        updateSuccessUiState()
+    }
+
     private fun updateSuccessUiState() {
-        if (_rawProducts.value.isNotEmpty()) {
+        if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE || _rawProducts.value.isNotEmpty()) {
             _uiState.value = ProductRemoteUiState.Success(
-                products = _rawProducts.value,
+                products = if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE) {
+                    _savedProducts.value.map { it.toDataItemResponse() }
+                } else {
+                    _rawProducts.value
+                },
                 filteredProducts = _filteredProducts.value,
                 searchQuery = _searchQuery.value,
                 statusFilter = _downloadStatusFilter.value
@@ -160,11 +189,16 @@ class ProductRemoteViewModel @Inject constructor(
     private fun applyFilter() {
         val query = _searchQuery.value.trim().lowercase()
         val statusFilter = _downloadStatusFilter.value
-        val allItems = _rawProducts.value
+        val sourceItems = if (statusFilter == DownloadStatusFilter.FAVORITE) {
+            _savedProducts.value.map { it.toDataItemResponse() }
+        } else {
+            _rawProducts.value
+        }
 
-        _filteredProducts.value = allItems.filter { item ->
+        _filteredProducts.value = sourceItems.filter { item ->
             val matchesStatus = when (statusFilter) {
                 DownloadStatusFilter.ALL -> true
+                DownloadStatusFilter.FAVORITE -> true
                 DownloadStatusFilter.DOWNLOADED -> item.isDownloaded
                 DownloadStatusFilter.NOT_DOWNLOADED -> !item.isDownloaded
             }
@@ -212,6 +246,10 @@ class ProductRemoteViewModel @Inject constructor(
                 "\"${item.displayTitle}\" disimpan ke Room DB (muncul di keyboard)"
             } else {
                 "\"${item.displayTitle}\" dihapus dari Room DB"
+            }
+            if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE) {
+                applyFilter()
+                updateSuccessUiState()
             }
         }
     }
@@ -263,6 +301,17 @@ class ProductRemoteViewModel @Inject constructor(
             _rawProducts.value = currentList
             applyFilter()
             updateSuccessUiState()
+        }
+    }
+
+    fun nukeAllFavoriteProducts() {
+        viewModelScope.launch {
+            productRemoteRepository.nukeAllSavedProducts()
+            _syncMessage.value = "Semua produk favorit berhasil dihapus dari Room DB"
+            if (_downloadStatusFilter.value == DownloadStatusFilter.FAVORITE) {
+                applyFilter()
+                updateSuccessUiState()
+            }
         }
     }
 

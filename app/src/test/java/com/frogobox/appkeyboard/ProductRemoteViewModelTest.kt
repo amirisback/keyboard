@@ -423,4 +423,157 @@ class ProductRemoteViewModelTest {
         assertEquals(2, viewModel.products.value.size)
         assertFalse(viewModel.products.value.any { it.id == itemToDelete.id })
     }
+
+    @Test
+    fun testDownloadStatusFilter_favorite_showsOnlySavedInRoomDb() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        // Initially no items saved
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.FAVORITE)
+        advanceUntilIdle()
+        assertEquals(DownloadStatusFilter.FAVORITE, viewModel.downloadStatusFilter.value)
+        assertEquals(0, viewModel.filteredProducts.value.size)
+
+        // Save item 1 to Room DB
+        viewModel.toggleSaveProduct(dummyProducts[0])
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.filteredProducts.value.size)
+        assertEquals("Kemeja Flannel Pria", viewModel.filteredProducts.value.first().productName)
+
+        // Save item 3 to Room DB
+        viewModel.toggleSaveProduct(dummyProducts[2])
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.filteredProducts.value.size)
+        assertTrue(viewModel.filteredProducts.value.any { it.productName == "Kemeja Flannel Pria" })
+        assertTrue(viewModel.filteredProducts.value.any { it.productName == "Hijab Paris Premium" })
+    }
+
+    @Test
+    fun testDownloadStatusFilter_favorite_searchQueryFiltersRoomDb() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        viewModel.toggleSaveProduct(dummyProducts[0]) // Kemeja Flannel
+        viewModel.toggleSaveProduct(dummyProducts[1]) // Celana Chino
+        advanceUntilIdle()
+
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.FAVORITE)
+        viewModel.onSearchQueryChanged("Chino")
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.filteredProducts.value.size)
+        assertEquals("Celana Chino Slim Fit", viewModel.filteredProducts.value.first().productName)
+    }
+
+    @Test
+    fun testDownloadStatusFilter_favorite_resilientWhenRemoteOffline() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Loading)
+                emit(Resource.Error("Connection refused: 192.168.100.6:3000"))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository().apply {
+            savedEntities.add(
+                ProductEntity(
+                    id = 1,
+                    remoteId = "1",
+                    productName = "Offline Cached Product",
+                    caption = "Cached in Room DB",
+                    statusDownload = "Sudah"
+                )
+            )
+            updateFlows()
+        }
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        viewModel.setInitialFilter(DownloadStatusFilter.FAVORITE)
+        advanceUntilIdle()
+
+        assertEquals(DownloadStatusFilter.FAVORITE, viewModel.downloadStatusFilter.value)
+        assertEquals(1, viewModel.filteredProducts.value.size)
+        assertEquals("Offline Cached Product", viewModel.filteredProducts.value.first().productName)
+        assertTrue(viewModel.uiState.value is ProductRemoteUiState.Success)
+    }
+
+    @Test
+    fun testNukeAllFavoriteProducts_clearsAllSavedEntitiesAndResetsFilteredList() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        viewModel.toggleSaveProduct(dummyProducts[0])
+        viewModel.toggleSaveProduct(dummyProducts[1])
+        advanceUntilIdle()
+
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.FAVORITE)
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.savedProducts.value.size)
+        assertEquals(2, viewModel.filteredProducts.value.size)
+
+        // Execute Nuke
+        viewModel.nukeAllFavoriteProducts()
+        advanceUntilIdle()
+
+        assertEquals(0, viewModel.savedProducts.value.size)
+        assertEquals(0, viewModel.savedRemoteIds.value.size)
+        assertEquals(0, viewModel.filteredProducts.value.size)
+        assertEquals("Semua produk favorit berhasil dihapus dari Room DB", viewModel.syncMessage.value)
+    }
+
+    @Test
+    fun testNukeAllFavoriteProducts_preservesRemoteCatalogData() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        viewModel.toggleSaveProduct(dummyProducts[0])
+        advanceUntilIdle()
+
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.FAVORITE)
+        advanceUntilIdle()
+        assertEquals(1, viewModel.filteredProducts.value.size)
+
+        // Nuke Room DB
+        viewModel.nukeAllFavoriteProducts()
+        advanceUntilIdle()
+        assertEquals(0, viewModel.filteredProducts.value.size)
+
+        // Remote catalog remains untouched when viewing ALL
+        viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.ALL)
+        advanceUntilIdle()
+        assertEquals(dummyProducts.size, viewModel.filteredProducts.value.size)
+    }
 }

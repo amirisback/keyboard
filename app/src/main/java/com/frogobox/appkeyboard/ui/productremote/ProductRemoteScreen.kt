@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Inventory2
@@ -136,6 +137,7 @@ fun ProductRemoteScreen(
         onCreateProduct = viewModel::createProduct,
         onUpdateProduct = viewModel::updateProduct,
         onDeleteProduct = viewModel::deleteProduct,
+        onNukeAllFavorites = viewModel::nukeAllFavoriteProducts,
         onRefresh = viewModel::fetchProducts,
         onBackClick = onBackClick,
         modifier = modifier
@@ -163,15 +165,16 @@ fun ProductRemoteScreen(
     onCreateProduct: (ProductEntity) -> Unit,
     onUpdateProduct: (ProductEntity) -> Unit,
     onDeleteProduct: (DataItemResponse) -> Unit,
+    onNukeAllFavorites: () -> Unit = {},
     onRefresh: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
-    var isAddDialogOpen by remember { mutableStateOf(false) }
     var editingItem by remember { mutableStateOf<DataItemResponse?>(null) }
     var itemToDelete by remember { mutableStateOf<DataItemResponse?>(null) }
+    var showNukeDialog by remember { mutableStateOf(false) }
 
     val onCopyCaption: (DataItemResponse) -> Unit = { item ->
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -205,9 +208,43 @@ fun ProductRemoteScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             FrogoTopAppBar(
-                title = "Katalog Product Remote",
+                title = if (statusFilter == DownloadStatusFilter.FAVORITE) "Produk Favorit (DB)" else "Katalog Product Remote",
                 onBackClick = onBackClick,
                 actions = {
+                    if (statusFilter == DownloadStatusFilter.FAVORITE) {
+                        IconButton(
+                            onClick = {
+                                if (savedRemoteIds.isEmpty()) {
+                                    Toast.makeText(context, "Tidak ada produk favorit untuk dihapus", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    showNukeDialog = true
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.DeleteSweep,
+                                contentDescription = "Hapus Semua Produk Favorit (Nuke)",
+                                tint = if (savedRemoteIds.isNotEmpty()) FrogoStatusFailed else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = {
+                            if (statusFilter == DownloadStatusFilter.FAVORITE) {
+                                onStatusFilterChange(DownloadStatusFilter.ALL)
+                            } else {
+                                onStatusFilterChange(DownloadStatusFilter.FAVORITE)
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (statusFilter == DownloadStatusFilter.FAVORITE) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = "Menu List Favorit",
+                            tint = if (statusFilter == DownloadStatusFilter.FAVORITE) FrogoPrimary else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
                     IconButton(
                         onClick = {
                             try {
@@ -245,31 +282,6 @@ fun ProductRemoteScreen(
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { isAddDialogOpen = true },
-                containerColor = FrogoPrimary,
-                contentColor = Color.White,
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Tambah Produk Baru",
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "Tambah Produk",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp
-                    )
-                }
-            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -325,10 +337,11 @@ fun ProductRemoteScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 2. Download Status Filter Chips (Semua, Sudah, Belum)
+                // 2. Download Status Filter Chips (Semua, Favorit, Sudah, Belum)
                 DownloadStatusFilterChips(
                     selectedFilter = statusFilter,
                     totalCount = products.size,
+                    favoriteCount = savedRemoteIds.size,
                     downloadedCount = products.count { it.isDownloaded },
                     notDownloadedCount = products.count { !it.isDownloaded },
                     onFilterSelected = onStatusFilterChange
@@ -356,6 +369,52 @@ fun ProductRemoteScreen(
                     .weight(1f)
             ) {
                 when {
+                    statusFilter == DownloadStatusFilter.FAVORITE && filteredProducts.isEmpty() && searchQuery.isBlank() -> {
+                        FrogoEmptyView(
+                            title = "Belum Ada Produk Favorit",
+                            subtitle = "Simpan produk dari katalog remote agar muncul di daftar favorit dan keyboard.",
+                            actionButtonText = "Lihat Semua Katalog",
+                            onActionClick = { onStatusFilterChange(DownloadStatusFilter.ALL) },
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    statusFilter == DownloadStatusFilter.FAVORITE -> {
+                        if (filteredProducts.isEmpty()) {
+                            ProductRemoteEmptySearchState(
+                                query = searchQuery,
+                                onResetSearch = {
+                                    onSearchQueryChange("")
+                                },
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(
+                                    items = filteredProducts,
+                                    key = { it.displayIndex }
+                                ) { item ->
+                                    val isSaved = savedRemoteIds.contains(item.id)
+                                    ProductRemoteInAppCard(
+                                        item = item,
+                                        isSavedInRoomDb = isSaved,
+                                        onToggleSave = { onToggleSave(item) },
+                                        onEditClick = { editingItem = item },
+                                        onDeleteClick = { itemToDelete = item },
+                                        onCopyCaption = { onCopyCaption(item) },
+                                        onCopyTitle = { onCopyTitle(item) },
+                                        onCopySnippet = { onCopySnippet(item) },
+                                        onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     isLoading && products.isEmpty() -> {
                         Column(
                             modifier = Modifier.align(Alignment.Center),
@@ -406,7 +465,7 @@ fun ProductRemoteScreen(
                     else -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 80.dp),
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
@@ -431,18 +490,6 @@ fun ProductRemoteScreen(
                 }
             }
         }
-    }
-
-    // Modal Form Dialog for Create / Edit Product
-    if (isAddDialogOpen) {
-        ProductFormDialog(
-            initialProduct = null,
-            onDismiss = { isAddDialogOpen = false },
-            onSave = { newProduct ->
-                onCreateProduct(newProduct)
-                isAddDialogOpen = false
-            }
-        )
     }
 
     editingItem?.let { item ->
@@ -490,6 +537,63 @@ fun ProductRemoteScreen(
             }
         )
     }
+
+    // Nuke All Favorites Confirmation Dialog
+    if (showNukeDialog) {
+        AlertDialog(
+            onDismissRequest = { showNukeDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.DeleteSweep,
+                    contentDescription = null,
+                    tint = FrogoStatusFailed,
+                    modifier = Modifier.size(32.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Hapus Semua Favorit?",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Text(
+                    text = "Apakah Anda yakin ingin menghapus semua (${savedRemoteIds.size}) produk favorit dari database lokal? Data ini akan dihapus dari Room DB dan tidak lagi muncul di keyboard.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onNukeAllFavorites()
+                        showNukeDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = FrogoStatusFailed
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "Hapus Semua",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showNukeDialog = false },
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Batal")
+                }
+            }
+        )
+    }
 }
 
 /**
@@ -499,6 +603,7 @@ fun ProductRemoteScreen(
 private fun DownloadStatusFilterChips(
     selectedFilter: DownloadStatusFilter,
     totalCount: Int,
+    favoriteCount: Int,
     downloadedCount: Int,
     notDownloadedCount: Int,
     onFilterSelected: (DownloadStatusFilter) -> Unit,
@@ -527,6 +632,40 @@ private fun DownloadStatusFilterChips(
                 ) {
                     Text(
                         text = "Semua ($totalCount)",
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        item {
+            val isSelected = selectedFilter == DownloadStatusFilter.FAVORITE
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = if (isSelected) FrogoPrimary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                border = BorderStroke(
+                    1.dp,
+                    if (isSelected) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant
+                ),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onFilterSelected(DownloadStatusFilter.FAVORITE) }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (isSelected) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        contentDescription = null,
+                        modifier = Modifier.size(13.dp),
+                        tint = if (isSelected) Color.White else FrogoPrimary
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Favorit ($favoriteCount)",
                         fontSize = 12.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                         color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface

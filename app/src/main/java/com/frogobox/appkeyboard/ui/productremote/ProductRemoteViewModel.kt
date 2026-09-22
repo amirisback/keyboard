@@ -293,7 +293,8 @@ class ProductRemoteViewModel @Inject constructor(
             if (remoteId != null) {
                 productRemoteRepository.deleteProductByRemoteId(remoteId)
             }
-            val localId = item.displayIndex
+            val matchingLocal = remoteId?.let { id -> _savedProducts.value.find { it.remoteId == id } }
+            val localId = matchingLocal?.id ?: item.displayIndex
             productRemoteRepository.deleteProductById(localId)
 
             _syncMessage.value = "Produk \"${item.displayTitle}\" dihapus dari database"

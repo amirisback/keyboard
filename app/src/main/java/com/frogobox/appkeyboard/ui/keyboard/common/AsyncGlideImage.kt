@@ -30,13 +30,15 @@ fun AsyncGlideImage(
     url: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop
+    contentScale: ContentScale = ContentScale.Crop,
+    overrideWidth: Int = 320,
+    overrideHeight: Int = 320
 ) {
     val context = LocalContext.current
     var bitmap by remember(url) { mutableStateOf<Bitmap?>(null) }
     var isLoading by remember(url) { mutableStateOf(!url.isNullOrBlank()) }
 
-    DisposableEffect(url) {
+    DisposableEffect(url, overrideWidth, overrideHeight) {
         if (url.isNullOrBlank()) {
             isLoading = false
             return@DisposableEffect onDispose {}
@@ -61,6 +63,8 @@ fun AsyncGlideImage(
         Glide.with(context)
             .asBitmap()
             .load(url)
+            .override(overrideWidth, overrideHeight)
+            .centerCrop()
             .into(target)
 
         onDispose {

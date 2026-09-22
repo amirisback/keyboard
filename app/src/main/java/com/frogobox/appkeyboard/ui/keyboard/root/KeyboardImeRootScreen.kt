@@ -203,7 +203,7 @@ fun KeyboardImeRootScreen(
                     }
 
                     KeyboardPanelState.PRODUCT_REMOTE -> {
-                        Box(modifier = Modifier.fillMaxWidth().height(270.dp)) {
+                        Box(modifier = Modifier.fillMaxWidth().height(540.dp)) {
                             ProductRemoteKeyboardScreen(
                                 items = productRemoteItems,
                                 isLoading = isProductRemoteLoading,

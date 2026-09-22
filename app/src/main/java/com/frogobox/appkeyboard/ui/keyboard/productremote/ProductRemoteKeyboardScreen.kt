@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Inventory2
@@ -58,7 +60,7 @@ import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusFailed
 
 /**
  * Modern Jetpack Compose screen for Product Remote keyboard panel.
- * Complies with Material 3, Anti-Slop principles, and 270.dp IME height constraints.
+ * Complies with Material 3, Anti-Slop principles, and 540.dp (2x enlarged) IME height constraints.
  */
 @Composable
 fun ProductRemoteKeyboardScreen(
@@ -202,10 +204,10 @@ fun ProductRemoteKeyboardScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(
+                        itemsIndexed(
                             items = items,
-                            key = { it.displayIndex }
-                        ) { item ->
+                            key = { index, item -> "${item.id ?: "item"}_${item.displayIndex}_$index" }
+                        ) { _, item ->
                             ProductRemoteCard(
                                 item = item,
                                 currentMode = selectedOutputMode,
@@ -307,17 +309,19 @@ fun ProductRemoteCard(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             if (hasThumbnail) {
-                // Media Thumbnail Header
+                // Media Thumbnail Header (9:16 Vertical Ratio)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
+                        .aspectRatio(9f / 16f)
                 ) {
                     AsyncGlideImage(
                         url = item.thumbnailUrl,
                         contentDescription = item.displayTitle,
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        overrideWidth = 360,
+                        overrideHeight = 640
                     )
 
                     // Video / File Size Badge Overlay

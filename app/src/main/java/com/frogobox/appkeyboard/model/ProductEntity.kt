@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import kotlinx.parcelize.Parcelize
@@ -13,7 +14,12 @@ import kotlinx.parcelize.Parcelize
  * Complies with Room schema export, Parcelize, and ProGuard obfuscation safety.
  */
 @Keep
-@Entity(tableName = "product_remote")
+@Entity(
+    tableName = "product_remote",
+    indices = [
+        Index(value = ["remoteId"])
+    ]
+)
 @Parcelize
 data class ProductEntity(
     @PrimaryKey(autoGenerate = true)

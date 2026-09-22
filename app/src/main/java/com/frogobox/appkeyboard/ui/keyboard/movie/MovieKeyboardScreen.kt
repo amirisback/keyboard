@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -82,10 +83,10 @@ fun MovieKeyboardScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(
+                itemsIndexed(
                     items = movieList,
-                    key = { it.id ?: it.hashCode() }
-                ) { movie ->
+                    key = { index, movie -> "${movie.id ?: movie.title ?: "movie"}_$index" }
+                ) { _, movie ->
                     val posterUrl = "${MovieUrl.BASE_URL_IMAGE_ORIGINAL}${movie.poster_path ?: ""}"
 
                     Card(

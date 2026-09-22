@@ -47,7 +47,18 @@ class ProductRemoteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateProduct(product: ProductEntity) {
-        productRemoteDao.update(product)
+        val targetId = if (product.id > 0) {
+            product.id
+        } else if (product.remoteId != null) {
+            productRemoteDao.getByRemoteId(product.remoteId!!)?.id ?: 0
+        } else {
+            0
+        }
+        if (targetId > 0) {
+            productRemoteDao.update(product.copy(id = targetId))
+        } else {
+            productRemoteDao.insert(product)
+        }
     }
 
     override suspend fun deleteProduct(product: ProductEntity) {
@@ -76,9 +87,13 @@ class ProductRemoteRepositoryImpl @Inject constructor(
                     return@flow
                 }
 
-                // Preserve local IDs if record with matching remoteId already exists
+                // Batch-load existing mappings in ONE single query to eliminate N+1 table scans
+                val existingLocalMap = productRemoteDao.getAllSync()
+                    .filter { it.remoteId != null }
+                    .associateBy { it.remoteId!! }
+
                 val entitiesToInsert = remoteItems.map { remoteItem ->
-                    val existing = remoteItem.id?.let { productRemoteDao.getByRemoteId(it) }
+                    val existing = remoteItem.id?.let { existingLocalMap[it] }
                     remoteItem.toProductEntity(localId = existing?.id ?: 0)
                 }
 

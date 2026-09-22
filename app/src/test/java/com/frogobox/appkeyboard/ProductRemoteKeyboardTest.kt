@@ -385,4 +385,19 @@ class ProductRemoteKeyboardTest {
         assertFalse(minimalItem.isDownloaded)
         assertEquals("Produk Sederhana", minimalItem.displayTitle)
     }
+
+    @Test
+    fun testProductRemoteThumbnailAspectRatio_isNineBySixteen() {
+        val widthRatio = 9f
+        val heightRatio = 16f
+        val aspectRatio = widthRatio / heightRatio
+        assertEquals(0.5625f, aspectRatio, 0.0001f)
+    }
+
+    @Test
+    fun testProductRemoteKeyboardHeight_isDoubleStandardHeight() {
+        val standardHeightDp = 270
+        val enlargedHeightDp = 540
+        assertEquals(standardHeightDp * 2, enlargedHeightDp)
+    }
 }

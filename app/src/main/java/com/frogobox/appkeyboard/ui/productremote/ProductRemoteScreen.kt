@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -389,15 +392,17 @@ fun ProductRemoteScreen(
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         } else {
-                            LazyColumn(
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                items(
+                                itemsIndexed(
                                     items = filteredProducts,
-                                    key = { it.displayIndex }
-                                ) { item ->
+                                    key = { index, item -> "${item.id ?: "fav"}_${item.displayIndex}_$index" }
+                                ) { _, item ->
                                     val isSaved = savedRemoteIds.contains(item.id)
                                     ProductRemoteInAppCard(
                                         item = item,
@@ -463,15 +468,17 @@ fun ProductRemoteScreen(
                     }
 
                     else -> {
-                        LazyColumn(
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            items(
+                            itemsIndexed(
                                 items = filteredProducts,
-                                key = { it.displayIndex }
-                            ) { item ->
+                                key = { index, item -> "${item.id ?: "prod"}_${item.displayIndex}_$index" }
+                            ) { _, item ->
                                 val isSaved = savedRemoteIds.contains(item.id)
                                 ProductRemoteInAppCard(
                                     item = item,
@@ -879,12 +886,13 @@ private fun ProductRemoteInAppCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Media Header
+            // Media Header (9:16 Vertical Ratio)
             if (hasThumbnail) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(150.dp)
+                        .aspectRatio(9f / 16f)
+                        .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                 ) {
                     AsyncGlideImage(
                         url = item.thumbnailUrl,
@@ -896,27 +904,27 @@ private fun ProductRemoteInAppCard(
                     // Video Indicator Badge
                     if (item.isVideo == true) {
                         Surface(
-                            shape = RoundedCornerShape(6.dp),
+                            shape = RoundedCornerShape(4.dp),
                             color = Color.Black.copy(alpha = 0.72f),
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(8.dp)
+                                .padding(6.dp)
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.PlayArrow,
                                     contentDescription = "Video product",
                                     tint = Color.White,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(12.dp)
                                 )
                                 if (!item.fileSize.isNullOrBlank()) {
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Spacer(modifier = Modifier.width(3.dp))
                                     Text(
                                         text = item.fileSize,
-                                        fontSize = 11.sp,
+                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = Color.White
                                     )
@@ -931,7 +939,7 @@ private fun ProductRemoteInAppCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(14.dp)
+                    .padding(10.dp)
             ) {
                 // Status Badges & Room DB Indicator Row
                 Row(
@@ -941,13 +949,14 @@ private fun ProductRemoteInAppCard(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.weight(1f, fill = false)
                     ) {
                         // Download Status Badge
                         if (!item.statusDownload.isNullOrBlank()) {
                             val isDownloaded = item.isDownloaded
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
+                                shape = RoundedCornerShape(4.dp),
                                 color = if (isDownloaded) Color(0xFFE8F5E9) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                                 border = BorderStroke(
                                     0.5.dp,
@@ -955,11 +964,11 @@ private fun ProductRemoteInAppCard(
                                 )
                             ) {
                                 Text(
-                                    text = if (isDownloaded) "✓ Terunduh" else "Belum diunduh",
-                                    fontSize = 10.5.sp,
+                                    text = if (isDownloaded) "✓ Terunduh" else "Belum",
+                                    fontSize = 9.5.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (isDownloaded) Color(0xFF1B5E20) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                                 )
                             }
                         }
@@ -967,24 +976,24 @@ private fun ProductRemoteInAppCard(
                         // Room DB Saved Badge
                         if (isSavedInRoomDb) {
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
+                                shape = RoundedCornerShape(4.dp),
                                 color = FrogoPrimary.copy(alpha = 0.12f),
                                 border = BorderStroke(0.5.dp, FrogoPrimary.copy(alpha = 0.35f))
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Bookmark,
                                         contentDescription = null,
                                         tint = FrogoPrimary,
-                                        modifier = Modifier.size(11.dp)
+                                        modifier = Modifier.size(10.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(3.dp))
+                                    Spacer(modifier = Modifier.width(2.dp))
                                     Text(
-                                        text = "Tersimpan di DB",
-                                        fontSize = 10.sp,
+                                        text = "DB",
+                                        fontSize = 9.5.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = FrogoPrimary
                                     )
@@ -993,24 +1002,27 @@ private fun ProductRemoteInAppCard(
                         }
                     }
 
+                    Spacer(modifier = Modifier.width(4.dp))
+
                     Text(
                         text = "#${item.displayIndex}",
                         style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 11.sp,
+                            fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 // Title
                 Text(
                     text = item.displayTitle,
-                    style = MaterialTheme.typography.titleMedium.copy(
+                    style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
+                        fontSize = 13.sp,
+                        lineHeight = 17.sp
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
@@ -1020,12 +1032,13 @@ private fun ProductRemoteInAppCard(
                 // Caption
                 val captionText = item.caption
                 if (!captionText.isNullOrBlank() && captionText != item.displayTitle) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = "Caption: $captionText",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 15.sp
                         ),
                         color = MaterialTheme.colorScheme.primary,
                         maxLines = 2,
@@ -1036,20 +1049,20 @@ private fun ProductRemoteInAppCard(
                 // Body Description
                 val bodyText = item.displayBody
                 if (!bodyText.isNullOrBlank() && bodyText != item.displayTitle && bodyText != captionText) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = bodyText,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = 12.5.sp,
-                            lineHeight = 17.sp
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 3,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // Metadata Row
                 Row(
@@ -1065,12 +1078,12 @@ private fun ProductRemoteInAppCard(
                             imageVector = Icons.Default.PlayArrow,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.size(12.dp)
+                            modifier = Modifier.size(11.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(3.dp))
                         Text(
                             text = item.originalFileName ?: "File #${item.displayIndex}",
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -1079,7 +1092,7 @@ private fun ProductRemoteInAppCard(
 
                     val timestamp = item.displayTimestamp
                     if (!timestamp.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -1087,12 +1100,12 @@ private fun ProductRemoteInAppCard(
                                 imageVector = Icons.Default.CalendarToday,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier = Modifier.size(11.dp)
+                                modifier = Modifier.size(10.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = timestamp,
-                                fontSize = 11.sp,
+                                fontSize = 9.5.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -1101,123 +1114,137 @@ private fun ProductRemoteInAppCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 HorizontalDivider(
                     thickness = 0.5.dp,
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // Primary Output Row: Salin Caption & Salin Judul
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Button(
                         onClick = onCopyCaption,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(30.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
-                        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 10.dp)
+                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
                     ) {
                         Text(
-                            text = "Salin Caption",
-                            fontSize = 12.sp,
+                            text = "Caption",
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
                     Button(
                         onClick = onCopyTitle,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(30.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
-                        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 10.dp)
+                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
                     ) {
                         Text(
-                            text = "Salin Judul",
-                            fontSize = 12.sp,
+                            text = "Judul",
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 // Secondary Row: Format Chat & Link Drive
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedButton(
                         onClick = onCopySnippet,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 10.dp)
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(28.dp),
+                        contentPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ContentCopy,
                             contentDescription = null,
-                            modifier = Modifier.size(15.dp)
+                            modifier = Modifier.size(12.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = "Format Chat",
-                            fontSize = 12.sp,
+                            text = "Chat",
+                            fontSize = 10.5.sp,
                             fontWeight = FontWeight.SemiBold,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
                     if (hasDriveLink) {
                         Button(
                             onClick = onCopyDriveLink,
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(6.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(28.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
-                            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 10.dp)
+                            contentPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Link,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(12.dp)
                             )
-                            Spacer(modifier = Modifier.width(6.dp))
+                            Spacer(modifier = Modifier.width(3.dp))
                             Text(
-                                text = "Salin Link Drive",
-                                fontSize = 12.sp,
+                                text = "Drive",
+                                fontSize = 10.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                maxLines = 1
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 // Room DB Sync & CRUD Operations Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Toggle Save / Unsave Room DB Button
                     OutlinedButton(
                         onClick = onToggleSave,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(30.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = if (isSavedInRoomDb) FrogoPrimary.copy(alpha = 0.1f) else Color.Transparent,
                             contentColor = if (isSavedInRoomDb) FrogoPrimary else MaterialTheme.colorScheme.onSurface
@@ -1226,20 +1253,21 @@ private fun ProductRemoteInAppCard(
                             1.dp,
                             if (isSavedInRoomDb) FrogoPrimary else MaterialTheme.colorScheme.outlineVariant
                         ),
-                        contentPadding = PaddingValues(vertical = 7.dp, horizontal = 8.dp)
+                        contentPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
                     ) {
                         Icon(
                             imageVector = if (isSavedInRoomDb) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                             contentDescription = null,
-                            modifier = Modifier.size(15.dp),
+                            modifier = Modifier.size(13.dp),
                             tint = if (isSavedInRoomDb) FrogoPrimary else MaterialTheme.colorScheme.primary
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = if (isSavedInRoomDb) "Tersimpan di DB" else "Simpan ke DB",
-                            fontSize = 11.5.sp,
+                            text = if (isSavedInRoomDb) "Tersimpan" else "Simpan",
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
@@ -1247,15 +1275,15 @@ private fun ProductRemoteInAppCard(
                     IconButton(
                         onClick = onEditClick,
                         modifier = Modifier
-                            .size(36.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(6.dp))
                             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit produk",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(14.dp)
                         )
                     }
 
@@ -1263,15 +1291,15 @@ private fun ProductRemoteInAppCard(
                     IconButton(
                         onClick = onDeleteClick,
                         modifier = Modifier
-                            .size(36.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(6.dp))
                             .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
                             contentDescription = "Hapus produk",
                             tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(14.dp)
                         )
                     }
                 }

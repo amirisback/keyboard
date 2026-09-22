@@ -97,16 +97,19 @@ class WordSuggestionEngine @Inject constructor() {
         try {
             val assetManager = context.assets
             val inputStream = assetManager.open("text/dictionary_en.txt")
+            val batch = ArrayList<String>()
             BufferedReader(InputStreamReader(inputStream)).use { reader ->
                 var line: String? = reader.readLine()
                 while (line != null) {
                     val word = line.trim().lowercase()
                     if (word.isNotEmpty() && !dictionarySet.contains(word)) {
-                        addWordInternal(word)
+                        dictionarySet.add(word)
+                        batch.add(word)
                     }
                     line = reader.readLine()
                 }
             }
+            dictionaryList.addAll(batch)
             isDictionaryLoaded = true
         } catch (_: Exception) {
             // Gracefully keep fallback vocabulary if asset read fails

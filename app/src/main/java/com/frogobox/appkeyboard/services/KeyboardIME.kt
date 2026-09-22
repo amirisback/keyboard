@@ -24,13 +24,13 @@ import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.ThemeType
+import com.frogobox.appkeyboard.repository.autotext.AutoTextRepository
 import com.frogobox.appkeyboard.repository.data.DataApiRepository
 import com.frogobox.appkeyboard.repository.productremote.ProductRemoteRepository
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.suggestion.WordSuggestionEngine
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
 import com.frogobox.appkeyboard.ui.productremote.ProductRemoteActivity
-import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardViewModel
 import com.frogobox.appkeyboard.ui.keyboard.root.KeyboardImeRootScreen
 import com.frogobox.appkeyboard.ui.keyboard.root.KeyboardPanelState
 import com.frogobox.appkeyboard.ui.main.MainActivity
@@ -57,6 +57,7 @@ import com.frogobox.sdk.delegate.preference.PreferenceDelegates
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,6 +89,9 @@ class KeyboardIME : BaseKeyboardIME() {
     @Inject
     lateinit var productRemoteRepository: ProductRemoteRepository
 
+    @Inject
+    lateinit var autoTextRepository: AutoTextRepository
+
     // Reactive State Holders
     private val activePanelStateFlow = MutableStateFlow(KeyboardPanelState.MAIN)
     private val themeTypeFlow = MutableStateFlow(ThemeType.COLOR)
@@ -114,10 +118,12 @@ class KeyboardIME : BaseKeyboardIME() {
     private val systemFontPaint = Paint().apply { typeface = Typeface.DEFAULT }
     private val emojiCompatMetadataVersion = 0
 
-    // Coroutine Scope & View Models
+    // Coroutine Scope & Managed Jobs
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
-    private val autoTextViewModel by lazy { AutoTextKeyboardViewModel(this) }
+    private var productRemoteJob: Job? = null
+    private var autoTextJob: Job? = null
+    private var suggestionJob: Job? = null
 
     // Interop MainKeyboard Instance
     private var mainKeyboardInstance: MainKeyboard? = null
@@ -144,10 +150,16 @@ class KeyboardIME : BaseKeyboardIME() {
         super.onWindowHidden()
         imeLifecycleOwner.onPause()
         imeLifecycleOwner.onStop()
+        productRemoteJob?.cancel()
+        autoTextJob?.cancel()
+        suggestionJob?.cancel()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        productRemoteJob?.cancel()
+        autoTextJob?.cancel()
+        suggestionJob?.cancel()
         serviceJob.cancelChildren()
         imeLifecycleOwner.onDestroy()
         mainKeyboardInstance = null
@@ -347,10 +359,16 @@ class KeyboardIME : BaseKeyboardIME() {
         if (keyboardUtil.isSuggestionEnabled()) {
             val word = getWordBeforeCursor(ic)
             if (word.isNotEmpty()) {
-                val suggestions = suggestionEngine.getSuggestions(word)
-                suggestionResultFlow.value = suggestions
-                isSuggestionVisibleFlow.value = true
+                suggestionJob?.cancel()
+                suggestionJob = serviceScope.launch(Dispatchers.Default) {
+                    val suggestions = suggestionEngine.getSuggestions(word)
+                    withContext(Dispatchers.Main) {
+                        suggestionResultFlow.value = suggestions
+                        isSuggestionVisibleFlow.value = true
+                    }
+                }
             } else {
+                suggestionJob?.cancel()
                 suggestionResultFlow.value = SuggestionResult.EMPTY
                 if (code == ItemMainKeyboard.KEYCODE_SPACE ||
                     code == ItemMainKeyboard.KEYCODE_ENTER ||
@@ -490,13 +508,17 @@ class KeyboardIME : BaseKeyboardIME() {
     }
 
     private fun loadAutoText() {
-        autoTextViewModel.getAutoText { items ->
-            autoTextListFlow.value = items
+        autoTextJob?.cancel()
+        autoTextJob = serviceScope.launch {
+            autoTextRepository.getAutoText().collect { items ->
+                autoTextListFlow.value = items
+            }
         }
     }
 
     private fun loadProductRemote() {
-        serviceScope.launch {
+        productRemoteJob?.cancel()
+        productRemoteJob = serviceScope.launch {
             productRemoteRepository.getSavedProductsStream().collect { savedList ->
                 productRemoteItemsFlow.value = savedList.map { it.toDataItemResponse() }
                 isProductRemoteLoadingFlow.value = false

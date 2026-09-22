@@ -9,6 +9,7 @@ import com.frogobox.appkeyboard.model.TemplateTextEntity
 import com.frogobox.sdk.ext.getDataFromJsonAsset
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 /**
  * Created by Faisal Amir on 24/10/22
@@ -57,7 +58,7 @@ object TemplateTextUtils {
         }.shuffled()
     }
 
-    fun getTemplatesForType(context: Context, type: KeyboardFeatureType): List<TemplateText> {
+    suspend fun getTemplatesForTypeSuspend(context: Context, type: KeyboardFeatureType): List<TemplateText> {
         val categoryKey = when (type) {
             KeyboardFeatureType.TEMPLATE_TEXT_GAME -> TemplateCategoryType.GAME.key
             KeyboardFeatureType.TEMPLATE_TEXT_APP -> TemplateCategoryType.APP.key
@@ -70,7 +71,7 @@ object TemplateTextUtils {
         return try {
             val db = AppDatabase.newInstance(context)
             val dao = db.templateTextDao()
-            val entities = runBlocking(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 var items = dao.getByCategory(categoryKey)
                 if (items.isEmpty()) {
                     val catType = TemplateCategoryType.fromFeatureType(type)
@@ -96,18 +97,23 @@ object TemplateTextUtils {
                         items = dao.getByCategory(categoryKey)
                     }
                 }
-                items
-            }
 
-            if (entities.isNotEmpty()) {
-                entities.map { entity ->
-                    TemplateText(entity.id, entity.text, type)
+                if (items.isNotEmpty()) {
+                    items.map { entity ->
+                        TemplateText(entity.id, entity.text, type)
+                    }
+                } else {
+                    getDefaultFallback(context, type)
                 }
-            } else {
-                getDefaultFallback(context, type)
             }
         } catch (_: Exception) {
             getDefaultFallback(context, type)
+        }
+    }
+
+    fun getTemplatesForType(context: Context, type: KeyboardFeatureType): List<TemplateText> {
+        return runBlocking(Dispatchers.IO) {
+            getTemplatesForTypeSuspend(context, type)
         }
     }
 

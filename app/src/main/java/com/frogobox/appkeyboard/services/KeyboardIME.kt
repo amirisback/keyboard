@@ -845,6 +845,8 @@ class KeyboardIME : BaseKeyboardIME() {
                     ic.setSelection(0, totalLength)
                     isSelectionModeFlow.value = true
                     selectionAnchor = 0
+                } else {
+                    ic.performContextMenuAction(android.R.id.selectAll)
                 }
             }
 
@@ -872,10 +874,15 @@ class KeyboardIME : BaseKeyboardIME() {
             }
 
             TextEditAction.PASTE -> {
-                val clip = clipboardManager?.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
-                if (clip.isNotEmpty()) {
-                    ic.commitText(clip, 1)
-                }
+                try {
+                    val clipData = clipboardManager?.primaryClip
+                    if (clipData != null && clipData.itemCount > 0) {
+                        val clip = clipData.getItemAt(0)?.text?.toString() ?: ""
+                        if (clip.isNotEmpty()) {
+                            ic.commitText(clip, 1)
+                        }
+                    }
+                } catch (_: Exception) {}
             }
 
             TextEditAction.DELETE -> {

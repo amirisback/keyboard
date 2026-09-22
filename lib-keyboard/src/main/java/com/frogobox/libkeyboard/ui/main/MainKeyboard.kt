@@ -407,7 +407,12 @@ class MainKeyboard @JvmOverloads constructor(
 
     fun vibrateIfNeeded() {
         if (ItemMainKeyboard.VIBRATE_ON_KEYPRESS) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            val feedbackConstant = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                HapticFeedbackConstants.KEYBOARD_TAP
+            } else {
+                HapticFeedbackConstants.VIRTUAL_KEY
+            }
+            performHapticFeedback(feedbackConstant)
         }
     }
 

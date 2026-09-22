@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
@@ -31,6 +33,7 @@ class ClipboardRepositoryImpl(
     }
 
     private val gson = Gson()
+    private val mutex = Mutex()
     private val _itemsFlow = MutableStateFlow<List<ClipboardItem>>(emptyList())
 
     init {
@@ -58,51 +61,59 @@ class ClipboardRepositoryImpl(
         if (trimmed.isEmpty()) return@withContext
 
         val safeText = if (trimmed.length > MAX_TEXT_LENGTH) trimmed.take(MAX_TEXT_LENGTH) else trimmed
-        val currentList = _itemsFlow.value.toMutableList()
+        mutex.withLock {
+            val currentList = _itemsFlow.value.toMutableList()
 
-        val existingIndex = currentList.indexOfFirst { it.text == safeText }
-        if (existingIndex != -1) {
-            val existing = currentList.removeAt(existingIndex)
-            val updated = existing.copy(timestamp = System.currentTimeMillis())
-            currentList.add(0, updated)
-        } else {
-            val newItem = ClipboardItem(
-                id = UUID.randomUUID().toString(),
-                text = safeText,
-                timestamp = System.currentTimeMillis(),
-                isPinned = false
-            )
-            currentList.add(0, newItem)
+            val existingIndex = currentList.indexOfFirst { it.text == safeText }
+            if (existingIndex != -1) {
+                val existing = currentList.removeAt(existingIndex)
+                val updated = existing.copy(timestamp = System.currentTimeMillis())
+                currentList.add(0, updated)
+            } else {
+                val newItem = ClipboardItem(
+                    id = UUID.randomUUID().toString(),
+                    text = safeText,
+                    timestamp = System.currentTimeMillis(),
+                    isPinned = false
+                )
+                currentList.add(0, newItem)
+            }
+
+            val sorted = sortItems(enforceLimits(currentList))
+            saveAndEmit(sorted)
         }
-
-        val sorted = sortItems(enforceLimits(currentList))
-        saveAndEmit(sorted)
     }
 
     override suspend fun togglePin(id: String): Unit = withContext(dispatcher) {
-        val currentList = _itemsFlow.value.map { item ->
-            if (item.id == id) {
-                item.copy(isPinned = !item.isPinned)
-            } else {
-                item
+        mutex.withLock {
+            val currentList = _itemsFlow.value.map { item ->
+                if (item.id == id) {
+                    item.copy(isPinned = !item.isPinned)
+                } else {
+                    item
+                }
             }
+            val sorted = sortItems(currentList)
+            saveAndEmit(sorted)
         }
-        val sorted = sortItems(currentList)
-        saveAndEmit(sorted)
     }
 
     override suspend fun deleteClip(id: String): Unit = withContext(dispatcher) {
-        val currentList = _itemsFlow.value.filterNot { it.id == id }
-        saveAndEmit(currentList)
+        mutex.withLock {
+            val currentList = _itemsFlow.value.filterNot { it.id == id }
+            saveAndEmit(currentList)
+        }
     }
 
     override suspend fun clearHistory(keepPinned: Boolean): Unit = withContext(dispatcher) {
-        val currentList = if (keepPinned) {
-            _itemsFlow.value.filter { it.isPinned }
-        } else {
-            emptyList()
+        mutex.withLock {
+            val currentList = if (keepPinned) {
+                _itemsFlow.value.filter { it.isPinned }
+            } else {
+                emptyList()
+            }
+            saveAndEmit(currentList)
         }
-        saveAndEmit(currentList)
     }
 
     private fun enforceLimits(items: List<ClipboardItem>): List<ClipboardItem> {

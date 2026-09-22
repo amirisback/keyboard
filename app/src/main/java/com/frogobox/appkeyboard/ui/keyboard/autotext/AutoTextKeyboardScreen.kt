@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
+import com.frogobox.appkeyboard.model.TemplateText
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
 import com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextUtils
 import com.frogobox.appkeyboard.ui.templatetext.TemplateTextActivity
@@ -69,14 +71,32 @@ fun AutoTextKeyboardScreen(
         AutoTextCategory.LOVE -> "Tap any love template to paste into chat"
     }
 
-    val templateList = remember(selectedCategory) {
-        when (selectedCategory) {
-            AutoTextCategory.GAME -> TemplateTextUtils.getTemplatesForType(context, KeyboardFeatureType.TEMPLATE_TEXT_GAME)
-            AutoTextCategory.APP -> TemplateTextUtils.getTemplatesForType(context, KeyboardFeatureType.TEMPLATE_TEXT_APP)
-            AutoTextCategory.SALE -> TemplateTextUtils.getTemplatesForType(context, KeyboardFeatureType.TEMPLATE_TEXT_SALE)
-            AutoTextCategory.GREETING -> TemplateTextUtils.getTemplatesForType(context, KeyboardFeatureType.TEMPLATE_TEXT_GREETING)
-            AutoTextCategory.LOVE -> TemplateTextUtils.getTemplatesForType(context, KeyboardFeatureType.TEMPLATE_TEXT_LOVE)
-            AutoTextCategory.MY_CUSTOM -> emptyList()
+    var templateList by remember(selectedCategory) {
+        mutableStateOf(
+            when (selectedCategory) {
+                AutoTextCategory.GAME -> TemplateTextUtils.getTextGame(context)
+                AutoTextCategory.APP -> TemplateTextUtils.getTextApp(context)
+                AutoTextCategory.SALE -> TemplateTextUtils.getTextSale(context)
+                AutoTextCategory.GREETING -> TemplateTextUtils.getTextGreeting(context)
+                AutoTextCategory.LOVE -> TemplateTextUtils.getTextLove(context)
+                AutoTextCategory.MY_CUSTOM -> emptyList()
+            }
+        )
+    }
+
+    LaunchedEffect(selectedCategory) {
+        if (selectedCategory != AutoTextCategory.MY_CUSTOM) {
+            val featureType = when (selectedCategory) {
+                AutoTextCategory.GAME -> KeyboardFeatureType.TEMPLATE_TEXT_GAME
+                AutoTextCategory.APP -> KeyboardFeatureType.TEMPLATE_TEXT_APP
+                AutoTextCategory.SALE -> KeyboardFeatureType.TEMPLATE_TEXT_SALE
+                AutoTextCategory.GREETING -> KeyboardFeatureType.TEMPLATE_TEXT_GREETING
+                AutoTextCategory.LOVE -> KeyboardFeatureType.TEMPLATE_TEXT_LOVE
+                AutoTextCategory.MY_CUSTOM -> null
+            }
+            if (featureType != null) {
+                templateList = TemplateTextUtils.getTemplatesForTypeSuspend(context, featureType)
+            }
         }
     }
 

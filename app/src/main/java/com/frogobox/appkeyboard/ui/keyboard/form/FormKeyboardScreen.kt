@@ -75,7 +75,9 @@ fun FormKeyboardScreen(
             ItemMainKeyboard.KEYCODE_ENTER -> {
                 when (activeField) {
                     FormField.SUBJECT -> activeField = FormField.DETAILS
-                    FormField.DETAILS -> activeField = FormField.REF_NUMBER
+                    FormField.DETAILS -> {
+                        details += "\n"
+                    }
                     FormField.REF_NUMBER -> {
                         val sb = StringBuilder()
                         if (subject.isNotBlank()) sb.append("Subject: ${subject.trim()}\n")

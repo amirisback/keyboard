@@ -319,7 +319,13 @@ fun WebviewKeyboardScreen(
                     webViewInstance = this
                 }
             },
-            update = { webViewInstance = it }
+            update = { webViewInstance = it },
+            onRelease = { view ->
+                try {
+                    view.stopLoading()
+                    view.destroy()
+                } catch (_: Exception) {}
+            }
         )
     }
 }

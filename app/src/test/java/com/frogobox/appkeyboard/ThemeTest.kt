@@ -92,4 +92,87 @@ class ThemeTest {
         assertEquals(ThemeType.COLOR, safeParse("CORRUPTED_VALUE"))
         assertEquals(ThemeType.COLOR, safeParse(""))
     }
+
+    @Test
+    fun testThemeIsDarkCategorization() {
+        val mappedThemes = KeyboardThemeType.entries.map { it.mapToModel() }
+        assertEquals(11, mappedThemes.size)
+
+        // Light themes must have isDark == false
+        val defaultTheme = mappedThemes.first { it.name == "Default" }
+        assertFalse("Default theme should not be classified as dark", defaultTheme.isDark)
+
+        val yellowTheme = mappedThemes.first { it.name == "Amber Gold" }
+        assertFalse("Amber Gold theme should not be classified as dark", yellowTheme.isDark)
+
+        // Dark themes must have isDark == true
+        val darkThemeNames = listOf(
+            "Frogo Purple",
+            "Midnight AMOLED",
+            "Ocean Blue",
+            "Forest Emerald",
+            "Crimson Sunset",
+            "Sunset Orange",
+            "Nordic Cyan",
+            "Sakura Pink",
+            "Wallpaper"
+        )
+
+        darkThemeNames.forEach { name ->
+            val theme = mappedThemes.first { it.name == name }
+            assertTrue("Theme $name should be classified as dark", theme.isDark)
+        }
+    }
+
+    @Test
+    fun testThemeContrastRatioCalculations() {
+        // WCAG relative luminance calculation
+        fun sRgbToLinear(c: Int): Double {
+            val v = c / 255.0
+            return if (v <= 0.03928) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4)
+        }
+
+        fun relativeLuminance(r: Int, g: Int, b: Int): Double {
+            return 0.2126 * sRgbToLinear(r) + 0.7152 * sRgbToLinear(g) + 0.0722 * sRgbToLinear(b)
+        }
+
+        fun contrastRatio(lum1: Double, lum2: Double): Double {
+            val lighter = maxOf(lum1, lum2)
+            val darker = minOf(lum1, lum2)
+            return (lighter + 0.05) / (darker + 0.05)
+        }
+
+        // Color definitions
+        val darkTextLum = relativeLuminance(15, 23, 42) // #0F172A (Slate 900)
+        val whiteTextLum = relativeLuminance(255, 255, 255) // #FFFFFF
+
+        // Light themes with dark text
+        val defaultBgLum = relativeLuminance(252, 252, 255) // #FCFCFF
+        val yellowBgLum = relativeLuminance(251, 192, 45) // #FBC02D (Amber Gold)
+
+        val defaultContrast = contrastRatio(defaultBgLum, darkTextLum)
+        val yellowContrast = contrastRatio(yellowBgLum, darkTextLum)
+
+        assertTrue(
+            "Default theme contrast with dark text ($defaultContrast) must exceed WCAG AA minimum 4.5",
+            defaultContrast >= 4.5
+        )
+        assertTrue(
+            "Amber Gold theme contrast with dark text ($yellowContrast) must exceed WCAG AA minimum 4.5",
+            yellowContrast >= 4.5
+        )
+
+        // Dark themes with white text
+        val amoledBgLum = relativeLuminance(18, 18, 18) // #121212
+        val purpleBgLum = relativeLuminance(98, 0, 238) // #6200EE
+        val blueBgLum = relativeLuminance(25, 118, 210) // #1976D2
+
+        val amoledContrast = contrastRatio(whiteTextLum, amoledBgLum)
+        val purpleContrast = contrastRatio(whiteTextLum, purpleBgLum)
+        val blueContrast = contrastRatio(whiteTextLum, blueBgLum)
+
+        assertTrue("AMOLED contrast ($amoledContrast) must exceed 4.5", amoledContrast >= 4.5)
+        assertTrue("Purple contrast ($purpleContrast) must exceed 4.5", purpleContrast >= 4.5)
+        assertTrue("Blue contrast ($blueContrast) must exceed 4.5", blueContrast >= 4.5)
+    }
 }

@@ -47,6 +47,11 @@ fun MainKeyboardView(
     keyboard: ItemMainKeyboard?,
     onActionListener: OnKeyboardActionListener?,
     modifier: Modifier = Modifier,
+    textColor: Int? = null,
+    actionTextColor: Int? = null,
+    keyColor: Int? = null,
+    actionKeyColor: Int? = null,
+    isDarkTheme: Boolean = false,
     onInit: (MainKeyboard) -> Unit = {}
 ) {
     AndroidView(
@@ -56,6 +61,15 @@ fun MainKeyboardView(
                 if (background == null) {
                     setBackgroundColor(context.getColorExt(R.color.keyboard_board))
                 }
+                if (textColor != null) {
+                    setKeyboardTheme(
+                        textColor = textColor,
+                        actionTextColor = actionTextColor ?: textColor,
+                        keyColor = keyColor,
+                        actionKeyColor = actionKeyColor,
+                        isDark = isDarkTheme
+                    )
+                }
                 this.mOnKeyboardActionListener = onActionListener
                 keyboard?.let { setKeyboard(it) }
                 onInit(this)
@@ -63,6 +77,15 @@ fun MainKeyboardView(
         },
         update = { view ->
             view.mOnKeyboardActionListener = onActionListener
+            if (textColor != null) {
+                view.setKeyboardTheme(
+                    textColor = textColor,
+                    actionTextColor = actionTextColor ?: textColor,
+                    keyColor = keyColor,
+                    actionKeyColor = actionKeyColor,
+                    isDark = isDarkTheme
+                )
+            }
             if (keyboard != null) {
                 view.setKeyboard(keyboard)
             }

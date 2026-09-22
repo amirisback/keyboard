@@ -48,6 +48,7 @@ import com.frogobox.libkeyboard.ui.theme.FrogoLibKeyboardTheme
 
 val EmojiCategoryType.displayName: String
     get() = when (this) {
+        EmojiCategoryType.RECENT -> "Recent"
         EmojiCategoryType.GENERAL -> "General"
         EmojiCategoryType.ACTIVITIES -> "Activities"
         EmojiCategoryType.ANIMAL_NATURE -> "Animals & Nature"

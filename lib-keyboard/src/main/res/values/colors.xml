@@ -19,10 +19,17 @@
 
     <color name="keyboard_board">@android:color/transparent</color>
 
+    <!--  High-Contrast Light Theme Keypad Tokens  -->
     <color name="keypad_text">#001E2C</color>
     <color name="keypad">#80FFFFFF</color>
     <color name="keypad_stroke">#80EFEFEF</color>
     <color name="keypad_pressed">#D1E4FF</color>
+
+    <!--  High-Contrast Dark Theme Keypad Tokens  -->
+    <color name="keypad_text_dark">#FFFFFF</color>
+    <color name="keypad_dark">#26FFFFFF</color>
+    <color name="keypad_stroke_dark">#33FFFFFF</color>
+    <color name="keypad_pressed_dark">#4DFFFFFF</color>
 
     <color name="keypad_action_icon">#FFFFFF</color>
     <color name="keypad_action_background">#8076D1FF</color>

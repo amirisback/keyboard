@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -23,18 +24,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.AutoTextEntity
+import com.frogobox.appkeyboard.model.ClipboardItem
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
-import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardScreen
+import com.frogobox.appkeyboard.ui.keyboard.clipboard.ClipboardKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.movie.MovieKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.news.NewsKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteKeyboardScreen
-import com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextKeyboardScreen
+import com.frogobox.appkeyboard.ui.keyboard.textedit.TextEditAction
+import com.frogobox.appkeyboard.ui.keyboard.textedit.TextEditKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.webview.WebviewKeyboardScreen
 import com.frogobox.coreutil.movie.model.TrendingMovie
 import com.frogobox.coreutil.news.model.Article
@@ -86,8 +90,34 @@ fun KeyboardImeRootScreen(
     onEmojiClicked: (String) -> Unit,
     onCommitText: (String) -> Unit,
     onBackToMain: () -> Unit,
+    onRegisterKeyConsumer: (((Int, Boolean) -> Boolean)?) -> Unit = {},
+    clipboardItems: List<ClipboardItem> = emptyList(),
+    onTogglePinClipboardItem: (String) -> Unit = {},
+    onDeleteClipboardItem: (String) -> Unit = {},
+    onClearClipboardHistory: () -> Unit = {},
+    recentClip: String? = null,
+    onQuickPaste: (String) -> Unit = {},
+    isSelectionMode: Boolean = false,
+    onTextEditAction: (TextEditAction) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val isDarkTheme = remember(themeType, themeBackgroundRes) {
+        if (themeType == ThemeType.IMAGE) {
+            true
+        } else {
+            try {
+                val colorInt = ContextCompat.getColor(context, themeBackgroundRes)
+                ColorUtils.calculateLuminance(colorInt) < 0.45
+            } catch (_: Exception) {
+                false
+            }
+        }
+    }
+    val themeTextColor = remember(isDarkTheme) {
+        if (isDarkTheme) android.graphics.Color.WHITE else android.graphics.Color.parseColor("#0F172A")
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -107,7 +137,6 @@ fun KeyboardImeRootScreen(
                     .background(Color.Black.copy(alpha = 0.25f))
             )
         } else {
-            val context = LocalContext.current
             val backgroundColor = remember(themeBackgroundRes) {
                 try {
                     Color(ContextCompat.getColor(context, themeBackgroundRes))
@@ -137,7 +166,7 @@ fun KeyboardImeRootScreen(
                         .height(56.dp)
                 ) {
                     AnimatedContent(
-                        targetState = isSuggestionVisible && suggestionResult.hasSuggestions(),
+                        targetState = (isSuggestionVisible && suggestionResult.hasSuggestions()) || !recentClip.isNullOrBlank(),
                         transitionSpec = {
                             fadeIn(
                                 animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
@@ -146,13 +175,15 @@ fun KeyboardImeRootScreen(
                             )
                         },
                         label = "TopBarTransition"
-                    ) { showSuggestions ->
-                        if (showSuggestions) {
+                    ) { showSuggestionsOrClip ->
+                        if (showSuggestionsOrClip) {
                             KeyboardSuggestionBar(
                                 result = suggestionResult,
                                 onCandidateSelected = onCandidateSelected,
                                 onSwitchMenu = onSwitchSuggestionMenu,
-                                onClose = onCloseSuggestion
+                                onClose = onCloseSuggestion,
+                                recentClip = recentClip,
+                                onQuickPaste = onQuickPaste
                             )
                         } else if (features.isNotEmpty()) {
                             KeyboardFeatureHeader(
@@ -175,6 +206,9 @@ fun KeyboardImeRootScreen(
                         MainKeyboardView(
                             keyboard = currentKeyboard,
                             onActionListener = onKeyboardActionListener,
+                            textColor = themeTextColor,
+                            actionTextColor = themeTextColor,
+                            isDarkTheme = isDarkTheme,
                             onInit = onMainKeyboardInit
                         )
                     }
@@ -221,11 +255,16 @@ fun KeyboardImeRootScreen(
                     KeyboardPanelState.TEMPLATE_TEXT_SALE,
                     KeyboardPanelState.TEMPLATE_TEXT_LOVE,
                     KeyboardPanelState.TEMPLATE_TEXT_GREETING -> {
+                        val category = panel.templateFeatureType?.let {
+                            com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextCategory.fromFeatureType(it)
+                        } ?: com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextCategory.GAME
                         Box(modifier = Modifier.fillMaxWidth().height(270.dp)) {
-                            TemplateTextKeyboardScreen(
-                                initialType = panel.templateFeatureType ?: KeyboardFeatureType.TEMPLATE_TEXT_GAME,
+                            AutoTextKeyboardScreen(
+                                autoTextList = autoTextList,
                                 onCommitText = onCommitText,
-                                onBackClick = onBackToMain
+                                onBackClick = onBackToMain,
+                                onManageClick = onManageAutoText,
+                                initialCategory = category
                             )
                         }
                     }
@@ -253,19 +292,74 @@ fun KeyboardImeRootScreen(
                     }
 
                     KeyboardPanelState.WEBVIEW -> {
-                        WebviewKeyboardScreen(
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(260.dp)
+                            ) {
+                                WebviewKeyboardScreen(
+                                    onCommitText = onCommitText,
+                                    onBackClick = onBackToMain,
+                                    onRegisterKeyHandler = onRegisterKeyConsumer,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                            MainKeyboardView(
+                                keyboard = currentKeyboard,
+                                onActionListener = onKeyboardActionListener,
+                                onInit = onMainKeyboardInit
+                            )
+                        }
+                    }
+
+                    KeyboardPanelState.FORM -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(240.dp)
+                            ) {
+                                FormKeyboardScreen(
+                                    onCommitText = onCommitText,
+                                    onBackClick = onBackToMain,
+                                    onRegisterKeyHandler = onRegisterKeyConsumer,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                            MainKeyboardView(
+                                keyboard = currentKeyboard,
+                                onActionListener = onKeyboardActionListener,
+                                onInit = onMainKeyboardInit
+                            )
+                        }
+                    }
+
+                    KeyboardPanelState.CLIPBOARD -> {
+                        ClipboardKeyboardScreen(
+                            items = clipboardItems,
                             onCommitText = onCommitText,
+                            onTogglePin = onTogglePinClipboardItem,
+                            onDeleteClip = onDeleteClipboardItem,
+                            onClearHistory = onClearClipboardHistory,
                             onBackClick = onBackToMain
                         )
                     }
 
-                    KeyboardPanelState.FORM -> {
-                        Box(modifier = Modifier.fillMaxWidth().height(270.dp)) {
-                            FormKeyboardScreen(
-                                onCommitText = onCommitText,
-                                onBackClick = onBackToMain
-                            )
-                        }
+                    KeyboardPanelState.TEXT_EDIT -> {
+                        TextEditKeyboardScreen(
+                            isSelectionMode = isSelectionMode,
+                            onAction = onTextEditAction,
+                            onBackClick = onBackToMain
+                        )
                     }
                 }
             }

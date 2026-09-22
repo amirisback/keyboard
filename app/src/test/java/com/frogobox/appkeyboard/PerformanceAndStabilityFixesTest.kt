@@ -63,7 +63,7 @@ class PerformanceAndStabilityFixesTest {
         )
 
         val movieKeys = dummyMovies.mapIndexed { index, (id, title) ->
-            "${id ?: title ?: "movie"}_$index"
+            "${id ?: title}_$index"
         }
         assertEquals(dummyMovies.size, movieKeys.distinct().size)
     }

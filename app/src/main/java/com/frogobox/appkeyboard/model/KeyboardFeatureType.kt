@@ -21,6 +21,8 @@ enum class KeyboardFeatureType(val id: String, val text: String, val icon: Int) 
     TEMPLATE_TEXT_SALE("menu_template_text_sale", "Sale Admin", R.drawable.ic_menu_ps_sale),
     TEMPLATE_TEXT_LOVE("menu_template_text_love", "Love Emoji", R.drawable.ic_menu_ps_love),
     TEMPLATE_TEXT_GREETING("menu_template_text_greeting", "Greeting", R.drawable.ic_menu_ps_greeting),
+    CLIPBOARD("menu_clipboard", "Clipboard", R.drawable.ic_menu_clipboard),
+    TEXT_EDIT("menu_text_edit", "Text Editing", R.drawable.ic_menu_text_edit),
     SUGGESTION("menu_suggestion", "Word Suggestion", R.drawable.ic_menu_suggestion),
     CHANGE_KEYBOARD("menu_change_keyboard", "Change Keyboard", R.drawable.ic_menu_keyboard),
     SETTING("menu_setting", "Setting", R.drawable.ic_menu_setting);

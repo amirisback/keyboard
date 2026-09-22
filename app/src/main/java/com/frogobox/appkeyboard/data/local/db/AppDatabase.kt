@@ -9,8 +9,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.frogobox.appkeyboard.BuildConfig
 import com.frogobox.appkeyboard.data.local.autotext.AutoTextDao
 import com.frogobox.appkeyboard.data.local.productremote.ProductRemoteDao
+import com.frogobox.appkeyboard.data.local.templatetext.TemplateTextDao
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.ProductEntity
+import com.frogobox.appkeyboard.model.TemplateTextEntity
 
 /**
  * Created by Faisal Amir on 06/01/23
@@ -26,14 +28,16 @@ import com.frogobox.appkeyboard.model.ProductEntity
 @Database(
     entities = [
         AutoTextEntity::class,
-        ProductEntity::class
-    ], version = 3,
+        ProductEntity::class,
+        TemplateTextEntity::class
+    ], version = 4,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun autoTextDao(): AutoTextDao
     abstract fun productRemoteDao(): ProductRemoteDao
+    abstract fun templateTextDao(): TemplateTextDao
 
     companion object {
 
@@ -80,6 +84,27 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `template_text` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `category` TEXT NOT NULL,
+                        `text` TEXT NOT NULL,
+                        `createdAt` INTEGER NOT NULL,
+                        `updatedAt` INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_template_text_category` ON `template_text` (`category`)
+                    """.trimIndent()
+                )
+            }
+        }
+
         fun newInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
@@ -89,12 +114,12 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context): AppDatabase {
             return if (BuildConfig.DEBUG) {
                 Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .fallbackToDestructiveMigration(dropAllTables = true) // FOR DEVELOPMENT ONLY !!!!
                     .build()
             } else {
                 Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
             }
         }

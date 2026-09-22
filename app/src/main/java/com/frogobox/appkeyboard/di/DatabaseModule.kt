@@ -4,6 +4,7 @@ import android.content.Context
 import com.frogobox.appkeyboard.data.local.autotext.AutoTextDao
 import com.frogobox.appkeyboard.data.local.db.AppDatabase
 import com.frogobox.appkeyboard.data.local.productremote.ProductRemoteDao
+import com.frogobox.appkeyboard.data.local.templatetext.TemplateTextDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,6 +41,11 @@ object DatabaseModule {
     @Provides
     fun provideProductRemoteDao(database: AppDatabase): ProductRemoteDao {
         return database.productRemoteDao()
+    }
+
+    @Provides
+    fun provideTemplateTextDao(database: AppDatabase): TemplateTextDao {
+        return database.templateTextDao()
     }
 
 }

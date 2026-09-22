@@ -41,6 +41,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.templatetext.TemplateTextActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.toggle.ToggleActivity"
             android:exported="false" />
 

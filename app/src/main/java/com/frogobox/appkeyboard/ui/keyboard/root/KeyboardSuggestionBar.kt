@@ -57,7 +57,9 @@ fun KeyboardSuggestionBar(
     onCandidateSelected: (String, CandidateType) -> Unit,
     onSwitchMenu: () -> Unit,
     onClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    recentClip: String? = null,
+    onQuickPaste: ((String) -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -92,31 +94,68 @@ fun KeyboardSuggestionBar(
 
             Spacer(modifier = Modifier.width(2.dp))
 
-            // Section 1: User's Word (Literal Raw Input)
-            val hasUserWord = result.userWord.isNotEmpty()
-            if (hasUserWord) {
-                Box(
+            if (!recentClip.isNullOrBlank() && !result.hasSuggestions()) {
+                // Gboard-Style Quick Paste Chip
+                Surface(
                     modifier = Modifier
-                        .weight(1.0f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { onCandidateSelected(result.userWord, CandidateType.USER_WORD) }
-                        .padding(horizontal = 4.dp),
-                    contentAlignment = Alignment.Center
+                        .weight(1f)
+                        .height(36.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .clickable { onQuickPaste?.invoke(recentClip) },
+                    shape = RoundedCornerShape(18.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
                 ) {
-                    Text(
-                        text = "“${result.userWord}”",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_menu_clipboard),
+                            contentDescription = "Tempel dari Papan Klip",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Tempel: ${recentClip.take(28)}${if (recentClip.length > 28) "..." else ""}",
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             } else {
-                Spacer(modifier = Modifier.weight(1.0f))
-            }
+                // Section 1: User's Word (Literal Raw Input)
+                val hasUserWord = result.userWord.isNotEmpty()
+                if (hasUserWord) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1.0f)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onCandidateSelected(result.userWord, CandidateType.USER_WORD) }
+                            .padding(horizontal = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "“${result.userWord}”",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.weight(1.0f))
+                }
 
             // Divider 1
             if (hasUserWord && result.predictedWord.isNotEmpty()) {
@@ -201,6 +240,7 @@ fun KeyboardSuggestionBar(
             } else {
                 Spacer(modifier = Modifier.weight(1.0f))
             }
+        }
 
             Spacer(modifier = Modifier.width(2.dp))
 

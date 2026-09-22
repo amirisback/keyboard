@@ -34,10 +34,12 @@ class KeyboardImeComposeUnitTest {
             KeyboardPanelState.NEWS,
             KeyboardPanelState.MOVIE,
             KeyboardPanelState.WEBVIEW,
-            KeyboardPanelState.FORM
+            KeyboardPanelState.FORM,
+            KeyboardPanelState.CLIPBOARD,
+            KeyboardPanelState.TEXT_EDIT
         )
 
-        assertEquals(13, KeyboardPanelState.entries.size)
+        assertEquals(15, KeyboardPanelState.entries.size)
         expectedPanels.forEach { panel ->
             assertTrue(KeyboardPanelState.entries.contains(panel))
         }
@@ -56,6 +58,8 @@ class KeyboardImeComposeUnitTest {
         assertEquals(KeyboardPanelState.MOVIE, KeyboardPanelState.fromFeature(KeyboardFeatureType.MOVIE))
         assertEquals(KeyboardPanelState.WEBVIEW, KeyboardPanelState.fromFeature(KeyboardFeatureType.WEB))
         assertEquals(KeyboardPanelState.FORM, KeyboardPanelState.fromFeature(KeyboardFeatureType.FORM))
+        assertEquals(KeyboardPanelState.CLIPBOARD, KeyboardPanelState.fromFeature(KeyboardFeatureType.CLIPBOARD))
+        assertEquals(KeyboardPanelState.TEXT_EDIT, KeyboardPanelState.fromFeature(KeyboardFeatureType.TEXT_EDIT))
 
         // Non-panel utility actions should map to null
         assertNull(KeyboardPanelState.fromFeature(KeyboardFeatureType.SUGGESTION))
@@ -86,6 +90,8 @@ class KeyboardImeComposeUnitTest {
         assertFalse(KeyboardPanelState.MOVIE.isTemplate)
         assertFalse(KeyboardPanelState.WEBVIEW.isTemplate)
         assertFalse(KeyboardPanelState.FORM.isTemplate)
+        assertFalse(KeyboardPanelState.CLIPBOARD.isTemplate)
+        assertFalse(KeyboardPanelState.TEXT_EDIT.isTemplate)
 
         assertNull(KeyboardPanelState.MAIN.templateFeatureType)
         assertNull(KeyboardPanelState.EMOJI.templateFeatureType)

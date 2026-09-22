@@ -23,9 +23,25 @@ class KeyboardUtil @Inject constructor(
         const val KEYBOARD_COLOR = "KEYBOARD_COLOR"
         const val KEYBOARD_COLOR_TYPE = "KEYBOARD_COLOR_TYPE"
         const val KEYBOARD_SUGGESTION_ENABLED = "KEYBOARD_SUGGESTION_ENABLED"
+        const val KEY_ALWAYS_SHOW_FEATURE = "KEY_ALWAYS_SHOW_FEATURE"
+        const val KEY_FEATURE_ORDER = "KEY_FEATURE_ORDER"
+
+        val DEFAULT_FEATURE_TYPES = listOf(
+            KeyboardFeatureType.SUGGESTION,
+            KeyboardFeatureType.AUTO_TEXT,
+            KeyboardFeatureType.PRODUCT_REMOTE,
+            KeyboardFeatureType.CLIPBOARD,
+            KeyboardFeatureType.TEXT_EDIT,
+            KeyboardFeatureType.NEWS,
+            KeyboardFeatureType.MOVIE,
+            KeyboardFeatureType.WEB,
+            KeyboardFeatureType.FORM,
+            KeyboardFeatureType.CHANGE_KEYBOARD,
+            KeyboardFeatureType.SETTING
+        )
     }
 
-    private fun getStateToggle(key: String) : Boolean {
+    fun getStateToggle(key: String): Boolean {
         return pref.getPrefBoolean(key, true)
     }
 
@@ -33,20 +49,49 @@ class KeyboardUtil @Inject constructor(
         return getStateToggle(KeyboardFeatureType.SUGGESTION.id)
     }
 
+    fun isClipboardEnabled(): Boolean {
+        return getStateToggle(KeyboardFeatureType.CLIPBOARD.id)
+    }
+
+    fun getAlwaysShowFeature(): String? {
+        val featureId = pref.getPrefString(KEY_ALWAYS_SHOW_FEATURE, "")
+        return if (featureId.isBlank()) null else featureId
+    }
+
+    fun setAlwaysShowFeature(featureId: String?) {
+        pref.savePrefString(KEY_ALWAYS_SHOW_FEATURE, featureId ?: "")
+    }
+
+    fun isAlwaysShowFeature(featureId: String): Boolean {
+        return getAlwaysShowFeature() == featureId
+    }
+
+    fun getFeatureOrder(): List<String> {
+        val raw = pref.getPrefString(KEY_FEATURE_ORDER, "")
+        val defaultIds = DEFAULT_FEATURE_TYPES.map { it.id }
+        if (raw.isBlank()) return defaultIds
+        val saved = raw.split(",").filter { it.isNotBlank() }
+        val validSaved = saved.filter { id -> defaultIds.contains(id) }.toMutableList()
+        defaultIds.forEach { id ->
+            if (!validSaved.contains(id)) {
+                validSaved.add(id)
+            }
+        }
+        return validSaved
+    }
+
+    fun saveFeatureOrder(order: List<String>) {
+        pref.savePrefString(KEY_FEATURE_ORDER, order.joinToString(","))
+    }
+
+    fun resetFeatureOrder() {
+        pref.savePrefString(KEY_FEATURE_ORDER, "")
+    }
+
     fun menuToggle(): List<KeyboardFeatureModel> {
-        return listOf(
-            KeyboardFeatureType.SUGGESTION.mapToModel(),
-            KeyboardFeatureType.AUTO_TEXT.mapToModel(),
-            KeyboardFeatureType.PRODUCT_REMOTE.mapToModel(),
-            KeyboardFeatureType.CLIPBOARD.mapToModel(),
-            KeyboardFeatureType.TEXT_EDIT.mapToModel(),
-            KeyboardFeatureType.NEWS.mapToModel(),
-            KeyboardFeatureType.MOVIE.mapToModel(),
-            KeyboardFeatureType.WEB.mapToModel(),
-            KeyboardFeatureType.FORM.mapToModel(),
-            KeyboardFeatureType.CHANGE_KEYBOARD.mapToModel(),
-            KeyboardFeatureType.SETTING.mapToModel(),
-        ).sortedBy { getStateToggle(it.id) }
+        val order = getFeatureOrder()
+        val map = DEFAULT_FEATURE_TYPES.associateBy { it.id }
+        return order.mapNotNull { id -> map[id]?.mapToModel() }
     }
 
     fun menuKeyboard(): List<KeyboardFeatureModel> {

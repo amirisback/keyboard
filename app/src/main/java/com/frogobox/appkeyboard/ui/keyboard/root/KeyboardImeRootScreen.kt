@@ -99,6 +99,9 @@ fun KeyboardImeRootScreen(
     onQuickPaste: (String) -> Unit = {},
     isSelectionMode: Boolean = false,
     onTextEditAction: (TextEditAction) -> Unit = {},
+    alwaysShowFeatureId: String? = null,
+    onToggleAlwaysShowFeature: ((String) -> Unit)? = null,
+    onDeleteEmoji: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -165,8 +168,12 @@ fun KeyboardImeRootScreen(
                         .fillMaxWidth()
                         .height(56.dp)
                 ) {
+                    val isClipboardActive = features.any { it.id == com.frogobox.appkeyboard.model.KeyboardFeatureType.CLIPBOARD.id }
+                    val shouldShowRecentClip = !recentClip.isNullOrBlank() && isClipboardActive
+                    val showSuggestionsOrClip = (isSuggestionVisible && suggestionResult.hasSuggestions()) || shouldShowRecentClip
+
                     AnimatedContent(
-                        targetState = (isSuggestionVisible && suggestionResult.hasSuggestions()) || !recentClip.isNullOrBlank(),
+                        targetState = showSuggestionsOrClip,
                         transitionSpec = {
                             fadeIn(
                                 animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
@@ -175,14 +182,14 @@ fun KeyboardImeRootScreen(
                             )
                         },
                         label = "TopBarTransition"
-                    ) { showSuggestionsOrClip ->
-                        if (showSuggestionsOrClip) {
+                    ) { shouldShow ->
+                        if (shouldShow) {
                             KeyboardSuggestionBar(
                                 result = suggestionResult,
                                 onCandidateSelected = onCandidateSelected,
                                 onSwitchMenu = onSwitchSuggestionMenu,
                                 onClose = onCloseSuggestion,
-                                recentClip = recentClip,
+                                recentClip = if (isClipboardActive) recentClip else null,
                                 onQuickPaste = onQuickPaste
                             )
                         } else if (features.isNotEmpty()) {
@@ -221,7 +228,8 @@ fun KeyboardImeRootScreen(
                             onCategorySelected = onSelectEmojiCategory,
                             onEmojiClicked = onEmojiClicked,
                             onBackClicked = onBackToMain,
-                            isLoading = isEmojiLoading
+                            isLoading = isEmojiLoading,
+                            onDeleteClicked = onDeleteEmoji ?: {}
                         )
                     }
 
@@ -231,7 +239,9 @@ fun KeyboardImeRootScreen(
                                 autoTextList = autoTextList,
                                 onCommitText = onCommitText,
                                 onBackClick = onBackToMain,
-                                onManageClick = onManageAutoText
+                                onManageClick = onManageAutoText,
+                                isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.AUTO_TEXT.id),
+                                onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.AUTO_TEXT.id) } }
                             )
                         }
                     }
@@ -245,7 +255,9 @@ fun KeyboardImeRootScreen(
                                 onCommitText = onCommitText,
                                 onBackClick = onBackToMain,
                                 onRefresh = onRefreshProductRemote,
-                                onManageClick = onManageProductRemote
+                                onManageClick = onManageProductRemote,
+                                isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.PRODUCT_REMOTE.id),
+                                onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.PRODUCT_REMOTE.id) } }
                             )
                         }
                     }
@@ -275,7 +287,9 @@ fun KeyboardImeRootScreen(
                                 articles = newsArticles,
                                 isLoading = isNewsLoading,
                                 onCommitText = onCommitText,
-                                onBackClick = onBackToMain
+                                onBackClick = onBackToMain,
+                                isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.NEWS.id),
+                                onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.NEWS.id) } }
                             )
                         }
                     }
@@ -286,7 +300,9 @@ fun KeyboardImeRootScreen(
                                 movieList = movieList,
                                 isLoading = isMovieLoading,
                                 onCommitText = onCommitText,
-                                onBackClick = onBackToMain
+                                onBackClick = onBackToMain,
+                                isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.MOVIE.id),
+                                onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.MOVIE.id) } }
                             )
                         }
                     }
@@ -350,7 +366,9 @@ fun KeyboardImeRootScreen(
                             onTogglePin = onTogglePinClipboardItem,
                             onDeleteClip = onDeleteClipboardItem,
                             onClearHistory = onClearClipboardHistory,
-                            onBackClick = onBackToMain
+                            onBackClick = onBackToMain,
+                            isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.CLIPBOARD.id),
+                            onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.CLIPBOARD.id) } }
                         )
                     }
 
@@ -358,7 +376,9 @@ fun KeyboardImeRootScreen(
                         TextEditKeyboardScreen(
                             isSelectionMode = isSelectionMode,
                             onAction = onTextEditAction,
-                            onBackClick = onBackToMain
+                            onBackClick = onBackToMain,
+                            isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.TEXT_EDIT.id),
+                            onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.TEXT_EDIT.id) } }
                         )
                     }
                 }

@@ -113,6 +113,7 @@ class KeyboardIME : BaseKeyboardIME() {
     private val featuresFlow = MutableStateFlow<List<KeyboardFeatureModel>>(emptyList())
     private val isSuggestionVisibleFlow = MutableStateFlow(false)
     private val suggestionResultFlow = MutableStateFlow(SuggestionResult.EMPTY)
+    private val alwaysShowFeatureFlow = MutableStateFlow<String?>(null)
 
     // Sub-Screen Reactive Data Flows
     private val autoTextListFlow = MutableStateFlow<List<AutoTextEntity>>(emptyList())
@@ -170,12 +171,35 @@ class KeyboardIME : BaseKeyboardIME() {
         setupFeatureKeyboard()
         loadAutoText()
         loadProductRemote()
-        loadClipboardItems()
-        try {
-            clipboardManager?.addPrimaryClipChangedListener(clipChangedListener)
-        } catch (_: Exception) {}
-        checkAndCaptureClipboard()
-        showMainKeyboard()
+
+        val isClipboardActive = keyboardUtil.isClipboardEnabled()
+        if (isClipboardActive) {
+            loadClipboardItems()
+            try {
+                clipboardManager?.addPrimaryClipChangedListener(clipChangedListener)
+            } catch (_: Exception) {}
+            checkAndCaptureClipboard()
+        } else {
+            recentClipFlow.value = null
+            clipboardItemsFlow.value = emptyList()
+            try {
+                clipboardManager?.removePrimaryClipChangedListener(clipChangedListener)
+            } catch (_: Exception) {}
+        }
+
+        val alwaysShowId = keyboardUtil.getAlwaysShowFeature()
+        alwaysShowFeatureFlow.value = alwaysShowId
+
+        val activeFeatures = keyboardUtil.menuKeyboard()
+        val defaultFeature = if (!alwaysShowId.isNullOrEmpty()) {
+            activeFeatures.firstOrNull { it.id == alwaysShowId }
+        } else null
+
+        if (defaultFeature != null) {
+            handleFeatureClick(defaultFeature)
+        } else {
+            showMainKeyboard()
+        }
     }
 
     override fun onWindowHidden() {
@@ -243,6 +267,7 @@ class KeyboardIME : BaseKeyboardIME() {
                     val clipboardItems by clipboardItemsFlow.collectAsState()
                     val recentClip by recentClipFlow.collectAsState()
                     val isSelectionMode by isSelectionModeFlow.collectAsState()
+                    val alwaysShowFeature by alwaysShowFeatureFlow.collectAsState()
 
                     KeyboardImeRootScreen(
                         activePanelState = activePanel,
@@ -301,7 +326,6 @@ class KeyboardIME : BaseKeyboardIME() {
                         onEmojiClicked = { emoji ->
                             getActiveInputConnection()?.commitText(emoji, 1)
                             recordRecentEmoji(emoji)
-                            this@KeyboardIME.onText(emoji)
                             this@KeyboardIME.onActionUp()
                         },
                         onCommitText = { text ->
@@ -331,6 +355,13 @@ class KeyboardIME : BaseKeyboardIME() {
                         isSelectionMode = isSelectionMode,
                         onTextEditAction = { action ->
                             handleTextEditAction(action)
+                        },
+                        alwaysShowFeatureId = alwaysShowFeature,
+                        onToggleAlwaysShowFeature = { featureId ->
+                            handleToggleAlwaysShow(featureId)
+                        },
+                        onDeleteEmoji = {
+                            onKey(ItemMainKeyboard.KEYCODE_DELETE)
                         }
                     )
                 }
@@ -427,6 +458,14 @@ class KeyboardIME : BaseKeyboardIME() {
         setupFeatureKeyboard()
         loadAutoText()
         loadProductRemote()
+        if (!keyboardUtil.isClipboardEnabled()) {
+            recentClipFlow.value = null
+            clipboardItemsFlow.value = emptyList()
+            try {
+                clipboardManager?.removePrimaryClipChangedListener(clipChangedListener)
+            } catch (_: Exception) {}
+        }
+        alwaysShowFeatureFlow.value = keyboardUtil.getAlwaysShowFeature()
     }
 
     override fun initView() {
@@ -737,6 +776,10 @@ class KeyboardIME : BaseKeyboardIME() {
     }
 
     private fun checkAndCaptureClipboard() {
+        if (!keyboardUtil.isClipboardEnabled()) {
+            recentClipFlow.value = null
+            return
+        }
         val cm = clipboardManager ?: return
         val clip = cm.primaryClip
         if (clip != null && clip.itemCount > 0) {
@@ -748,6 +791,13 @@ class KeyboardIME : BaseKeyboardIME() {
                 }
             }
         }
+    }
+
+    private fun handleToggleAlwaysShow(featureId: String) {
+        val current = keyboardUtil.getAlwaysShowFeature()
+        val next = if (current == featureId) null else featureId
+        keyboardUtil.setAlwaysShowFeature(next)
+        alwaysShowFeatureFlow.value = next
     }
 
     private fun loadClipboardItems() {

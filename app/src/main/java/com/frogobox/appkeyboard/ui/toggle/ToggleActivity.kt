@@ -18,9 +18,11 @@ class ToggleActivity : BaseComposeActivity() {
 
     private var featureList by mutableStateOf<List<KeyboardFeatureModel>>(emptyList())
     private val toggleStates = mutableStateMapOf<String, Boolean>()
+    private var alwaysShowFeature by mutableStateOf<String?>(null)
 
     override fun onCreateExt(savedInstanceState: Bundle?) {
         super.onCreateExt(savedInstanceState)
+        alwaysShowFeature = viewModel.getAlwaysShowFeature()
         viewModel.keyboardFeatureState.observe(this) { list ->
             featureList = list
             list.forEach { feature ->
@@ -38,6 +40,18 @@ class ToggleActivity : BaseComposeActivity() {
             onToggleChanged = { id, isChecked ->
                 toggleStates[id] = isChecked
                 viewModel.switchToggle(id, isChecked)
+            },
+            onMoveFeature = { from, to ->
+                viewModel.moveFeature(from, to)
+            },
+            onResetOrder = {
+                viewModel.resetFeatureOrder()
+            },
+            alwaysShowFeatureId = alwaysShowFeature,
+            onToggleAlwaysShow = { featureId ->
+                val next = if (alwaysShowFeature == featureId) null else featureId
+                alwaysShowFeature = next
+                viewModel.setAlwaysShowFeature(next)
             },
             onBackClick = { finish() }
         )

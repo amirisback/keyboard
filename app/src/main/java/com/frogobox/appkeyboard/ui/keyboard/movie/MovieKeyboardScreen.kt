@@ -50,7 +50,9 @@ fun MovieKeyboardScreen(
     isLoading: Boolean,
     onCommitText: (String) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -59,8 +61,10 @@ fun MovieKeyboardScreen(
     ) {
         KeyboardFeatureToolbar(
             title = "Trending Movies",
-            subtitle = "Tap to share movie recommendation",
-            onBackClick = onBackClick
+            subtitle = "Tap to share movie synopsis & rating",
+            onBackClick = onBackClick,
+            isAlwaysShow = isAlwaysShow,
+            onToggleAlwaysShow = onToggleAlwaysShow
         )
 
         if (isLoading) {

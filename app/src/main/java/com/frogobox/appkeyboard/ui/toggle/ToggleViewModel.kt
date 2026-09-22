@@ -40,4 +40,34 @@ class ToggleViewModel @Inject constructor(
         _keyboardFeatureState.postValue(keyboardUtil.menuToggle())
     }
 
+    fun moveFeature(fromIndex: Int, toIndex: Int) {
+        val currentList = _keyboardFeatureState.value?.toMutableList() ?: return
+        if (fromIndex !in currentList.indices || toIndex !in currentList.indices || fromIndex == toIndex) return
+        val item = currentList.removeAt(fromIndex)
+        currentList.add(toIndex, item)
+        _keyboardFeatureState.value = currentList
+        keyboardUtil.saveFeatureOrder(currentList.map { it.id })
+    }
+
+    fun swapFeatures(fromIndex: Int, toIndex: Int) {
+        val currentList = _keyboardFeatureState.value?.toMutableList() ?: return
+        if (fromIndex !in currentList.indices || toIndex !in currentList.indices || fromIndex == toIndex) return
+        java.util.Collections.swap(currentList, fromIndex, toIndex)
+        _keyboardFeatureState.value = currentList
+        keyboardUtil.saveFeatureOrder(currentList.map { it.id })
+    }
+
+    fun resetFeatureOrder() {
+        keyboardUtil.resetFeatureOrder()
+        _keyboardFeatureState.value = keyboardUtil.menuToggle()
+    }
+
+    fun getAlwaysShowFeature(): String? {
+        return keyboardUtil.getAlwaysShowFeature()
+    }
+
+    fun setAlwaysShowFeature(featureId: String?) {
+        keyboardUtil.setAlwaysShowFeature(featureId)
+    }
+
 }

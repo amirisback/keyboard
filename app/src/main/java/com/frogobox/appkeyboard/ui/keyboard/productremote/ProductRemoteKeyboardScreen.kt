@@ -71,7 +71,9 @@ fun ProductRemoteKeyboardScreen(
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onManageClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -83,6 +85,8 @@ fun ProductRemoteKeyboardScreen(
             title = "Product Remote",
             subtitle = "Katalog produk tersimpan di Room DB",
             onBackClick = onBackClick,
+            isAlwaysShow = isAlwaysShow,
+            onToggleAlwaysShow = onToggleAlwaysShow,
             action = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

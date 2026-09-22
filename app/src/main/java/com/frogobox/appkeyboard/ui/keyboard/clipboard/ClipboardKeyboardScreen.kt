@@ -55,7 +55,9 @@ fun ClipboardKeyboardScreen(
     onDeleteClip: (String) -> Unit,
     onClearHistory: () -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Surface(
         modifier = modifier
@@ -93,6 +95,14 @@ fun ClipboardKeyboardScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f)
                 )
+
+                if (onToggleAlwaysShow != null) {
+                    com.frogobox.appkeyboard.ui.keyboard.common.PinFeatureButton(
+                        isPinned = isAlwaysShow,
+                        onTogglePin = onToggleAlwaysShow
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
 
                 if (items.any { !it.isPinned }) {
                     Surface(

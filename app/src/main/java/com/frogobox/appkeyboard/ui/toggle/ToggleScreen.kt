@@ -22,8 +22,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -64,7 +68,11 @@ fun ToggleScreen(
     getToggleState: (String) -> Boolean,
     onToggleChanged: (String, Boolean) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onMoveFeature: ((fromIndex: Int, toIndex: Int) -> Unit)? = null,
+    onResetOrder: (() -> Unit)? = null,
+    alwaysShowFeatureId: String? = null,
+    onToggleAlwaysShow: ((String) -> Unit)? = null
 ) {
     var selectedTab by remember { mutableStateOf(ToggleFilterTab.ALL) }
 
@@ -106,7 +114,8 @@ fun ToggleScreen(
                     },
                     onDisableAll = {
                         features.forEach { onToggleChanged(it.id, false) }
-                    }
+                    },
+                    onResetOrder = onResetOrder ?: {}
                 )
             }
 
@@ -152,12 +161,26 @@ fun ToggleScreen(
                 }
             } else {
                 items(filteredFeatures, key = { it.id }) { feature ->
+                    val currentIndex = features.indexOf(feature)
+                    val canMoveUp = onMoveFeature != null && currentIndex > 0
+                    val canMoveDown = onMoveFeature != null && currentIndex in 0 until (features.size - 1)
+
                     ToggleFeatureCard(
                         feature = feature,
                         isChecked = getToggleState(feature.id),
                         onCheckedChange = { isChecked ->
                             onToggleChanged(feature.id, isChecked)
-                        }
+                        },
+                        canMoveUp = canMoveUp,
+                        canMoveDown = canMoveDown,
+                        onMoveUp = {
+                            onMoveFeature?.invoke(currentIndex, currentIndex - 1)
+                        },
+                        onMoveDown = {
+                            onMoveFeature?.invoke(currentIndex, currentIndex + 1)
+                        },
+                        isAlwaysShow = (alwaysShowFeatureId == feature.id),
+                        onToggleAlwaysShow = onToggleAlwaysShow?.let { cb -> { cb(feature.id) } }
                     )
                 }
             }
@@ -171,6 +194,7 @@ private fun ToggleHeaderBanner(
     activeCount: Int,
     onEnableAll: () -> Unit,
     onDisableAll: () -> Unit,
+    onResetOrder: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -237,6 +261,22 @@ private fun ToggleHeaderBanner(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                TextButton(
+                    onClick = onResetOrder,
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "Reset Urutan",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
                 TextButton(
                     onClick = onEnableAll,
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
@@ -354,7 +394,13 @@ private fun ToggleFeatureCard(
     feature: KeyboardFeatureModel,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canMoveUp: Boolean = false,
+    canMoveDown: Boolean = false,
+    onMoveUp: () -> Unit = {},
+    onMoveDown: () -> Unit = {},
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val surfaceColor = MaterialTheme.colorScheme.surface
@@ -476,6 +522,92 @@ private fun ToggleFeatureCard(
                         MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     }
                 )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Bottom action row: Always show (Pin) button + Re-order arrows
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Pin / Always Show toggle chip
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = if (isAlwaysShow) {
+                        primaryColor.copy(alpha = 0.2f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    },
+                    border = if (isAlwaysShow) BorderStroke(1.dp, primaryColor) else null,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onToggleAlwaysShow?.invoke() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_feature_pin),
+                            contentDescription = if (isAlwaysShow) "Default Startup" else "Jadikan Default",
+                            tint = if (isAlwaysShow) primaryColor else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            modifier = Modifier.size(13.dp)
+                        )
+                        Text(
+                            text = if (isAlwaysShow) "Default" else "Pin",
+                            fontSize = 10.sp,
+                            fontWeight = if (isAlwaysShow) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isAlwaysShow) primaryColor else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Reorder / Move Buttons
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(
+                                if (canMoveUp) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+                            )
+                            .clickable(enabled = canMoveUp) { onMoveUp() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Geser Maju",
+                            tint = if (canMoveUp) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f),
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(
+                                if (canMoveDown) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+                            )
+                            .clickable(enabled = canMoveDown) { onMoveDown() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Geser Mundur",
+                            tint = if (canMoveDown) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f),
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
             }
         }
     }

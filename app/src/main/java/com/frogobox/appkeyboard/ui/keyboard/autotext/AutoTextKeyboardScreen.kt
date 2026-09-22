@@ -57,7 +57,9 @@ fun AutoTextKeyboardScreen(
     onBackClick: () -> Unit,
     onManageClick: () -> Unit,
     modifier: Modifier = Modifier,
-    initialCategory: AutoTextCategory = AutoTextCategory.MY_CUSTOM
+    initialCategory: AutoTextCategory = AutoTextCategory.MY_CUSTOM,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     var selectedCategory by remember(initialCategory) { mutableStateOf(initialCategory) }
@@ -109,6 +111,8 @@ fun AutoTextKeyboardScreen(
             title = "Auto Text",
             subtitle = currentSubtitle,
             onBackClick = onBackClick,
+            isAlwaysShow = isAlwaysShow,
+            onToggleAlwaysShow = onToggleAlwaysShow,
             action = {
                 Box(
                     modifier = Modifier

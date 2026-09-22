@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -74,7 +75,8 @@ fun EmojiKeyboardScreen(
     onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
     lazyGridState: LazyGridState = rememberLazyGridState(),
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    onDeleteClicked: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
@@ -86,7 +88,8 @@ fun EmojiKeyboardScreen(
             // Header Toolbar
             EmojiHeaderToolbar(
                 selectedCategory = selectedCategory,
-                onBackClicked = onBackClicked
+                onBackClicked = onBackClicked,
+                onDeleteClicked = onDeleteClicked
             )
 
             HorizontalDivider(
@@ -153,7 +156,8 @@ fun EmojiKeyboardScreen(
 fun EmojiHeaderToolbar(
     selectedCategory: EmojiCategoryType,
     onBackClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDeleteClicked: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -193,6 +197,18 @@ fun EmojiHeaderToolbar(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        IconButton(
+            onClick = onDeleteClicked,
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_keyboard_backspace),
+                contentDescription = stringResource(id = R.string.keycode_delete),
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(20.dp)
             )
         }
     }

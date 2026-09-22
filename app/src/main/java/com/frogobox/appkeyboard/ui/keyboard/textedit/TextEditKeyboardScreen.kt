@@ -54,7 +54,9 @@ fun TextEditKeyboardScreen(
     isSelectionMode: Boolean,
     onAction: (TextEditAction) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Surface(
         modifier = modifier
@@ -92,6 +94,14 @@ fun TextEditKeyboardScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f)
                 )
+
+                if (onToggleAlwaysShow != null) {
+                    com.frogobox.appkeyboard.ui.keyboard.common.PinFeatureButton(
+                        isPinned = isAlwaysShow,
+                        onTogglePin = onToggleAlwaysShow
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
 
                 // Selection Mode Status Badge
                 Surface(

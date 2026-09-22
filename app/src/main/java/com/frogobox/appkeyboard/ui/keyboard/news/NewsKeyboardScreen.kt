@@ -43,7 +43,9 @@ fun NewsKeyboardScreen(
     isLoading: Boolean,
     onCommitText: (String) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -53,7 +55,9 @@ fun NewsKeyboardScreen(
         KeyboardFeatureToolbar(
             title = "Top Headlines",
             subtitle = "Tap to share article & source link",
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            isAlwaysShow = isAlwaysShow,
+            onToggleAlwaysShow = onToggleAlwaysShow
         )
 
         if (isLoading) {

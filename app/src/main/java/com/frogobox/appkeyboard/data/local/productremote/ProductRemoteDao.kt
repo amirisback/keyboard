@@ -58,7 +58,7 @@ interface ProductRemoteDao {
     @Query("SELECT * FROM product_remote WHERE statusDownload = :status ORDER BY id DESC")
     fun getByStatusDownload(status: String): Flow<List<ProductEntity>>
 
-    @Query("SELECT * FROM product_remote WHERE (productName LIKE '%' || :query || '%' OR caption LIKE '%' || :query || '%' OR originalFileName LIKE '%' || :query || '%') ORDER BY id DESC")
+    @Query("SELECT * FROM product_remote WHERE (productName LIKE '%' || :query || '%' OR caption LIKE '%' || :query || '%' OR hook LIKE '%' || :query || '%' OR originalFileName LIKE '%' || :query || '%') ORDER BY id DESC")
     fun search(query: String): Flow<List<ProductEntity>>
 
 }

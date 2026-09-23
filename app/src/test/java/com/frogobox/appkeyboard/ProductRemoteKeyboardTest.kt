@@ -6,12 +6,17 @@ import com.frogobox.appkeyboard.data.remote.model.DataApiResponse
 import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.repository.data.DataApiRepositoryImpl
+import com.frogobox.appkeyboard.model.ProductEntity
+import com.frogobox.appkeyboard.model.toProductEntity
 import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteOutputMode
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toCommitTextByMode
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toFormattedCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductCaptionCommitText
+import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductHookCommitText
+import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductLinkCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductTitleCommitText
 import com.frogobox.appkeyboard.ui.keyboard.root.KeyboardPanelState
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -344,11 +349,146 @@ class ProductRemoteKeyboardTest {
 
     @Test
     fun testProductRemoteOutputMode_labelsAndEntries() {
-        assertEquals(2, ProductRemoteOutputMode.entries.size)
+        assertEquals(4, ProductRemoteOutputMode.entries.size)
         assertEquals("Caption", ProductRemoteOutputMode.CAPTION.shortLabel)
         assertEquals("Judul", ProductRemoteOutputMode.TITLE.shortLabel)
+        assertEquals("Hook", ProductRemoteOutputMode.HOOK.shortLabel)
+        assertEquals("Link", ProductRemoteOutputMode.LINK.shortLabel)
         assertTrue(ProductRemoteOutputMode.CAPTION.displayName.contains("Caption"))
         assertTrue(ProductRemoteOutputMode.TITLE.displayName.contains("Judul"))
+        assertTrue(ProductRemoteOutputMode.HOOK.displayName.contains("Hook"))
+        assertTrue(ProductRemoteOutputMode.LINK.displayName.contains("Link"))
+    }
+
+    @Test
+    fun testToProductHookCommitText_withHookPresent() {
+        val item = DataItemResponse(
+            id = "gviz-57",
+            productName = "Tongsis Bluetooth",
+            caption = "Caption promosi tongsis",
+            hook = "Alat ngonten serbaguna idaman kreator!"
+        )
+        assertEquals("Alat ngonten serbaguna idaman kreator!", item.toProductHookCommitText())
+    }
+
+    @Test
+    fun testToProductHookCommitText_fallbackToCaption() {
+        val item = DataItemResponse(
+            id = "gviz-58",
+            productName = "Tripod Kamera",
+            caption = "Caption tripod mantap",
+            hook = null
+        )
+        assertEquals("Caption tripod mantap", item.toProductHookCommitText())
+    }
+
+    @Test
+    fun testToProductHookCommitText_fallbackToProductName() {
+        val item = DataItemResponse(
+            id = "gviz-59",
+            productName = "LED Fill Light",
+            caption = null,
+            hook = ""
+        )
+        assertEquals("LED Fill Light", item.toProductHookCommitText())
+    }
+
+    @Test
+    fun testToProductLinkCommitText_withLinkProductPresent() {
+        val item = DataItemResponse(
+            id = "gviz-57",
+            productName = "Tongsis Bluetooth",
+            linkProduct = "https://shopee.co.id/search?keyword=Tongsis",
+            driveLink = "https://drive.google.com/file/d/test"
+        )
+        assertEquals("https://shopee.co.id/search?keyword=Tongsis", item.toProductLinkCommitText())
+    }
+
+    @Test
+    fun testToProductLinkCommitText_fallbackToDriveLink() {
+        val item = DataItemResponse(
+            id = "gviz-60",
+            productName = "Ring Light",
+            linkProduct = null,
+            driveLink = "https://drive.google.com/file/d/ringlight"
+        )
+        assertEquals("https://drive.google.com/file/d/ringlight", item.toProductLinkCommitText())
+    }
+
+    @Test
+    fun testToProductLinkCommitText_emptyWhenBothNull() {
+        val item = DataItemResponse(
+            id = "gviz-61",
+            productName = "Item Tanpa Link",
+            linkProduct = null,
+            driveLink = null
+        )
+        assertEquals("", item.toProductLinkCommitText())
+    }
+
+    @Test
+    fun testToCommitTextByMode_allFourModes() {
+        val item = DataItemResponse(
+            id = "gviz-57",
+            rowIndex = 57,
+            productName = "Tongsis Bluetooth 360",
+            caption = "Bikin konten di mana aja makin pro!",
+            hook = "Alat ngonten serbaguna idaman kreator!",
+            linkProduct = "https://shopee.co.id/tongsis"
+        )
+
+        assertEquals("Bikin konten di mana aja makin pro!", item.toCommitTextByMode(ProductRemoteOutputMode.CAPTION))
+        assertEquals("Tongsis Bluetooth 360", item.toCommitTextByMode(ProductRemoteOutputMode.TITLE))
+        assertEquals("Alat ngonten serbaguna idaman kreator!", item.toCommitTextByMode(ProductRemoteOutputMode.HOOK))
+        assertEquals("https://shopee.co.id/tongsis", item.toCommitTextByMode(ProductRemoteOutputMode.LINK))
+    }
+
+    @Test
+    fun testUserSampleJsonDeserialization_tongsisTripod() {
+        val userJson = """
+        {
+          "id": "gviz-57-1N3pdG1aOZf2_ENVzFDA68sOlyhI3CKGg",
+          "uploadTimestamp": "2026-09-22 08:37:04 WIB",
+          "productName": "Tongsis Bluetooth 360 Rotation Tripod with LED Fill Light",
+          "caption": "Bikin konten di mana aja makin pro! Tongsis + tripod + lampu LED + remote bluetooth lengkap dalam 1 alat! #tongsistripod #alatngonten #shopee",
+          "hook": "Alat ngonten serbaguna idaman kreator: tongsis, tripod 360, plus lampu LED fill light lengkap jadi satu!",
+          "originalFileName": "20260922_083704_tongsis_bluetooth_360_rotation_tripod_with_led_fill_light.mp4",
+          "fileSize": "2.55 MB",
+          "fileType": "video/mp4",
+          "driveLink": "https://drive.google.com/file/d/1N3pdG1aOZf2_ENVzFDA68sOlyhI3CKGg/view?usp=drivesdk",
+          "linkProduct": "https://shopee.co.id/search?keyword=Tongsis%20Bluetooth%20360%20Rotation%20Tripod%20with%20LED%20Fill%20Light",
+          "driveFileId": "1N3pdG1aOZf2_ENVzFDA68sOlyhI3CKGg",
+          "thumbnailUrl": "https://drive.google.com/thumbnail?id=1N3pdG1aOZf2_ENVzFDA68sOlyhI3CKGg&sz=w600",
+          "previewUrl": "https://drive.google.com/file/d/1N3pdG1aOZf2_ENVzFDA68sOlyhI3CKGg/preview",
+          "isVideo": true,
+          "statusDownload": "Belum",
+          "rowIndex": 57
+        }
+        """.trimIndent()
+
+        val item = Gson().fromJson(userJson, DataItemResponse::class.java)
+
+        assertEquals("gviz-57-1N3pdG1aOZf2_ENVzFDA68sOlyhI3CKGg", item.id)
+        assertEquals("Tongsis Bluetooth 360 Rotation Tripod with LED Fill Light", item.productName)
+        assertEquals("Alat ngonten serbaguna idaman kreator: tongsis, tripod 360, plus lampu LED fill light lengkap jadi satu!", item.hook)
+        assertEquals("https://shopee.co.id/search?keyword=Tongsis%20Bluetooth%20360%20Rotation%20Tripod%20with%20LED%20Fill%20Light", item.linkProduct)
+        assertEquals("2.55 MB", item.fileSize)
+        assertEquals(true, item.isVideo)
+        assertEquals(57, item.rowIndex)
+        assertEquals(item.hook, item.displayHook)
+        assertEquals(item.linkProduct, item.displayProductLink)
+
+        // Room entity mapping verification
+        val entity = item.toProductEntity(localId = 1)
+        assertEquals(1, entity.id)
+        assertEquals(item.id, entity.remoteId)
+        assertEquals(item.hook, entity.hook)
+        assertEquals(item.linkProduct, entity.linkProduct)
+        assertEquals(item.productName, entity.productName)
+
+        val restoredResponse = entity.toDataItemResponse()
+        assertEquals(item.hook, restoredResponse.hook)
+        assertEquals(item.linkProduct, restoredResponse.linkProduct)
     }
 
     @Test
@@ -382,6 +522,8 @@ class ProductRemoteKeyboardTest {
         assertNull(minimalItem.originalFileName)
         assertNull(minimalItem.displayTimestamp)
         assertNull(minimalItem.displayBody)
+        assertNull(minimalItem.hook)
+        assertNull(minimalItem.linkProduct)
         assertFalse(minimalItem.isDownloaded)
         assertEquals("Produk Sederhana", minimalItem.displayTitle)
     }

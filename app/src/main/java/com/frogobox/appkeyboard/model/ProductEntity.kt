@@ -38,6 +38,9 @@ data class ProductEntity(
     @ColumnInfo(name = "caption")
     var caption: String = "",
 
+    @ColumnInfo(name = "hook")
+    var hook: String? = null,
+
     @ColumnInfo(name = "originalFileName")
     var originalFileName: String? = null,
 
@@ -49,6 +52,9 @@ data class ProductEntity(
 
     @ColumnInfo(name = "driveLink")
     var driveLink: String? = null,
+
+    @ColumnInfo(name = "linkProduct")
+    var linkProduct: String? = null,
 
     @ColumnInfo(name = "driveFileId")
     var driveFileId: String? = null,
@@ -84,10 +90,12 @@ data class ProductEntity(
             uploadTimestamp = uploadTimestamp,
             productName = productName,
             caption = caption,
+            hook = hook,
             originalFileName = originalFileName,
             fileSize = fileSize,
             fileType = fileType,
             driveLink = driveLink,
+            linkProduct = linkProduct,
             driveFileId = driveFileId,
             thumbnailUrl = thumbnailUrl,
             previewUrl = previewUrl,
@@ -105,10 +113,12 @@ data class ProductEntity(
                 uploadTimestamp = item.uploadTimestamp,
                 productName = item.productName ?: item.displayTitle,
                 caption = item.caption ?: "",
+                hook = item.hook,
                 originalFileName = item.originalFileName,
                 fileSize = item.fileSize,
                 fileType = item.fileType,
                 driveLink = item.driveLink,
+                linkProduct = item.linkProduct,
                 driveFileId = item.driveFileId,
                 thumbnailUrl = item.thumbnailUrl,
                 previewUrl = item.previewUrl,

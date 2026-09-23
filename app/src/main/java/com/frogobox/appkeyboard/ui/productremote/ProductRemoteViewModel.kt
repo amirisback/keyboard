@@ -209,6 +209,8 @@ class ProductRemoteViewModel @Inject constructor(
                 item.productName?.lowercase()?.contains(query) == true ||
                 item.displayTitle.lowercase().contains(query) ||
                 item.caption?.lowercase()?.contains(query) == true ||
+                item.hook?.lowercase()?.contains(query) == true ||
+                item.linkProduct?.lowercase()?.contains(query) == true ||
                 item.originalFileName?.lowercase()?.contains(query) == true ||
                 item.statusDownload?.lowercase()?.contains(query) == true ||
                 item.displayBody?.lowercase()?.contains(query) == true

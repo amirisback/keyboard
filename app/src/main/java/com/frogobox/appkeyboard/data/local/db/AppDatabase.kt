@@ -30,7 +30,7 @@ import com.frogobox.appkeyboard.model.TemplateTextEntity
         AutoTextEntity::class,
         ProductEntity::class,
         TemplateTextEntity::class
-    ], version = 4,
+    ], version = 5,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -105,6 +105,21 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    ALTER TABLE `product_remote` ADD COLUMN `hook` TEXT
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    ALTER TABLE `product_remote` ADD COLUMN `linkProduct` TEXT
+                    """.trimIndent()
+                )
+            }
+        }
+
         fun newInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
@@ -114,12 +129,12 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context): AppDatabase {
             return if (BuildConfig.DEBUG) {
                 Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .fallbackToDestructiveMigration(dropAllTables = true) // FOR DEVELOPMENT ONLY !!!!
                     .build()
             } else {
                 Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .build()
             }
         }

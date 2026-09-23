@@ -6,6 +6,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,6 +81,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -91,6 +93,8 @@ import com.frogobox.appkeyboard.model.ProductEntity
 import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toFormattedCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductCaptionCommitText
+import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductHookCommitText
+import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductLinkCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductTitleCommitText
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoEmptyView
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoPrimary
@@ -200,11 +204,25 @@ fun ProductRemoteScreen(
         Toast.makeText(context, "Format chat berhasil disalin", Toast.LENGTH_SHORT).show()
     }
 
+    val onCopyHook: (DataItemResponse) -> Unit = { item ->
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Hook Produk", item.toProductHookCommitText())
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(context, "Hook produk berhasil disalin", Toast.LENGTH_SHORT).show()
+    }
+
     val onCopyDriveLink: (String) -> Unit = { link ->
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Drive Link", link)
         clipboard.setPrimaryClip(clip)
         Toast.makeText(context, "Link Drive berhasil disalin", Toast.LENGTH_SHORT).show()
+    }
+
+    val onCopyProductLink: (String) -> Unit = { link ->
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Link Produk", link)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(context, "Link Produk berhasil disalin", Toast.LENGTH_SHORT).show()
     }
 
     Scaffold(
@@ -412,8 +430,10 @@ fun ProductRemoteScreen(
                                         onDeleteClick = { itemToDelete = item },
                                         onCopyCaption = { onCopyCaption(item) },
                                         onCopyTitle = { onCopyTitle(item) },
+                                        onCopyHook = { onCopyHook(item) },
                                         onCopySnippet = { onCopySnippet(item) },
-                                        onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) }
+                                        onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) },
+                                        onCopyProductLink = { item.linkProduct?.let(onCopyProductLink) ?: item.toProductLinkCommitText().takeIf { it.isNotBlank() }?.let(onCopyProductLink) ?: onCopyProductLink("") }
                                     )
                                 }
                             }
@@ -488,8 +508,10 @@ fun ProductRemoteScreen(
                                     onDeleteClick = { itemToDelete = item },
                                     onCopyCaption = { onCopyCaption(item) },
                                     onCopyTitle = { onCopyTitle(item) },
+                                    onCopyHook = { onCopyHook(item) },
                                     onCopySnippet = { onCopySnippet(item) },
-                                    onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) }
+                                    onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) },
+                                    onCopyProductLink = { item.linkProduct?.let(onCopyProductLink) ?: item.toProductLinkCommitText().takeIf { it.isNotBlank() }?.let(onCopyProductLink) ?: onCopyProductLink("") }
                                 )
                             }
                         }
@@ -869,12 +891,15 @@ private fun ProductRemoteInAppCard(
     onDeleteClick: () -> Unit,
     onCopyCaption: () -> Unit,
     onCopyTitle: () -> Unit,
+    onCopyHook: () -> Unit,
     onCopySnippet: () -> Unit,
     onCopyDriveLink: () -> Unit,
+    onCopyProductLink: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val hasThumbnail = !item.thumbnailUrl.isNullOrBlank()
     val hasDriveLink = !item.driveLink.isNullOrBlank()
+    val hasProductLink = !item.linkProduct.isNullOrBlank()
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -1046,9 +1071,41 @@ private fun ProductRemoteInAppCard(
                     )
                 }
 
+                // Hook snippet
+                val hookText = item.hook
+                if (!hookText.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = "🪝 Hook: $hookText",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 15.sp
+                        ),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                // Product Link
+                val productLinkText = item.linkProduct
+                if (!productLinkText.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = "🔗 Link: $productLinkText",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 10.5.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
                 // Body Description
                 val bodyText = item.displayBody
-                if (!bodyText.isNullOrBlank() && bodyText != item.displayTitle && bodyText != captionText) {
+                if (!bodyText.isNullOrBlank() && bodyText != item.displayTitle && bodyText != captionText && bodyText != hookText) {
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = bodyText,
@@ -1123,10 +1180,10 @@ private fun ProductRemoteInAppCard(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Primary Output Row: Salin Caption & Salin Judul
+                // Primary Output Row: Salin Caption, Salin Judul, Salin Hook
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Button(
@@ -1139,11 +1196,11 @@ private fun ProductRemoteInAppCard(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
-                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
+                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 2.dp)
                     ) {
                         Text(
                             text = "Caption",
-                            fontSize = 11.sp,
+                            fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -1160,11 +1217,32 @@ private fun ProductRemoteInAppCard(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
-                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
+                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 2.dp)
                     ) {
                         Text(
                             text = "Judul",
-                            fontSize = 11.sp,
+                            fontSize = 10.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Button(
+                        onClick = onCopyHook,
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(30.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        ),
+                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 2.dp)
+                    ) {
+                        Text(
+                            text = "🪝 Hook",
+                            fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -1174,29 +1252,33 @@ private fun ProductRemoteInAppCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Secondary Row: Format Chat & Link Drive
+                // Secondary Row: Link Produk, Drive, & Chat
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedButton(
-                        onClick = onCopySnippet,
+                    Button(
+                        onClick = onCopyProductLink,
                         shape = RoundedCornerShape(6.dp),
                         modifier = Modifier
                             .weight(1f)
                             .height(28.dp),
-                        contentPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (hasProductLink) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = if (hasProductLink) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        contentPadding = PaddingValues(vertical = 2.dp, horizontal = 2.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ContentCopy,
+                            imageVector = Icons.Default.Link,
                             contentDescription = null,
-                            modifier = Modifier.size(12.dp)
+                            modifier = Modifier.size(11.dp)
                         )
-                        Spacer(modifier = Modifier.width(3.dp))
+                        Spacer(modifier = Modifier.width(2.dp))
                         Text(
-                            text = "Chat",
-                            fontSize = 10.5.sp,
+                            text = "Link",
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -1211,22 +1293,45 @@ private fun ProductRemoteInAppCard(
                                 .weight(1f)
                                 .height(28.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
-                            contentPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
+                            contentPadding = PaddingValues(vertical = 2.dp, horizontal = 2.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Link,
+                                imageVector = Icons.Default.CloudDownload,
                                 contentDescription = null,
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(11.dp)
                             )
-                            Spacer(modifier = Modifier.width(3.dp))
+                            Spacer(modifier = Modifier.width(2.dp))
                             Text(
                                 text = "Drive",
-                                fontSize = 10.5.sp,
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
+                    }
+
+                    OutlinedButton(
+                        onClick = onCopySnippet,
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(28.dp),
+                        contentPadding = PaddingValues(vertical = 2.dp, horizontal = 2.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = null,
+                            modifier = Modifier.size(11.dp)
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "Chat",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
 
@@ -1272,12 +1377,21 @@ private fun ProductRemoteInAppCard(
                     }
 
                     // Edit Button
-                    IconButton(
-                        onClick = onEditClick,
+                    Box(
                         modifier = Modifier
                             .size(30.dp)
                             .clip(RoundedCornerShape(6.dp))
                             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                                RoundedCornerShape(6.dp)
+                            )
+                            .clickable(
+                                role = Role.Button,
+                                onClick = onEditClick
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -1288,12 +1402,21 @@ private fun ProductRemoteInAppCard(
                     }
 
                     // Delete Button
-                    IconButton(
-                        onClick = onDeleteClick,
+                    Box(
                         modifier = Modifier
                             .size(30.dp)
                             .clip(RoundedCornerShape(6.dp))
                             .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f))
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.error.copy(alpha = 0.35f),
+                                RoundedCornerShape(6.dp)
+                            )
+                            .clickable(
+                                role = Role.Button,
+                                onClick = onDeleteClick
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
@@ -1319,6 +1442,8 @@ private fun ProductFormDialog(
 ) {
     var productName by remember { mutableStateOf(initialProduct?.productName ?: initialProduct?.displayTitle ?: "") }
     var caption by remember { mutableStateOf(initialProduct?.caption ?: "") }
+    var hook by remember { mutableStateOf(initialProduct?.hook ?: "") }
+    var linkProduct by remember { mutableStateOf(initialProduct?.linkProduct ?: "") }
     var statusDownload by remember { mutableStateOf(initialProduct?.statusDownload ?: "Belum") }
     var driveLink by remember { mutableStateOf(initialProduct?.driveLink ?: "") }
     var originalFileName by remember { mutableStateOf(initialProduct?.originalFileName ?: "") }
@@ -1377,6 +1502,29 @@ private fun ProductFormDialog(
                     isError = isError && caption.isBlank(),
                     minLines = 3,
                     maxLines = 5,
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = hook,
+                    onValueChange = { hook = it },
+                    label = { Text("Hook Promosi (Opsional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 2,
+                    maxLines = 4,
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = linkProduct,
+                    onValueChange = { linkProduct = it },
+                    label = { Text("Link Produk (Shopee/Tokopedia/Web) (Opsional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
                     shape = RoundedCornerShape(8.dp)
                 )
 
@@ -1507,10 +1655,12 @@ private fun ProductFormDialog(
                                 uploadTimestamp = initialProduct?.uploadTimestamp,
                                 productName = productName.trim(),
                                 caption = caption.trim(),
+                                hook = hook.trim().takeIf { it.isNotBlank() },
                                 originalFileName = originalFileName.takeIf { it.isNotBlank() },
                                 fileSize = fileSize.takeIf { it.isNotBlank() },
                                 fileType = initialProduct?.fileType,
                                 driveLink = driveLink.takeIf { it.isNotBlank() },
+                                linkProduct = linkProduct.trim().takeIf { it.isNotBlank() },
                                 driveFileId = initialProduct?.driveFileId,
                                 thumbnailUrl = initialProduct?.thumbnailUrl,
                                 previewUrl = initialProduct?.previewUrl,

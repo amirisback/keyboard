@@ -217,7 +217,9 @@ fun ProductRemoteKeyboardScreen(
                                 currentMode = selectedOutputMode,
                                 onClick = { onCommitText(item.toCommitTextByMode(selectedOutputMode)) },
                                 onTitleClick = { onCommitText(item.toProductTitleCommitText()) },
-                                onCaptionClick = { onCommitText(item.toProductCaptionCommitText()) }
+                                onCaptionClick = { onCommitText(item.toProductCaptionCommitText()) },
+                                onHookClick = { onCommitText(item.toProductHookCommitText()) },
+                                onLinkClick = { onCommitText(item.toProductLinkCommitText()) }
                             )
                         }
                     }
@@ -293,7 +295,9 @@ fun ProductRemoteCard(
     modifier: Modifier = Modifier,
     currentMode: ProductRemoteOutputMode = ProductRemoteOutputMode.CAPTION,
     onTitleClick: () -> Unit = onClick,
-    onCaptionClick: () -> Unit = onClick
+    onCaptionClick: () -> Unit = onClick,
+    onHookClick: () -> Unit = onClick,
+    onLinkClick: () -> Unit = onClick
 ) {
     val hasThumbnail = !item.thumbnailUrl.isNullOrBlank()
 
@@ -397,11 +401,28 @@ fun ProductRemoteCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
+                // Hook snippet (if present)
+                val hookSnippet = item.hook
+                if (!hookSnippet.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "🪝 $hookSnippet",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 10.5.sp,
+                            lineHeight = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(2.dp))
 
                 // Body snippet
                 val bodyText = item.displayBody
-                if (!bodyText.isNullOrBlank()) {
+                if (!bodyText.isNullOrBlank() && bodyText != hookSnippet) {
                     Text(
                         text = bodyText,
                         style = MaterialTheme.typography.bodySmall.copy(
@@ -439,72 +460,147 @@ fun ProductRemoteCard(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Dual Quick Actions: Judul & Caption
-                Row(
+                // 4 Quick Actions: Judul, Caption, Hook, Link
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = if (currentMode == ProductRemoteOutputMode.TITLE) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                        },
-                        border = BorderStroke(
-                            0.5.dp,
-                            if (currentMode == ProductRemoteOutputMode.TITLE) {
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                            } else {
-                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                            }
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .clickable(onClick = onTitleClick)
+                    // Row 1: Judul & Caption
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Judul",
-                            fontSize = 10.sp,
-                            fontWeight = if (currentMode == ProductRemoteOutputMode.TITLE) FontWeight.Bold else FontWeight.SemiBold,
-                            color = if (currentMode == ProductRemoteOutputMode.TITLE) MaterialTheme.colorScheme.onPrimaryContainer
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = if (currentMode == ProductRemoteOutputMode.TITLE) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                            },
+                            border = BorderStroke(
+                                0.5.dp,
+                                if (currentMode == ProductRemoteOutputMode.TITLE) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                }
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(6.dp))
+                                .clickable(onClick = onTitleClick)
+                        ) {
+                            Text(
+                                text = "Judul",
+                                fontSize = 10.sp,
+                                fontWeight = if (currentMode == ProductRemoteOutputMode.TITLE) FontWeight.Bold else FontWeight.SemiBold,
+                                color = if (currentMode == ProductRemoteOutputMode.TITLE) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = if (currentMode == ProductRemoteOutputMode.CAPTION) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                            },
+                            border = BorderStroke(
+                                0.5.dp,
+                                if (currentMode == ProductRemoteOutputMode.CAPTION) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                }
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(6.dp))
+                                .clickable(onClick = onCaptionClick)
+                        ) {
+                            Text(
+                                text = "Caption",
+                                fontSize = 10.sp,
+                                fontWeight = if (currentMode == ProductRemoteOutputMode.CAPTION) FontWeight.Bold else FontWeight.SemiBold,
+                                color = if (currentMode == ProductRemoteOutputMode.CAPTION) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
                     }
 
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = if (currentMode == ProductRemoteOutputMode.CAPTION) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                        },
-                        border = BorderStroke(
-                            0.5.dp,
-                            if (currentMode == ProductRemoteOutputMode.CAPTION) {
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                            } else {
-                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                            }
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .clickable(onClick = onCaptionClick)
+                    // Row 2: Hook & Link
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Caption",
-                            fontSize = 10.sp,
-                            fontWeight = if (currentMode == ProductRemoteOutputMode.CAPTION) FontWeight.Bold else FontWeight.SemiBold,
-                            color = if (currentMode == ProductRemoteOutputMode.CAPTION) MaterialTheme.colorScheme.onPrimaryContainer
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = if (currentMode == ProductRemoteOutputMode.HOOK) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                            },
+                            border = BorderStroke(
+                                0.5.dp,
+                                if (currentMode == ProductRemoteOutputMode.HOOK) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                }
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(6.dp))
+                                .clickable(onClick = onHookClick)
+                        ) {
+                            Text(
+                                text = "🪝 Hook",
+                                fontSize = 10.sp,
+                                fontWeight = if (currentMode == ProductRemoteOutputMode.HOOK) FontWeight.Bold else FontWeight.SemiBold,
+                                color = if (currentMode == ProductRemoteOutputMode.HOOK) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = if (currentMode == ProductRemoteOutputMode.LINK) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                            },
+                            border = BorderStroke(
+                                0.5.dp,
+                                if (currentMode == ProductRemoteOutputMode.LINK) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                }
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(6.dp))
+                                .clickable(onClick = onLinkClick)
+                        ) {
+                            Text(
+                                text = "🔗 Link",
+                                fontSize = 10.sp,
+                                fontWeight = if (currentMode == ProductRemoteOutputMode.LINK) FontWeight.Bold else FontWeight.SemiBold,
+                                color = if (currentMode == ProductRemoteOutputMode.LINK) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -590,10 +686,14 @@ fun ProductRemoteErrorView(
  * Output mode options for Product Remote keyboard snippets:
  * 1. CAPTION: Commits product promotional caption / description
  * 2. TITLE: Commits product title
+ * 3. HOOK: Commits promotional hook / headline
+ * 4. LINK: Commits product purchase link (Shopee, etc.)
  */
 enum class ProductRemoteOutputMode(val displayName: String, val shortLabel: String) {
     CAPTION("📝 Caption", "Caption"),
-    TITLE("🏷️ Judul Produk", "Judul")
+    TITLE("🏷️ Judul", "Judul"),
+    HOOK("🪝 Hook", "Hook"),
+    LINK("🔗 Link", "Link")
 }
 
 /**
@@ -617,12 +717,35 @@ fun DataItemResponse.toProductTitleCommitText(): String {
 }
 
 /**
+ * Text formatting contract for inserting product hook into chat input.
+ * Prioritizes hook, fallback to caption, productName, or item index.
+ */
+fun DataItemResponse.toProductHookCommitText(): String {
+    return hook?.takeIf { it.isNotBlank() }
+        ?: caption?.takeIf { it.isNotBlank() }
+        ?: productName?.takeIf { it.isNotBlank() }
+        ?: "Hook #$displayIndex"
+}
+
+/**
+ * Text formatting contract for inserting product link into chat input.
+ * Prioritizes linkProduct, fallback to driveLink, or empty string.
+ */
+fun DataItemResponse.toProductLinkCommitText(): String {
+    return linkProduct?.takeIf { it.isNotBlank() }
+        ?: driveLink?.takeIf { it.isNotBlank() }
+        ?: ""
+}
+
+/**
  * Maps selected mode to the formatted commit text.
  */
 fun DataItemResponse.toCommitTextByMode(mode: ProductRemoteOutputMode): String {
     return when (mode) {
         ProductRemoteOutputMode.CAPTION -> toProductCaptionCommitText()
         ProductRemoteOutputMode.TITLE -> toProductTitleCommitText()
+        ProductRemoteOutputMode.HOOK -> toProductHookCommitText()
+        ProductRemoteOutputMode.LINK -> toProductLinkCommitText()
     }
 }
 

@@ -22,6 +22,9 @@ data class DataItemResponse(
     @SerializedName("caption")
     val caption: String? = null,
 
+    @SerializedName("hook")
+    val hook: String? = null,
+
     @SerializedName("originalFileName")
     val originalFileName: String? = null,
 
@@ -33,6 +36,9 @@ data class DataItemResponse(
 
     @SerializedName("driveLink")
     val driveLink: String? = null,
+
+    @SerializedName("linkProduct")
+    val linkProduct: String? = null,
 
     @SerializedName("driveFileId")
     val driveFileId: String? = null,
@@ -57,10 +63,12 @@ data class DataItemResponse(
         uploadTimestamp: String? = null,
         productName: String? = null,
         caption: String? = null,
+        hook: String? = null,
         originalFileName: String? = null,
         fileSize: String? = null,
         fileType: String? = null,
         driveLink: String? = null,
+        linkProduct: String? = null,
         driveFileId: String? = null,
         thumbnailUrl: String? = null,
         previewUrl: String? = null,
@@ -72,10 +80,12 @@ data class DataItemResponse(
         uploadTimestamp = uploadTimestamp,
         productName = productName,
         caption = caption,
+        hook = hook,
         originalFileName = originalFileName,
         fileSize = fileSize,
         fileType = fileType,
         driveLink = driveLink,
+        linkProduct = linkProduct,
         driveFileId = driveFileId,
         thumbnailUrl = thumbnailUrl,
         previewUrl = previewUrl,
@@ -86,6 +96,12 @@ data class DataItemResponse(
 
     val displayIndex: Int
         get() = rowIndex ?: id?.filter { it.isDigit() }?.toIntOrNull() ?: (id?.hashCode() ?: 0).let { if (it < 0) -it else it }
+
+    val displayHook: String?
+        get() = hook?.takeIf { it.isNotBlank() }
+
+    val displayProductLink: String?
+        get() = linkProduct?.takeIf { it.isNotBlank() }
 
     val displayTitle: String
         get() = productName?.takeIf { it.isNotBlank() }

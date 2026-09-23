@@ -477,6 +477,14 @@ class KeyboardIME : BaseKeyboardIME() {
         openEmojiPalette()
     }
 
+    // Auto-Correction State & Single-Tap Undo (Gboard Parity)
+    private data class AutoCorrectionRecord(
+        val original: String,
+        val replacement: String,
+        val timestamp: Long
+    )
+    private var lastAutoCorrection: AutoCorrectionRecord? = null
+
     override fun onKey(code: Int) {
         val kb = keyboard
         val isShifted = kb != null && kb.mShiftState > ItemMainKeyboard.SHIFT_OFF
@@ -489,6 +497,68 @@ class KeyboardIME : BaseKeyboardIME() {
         }
 
         val ic = getActiveInputConnection() ?: return
+
+        // 1. Single-Tap Backspace Undo for Auto-Correction (Gboard Parity)
+        if (code == ItemMainKeyboard.KEYCODE_DELETE) {
+            val record = lastAutoCorrection
+            if (record != null) {
+                val expectedSuffix = "${record.replacement} "
+                val textBefore = ic.getTextBeforeCursor(expectedSuffix.length, 0)?.toString()
+                if (textBefore == expectedSuffix) {
+                    ic.deleteSurroundingText(expectedSuffix.length, 0)
+                    ic.commitText(record.original, 1)
+                    lastAutoCorrection = null
+                    if (keyboardUtil.isSuggestionEnabled()) {
+                        suggestionJob?.cancel()
+                        suggestionJob = serviceScope.launch(Dispatchers.Default) {
+                            val suggestions = suggestionEngine.getSuggestions(record.original)
+                            withContext(Dispatchers.Main) {
+                                suggestionResultFlow.value = suggestions
+                                isSuggestionVisibleFlow.value = true
+                            }
+                        }
+                    }
+                    return
+                }
+            }
+            lastAutoCorrection = null
+        }
+
+        // 2. Spacebar Auto-Correction (Gboard Parity)
+        if (code == ItemMainKeyboard.KEYCODE_SPACE) {
+            val editorInfo = currentInputEditorInfo
+            val inputType = editorInfo?.inputType ?: 0
+            val inputClass = inputType and android.text.InputType.TYPE_MASK_CLASS
+            val variation = inputType and android.text.InputType.TYPE_MASK_VARIATION
+            val isSensitiveOrNumeric = (inputClass == android.text.InputType.TYPE_CLASS_NUMBER) ||
+                    (inputClass == android.text.InputType.TYPE_CLASS_PHONE) ||
+                    (inputClass == android.text.InputType.TYPE_CLASS_DATETIME) ||
+                    (inputClass == android.text.InputType.TYPE_CLASS_TEXT && (
+                        variation == android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                        variation == android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
+                        variation == android.text.InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD ||
+                        variation == android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS ||
+                        variation == android.text.InputType.TYPE_TEXT_VARIATION_URI
+                    ))
+
+            val wordBefore = getWordBeforeCursor(ic)
+            if (keyboardUtil.isSuggestionEnabled() && !isSensitiveOrNumeric && wordBefore.length >= 2) {
+                val replacement = suggestionEngine.getAutoCorrectReplacement(wordBefore)
+                if (replacement != null && !replacement.equals(wordBefore, ignoreCase = true)) {
+                    ic.deleteSurroundingText(wordBefore.length, 0)
+                    ic.commitText("$replacement ", 1)
+                    lastAutoCorrection = AutoCorrectionRecord(wordBefore, replacement, System.currentTimeMillis())
+                    suggestionResultFlow.value = SuggestionResult.EMPTY
+                    isSuggestionVisibleFlow.value = false
+                    updateShiftKeyState()
+                    return
+                }
+            }
+            lastAutoCorrection = null
+        } else if (code != ItemMainKeyboard.KEYCODE_DELETE) {
+            lastAutoCorrection = null
+        }
+
         onKeyExt(code, ic)
 
         if (keyboardUtil.isSuggestionEnabled()) {

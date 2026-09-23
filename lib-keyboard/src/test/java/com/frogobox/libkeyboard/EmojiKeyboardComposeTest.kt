@@ -77,4 +77,28 @@ class EmojiKeyboardComposeTest {
         resetTrigger++
         assertEquals(2, resetTrigger)
     }
+
+    @Test
+    fun testEmojiSearchEngineBilingual() {
+        val smileIndonesian = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("senyum")
+        assertTrue("Should find smile emoji for 'senyum'", smileIndonesian.contains("😀"))
+
+        val smileEnglish = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("smile")
+        assertTrue("Should find smile emoji for 'smile'", smileEnglish.contains("😀"))
+
+        val moneyIndonesian = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("uang")
+        assertTrue("Should find money emoji for 'uang'", moneyIndonesian.contains("💰"))
+
+        val packageIndonesian = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("paket")
+        assertTrue("Should find package emoji for 'paket'", packageIndonesian.contains("📦"))
+
+        val fireSearch = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("api")
+        assertTrue("Should find fire emoji for 'api'", fireSearch.contains("🔥"))
+
+        val thumbsSearch = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("jempol")
+        assertTrue("Should find thumbs up emoji for 'jempol'", thumbsSearch.contains("👍"))
+
+        val emptySearch = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("")
+        assertTrue("Empty search should return empty list", emptySearch.isEmpty())
+    }
 }

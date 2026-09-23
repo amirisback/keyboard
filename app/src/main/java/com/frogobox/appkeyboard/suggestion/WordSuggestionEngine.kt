@@ -20,8 +20,9 @@ import kotlin.math.min
 @Singleton
 class WordSuggestionEngine @Inject constructor() {
 
-    // Common instant typo and shorthand substitution mapping
+    // Common instant typo and shorthand substitution mapping (English & Indonesian)
     private val commonTypoMap = mapOf(
+        // English common typos & shorthands
         "teh" to "the",
         "wht" to "what",
         "adn" to "and",
@@ -31,7 +32,7 @@ class WordSuggestionEngine @Inject constructor() {
         "im" to "I'm",
         "ive" to "I've",
         "youre" to "you're",
-        "theyre" to "they're",
+        "theyre" to "theyre",
         "alot" to "a lot",
         "helo" to "hello",
         "hw" to "how",
@@ -50,7 +51,45 @@ class WordSuggestionEngine @Inject constructor() {
         "occured" to "occurred",
         "untill" to "until",
         "beleive" to "believe",
-        "frogo" to "Frogo"
+        "frogo" to "Frogo",
+
+        // Indonesian common typos, conversational shorthands & seller slang
+        "yg" to "yang",
+        "dgn" to "dengan",
+        "sy" to "saya",
+        "km" to "kamu",
+        "gak" to "tidak",
+        "gk" to "tidak",
+        "ga" to "tidak",
+        "ngga" to "nggak",
+        "sdh" to "sudah",
+        "udh" to "sudah",
+        "blm" to "belum",
+        "bgt" to "banget",
+        "trs" to "terus",
+        "tdk" to "tidak",
+        "kpn" to "kapan",
+        "gmn" to "gimana",
+        "bs" to "bisa",
+        "bkn" to "bukan",
+        "tlg" to "tolong",
+        "mhn" to "mohon",
+        "makasih" to "terima kasih",
+        "mksh" to "terima kasih",
+        "makasi" to "terima kasih",
+        "tf" to "transfer",
+        "rek" to "rekening",
+        "brg" to "barang",
+        "ongkir" to "ongkir",
+        "cod" to "COD",
+        "resi" to "resi",
+        "bca" to "BCA",
+        "bri" to "BRI",
+        "bni" to "BNI",
+        "mandiri" to "Mandiri",
+        "jnt" to "J&T",
+        "jne" to "JNE",
+        "sicepat" to "SiCepat"
     )
 
     // In-memory frequency-ranked dictionary
@@ -82,7 +121,12 @@ class WordSuggestionEngine @Inject constructor() {
             "even", "new", "want", "because", "any", "these", "give", "day", "most", "us",
             "hello", "thanks", "please", "sorry", "today", "tomorrow", "keyboard", "android",
             "apple", "application", "screen", "mobile", "message", "email", "happy", "great",
-            "help", "home", "call", "start", "stop", "test", "ready", "super", "cool", "fine"
+            "help", "home", "call", "start", "stop", "test", "ready", "super", "cool", "fine",
+            // Core Indonesian Fallback
+            "yang", "dan", "di", "ini", "itu", "dengan", "untuk", "dari", "tidak", "ada",
+            "akan", "bisa", "sudah", "saya", "kamu", "kita", "mereka", "dia", "kami", "tapi",
+            "karena", "juga", "hanya", "semua", "banyak", "lagi", "bila", "jika", "kalau", "saat",
+            "pesanan", "barang", "paket", "produk", "ongkir", "resi", "rekening", "transfer", "lunas"
         )
         for (w in fallbackWords) {
             addWordInternal(w)
@@ -90,30 +134,34 @@ class WordSuggestionEngine @Inject constructor() {
     }
 
     /**
-     * Loads extended dictionary from assets/text/dictionary_en.txt
+     * Loads extended bilingual dictionary from assets (dictionary_en.txt and dictionary_id.txt)
      */
     fun loadDictionaryFromAsset(context: Context) {
         if (isDictionaryLoaded) return
-        try {
-            val assetManager = context.assets
-            val inputStream = assetManager.open("text/dictionary_en.txt")
-            val batch = ArrayList<String>()
-            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    val word = line.trim().lowercase()
-                    if (word.isNotEmpty() && !dictionarySet.contains(word)) {
-                        dictionarySet.add(word)
-                        batch.add(word)
+        val assetManager = context.assets
+        val dictionaryFiles = listOf("text/dictionary_en.txt", "text/dictionary_id.txt")
+        val batch = ArrayList<String>()
+
+        for (fileName in dictionaryFiles) {
+            try {
+                val inputStream = assetManager.open(fileName)
+                BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                    var line: String? = reader.readLine()
+                    while (line != null) {
+                        val word = line.trim().lowercase()
+                        if (word.isNotEmpty() && !dictionarySet.contains(word)) {
+                            dictionarySet.add(word)
+                            batch.add(word)
+                        }
+                        line = reader.readLine()
                     }
-                    line = reader.readLine()
                 }
+            } catch (_: Exception) {
+                // Gracefully continue to next file
             }
-            dictionaryList.addAll(batch)
-            isDictionaryLoaded = true
-        } catch (_: Exception) {
-            // Gracefully keep fallback vocabulary if asset read fails
         }
+        dictionaryList.addAll(batch)
+        isDictionaryLoaded = true
     }
 
     private fun addWordInternal(word: String) {
@@ -288,10 +336,49 @@ class WordSuggestionEngine @Inject constructor() {
             source.first().isUpperCase() -> {
                 candidate.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             }
+            candidate.any { it.isUpperCase() } -> {
+                candidate
+            }
             else -> {
                 candidate.lowercase()
             }
         }
+    }
+
+    /**
+     * Evaluates whether [input] should be auto-corrected when spacebar is pressed.
+     * Returns the replacement word if:
+     * 1. A direct typo or shorthand substitution exists (e.g., "teh" -> "the", "yg" -> "yang").
+     * 2. The word is not in dictionary and a high-confidence correction is available.
+     * Returns null if the word is already valid or no auto-correction is warranted.
+     */
+    fun getAutoCorrectReplacement(input: String): String? {
+        val trimmed = input.trim()
+        if (trimmed.length < 2) return null
+        val lower = trimmed.lowercase()
+
+        // 1. Direct typo or shorthand substitution (highest confidence)
+        val typoMatch = commonTypoMap[lower]
+        if (typoMatch != null) {
+            return matchCasing(trimmed, typoMatch)
+        }
+
+        // 2. If the word is already recognized in dictionary, do not auto-correct
+        if (dictionarySet.contains(lower)) {
+            return null
+        }
+
+        // 3. For unrecognized words, look for close correction (Levenshtein distance <= 1 or <= 2)
+        val suggestion = findClosestCorrection(lower)
+        if (suggestion != null && !suggestion.equals(lower, ignoreCase = true)) {
+            val dist = calculateLevenshteinDistance(lower, suggestion)
+            if (trimmed.length <= 3 && dist == 1) {
+                return matchCasing(trimmed, suggestion)
+            } else if (trimmed.length > 3 && dist <= 2 && suggestion.first() == lower.first()) {
+                return matchCasing(trimmed, suggestion)
+            }
+        }
+        return null
     }
 
 }

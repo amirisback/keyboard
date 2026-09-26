@@ -9,6 +9,7 @@ import com.frogobox.appkeyboard.repository.data.DataApiRepositoryImpl
 import com.frogobox.appkeyboard.model.ProductEntity
 import com.frogobox.appkeyboard.model.toProductEntity
 import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteOutputMode
+import com.frogobox.appkeyboard.ui.keyboard.productremote.matchesSearchQuery
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toCommitTextByMode
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toFormattedCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductCaptionCommitText
@@ -225,7 +226,7 @@ class ProductRemoteKeyboardTest {
     fun testStateTransitions_loadingToErrorThenRetrySuccess() = runTest {
         val testDispatcher = StandardTestDispatcher(testScheduler)
         val fakeApiService = FakeDataApiService().apply {
-            exceptionToThrow = ConnectException("Failed to connect to 192.168.100.6:3000")
+            exceptionToThrow = ConnectException("Failed to connect to 192.168.100.6:7272")
         }
 
         val repository = DataApiRepositoryImpl(fakeApiService, testDispatcher)
@@ -542,4 +543,128 @@ class ProductRemoteKeyboardTest {
         val enlargedHeightDp = 540
         assertEquals(standardHeightDp * 2, enlargedHeightDp)
     }
+
+    @Test
+    fun testProductRemoteCard_directSnippetSelection() {
+        val item = DataItemResponse(
+            id = "gviz-99",
+            productName = "Serum Wajah Glowing",
+            caption = "Serum dengan kandungan Niacinamide 10% untuk mencerahkan kulit!",
+            hook = "Wajah kusam dalam 7 hari? Ini rahasia glowing alami!",
+            linkProduct = "https://shopee.co.id/serum-glowing",
+            driveLink = "https://drive.google.com/file/d/serum123/view",
+            rowIndex = 99
+        )
+
+        // 1. Direct Title Click
+        val committedTitle = item.toProductTitleCommitText()
+        assertEquals("Serum Wajah Glowing", committedTitle)
+
+        // 2. Direct Caption Click
+        val committedCaption = item.toProductCaptionCommitText()
+        assertEquals("Serum dengan kandungan Niacinamide 10% untuk mencerahkan kulit!", committedCaption)
+
+        // 3. Direct Hook Click
+        val committedHook = item.toProductHookCommitText()
+        assertEquals("Wajah kusam dalam 7 hari? Ini rahasia glowing alami!", committedHook)
+
+        // 4. Direct Link Click
+        val committedLink = item.toProductLinkCommitText()
+        assertEquals("https://shopee.co.id/serum-glowing", committedLink)
+
+        // 5. Card Body Direct Click Fallback (Defaults to Caption)
+        val defaultCardClick = item.toProductCaptionCommitText()
+        assertEquals("Serum dengan kandungan Niacinamide 10% untuk mencerahkan kulit!", defaultCardClick)
+    }
+
+    @Test
+    fun testProductRemoteCard_directActionFallbacksWhenFieldsNull() {
+        val item = DataItemResponse(
+            id = "gviz-100",
+            productName = "Toner Hydrating",
+            caption = null,
+            hook = null,
+            linkProduct = null,
+            driveLink = "https://drive.google.com/file/d/toner/view",
+            rowIndex = 100
+        )
+
+        // Hook falls back to caption -> productName
+        assertEquals("Toner Hydrating", item.toProductHookCommitText())
+
+        // Caption falls back to productName
+        assertEquals("Toner Hydrating", item.toProductCaptionCommitText())
+
+        // Link falls back to driveLink
+        assertEquals("https://drive.google.com/file/d/toner/view", item.toProductLinkCommitText())
+
+        // Title uses productName
+        assertEquals("Toner Hydrating", item.toProductTitleCommitText())
+    }
+
+    @Test
+    fun testMatchesSearchQuery_matchesTitle() {
+        val item = DataItemResponse(
+            id = "test-1",
+            productName = "The Originote Hyalucera Moisturizer",
+            caption = "Pelembap gel ringan",
+            hook = "Kulit kering?",
+            linkProduct = "https://shopee.co.id/originote"
+        )
+
+        assertTrue(item.matchesSearchQuery("Originote"))
+        assertTrue(item.matchesSearchQuery("hyalucera"))
+        assertTrue(item.matchesSearchQuery("MOISTURIZER"))
+    }
+
+    @Test
+    fun testMatchesSearchQuery_matchesHook() {
+        val item = DataItemResponse(
+            id = "test-2",
+            productName = "Sunscreen SPF 50",
+            caption = "Proteksi sinar UV maksimal",
+            hook = "Aduh panasnya pol banget!",
+            linkProduct = "https://shopee.co.id/sunscreen"
+        )
+
+        assertTrue(item.matchesSearchQuery("panasnya"))
+        assertTrue(item.matchesSearchQuery("pol banget"))
+    }
+
+    @Test
+    fun testMatchesSearchQuery_matchesCaptionAndLink() {
+        val item = DataItemResponse(
+            id = "test-3",
+            productName = "Serum Vitamin C",
+            caption = "Mencerahkan noda hitam dalam 14 hari #racunshopee",
+            linkProduct = "https://tokopedia.com/serum-vit-c",
+            originalFileName = "20260926_vitc_promo.mp4"
+        )
+
+        assertTrue(item.matchesSearchQuery("noda hitam"))
+        assertTrue(item.matchesSearchQuery("tokopedia"))
+        assertTrue(item.matchesSearchQuery("vitc_promo"))
+    }
+
+    @Test
+    fun testMatchesSearchQuery_blankQueryMatchesAll() {
+        val item = DataItemResponse(id = "test-4", productName = "Barang Apa Saja")
+        assertTrue(item.matchesSearchQuery(""))
+        assertTrue(item.matchesSearchQuery("   "))
+    }
+
+    @Test
+    fun testMatchesSearchQuery_noMatchReturnsFalse() {
+        val item = DataItemResponse(
+            id = "test-5",
+            productName = "Sepatu Lari",
+            caption = "Sepatu olahraga empuk",
+            hook = "Lari makin kencang"
+        )
+
+        assertFalse(item.matchesSearchQuery("lipstick"))
+        assertFalse(item.matchesSearchQuery("keyboard"))
+    }
 }
+
+

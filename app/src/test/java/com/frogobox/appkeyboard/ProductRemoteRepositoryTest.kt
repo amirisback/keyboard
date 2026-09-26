@@ -101,6 +101,22 @@ class ProductRemoteRepositoryTest {
         override fun search(query: String): Flow<List<ProductEntity>> = flow {
             emit(list.filter { it.productName.contains(query, ignoreCase = true) })
         }
+
+        override suspend fun updateDownloadStatusByRemoteId(remoteId: String, status: String, updatedAt: Long) {
+            val idx = list.indexOfFirst { it.remoteId == remoteId }
+            if (idx >= 0) {
+                list[idx] = list[idx].copy(statusDownload = status, updatedAt = updatedAt)
+            }
+            sync()
+        }
+
+        override suspend fun updateDownloadStatusById(id: Int, status: String, updatedAt: Long) {
+            val idx = list.indexOfFirst { it.id == id }
+            if (idx >= 0) {
+                list[idx] = list[idx].copy(statusDownload = status, updatedAt = updatedAt)
+            }
+            sync()
+        }
     }
 
     private class FakeApi : DataApiRepository {
@@ -164,5 +180,24 @@ class ProductRemoteRepositoryTest {
 
         assertTrue(results.any { it is Resource.Success && it.data == 2 })
         assertEquals(2, fakeDao.list.size)
+    }
+
+    @Test
+    fun testUpdateDownloadStatus() = runTest(testDispatcher) {
+        val fakeDao = FakeDao()
+        val fakeApi = FakeApi()
+        val repository = ProductRemoteRepositoryImpl(fakeDao, fakeApi)
+
+        val product = ProductEntity(
+            id = 1,
+            remoteId = "rem_123",
+            productName = "Video Speaker",
+            statusDownload = "Belum"
+        )
+        fakeDao.list.add(product)
+
+        repository.updateDownloadStatus("rem_123", 1, "Sudah")
+
+        assertEquals("Sudah", fakeDao.list.first().statusDownload)
     }
 }

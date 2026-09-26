@@ -113,6 +113,7 @@ class DataApiRepositoryTest {
 
         val errorResult = emissions[1] as Resource.Error
         assertTrue(errorResult.message.contains("Connection refused", ignoreCase = true))
+        assertTrue(errorResult.message.contains("7272"))
         assertTrue(errorResult.cause is ConnectException)
     }
 

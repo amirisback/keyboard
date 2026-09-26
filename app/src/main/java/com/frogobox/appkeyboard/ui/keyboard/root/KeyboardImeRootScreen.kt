@@ -1,11 +1,15 @@
 package com.frogobox.appkeyboard.ui.keyboard.root
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,7 +20,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -119,6 +128,14 @@ fun KeyboardImeRootScreen(
     }
     val themeTextColor = remember(isDarkTheme) {
         if (isDarkTheme) android.graphics.Color.WHITE else android.graphics.Color.parseColor("#0F172A")
+    }
+
+    var isProductRemoteSearchActive by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(activePanelState) {
+        if (activePanelState != KeyboardPanelState.PRODUCT_REMOTE) {
+            isProductRemoteSearchActive = false
+        }
     }
 
     Box(
@@ -247,18 +264,66 @@ fun KeyboardImeRootScreen(
                     }
 
                     KeyboardPanelState.PRODUCT_REMOTE -> {
-                        Box(modifier = Modifier.fillMaxWidth().height(540.dp)) {
-                            ProductRemoteKeyboardScreen(
-                                items = productRemoteItems,
-                                isLoading = isProductRemoteLoading,
-                                errorMessage = productRemoteError,
-                                onCommitText = onCommitText,
-                                onBackClick = onBackToMain,
-                                onRefresh = onRefreshProductRemote,
-                                onManageClick = onManageProductRemote,
-                                isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.PRODUCT_REMOTE.id),
-                                onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.PRODUCT_REMOTE.id) } }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            val panelHeight = if (isProductRemoteSearchActive) 260.dp else 540.dp
+                            val animatedHeight by animateDpAsState(
+                                targetValue = panelHeight,
+                                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+                                label = "ProductRemoteHeight"
                             )
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(animatedHeight)
+                            ) {
+                                ProductRemoteKeyboardScreen(
+                                    items = productRemoteItems,
+                                    isLoading = isProductRemoteLoading,
+                                    errorMessage = productRemoteError,
+                                    onCommitText = onCommitText,
+                                    onBackClick = {
+                                        if (isProductRemoteSearchActive) {
+                                            isProductRemoteSearchActive = false
+                                        } else {
+                                            onBackToMain()
+                                        }
+                                    },
+                                    onRefresh = onRefreshProductRemote,
+                                    onManageClick = onManageProductRemote,
+                                    isAlwaysShow = (alwaysShowFeatureId == com.frogobox.appkeyboard.model.KeyboardFeatureType.PRODUCT_REMOTE.id),
+                                    onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.PRODUCT_REMOTE.id) } },
+                                    isSearchActive = isProductRemoteSearchActive,
+                                    onSearchActiveChange = { isProductRemoteSearchActive = it },
+                                    onRegisterKeyHandler = onRegisterKeyConsumer,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+
+                            AnimatedVisibility(
+                                visible = isProductRemoteSearchActive,
+                                enter = slideInVertically(
+                                    initialOffsetY = { it },
+                                    animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+                                ) + fadeIn(animationSpec = tween(150)),
+                                exit = slideOutVertically(
+                                    targetOffsetY = { it },
+                                    animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+                                ) + fadeOut(animationSpec = tween(150))
+                            ) {
+                                MainKeyboardView(
+                                    keyboard = currentKeyboard,
+                                    onActionListener = onKeyboardActionListener,
+                                    textColor = themeTextColor,
+                                    actionTextColor = themeTextColor,
+                                    isDarkTheme = isDarkTheme,
+                                    onInit = onMainKeyboardInit
+                                )
+                            }
                         }
                     }
 

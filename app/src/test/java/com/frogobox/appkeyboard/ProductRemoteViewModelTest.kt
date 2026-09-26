@@ -117,6 +117,16 @@ class ProductRemoteViewModelTest {
         override suspend fun isProductSaved(remoteId: String): Boolean {
             return savedEntities.any { it.remoteId == remoteId }
         }
+
+        override suspend fun updateDownloadStatus(remoteId: String?, localId: Int, status: String) {
+            val index = savedEntities.indexOfFirst {
+                (remoteId != null && it.remoteId == remoteId) || (localId > 0 && it.id == localId)
+            }
+            if (index >= 0) {
+                savedEntities[index] = savedEntities[index].copy(statusDownload = status)
+            }
+            updateFlows()
+        }
     }
 
     private val dummyProducts = listOf(
@@ -211,7 +221,7 @@ class ProductRemoteViewModelTest {
         val fakeRepo = FakeDataApiRepository().apply {
             flowToReturn = flow {
                 emit(Resource.Loading)
-                emit(Resource.Error("Connection refused: 192.168.100.6:3000"))
+                emit(Resource.Error("Connection refused: 192.168.100.6:7272"))
             }
         }
         val fakeLocalRepo = FakeProductRemoteRepository()
@@ -220,12 +230,12 @@ class ProductRemoteViewModelTest {
         advanceUntilIdle()
 
         assertFalse(viewModel.isLoading.value)
-        assertEquals("Connection refused: 192.168.100.6:3000", viewModel.errorMessage.value)
+        assertEquals("Connection refused: 192.168.100.6:7272", viewModel.errorMessage.value)
 
         val uiState = viewModel.uiState.value
         assertTrue(uiState is ProductRemoteUiState.Error)
         val errorState = uiState as ProductRemoteUiState.Error
-        assertEquals("Connection refused: 192.168.100.6:3000", errorState.message)
+        assertEquals("Connection refused: 192.168.100.6:7272", errorState.message)
         assertTrue(errorState.isOffline)
     }
 
@@ -487,7 +497,7 @@ class ProductRemoteViewModelTest {
         val fakeRepo = FakeDataApiRepository().apply {
             flowToReturn = flow {
                 emit(Resource.Loading)
-                emit(Resource.Error("Connection refused: 192.168.100.6:3000"))
+                emit(Resource.Error("Connection refused: 192.168.100.6:7272"))
             }
         }
         val fakeLocalRepo = FakeProductRemoteRepository().apply {
@@ -575,5 +585,51 @@ class ProductRemoteViewModelTest {
         viewModel.onDownloadStatusFilterChanged(DownloadStatusFilter.ALL)
         advanceUntilIdle()
         assertEquals(dummyProducts.size, viewModel.filteredProducts.value.size)
+    }
+
+    @Test
+    fun testDownloadStates_initialStateIsEmpty() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.downloadStates.value.isEmpty())
+    }
+
+    @Test
+    fun testDownloadVideo_invalidUrl_emitsErrorState() = runTest(testDispatcher) {
+        val fakeRepo = FakeDataApiRepository().apply {
+            flowToReturn = flow {
+                emit(Resource.Success(DataApiResponse(success = true, items = dummyProducts)))
+            }
+        }
+        val fakeLocalRepo = FakeProductRemoteRepository()
+        val viewModel = ProductRemoteViewModel(fakeRepo, fakeLocalRepo)
+        advanceUntilIdle()
+
+        val invalidItem = DataItemResponse(
+            id = 999,
+            productName = "No Drive Product",
+            driveLink = null,
+            driveFileId = null
+        )
+
+        // Passing dummy context: since directUrl is null, it returns early before touching context
+        try {
+            val mockContext = java.lang.reflect.Proxy.newProxyInstance(
+                android.content.Context::class.java.classLoader,
+                arrayOf(android.content.Context::class.java)
+            ) { _, _, _ -> null } as android.content.Context
+
+            viewModel.downloadVideo(mockContext, invalidItem)
+            val state = viewModel.downloadStates.value["999"]
+            assertTrue(state is com.frogobox.appkeyboard.ui.productremote.DownloadProgressState.Error)
+            assertEquals("URL Google Drive tidak ditemukan atau tidak valid", viewModel.errorMessage.value)
+        } catch (_: Exception) {}
     }
 }

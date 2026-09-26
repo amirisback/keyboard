@@ -1,5 +1,6 @@
 package com.frogobox.appkeyboard.ui.productremote
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.frogobox.appkeyboard.common.base.BaseViewModel
 import com.frogobox.appkeyboard.common.core.Resource
@@ -7,6 +8,8 @@ import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.ProductEntity
 import com.frogobox.appkeyboard.repository.data.DataApiRepository
 import com.frogobox.appkeyboard.repository.productremote.ProductRemoteRepository
+import com.frogobox.appkeyboard.util.DriveUrlHelper
+import com.frogobox.appkeyboard.util.VideoDownloader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +22,13 @@ enum class DownloadStatusFilter(val label: String) {
     FAVORITE("Favorit"),
     DOWNLOADED("Sudah"),
     NOT_DOWNLOADED("Belum")
+}
+
+sealed interface DownloadProgressState {
+    data object Idle : DownloadProgressState
+    data class Downloading(val progress: Int) : DownloadProgressState
+    data class Success(val destination: String) : DownloadProgressState
+    data class Error(val message: String) : DownloadProgressState
 }
 
 sealed interface ProductRemoteUiState {
@@ -68,6 +78,9 @@ class ProductRemoteViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+    private val _downloadStates = MutableStateFlow<Map<String, DownloadProgressState>>(emptyMap())
+    val downloadStates: StateFlow<Map<String, DownloadProgressState>> = _downloadStates.asStateFlow()
 
     private val _uiState = MutableStateFlow<ProductRemoteUiState>(ProductRemoteUiState.Loading)
     val uiState: StateFlow<ProductRemoteUiState> = _uiState.asStateFlow()
@@ -315,6 +328,62 @@ class ProductRemoteViewModel @Inject constructor(
                 applyFilter()
                 updateSuccessUiState()
             }
+        }
+    }
+
+    fun downloadVideo(context: Context, item: DataItemResponse) {
+        val itemId = item.id ?: item.productName ?: item.rowIndex?.toString() ?: "item_${System.currentTimeMillis()}"
+        val currentState = _downloadStates.value[itemId]
+        if (currentState is DownloadProgressState.Downloading) {
+            return
+        }
+
+        val directUrl = DriveUrlHelper.getDirectDownloadUrl(item.driveFileId, item.driveLink)
+        if (directUrl.isNullOrBlank()) {
+            val msg = "URL Google Drive tidak ditemukan atau tidak valid"
+            _downloadStates.value = _downloadStates.value + (itemId to DownloadProgressState.Error(msg))
+            _errorMessage.value = msg
+            return
+        }
+
+        val fileName = DriveUrlHelper.sanitizeFileName(item.originalFileName, item.productName, item.driveFileId)
+
+        viewModelScope.launch {
+            _downloadStates.value = _downloadStates.value + (itemId to DownloadProgressState.Downloading(0))
+
+            val result = VideoDownloader.downloadVideo(
+                context = context.applicationContext,
+                downloadUrl = directUrl,
+                fileName = fileName,
+                onProgress = { progress ->
+                    _downloadStates.value = _downloadStates.value + (itemId to DownloadProgressState.Downloading(progress))
+                }
+            )
+
+            result.fold(
+                onSuccess = { destination ->
+                    _downloadStates.value = _downloadStates.value + (itemId to DownloadProgressState.Success(destination))
+
+                    productRemoteRepository.updateDownloadStatus(item.id, 0, "Sudah")
+
+                    _rawProducts.value = _rawProducts.value.map { current ->
+                        if (current.id == item.id || (item.id == null && current.productName == item.productName)) {
+                            current.copy(statusDownload = "Sudah")
+                        } else {
+                            current
+                        }
+                    }
+                    applyFilter()
+                    updateSuccessUiState()
+
+                    _syncMessage.value = "Video \"$fileName\" berhasil diunduh ke Galeri!"
+                },
+                onFailure = { error ->
+                    val errorMsg = error.message ?: "Gagal mengunduh video"
+                    _downloadStates.value = _downloadStates.value + (itemId to DownloadProgressState.Error(errorMsg))
+                    _errorMessage.value = errorMsg
+                }
+            )
         }
     }
 

@@ -3,6 +3,7 @@ package com.frogobox.appkeyboard.repository.data
 import com.frogobox.appkeyboard.common.core.Resource
 import com.frogobox.appkeyboard.data.remote.DataApiService
 import com.frogobox.appkeyboard.data.remote.model.DataApiResponse
+import com.frogobox.appkeyboard.di.NetworkModule
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -62,10 +63,12 @@ class DataApiRepositoryImpl(
     }
 
     private fun formatErrorMessage(throwable: Throwable): String {
+        val serverUrl = NetworkModule.BASE_URL.removeSuffix("/")
+        val host = NetworkModule.BASE_URL.removePrefix("http://").removePrefix("https://").substringBefore(":").substringBefore("/")
         return when (throwable) {
-            is ConnectException -> "Connection refused. Please ensure the local server is running at http://192.168.100.6:3000."
+            is ConnectException -> "Connection refused. Please ensure the local server is running at $serverUrl."
             is SocketTimeoutException -> "Connection timed out while communicating with the server."
-            is UnknownHostException -> "Unable to resolve host 192.168.100.6. Check your Wi-Fi network."
+            is UnknownHostException -> "Unable to resolve host $host. Check your Wi-Fi network."
             is IOException -> throwable.localizedMessage ?: "Network I/O error occurred."
             else -> throwable.localizedMessage ?: "Unexpected error occurred."
         }

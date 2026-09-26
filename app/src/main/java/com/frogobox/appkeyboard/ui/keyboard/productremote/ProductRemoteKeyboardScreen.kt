@@ -24,9 +24,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,8 +41,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,6 +63,7 @@ import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoEmptyView
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusFailed
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard
 
 /**
  * Modern Jetpack Compose screen for Product Remote keyboard panel.
@@ -73,89 +80,257 @@ fun ProductRemoteKeyboardScreen(
     onManageClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     isAlwaysShow: Boolean = false,
-    onToggleAlwaysShow: (() -> Unit)? = null
+    onToggleAlwaysShow: (() -> Unit)? = null,
+    isSearchActive: Boolean = false,
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    onRegisterKeyHandler: (((Int, Boolean) -> Boolean)?) -> Unit = {}
 ) {
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(isSearchActive) {
+        if (!isSearchActive) {
+            searchQuery = ""
+        }
+    }
+
+    val handleKeyPress: (Int, Boolean) -> Boolean = { code, isShifted ->
+        if (!isSearchActive) {
+            false
+        } else {
+            when (code) {
+                ItemMainKeyboard.KEYCODE_DELETE -> {
+                    if (searchQuery.isNotEmpty()) {
+                        searchQuery = searchQuery.dropLast(1)
+                    }
+                    true
+                }
+                ItemMainKeyboard.KEYCODE_SPACE -> {
+                    searchQuery += " "
+                    true
+                }
+                ItemMainKeyboard.KEYCODE_ENTER -> {
+                    true
+                }
+                ItemMainKeyboard.KEYCODE_SHIFT,
+                ItemMainKeyboard.KEYCODE_MODE_CHANGE,
+                ItemMainKeyboard.KEYCODE_EMOJI -> {
+                    false
+                }
+                else -> {
+                    if (code > 0) {
+                        var ch = code.toChar()
+                        if (ch.isLetter() && isShifted) {
+                            ch = ch.uppercaseChar()
+                        }
+                        searchQuery += ch
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        }
+    }
+
+    DisposableEffect(isSearchActive, handleKeyPress) {
+        if (isSearchActive) {
+            onRegisterKeyHandler(handleKeyPress)
+        }
+        onDispose {
+            onRegisterKeyHandler(null)
+        }
+    }
+
+    val filteredItems = remember(items, searchQuery) {
+        if (searchQuery.isBlank()) items
+        else items.filter { it.matchesSearchQuery(searchQuery) }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-        // 1. Fixed Height Toolbar Header (50.dp)
-        KeyboardFeatureToolbar(
-            title = "Product Remote",
-            subtitle = "Katalog produk tersimpan di Room DB",
-            onBackClick = onBackClick,
-            isAlwaysShow = isAlwaysShow,
-            onToggleAlwaysShow = onToggleAlwaysShow,
-            action = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+        if (isSearchActive) {
+            // Search Active Header (50.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Back / Close Search Button
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .clickable {
+                            searchQuery = ""
+                            onSearchActiveChange(false)
+                        }
+                        .padding(6.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (onManageClick != null) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Tutup Pencarian",
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // Interactive Search Input Box
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(36.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (searchQuery.isEmpty()) {
+                                Text(
+                                    text = "Ketik di keyboard QWERTY...",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            } else {
+                                Text(
+                                    text = searchQuery,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontSize = 12.5.sp,
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                        if (searchQuery.isNotEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable { searchQuery = "" },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Hapus kata kunci",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // 1. Fixed Height Toolbar Header (50.dp)
+            KeyboardFeatureToolbar(
+                title = "Product Remote",
+                subtitle = "Katalog produk tersimpan di Room DB",
+                onBackClick = onBackClick,
+                isAlwaysShow = isAlwaysShow,
+                onToggleAlwaysShow = onToggleAlwaysShow,
+                action = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        // Search Button (Triggers QWERTY Keyboard from bottom)
                         Box(
                             modifier = Modifier
                                 .size(34.dp)
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                                .clickable { onManageClick() }
+                                .clickable { onSearchActiveChange(true) }
                                 .padding(6.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Inventory2,
-                                contentDescription = "Buka Katalog",
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Cari Produk",
                                 modifier = Modifier.size(18.dp),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
-                    }
 
-                    Box(
-                        modifier = Modifier
-                            .size(34.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                            .clickable(enabled = !isLoading) { onRefresh() }
-                            .padding(6.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Refresh product remote data",
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
+                        if (onManageClick != null) {
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                    .clickable { onManageClick() }
+                                    .padding(6.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Inventory2,
+                                    contentDescription = "Buka Katalog",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                .clickable(enabled = !isLoading) { onRefresh() }
+                                .padding(6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Refresh product remote data",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
 
-        var selectedOutputMode by rememberSaveable { mutableStateOf(ProductRemoteOutputMode.CAPTION) }
-
-        // 2. Output Mode Selector Bar (Caption vs Judul Produk)
-        ProductRemoteModeSelector(
-            selectedMode = selectedOutputMode,
-            onModeSelected = { selectedOutputMode = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 2.dp)
-        )
-
-        // 3. Animated Content Viewport
+        // 2. Animated Content Viewport (Filtered by search query if present)
         Crossfade(
             targetState = when {
                 isLoading && items.isEmpty() -> ProductKeyboardState.LOADING
                 errorMessage != null && items.isEmpty() -> ProductKeyboardState.ERROR
-                items.isEmpty() -> ProductKeyboardState.EMPTY
+                filteredItems.isEmpty() -> ProductKeyboardState.EMPTY
                 else -> ProductKeyboardState.SUCCESS
             },
             animationSpec = tween(durationMillis = 180),
@@ -191,12 +366,21 @@ fun ProductRemoteKeyboardScreen(
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        FrogoEmptyView(
-                            title = "Belum Ada Produk Tersimpan",
-                            subtitle = "Simpan produk di katalog remote agar muncul di keyboard.",
-                            actionButtonText = if (onManageClick != null) "Buka Katalog" else "Segarkan",
-                            onActionClick = { onManageClick?.invoke() ?: onRefresh() }
-                        )
+                        if (searchQuery.isNotBlank() && items.isNotEmpty()) {
+                            FrogoEmptyView(
+                                title = "Produk Tidak Ditemukan",
+                                subtitle = "Tidak ada produk yang cocok dengan \"$searchQuery\". Coba kata kunci lain.",
+                                actionButtonText = "Hapus Pencarian",
+                                onActionClick = { searchQuery = "" }
+                            )
+                        } else {
+                            FrogoEmptyView(
+                                title = "Belum Ada Produk Tersimpan",
+                                subtitle = "Simpan produk di katalog remote agar muncul di keyboard.",
+                                actionButtonText = if (onManageClick != null) "Buka Katalog" else "Segarkan",
+                                onActionClick = { onManageClick?.invoke() ?: onRefresh() }
+                            )
+                        }
                     }
                 }
 
@@ -209,13 +393,12 @@ fun ProductRemoteKeyboardScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         itemsIndexed(
-                            items = items,
+                            items = filteredItems,
                             key = { index, item -> "${item.id ?: "item"}_${item.displayIndex}_$index" }
                         ) { _, item ->
                             ProductRemoteCard(
                                 item = item,
-                                currentMode = selectedOutputMode,
-                                onClick = { onCommitText(item.toCommitTextByMode(selectedOutputMode)) },
+                                onClick = { onCommitText(item.toProductCaptionCommitText()) },
                                 onTitleClick = { onCommitText(item.toProductTitleCommitText()) },
                                 onCaptionClick = { onCommitText(item.toProductCaptionCommitText()) },
                                 onHookClick = { onCommitText(item.toProductHookCommitText()) },
@@ -293,7 +476,7 @@ fun ProductRemoteCard(
     item: DataItemResponse,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    currentMode: ProductRemoteOutputMode = ProductRemoteOutputMode.CAPTION,
+    currentMode: ProductRemoteOutputMode? = null,
     onTitleClick: () -> Unit = onClick,
     onCaptionClick: () -> Unit = onClick,
     onHookClick: () -> Unit = onClick,
@@ -460,7 +643,7 @@ fun ProductRemoteCard(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // 4 Quick Actions: Judul, Caption, Hook, Link
+                // 4 Direct Quick Actions: Judul, Caption, Hook, Link (Uniform styling, no color distinction)
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(3.dp)
@@ -473,18 +656,10 @@ fun ProductRemoteCard(
                     ) {
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = if (currentMode == ProductRemoteOutputMode.TITLE) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                            },
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                             border = BorderStroke(
                                 0.5.dp,
-                                if (currentMode == ProductRemoteOutputMode.TITLE) {
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                } else {
-                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                }
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -494,9 +669,8 @@ fun ProductRemoteCard(
                             Text(
                                 text = "Judul",
                                 fontSize = 10.sp,
-                                fontWeight = if (currentMode == ProductRemoteOutputMode.TITLE) FontWeight.Bold else FontWeight.SemiBold,
-                                color = if (currentMode == ProductRemoteOutputMode.TITLE) MaterialTheme.colorScheme.onPrimaryContainer
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
@@ -504,18 +678,10 @@ fun ProductRemoteCard(
 
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = if (currentMode == ProductRemoteOutputMode.CAPTION) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                            },
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                             border = BorderStroke(
                                 0.5.dp,
-                                if (currentMode == ProductRemoteOutputMode.CAPTION) {
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                } else {
-                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                }
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -525,9 +691,8 @@ fun ProductRemoteCard(
                             Text(
                                 text = "Caption",
                                 fontSize = 10.sp,
-                                fontWeight = if (currentMode == ProductRemoteOutputMode.CAPTION) FontWeight.Bold else FontWeight.SemiBold,
-                                color = if (currentMode == ProductRemoteOutputMode.CAPTION) MaterialTheme.colorScheme.onPrimaryContainer
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
@@ -542,18 +707,10 @@ fun ProductRemoteCard(
                     ) {
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = if (currentMode == ProductRemoteOutputMode.HOOK) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                            },
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                             border = BorderStroke(
                                 0.5.dp,
-                                if (currentMode == ProductRemoteOutputMode.HOOK) {
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                } else {
-                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                }
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -563,9 +720,8 @@ fun ProductRemoteCard(
                             Text(
                                 text = "🪝 Hook",
                                 fontSize = 10.sp,
-                                fontWeight = if (currentMode == ProductRemoteOutputMode.HOOK) FontWeight.Bold else FontWeight.SemiBold,
-                                color = if (currentMode == ProductRemoteOutputMode.HOOK) MaterialTheme.colorScheme.onPrimaryContainer
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
@@ -573,18 +729,10 @@ fun ProductRemoteCard(
 
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = if (currentMode == ProductRemoteOutputMode.LINK) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                            },
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                             border = BorderStroke(
                                 0.5.dp,
-                                if (currentMode == ProductRemoteOutputMode.LINK) {
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                } else {
-                                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                }
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -594,9 +742,8 @@ fun ProductRemoteCard(
                             Text(
                                 text = "🔗 Link",
                                 fontSize = 10.sp,
-                                fontWeight = if (currentMode == ProductRemoteOutputMode.LINK) FontWeight.Bold else FontWeight.SemiBold,
-                                color = if (currentMode == ProductRemoteOutputMode.LINK) MaterialTheme.colorScheme.onPrimaryContainer
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
@@ -774,3 +921,18 @@ fun DataItemResponse.toFormattedCommitText(): String {
         }
     }
 }
+
+/**
+ * Case-insensitive search query matcher for Product Remote items.
+ * Checks product title, caption/body, hook, link, and filename.
+ */
+fun DataItemResponse.matchesSearchQuery(query: String): Boolean {
+    if (query.isBlank()) return true
+    val q = query.trim().lowercase()
+    return displayTitle.lowercase().contains(q) ||
+            (displayBody?.lowercase()?.contains(q) == true) ||
+            (hook?.lowercase()?.contains(q) == true) ||
+            (linkProduct?.lowercase()?.contains(q) == true) ||
+            (originalFileName?.lowercase()?.contains(q) == true)
+}
+

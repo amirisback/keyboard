@@ -127,4 +127,12 @@ class ProductRemoteRepositoryImpl @Inject constructor(
         return productRemoteDao.getByRemoteId(remoteId) != null
     }
 
+    override suspend fun updateDownloadStatus(remoteId: String?, localId: Int, status: String) {
+        if (!remoteId.isNullOrBlank()) {
+            productRemoteDao.updateDownloadStatusByRemoteId(remoteId, status)
+        } else if (localId > 0) {
+            productRemoteDao.updateDownloadStatusById(localId, status)
+        }
+    }
+
 }

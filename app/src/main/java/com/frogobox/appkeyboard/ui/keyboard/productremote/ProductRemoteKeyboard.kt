@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Standalone FrameLayout custom view for Product Remote Keyboard panel.
- * Fetches from DataApiRepository / DataApiService (http://192.168.100.6:3000/api/data.json),
+ * Fetches from DataApiRepository / DataApiService (http://192.168.100.6:7272/api/data.json),
  * embeds ProductRemoteKeyboardScreen via ComposeView with FrogoKeyboardTheme.
  */
 class ProductRemoteKeyboard @JvmOverloads constructor(

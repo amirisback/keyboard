@@ -39,4 +39,6 @@ interface ProductRemoteRepository {
 
     suspend fun isProductSaved(remoteId: String): Boolean
 
+    suspend fun updateDownloadStatus(remoteId: String?, localId: Int, status: String)
+
 }

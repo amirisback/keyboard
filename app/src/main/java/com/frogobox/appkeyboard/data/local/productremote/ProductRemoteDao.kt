@@ -61,4 +61,10 @@ interface ProductRemoteDao {
     @Query("SELECT * FROM product_remote WHERE (productName LIKE '%' || :query || '%' OR caption LIKE '%' || :query || '%' OR hook LIKE '%' || :query || '%' OR originalFileName LIKE '%' || :query || '%') ORDER BY id DESC")
     fun search(query: String): Flow<List<ProductEntity>>
 
+    @Query("UPDATE product_remote SET statusDownload = :status, updatedAt = :updatedAt WHERE remoteId = :remoteId")
+    suspend fun updateDownloadStatusByRemoteId(remoteId: String, status: String, updatedAt: Long = System.currentTimeMillis())
+
+    @Query("UPDATE product_remote SET statusDownload = :status, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateDownloadStatusById(id: Int, status: String, updatedAt: Long = System.currentTimeMillis())
+
 }

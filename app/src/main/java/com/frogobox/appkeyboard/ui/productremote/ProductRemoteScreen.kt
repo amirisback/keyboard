@@ -5,9 +5,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,6 +98,7 @@ import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductCaptionCommit
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductHookCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductLinkCommitText
 import com.frogobox.appkeyboard.ui.keyboard.productremote.toProductTitleCommitText
+import com.frogobox.appkeyboard.di.NetworkModule
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoEmptyView
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoPrimary
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusFailed
@@ -120,6 +123,7 @@ fun ProductRemoteScreen(
     val isSyncing by viewModel.isSyncing.collectAsState()
     val syncMessage by viewModel.syncMessage.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val downloadStates by viewModel.downloadStates.collectAsState()
 
     LaunchedEffect(syncMessage) {
         syncMessage?.let {
@@ -134,6 +138,7 @@ fun ProductRemoteScreen(
         searchQuery = searchQuery,
         statusFilter = statusFilter,
         savedRemoteIds = savedRemoteIds,
+        downloadStates = downloadStates,
         isLoading = isLoading,
         isSyncing = isSyncing,
         errorMessage = errorMessage,
@@ -145,6 +150,7 @@ fun ProductRemoteScreen(
         onUpdateProduct = viewModel::updateProduct,
         onDeleteProduct = viewModel::deleteProduct,
         onNukeAllFavorites = viewModel::nukeAllFavoriteProducts,
+        onDownloadVideo = { item -> viewModel.downloadVideo(context, item) },
         onRefresh = viewModel::fetchProducts,
         onBackClick = onBackClick,
         modifier = modifier
@@ -162,6 +168,7 @@ fun ProductRemoteScreen(
     searchQuery: String,
     statusFilter: DownloadStatusFilter,
     savedRemoteIds: Set<String>,
+    downloadStates: Map<String, DownloadProgressState> = emptyMap(),
     isLoading: Boolean,
     isSyncing: Boolean,
     errorMessage: String?,
@@ -173,6 +180,7 @@ fun ProductRemoteScreen(
     onUpdateProduct: (ProductEntity) -> Unit,
     onDeleteProduct: (DataItemResponse) -> Unit,
     onNukeAllFavorites: () -> Unit = {},
+    onDownloadVideo: (DataItemResponse) -> Unit = {},
     onRefresh: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -230,6 +238,10 @@ fun ProductRemoteScreen(
         topBar = {
             FrogoTopAppBar(
                 title = if (statusFilter == DownloadStatusFilter.FAVORITE) "Produk Favorit (DB)" else "Katalog Product Remote",
+                titleStyle = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.5.sp
+                ),
                 onBackClick = onBackClick,
                 actions = {
                     if (statusFilter == DownloadStatusFilter.FAVORITE) {
@@ -240,12 +252,14 @@ fun ProductRemoteScreen(
                                 } else {
                                     showNukeDialog = true
                                 }
-                            }
+                            },
+                            modifier = Modifier.size(38.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.DeleteSweep,
                                 contentDescription = "Hapus Semua Produk Favorit (Nuke)",
-                                tint = if (savedRemoteIds.isNotEmpty()) FrogoStatusFailed else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                                tint = if (savedRemoteIds.isNotEmpty()) FrogoStatusFailed else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
@@ -257,12 +271,14 @@ fun ProductRemoteScreen(
                             } else {
                                 onStatusFilterChange(DownloadStatusFilter.FAVORITE)
                             }
-                        }
+                        },
+                        modifier = Modifier.size(38.dp)
                     ) {
                         Icon(
                             imageVector = if (statusFilter == DownloadStatusFilter.FAVORITE) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                             contentDescription = "Menu List Favorit",
-                            tint = if (statusFilter == DownloadStatusFilter.FAVORITE) FrogoPrimary else MaterialTheme.colorScheme.onSurface
+                            tint = if (statusFilter == DownloadStatusFilter.FAVORITE) FrogoPrimary else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
@@ -274,30 +290,34 @@ fun ProductRemoteScreen(
                             } catch (e: Exception) {
                                 Toast.makeText(context, "Chucker belum tersedia: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
-                        }
+                        },
+                        modifier = Modifier.size(38.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.BugReport,
                             contentDescription = "Buka Chucker Interceptor",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
                     IconButton(
                         onClick = onRefresh,
-                        enabled = !isLoading
+                        enabled = !isLoading,
+                        modifier = Modifier.size(38.dp)
                     ) {
                         if (isLoading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.5.dp,
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
                                 color = FrogoPrimary
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "Segarkan data produk",
-                                tint = MaterialTheme.colorScheme.onSurface
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
@@ -422,9 +442,12 @@ fun ProductRemoteScreen(
                                     key = { index, item -> "${item.id ?: "fav"}_${item.displayIndex}_$index" }
                                 ) { _, item ->
                                     val isSaved = savedRemoteIds.contains(item.id)
+                                    val itemId = item.id ?: item.productName ?: item.rowIndex?.toString() ?: ""
+                                    val itemDownloadState = downloadStates[itemId]
                                     ProductRemoteInAppCard(
                                         item = item,
                                         isSavedInRoomDb = isSaved,
+                                        downloadState = itemDownloadState,
                                         onToggleSave = { onToggleSave(item) },
                                         onEditClick = { editingItem = item },
                                         onDeleteClick = { itemToDelete = item },
@@ -433,7 +456,8 @@ fun ProductRemoteScreen(
                                         onCopyHook = { onCopyHook(item) },
                                         onCopySnippet = { onCopySnippet(item) },
                                         onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) },
-                                        onCopyProductLink = { item.linkProduct?.let(onCopyProductLink) ?: item.toProductLinkCommitText().takeIf { it.isNotBlank() }?.let(onCopyProductLink) ?: onCopyProductLink("") }
+                                        onCopyProductLink = { item.linkProduct?.let(onCopyProductLink) ?: item.toProductLinkCommitText().takeIf { it.isNotBlank() }?.let(onCopyProductLink) ?: onCopyProductLink("") },
+                                        onDownloadVideo = { onDownloadVideo(item) }
                                     )
                                 }
                             }
@@ -500,9 +524,12 @@ fun ProductRemoteScreen(
                                 key = { index, item -> "${item.id ?: "prod"}_${item.displayIndex}_$index" }
                             ) { _, item ->
                                 val isSaved = savedRemoteIds.contains(item.id)
+                                val itemId = item.id ?: item.productName ?: item.rowIndex?.toString() ?: ""
+                                val itemDownloadState = downloadStates[itemId]
                                 ProductRemoteInAppCard(
                                     item = item,
                                     isSavedInRoomDb = isSaved,
+                                    downloadState = itemDownloadState,
                                     onToggleSave = { onToggleSave(item) },
                                     onEditClick = { editingItem = item },
                                     onDeleteClick = { itemToDelete = item },
@@ -511,7 +538,8 @@ fun ProductRemoteScreen(
                                     onCopyHook = { onCopyHook(item) },
                                     onCopySnippet = { onCopySnippet(item) },
                                     onCopyDriveLink = { item.driveLink?.let(onCopyDriveLink) },
-                                    onCopyProductLink = { item.linkProduct?.let(onCopyProductLink) ?: item.toProductLinkCommitText().takeIf { it.isNotBlank() }?.let(onCopyProductLink) ?: onCopyProductLink("") }
+                                    onCopyProductLink = { item.linkProduct?.let(onCopyProductLink) ?: item.toProductLinkCommitText().takeIf { it.isNotBlank() }?.let(onCopyProductLink) ?: onCopyProductLink("") },
+                                    onDownloadVideo = { onDownloadVideo(item) }
                                 )
                             }
                         }
@@ -783,6 +811,7 @@ private fun ProductRemoteSummaryBanner(
     savedCount: Int,
     isSearching: Boolean,
     isSyncing: Boolean,
+    endpoint: String = NetworkModule.BASE_URL.removePrefix("http://").removePrefix("https://").removeSuffix("/"),
     onSyncAll: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -832,10 +861,18 @@ private fun ProductRemoteSummaryBanner(
                         ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
+                    val context = LocalContext.current
                     Text(
-                        text = "Endpoint: 192.168.100.6:3000 • $savedCount di DB",
+                        text = "Endpoint: $endpoint • $savedCount di DB",
                         style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val fullEndpoint = "${NetworkModule.BASE_URL}api/data.json"
+                            val clip = ClipData.newPlainText("API Endpoint", fullEndpoint)
+                            clipboard.setPrimaryClip(clip)
+                            Toast.makeText(context, "Endpoint disalin: $fullEndpoint", Toast.LENGTH_SHORT).show()
+                        }
                     )
                 }
             }
@@ -882,10 +919,12 @@ private fun ProductRemoteSummaryBanner(
 /**
  * Rich In-App Product Card with media thumbnail, status badges, Room DB indicator, and CRUD controls.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ProductRemoteInAppCard(
     item: DataItemResponse,
     isSavedInRoomDb: Boolean,
+    downloadState: DownloadProgressState? = null,
     onToggleSave: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -895,6 +934,7 @@ private fun ProductRemoteInAppCard(
     onCopySnippet: () -> Unit,
     onCopyDriveLink: () -> Unit,
     onCopyProductLink: () -> Unit,
+    onDownloadVideo: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val hasThumbnail = !item.thumbnailUrl.isNullOrBlank()
@@ -1286,28 +1326,92 @@ private fun ProductRemoteInAppCard(
                     }
 
                     if (hasDriveLink) {
-                        Button(
-                            onClick = onCopyDriveLink,
+                        val isDownloading = downloadState is DownloadProgressState.Downloading
+                        val progress = (downloadState as? DownloadProgressState.Downloading)?.progress ?: 0
+                        val isDownloaded = item.isDownloaded || downloadState is DownloadProgressState.Success
+
+                        val containerColor = when {
+                            isDownloading -> FrogoPrimary.copy(alpha = 0.85f)
+                            isDownloaded -> Color(0xFF2E7D32)
+                            else -> FrogoPrimary
+                        }
+
+                        Surface(
                             shape = RoundedCornerShape(6.dp),
+                            color = containerColor,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(28.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = FrogoPrimary),
-                            contentPadding = PaddingValues(vertical = 2.dp, horizontal = 2.dp)
+                                .height(28.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .combinedClickable(
+                                    onClick = {
+                                        if (!isDownloading) {
+                                            onDownloadVideo()
+                                        }
+                                    },
+                                    onLongClick = onCopyDriveLink
+                                )
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.CloudDownload,
-                                contentDescription = null,
-                                modifier = Modifier.size(11.dp)
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(
-                                text = "Drive",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 4.dp, vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                when {
+                                    isDownloading -> {
+                                        CircularProgressIndicator(
+                                            color = Color.White,
+                                            strokeWidth = 1.5.dp,
+                                            modifier = Modifier.size(11.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(3.dp))
+                                        Text(
+                                            text = if (progress >= 0) "$progress%" else "Unduh",
+                                            fontSize = 9.5.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.White,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    isDownloaded -> {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "Sudah Diunduh",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(11.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(2.dp))
+                                        Text(
+                                            text = "Video",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.White,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    else -> {
+                                        Icon(
+                                            imageVector = Icons.Default.CloudDownload,
+                                            contentDescription = "Unduh Video Drive",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(11.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(2.dp))
+                                        Text(
+                                            text = "Drive",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.White,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
 

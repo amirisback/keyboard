@@ -141,7 +141,7 @@ class DataApiViewModelTest {
     fun testFetchRemoteData_error_transitionsThroughLoadingToError() = runTest(testDispatcher) {
         val fakeAutoTextRepo = FakeAutoTextRepository()
         val fakeDataApiRepo = FakeDataApiRepository()
-        val errorMsg = "Connection refused. Please ensure the local server is running at http://192.168.100.6:3000."
+        val errorMsg = "Connection refused. Please ensure the local server is running at http://192.168.100.6:7272."
 
         fakeDataApiRepo.flowToReturn = flow {
             emit(Resource.Loading)

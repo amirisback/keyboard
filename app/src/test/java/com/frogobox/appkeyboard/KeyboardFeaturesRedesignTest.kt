@@ -122,6 +122,7 @@ class KeyboardFeaturesRedesignTest {
     @Test
     fun testFeatureTypeFromIdMapping() {
         assertEquals(KeyboardFeatureType.AUTO_TEXT, KeyboardFeatureType.from("menu_auto_text"))
+        assertEquals(KeyboardFeatureType.PRODUCT_REMOTE, KeyboardFeatureType.from("menu_product_remote"))
         assertEquals(KeyboardFeatureType.MOVIE, KeyboardFeatureType.from("menu_movie"))
         assertEquals(KeyboardFeatureType.NEWS, KeyboardFeatureType.from("menu_news"))
         assertEquals(KeyboardFeatureType.WEB, KeyboardFeatureType.from("menu_web"))

@@ -12,7 +12,9 @@ import androidx.compose.runtime.setValue
 import com.frogobox.appkeyboard.common.base.BaseComposeMainActivity
 import com.frogobox.appkeyboard.ui.autotext.AutoTextActivity
 import com.frogobox.appkeyboard.ui.language.KeyboardLanguageActivity
+import com.frogobox.appkeyboard.ui.productremote.ProductRemoteActivity
 import com.frogobox.appkeyboard.ui.sound.SoundActivity
+import com.frogobox.appkeyboard.ui.templatetext.TemplateTextActivity
 import com.frogobox.appkeyboard.ui.test.TestActivity
 import com.frogobox.appkeyboard.ui.theme.ThemeActivity
 import com.frogobox.appkeyboard.ui.toggle.ToggleActivity
@@ -87,6 +89,15 @@ class MainActivity : BaseComposeMainActivity() {
                 mState = PICKING
             },
             onNavigateAutoText = { startActivityExt<AutoTextActivity>() },
+            onNavigateTemplateText = { category ->
+                val intent = Intent(this@MainActivity, TemplateTextActivity::class.java).apply {
+                    if (!category.isNullOrBlank()) {
+                        putExtra(TemplateTextActivity.EXTRA_INITIAL_CATEGORY, category)
+                    }
+                }
+                startActivity(intent)
+            },
+            onNavigateProductRemote = { startActivityExt<ProductRemoteActivity>() },
             onNavigateToggle = { startActivityExt<ToggleActivity>() },
             onNavigateLanguage = { startActivityExt<KeyboardLanguageActivity>() },
             onNavigateTheme = { startActivityExt<ThemeActivity>() },

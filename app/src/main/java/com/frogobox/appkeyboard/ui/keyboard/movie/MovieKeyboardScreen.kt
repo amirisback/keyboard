@@ -1,6 +1,5 @@
 package com.frogobox.appkeyboard.ui.keyboard.movie
 
-import java.util.Locale
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -38,10 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frogobox.coreutil.movie.MovieUrl
-import com.frogobox.coreutil.movie.model.TrendingMovie
 import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
+import com.frogobox.coreutil.movie.MovieUrl
+import com.frogobox.coreutil.movie.model.TrendingMovie
+import java.util.Locale
 
 @Composable
 fun MovieKeyboardScreen(
@@ -49,7 +50,9 @@ fun MovieKeyboardScreen(
     isLoading: Boolean,
     onCommitText: (String) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -58,8 +61,10 @@ fun MovieKeyboardScreen(
     ) {
         KeyboardFeatureToolbar(
             title = "Trending Movies",
-            subtitle = "Tap to share movie recommendation",
-            onBackClick = onBackClick
+            subtitle = "Tap to share movie synopsis & rating",
+            onBackClick = onBackClick,
+            isAlwaysShow = isAlwaysShow,
+            onToggleAlwaysShow = onToggleAlwaysShow
         )
 
         if (isLoading) {
@@ -82,10 +87,10 @@ fun MovieKeyboardScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(
+                itemsIndexed(
                     items = movieList,
-                    key = { it.id ?: it.hashCode() }
-                ) { movie ->
+                    key = { index, movie -> "${movie.id ?: movie.title ?: "movie"}_$index" }
+                ) { _, movie ->
                     val posterUrl = "${MovieUrl.BASE_URL_IMAGE_ORIGINAL}${movie.poster_path ?: ""}"
 
                     Card(

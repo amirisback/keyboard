@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -42,37 +43,37 @@ class DataApiRepositoryTest {
         DataItemResponse(
             id = 1,
             rowIndex = 1,
-            title = "Tongsis Bluetooth",
+            productName = "Tongsis Bluetooth",
             caption = "Tongsis Bluetooth Wireless 3-in-1 Remote Shutter",
-            body = "Deskripsi produk tongsis tripod wireless bluetooth",
-            category = "Accessories",
+            originalFileName = "tongsis.mp4",
             fileSize = "3.26 MB",
+            fileType = "video/mp4",
             isVideo = true,
-            uploaderName = "Celana Kulot Official",
             uploadTimestamp = "2026-09-18 04:58:28 WIB",
             driveLink = "https://drive.google.com/file/d/dummy123/view",
-            isActive = true
+            statusDownload = "Sudah"
         ),
         DataItemResponse(
             id = 2,
             rowIndex = 2,
-            title = "Keyboard Mechanical RGB",
-            body = "Keyboard mechanical tactile switches RGB backlit",
-            category = "Hardware",
+            productName = "Keyboard Mechanical RGB",
+            caption = "Keyboard mechanical tactile switches RGB backlit",
+            originalFileName = "keyboard.mp4",
             fileSize = "1.50 MB",
+            fileType = "video/mp4",
             isVideo = false,
-            uploaderName = "Tech Store",
-            isActive = true
+            statusDownload = "Belum"
         )
     )
 
     private val sampleApiResponse = DataApiResponse(
-        code = 200,
-        status = "success",
-        message = "Data fetched successfully",
+        success = true,
         total = 2,
         lastUpdated = "2026-09-19 08:00:00 WIB",
-        data = sampleItems
+        lastUpdatedWib = "2026-09-19 15:00:00 WIB",
+        sheetId = "1ox6JTF_IjN2sFOhpEsO3vM4T6Bd3yYfsnO09okOeb1k",
+        source = "google-sheets",
+        items = sampleItems
     )
 
     @Test
@@ -90,11 +91,10 @@ class DataApiRepositoryTest {
         assertTrue(emissions[1] is Resource.Success)
 
         val successResult = emissions[1] as Resource.Success<DataApiResponse>
-        assertEquals(200, successResult.data.code)
-        assertEquals("success", successResult.data.status)
+        assertEquals(true, successResult.data.success)
         assertEquals(2, successResult.data.total)
-        assertEquals(2, successResult.data.data?.size)
-        assertEquals("Tongsis Bluetooth Wireless 3-in-1 Remote Shutter", successResult.data.data?.get(0)?.caption)
+        assertEquals(2, successResult.data.items?.size)
+        assertEquals("Tongsis Bluetooth Wireless 3-in-1 Remote Shutter", successResult.data.items?.get(0)?.caption)
     }
 
     @Test
@@ -113,6 +113,7 @@ class DataApiRepositoryTest {
 
         val errorResult = emissions[1] as Resource.Error
         assertTrue(errorResult.message.contains("Connection refused", ignoreCase = true))
+        assertTrue(errorResult.message.contains("7272"))
         assertTrue(errorResult.cause is ConnectException)
     }
 
@@ -195,26 +196,28 @@ class DataApiRepositoryTest {
         val gson = Gson()
         val json = """
             {
-                "code": 200,
-                "status": "success",
-                "message": "OK",
+                "success": true,
                 "total": 1,
                 "lastUpdated": "2026-09-19 12:00:00 WIB",
-                "data": [
+                "lastUpdatedWib": "2026-09-19 19:00:00 WIB",
+                "sheetId": "1ox6JTF_IjN2sFOhpEsO3vM4T6Bd3yYfsnO09okOeb1k",
+                "source": "google-sheets",
+                "items": [
                     {
-                        "id": 10,
+                        "id": "10",
                         "rowIndex": 10,
-                        "title": "Tripod Mini",
+                        "productName": "Tripod Mini",
                         "caption": "Tripod Mini Flexible Stand",
-                        "body": "Flexible spider tripod for mobile photography",
-                        "category": "Camera",
+                        "originalFileName": "tripod.mp4",
+                        "fileType": "video/mp4",
                         "isVideo": true,
                         "fileSize": "2.40 MB",
-                        "uploaderName": "PhotoStudio",
                         "uploadTimestamp": "2026-09-18 10:00:00 WIB",
                         "driveLink": "https://drive.google.com/file/d/test",
+                        "driveFileId": "test",
                         "thumbnailUrl": "https://example.com/thumb.jpg",
-                        "isActive": true
+                        "previewUrl": "https://example.com/preview",
+                        "statusDownload": "Sudah"
                     }
                 ]
             }
@@ -223,45 +226,156 @@ class DataApiRepositoryTest {
         val parsed = gson.fromJson(json, DataApiResponse::class.java)
 
         assertNotNull(parsed)
-        assertEquals(200, parsed.code)
-        assertEquals("success", parsed.status)
+        assertEquals(true, parsed.success)
         assertEquals(1, parsed.total)
-        assertNotNull(parsed.data)
-        assertEquals(1, parsed.data?.size)
+        assertNotNull(parsed.items)
+        assertEquals(1, parsed.items?.size)
 
-        val item = parsed.data?.first()!!
+        val item = parsed.items?.first()!!
         assertEquals(10, item.displayIndex)
-        assertEquals("Tripod Mini Flexible Stand", item.displayTitle)
-        assertEquals("PhotoStudio", item.displaySubtitle)
-        assertEquals("Flexible spider tripod for mobile photography", item.displayBody)
+        assertEquals("Tripod Mini", item.displayTitle)
+        assertEquals("Tripod Mini Flexible Stand", item.displayBody)
         assertEquals("2026-09-18 10:00:00 WIB", item.displayTimestamp)
         assertEquals(true, item.isVideo)
         assertEquals("2.40 MB", item.fileSize)
         assertEquals("https://drive.google.com/file/d/test", item.driveLink)
         assertEquals("https://example.com/thumb.jpg", item.thumbnailUrl)
+        assertTrue(item.isDownloaded)
     }
 
     @Test
     fun testDataItemResponse_fallbackDisplayProperties() {
         // Item with minimal fields
-        val minimalItem = DataItemResponse(id = 5, title = "Simple Title")
+        val minimalItem = DataItemResponse(id = 5, productName = "Simple Title")
         assertEquals(5, minimalItem.displayIndex)
         assertEquals("Simple Title", minimalItem.displayTitle)
-        assertNull(minimalItem.displaySubtitle)
         assertNull(minimalItem.displayBody)
         assertNull(minimalItem.displayTimestamp)
 
-        // Item with only rowIndex and uploaderName
-        val uploaderOnlyItem = DataItemResponse(rowIndex = 12, uploaderName = "Admin")
-        assertEquals(12, uploaderOnlyItem.displayIndex)
-        assertEquals("Admin", uploaderOnlyItem.displayTitle)
-        assertEquals("Admin", uploaderOnlyItem.displaySubtitle)
+        // Item with only caption
+        val captionOnlyItem = DataItemResponse(rowIndex = 12, caption = "Caption Saja")
+        assertEquals(12, captionOnlyItem.displayIndex)
+        assertEquals("Caption Saja", captionOnlyItem.displayTitle)
 
         // Completely empty item
         val emptyItem = DataItemResponse()
         assertEquals(0, emptyItem.displayIndex)
         assertEquals("Item #0", emptyItem.displayTitle)
-        assertNull(emptyItem.displaySubtitle)
         assertNull(emptyItem.displayBody)
+    }
+
+    @Test
+    fun testProductionJsonSerializationDeserialization_exactUserPayload() {
+        val gson = Gson()
+        val json = """
+            {
+              "success": true,
+              "lastUpdated": "2026-09-20T15:36:51.788Z",
+              "lastUpdatedWib": "2026-09-20 22:36:51 WIB",
+              "total": 30,
+              "sheetId": "1ox6JTF_IjN2sFOhpEsO3vM4T6Bd3yYfsnO09okOeb1k",
+              "source": "google-sheets",
+              "items": [
+                {
+                  "id": "gviz-32-67890",
+                  "uploadTimestamp": "2026-09-20 22:21:57 WIB",
+                  "productName": "Produk Selesai",
+                  "caption": "Sudah diunduh",
+                  "originalFileName": "selesai.mp4",
+                  "fileSize": "0 B",
+                  "fileType": "video/mp4",
+                  "driveLink": "https://drive.google.com/file/d/67890/view",
+                  "driveFileId": "67890",
+                  "thumbnailUrl": "https://drive.google.com/thumbnail?id=67890&sz=w600",
+                  "previewUrl": "https://drive.google.com/file/d/67890/preview",
+                  "isVideo": true,
+                  "statusDownload": "Sudah",
+                  "rowIndex": 32
+                },
+                {
+                  "id": "gviz-31-12345",
+                  "uploadTimestamp": "2026-09-20 22:21:56 WIB",
+                  "productName": "Produk Baru",
+                  "caption": "Review produk #racunshopee",
+                  "originalFileName": "produk_baru.mp4",
+                  "fileSize": "0 B",
+                  "fileType": "video/mp4",
+                  "driveLink": "https://drive.google.com/file/d/12345/view",
+                  "driveFileId": "12345",
+                  "thumbnailUrl": "https://drive.google.com/thumbnail?id=12345&sz=w600",
+                  "previewUrl": "https://drive.google.com/file/d/12345/preview",
+                  "isVideo": true,
+                  "statusDownload": "Belum",
+                  "rowIndex": 31
+                },
+                {
+                  "id": "gviz-28-1BrY05mLRCR92g5vo2TCb6MOB69_L8fmF",
+                  "uploadTimestamp": "2026-09-20 22:12:57 WIB",
+                  "productName": "Glad2Glow Blueberry 5% Ceramide Barrier Repair Moisturizer (30g)",
+                  "caption": "Pelembab Wajah Gel Mencerahkan Menenangkan Kemerahan Kulit Kering Sensitif BPOM Original #glad2glow #glad2glowblueberry",
+                  "originalFileName": "20260920_221257_glad2glow_blueberry_5_ceramide_barrier_repair_moisturizer_30g.mp4",
+                  "fileSize": "3 MB",
+                  "fileType": "video/mp4",
+                  "driveLink": "https://drive.google.com/file/d/1BrY05mLRCR92g5vo2TCb6MOB69_L8fmF/view?usp=drivesdk",
+                  "driveFileId": "1BrY05mLRCR92g5vo2TCb6MOB69_L8fmF",
+                  "thumbnailUrl": "https://drive.google.com/thumbnail?id=1BrY05mLRCR92g5vo2TCb6MOB69_L8fmF&sz=w600",
+                  "previewUrl": "https://drive.google.com/file/d/1BrY05mLRCR92g5vo2TCb6MOB69_L8fmF/preview",
+                  "isVideo": true,
+                  "statusDownload": "Belum",
+                  "rowIndex": 28
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val parsed = gson.fromJson(json, DataApiResponse::class.java)
+
+        assertNotNull(parsed)
+        assertEquals(true, parsed.success)
+        assertEquals("2026-09-20T15:36:51.788Z", parsed.lastUpdated)
+        assertEquals("2026-09-20 22:36:51 WIB", parsed.lastUpdatedWib)
+        assertEquals(30, parsed.total)
+        assertEquals("1ox6JTF_IjN2sFOhpEsO3vM4T6Bd3yYfsnO09okOeb1k", parsed.sheetId)
+        assertEquals("google-sheets", parsed.source)
+        assertNotNull(parsed.items)
+        val items = parsed.items!!
+        assertEquals(3, items.size)
+
+        // Validate Item 1 (Downloaded item)
+        val item1 = items[0]
+        assertEquals("gviz-32-67890", item1.id)
+        assertEquals("2026-09-20 22:21:57 WIB", item1.uploadTimestamp)
+        assertEquals("Produk Selesai", item1.productName)
+        assertEquals("Produk Selesai", item1.displayTitle)
+        assertEquals("Sudah diunduh", item1.caption)
+        assertEquals("selesai.mp4", item1.originalFileName)
+        assertEquals("0 B", item1.fileSize)
+        assertEquals("video/mp4", item1.fileType)
+        assertEquals("https://drive.google.com/file/d/67890/view", item1.driveLink)
+        assertEquals("67890", item1.driveFileId)
+        assertEquals("https://drive.google.com/thumbnail?id=67890&sz=w600", item1.thumbnailUrl)
+        assertEquals("https://drive.google.com/file/d/67890/preview", item1.previewUrl)
+        assertEquals(true, item1.isVideo)
+        assertEquals("Sudah", item1.statusDownload)
+        assertTrue(item1.isDownloaded)
+        assertEquals(32, item1.rowIndex)
+        assertEquals(32, item1.displayIndex)
+
+        // Validate Item 2 (Pending item)
+        val item2 = items[1]
+        assertEquals("gviz-31-12345", item2.id)
+        assertEquals("Produk Baru", item2.productName)
+        assertEquals("Produk Baru", item2.displayTitle)
+        assertEquals("Belum", item2.statusDownload)
+        assertFalse(item2.isDownloaded)
+        assertEquals(31, item2.rowIndex)
+
+        // Validate Item 3 (Full product with long name & caption)
+        val item3 = items[2]
+        assertEquals("Glad2Glow Blueberry 5% Ceramide Barrier Repair Moisturizer (30g)", item3.productName)
+        assertEquals("Glad2Glow Blueberry 5% Ceramide Barrier Repair Moisturizer (30g)", item3.displayTitle)
+        assertEquals("20260920_221257_glad2glow_blueberry_5_ceramide_barrier_repair_moisturizer_30g.mp4", item3.originalFileName)
+        assertEquals("1BrY05mLRCR92g5vo2TCb6MOB69_L8fmF", item3.driveFileId)
+        assertEquals(28, item3.rowIndex)
     }
 }

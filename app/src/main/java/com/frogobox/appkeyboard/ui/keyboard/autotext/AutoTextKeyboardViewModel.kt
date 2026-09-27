@@ -18,18 +18,18 @@ import kotlinx.coroutines.withContext
 
 class AutoTextKeyboardViewModel(val context: Context) {
 
-    private fun getRepository(): AutoTextRepository {
-        return AutoTextRepositoryImpl(AppDatabase.newInstance(context).autoTextDao())
+    private val repository: AutoTextRepository by lazy {
+        AutoTextRepositoryImpl(AppDatabase.newInstance(context).autoTextDao())
     }
 
     fun getAutoTextFlow(): Flow<List<AutoTextEntity>> {
-        return getRepository().getAutoText()
+        return repository.getAutoText()
     }
 
     fun getAutoText(onSuccessData: (List<AutoTextEntity>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                getRepository().getAutoText().collect { data ->
+                repository.getAutoText().collect { data ->
                     withContext(Dispatchers.Main) {
                         onSuccessData(data)
                     }

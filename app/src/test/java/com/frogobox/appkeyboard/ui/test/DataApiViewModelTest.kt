@@ -66,7 +66,7 @@ class DataApiViewModelTest {
 
     private class FakeDataApiRepository : DataApiRepository {
         var flowToReturn: Flow<Resource<DataApiResponse>> = emptyFlow()
-        var directResultToReturn: Resource<DataApiResponse> = Resource.Success(DataApiResponse(code = 200))
+        var directResultToReturn: Resource<DataApiResponse> = Resource.Success(DataApiResponse(success = true))
 
         override fun fetchDataStream(): Flow<Resource<DataApiResponse>> = flowToReturn
         override suspend fun fetchData(): Resource<DataApiResponse> = directResultToReturn
@@ -99,14 +99,14 @@ class DataApiViewModelTest {
         val fakeDataApiRepo = FakeDataApiRepository()
 
         val sampleItems = listOf(
-            DataItemResponse(id = 1, title = "Wireless Mouse", body = "2.4GHz wireless mouse")
+            DataItemResponse(id = 1, productName = "Wireless Mouse", caption = "2.4GHz wireless mouse")
         )
         val successResponse = DataApiResponse(
-            code = 200,
-            status = "success",
+            success = true,
             total = 1,
             lastUpdated = "2026-09-19 15:00:00 WIB",
-            data = sampleItems
+            lastUpdatedWib = "2026-09-19 15:00:00 WIB",
+            items = sampleItems
         )
 
         fakeDataApiRepo.flowToReturn = flow {
@@ -132,7 +132,7 @@ class DataApiViewModelTest {
         assertEquals(1, successState.total)
         assertEquals("2026-09-19 15:00:00 WIB", successState.lastUpdatedWib)
         assertEquals(1, successState.items.size)
-        assertEquals("Wireless Mouse", successState.items[0].title)
+        assertEquals("Wireless Mouse", successState.items[0].productName)
 
         collectJob.cancel()
     }
@@ -141,7 +141,7 @@ class DataApiViewModelTest {
     fun testFetchRemoteData_error_transitionsThroughLoadingToError() = runTest(testDispatcher) {
         val fakeAutoTextRepo = FakeAutoTextRepository()
         val fakeDataApiRepo = FakeDataApiRepository()
-        val errorMsg = "Connection refused. Please ensure the local server is running at http://192.168.100.6:3000."
+        val errorMsg = "Connection refused. Please ensure the local server is running at http://192.168.100.6:7272."
 
         fakeDataApiRepo.flowToReturn = flow {
             emit(Resource.Loading)

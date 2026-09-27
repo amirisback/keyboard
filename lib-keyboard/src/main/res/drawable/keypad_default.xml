@@ -17,6 +17,7 @@
     <item>
         <layer-list>
             <item
+                android:id="@+id/keypad_background_shape"
                 android:bottom="@dimen/key_margin"
                 android:left="@dimen/key_margin"
                 android:right="@dimen/key_margin"

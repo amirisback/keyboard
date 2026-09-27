@@ -1,5 +1,8 @@
 package com.frogobox.appkeyboard.model
 
+import android.content.Context
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import com.frogobox.appkeyboard.R
 
 /**
@@ -16,29 +19,31 @@ enum class ThemeType {
 }
 
 enum class KeyboardThemeType(
-    private val label: String,
-    private val desc: String,
-    private val themeType: ThemeType,
-    private val background: Int,
+    val label: String,
+    val desc: String,
+    val themeType: ThemeType,
+    val background: Int,
+    val isDark: Boolean = false,
 ) {
-    DEFAULT("Default", "Classic Adaptive", ThemeType.COLOR, R.color.color_bg_keyboard_default),
-    PURPLE("Frogo Purple", "Signature Brand", ThemeType.COLOR, R.color.color_bg_keyboard_purple),
-    DARK("Midnight AMOLED", "Deep OLED Black", ThemeType.COLOR, R.color.color_bg_keyboard_dark),
-    BLUE("Ocean Blue", "Calm & Focused", ThemeType.COLOR, R.color.color_bg_keyboard_blue),
-    GREEN("Forest Emerald", "Natural Harmony", ThemeType.COLOR, R.color.color_bg_keyboard_green),
-    RED("Crimson Sunset", "Vibrant Warmth", ThemeType.COLOR, R.color.color_bg_keyboard_red),
-    ORANGE("Sunset Orange", "Energetic Twilight", ThemeType.COLOR, R.color.color_bg_keyboard_orange),
-    CYAN("Nordic Cyan", "Fresh & Clean", ThemeType.COLOR, R.color.color_bg_keyboard_cyan),
-    PINK("Sakura Pink", "Aesthetic Pastel", ThemeType.COLOR, R.color.color_bg_keyboard_pink),
-    YELLOW("Amber Gold", "Golden Accent", ThemeType.COLOR, R.color.color_bg_keyboard_yellow),
-    IMAGE_BG_DARK("Wallpaper", "Sample Artwork", ThemeType.IMAGE, R.drawable.ic_wallpaper_dummy);
+    DEFAULT("Default", "Classic Adaptive", ThemeType.COLOR, R.color.color_bg_keyboard_default, isDark = false),
+    PURPLE("Frogo Purple", "Signature Brand", ThemeType.COLOR, R.color.color_bg_keyboard_purple, isDark = true),
+    DARK("Midnight AMOLED", "Deep OLED Black", ThemeType.COLOR, R.color.color_bg_keyboard_dark, isDark = true),
+    BLUE("Ocean Blue", "Calm & Focused", ThemeType.COLOR, R.color.color_bg_keyboard_blue, isDark = true),
+    GREEN("Forest Emerald", "Natural Harmony", ThemeType.COLOR, R.color.color_bg_keyboard_green, isDark = true),
+    RED("Crimson Sunset", "Vibrant Warmth", ThemeType.COLOR, R.color.color_bg_keyboard_red, isDark = true),
+    ORANGE("Sunset Orange", "Energetic Twilight", ThemeType.COLOR, R.color.color_bg_keyboard_orange, isDark = true),
+    CYAN("Nordic Cyan", "Fresh & Clean", ThemeType.COLOR, R.color.color_bg_keyboard_cyan, isDark = true),
+    PINK("Sakura Pink", "Aesthetic Pastel", ThemeType.COLOR, R.color.color_bg_keyboard_pink, isDark = true),
+    YELLOW("Amber Gold", "Golden Accent", ThemeType.COLOR, R.color.color_bg_keyboard_yellow, isDark = false),
+    IMAGE_BG_DARK("Wallpaper", "Sample Artwork", ThemeType.IMAGE, R.drawable.ic_wallpaper_dummy, isDark = true);
 
     fun mapToModel(): KeyboardThemeModel {
         return KeyboardThemeModel(
             this.label,
             this.desc,
             this.themeType,
-            this.background
+            this.background,
+            this.isDark
         )
     }
 
@@ -47,4 +52,17 @@ enum class KeyboardThemeType(
             entries.firstOrNull { it.name == value } ?: DEFAULT
     }
 
+}
+
+/**
+ * Robust WCAG AA helper evaluating relative luminance to guarantee contrast ratio >= 4.5:1.
+ */
+fun isThemeDark(context: Context, theme: KeyboardThemeModel): Boolean {
+    if (theme.themType == ThemeType.IMAGE) return true
+    return try {
+        val colorInt = ContextCompat.getColor(context, theme.background)
+        ColorUtils.calculateLuminance(colorInt) < 0.45
+    } catch (_: Exception) {
+        theme.isDark
+    }
 }

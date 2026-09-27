@@ -9,6 +9,7 @@ enum class KeyboardPanelState {
     MAIN,
     EMOJI,
     AUTO_TEXT,
+    PRODUCT_REMOTE,
     TEMPLATE_TEXT_GAME,
     TEMPLATE_TEXT_APP,
     TEMPLATE_TEXT_SALE,
@@ -17,7 +18,9 @@ enum class KeyboardPanelState {
     NEWS,
     MOVIE,
     WEBVIEW,
-    FORM;
+    FORM,
+    CLIPBOARD,
+    TEXT_EDIT;
 
     val isTemplate: Boolean
         get() = this in TEMPLATE_STATES
@@ -44,11 +47,14 @@ enum class KeyboardPanelState {
         fun fromFeature(featureType: KeyboardFeatureType): KeyboardPanelState? {
             return when (featureType) {
                 KeyboardFeatureType.AUTO_TEXT -> AUTO_TEXT
+                KeyboardFeatureType.PRODUCT_REMOTE -> PRODUCT_REMOTE
                 KeyboardFeatureType.TEMPLATE_TEXT_GAME -> TEMPLATE_TEXT_GAME
                 KeyboardFeatureType.TEMPLATE_TEXT_APP -> TEMPLATE_TEXT_APP
                 KeyboardFeatureType.TEMPLATE_TEXT_SALE -> TEMPLATE_TEXT_SALE
                 KeyboardFeatureType.TEMPLATE_TEXT_LOVE -> TEMPLATE_TEXT_LOVE
                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> TEMPLATE_TEXT_GREETING
+                KeyboardFeatureType.CLIPBOARD -> CLIPBOARD
+                KeyboardFeatureType.TEXT_EDIT -> TEXT_EDIT
                 KeyboardFeatureType.NEWS -> NEWS
                 KeyboardFeatureType.MOVIE -> MOVIE
                 KeyboardFeatureType.WEB -> WEBVIEW

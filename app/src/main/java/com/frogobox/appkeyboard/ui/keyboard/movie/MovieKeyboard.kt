@@ -9,11 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.frogobox.api.movie.ConsumeMovieApi
+import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 import com.frogobox.coresdk.response.FrogoDataResponse
 import com.frogobox.coreutil.movie.MovieUrl
 import com.frogobox.coreutil.movie.model.TrendingMovie
 import com.frogobox.coreutil.movie.response.Trending
-import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

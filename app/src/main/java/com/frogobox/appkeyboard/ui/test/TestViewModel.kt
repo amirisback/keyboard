@@ -140,14 +140,14 @@ class TestViewModel @Inject constructor(
                         _remoteApiUiState.value = DataApiUiState.Loading
                     }
                     is Resource.Success -> {
-                        val items = resource.data.data ?: emptyList()
+                        val items = resource.data.items ?: emptyList()
                         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply {
                             timeZone = TimeZone.getTimeZone("Asia/Jakarta")
                         }
                         val nowWib = "${sdf.format(Date())} WIB"
                         _remoteApiUiState.value = DataApiUiState.Success(
                             total = resource.data.total ?: items.size,
-                            lastUpdatedWib = resource.data.lastUpdated ?: nowWib,
+                            lastUpdatedWib = resource.data.lastUpdatedWib ?: resource.data.lastUpdated ?: nowWib,
                             items = items
                         )
                     }

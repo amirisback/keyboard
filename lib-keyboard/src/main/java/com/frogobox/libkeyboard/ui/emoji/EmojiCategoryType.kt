@@ -12,6 +12,7 @@ package com.frogobox.libkeyboard.ui.emoji
 
 
 enum class EmojiCategoryType(val icon: String, val path: String) {
+    RECENT("🕒", "recent"),
     GENERAL("🙂", "media/_emoji_general.txt"),
     ACTIVITIES("\uD83C\uDF83", "media/emoji_activities.txt"),
     ANIMAL_NATURE("\uD83D\uDC35", "media/emoji_animal_nature.txt"),

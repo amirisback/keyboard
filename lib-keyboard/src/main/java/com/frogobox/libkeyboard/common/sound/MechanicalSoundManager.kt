@@ -125,5 +125,8 @@ class MechanicalSoundManager private constructor(context: Context) {
         soundPool = null
         soundIdMap.clear()
         loadedSounds.clear()
+        synchronized(MechanicalSoundManager::class.java) {
+            INSTANCE = null
+        }
     }
 }

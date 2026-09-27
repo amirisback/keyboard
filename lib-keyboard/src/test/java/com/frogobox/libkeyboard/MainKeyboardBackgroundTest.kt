@@ -3,7 +3,6 @@ package com.frogobox.libkeyboard
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.LayerDrawable
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.frogobox.libkeyboard.ui.main.MainKeyboard
@@ -115,5 +114,26 @@ class MainKeyboardBackgroundTest {
         keyboard.onVisibilityChanged(keyboard, View.INVISIBLE)
 
         assertNull("Background remains null when view is not visible", keyboard.background)
+    }
+
+    @Test
+    fun testSetKeyboardTheme_updatesTextColorAndDarkThemeFlag() {
+        val keyboard = MainKeyboard(context, null)
+
+        // Dark theme setup
+        keyboard.setKeyboardTheme(
+            textColor = Color.WHITE,
+            actionTextColor = Color.WHITE,
+            isDark = true
+        )
+        assertTrue("Keyboard must report isDarkTheme == true", keyboard.isDarkTheme())
+
+        // Light theme setup
+        keyboard.setKeyboardTheme(
+            textColor = Color.parseColor("#0F172A"),
+            actionTextColor = Color.parseColor("#0F172A"),
+            isDark = false
+        )
+        org.junit.Assert.assertFalse("Keyboard must report isDarkTheme == false", keyboard.isDarkTheme())
     }
 }

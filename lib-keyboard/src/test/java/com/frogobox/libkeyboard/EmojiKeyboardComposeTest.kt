@@ -14,8 +14,9 @@ class EmojiKeyboardComposeTest {
     @Test
     fun testEmojiCategoryTypeCountAndPaths() {
         val categories = EmojiCategoryType.entries
-        assertEquals(10, categories.size)
+        assertEquals(11, categories.size)
 
+        assertTrue(categories.any { it == EmojiCategoryType.RECENT && it.path == "recent" })
         assertTrue(categories.any { it == EmojiCategoryType.GENERAL && it.path == "media/_emoji_general.txt" })
         assertTrue(categories.any { it == EmojiCategoryType.ACTIVITIES && it.path == "media/emoji_activities.txt" })
         assertTrue(categories.any { it == EmojiCategoryType.ANIMAL_NATURE && it.path == "media/emoji_animal_nature.txt" })
@@ -30,6 +31,7 @@ class EmojiKeyboardComposeTest {
 
     @Test
     fun testEmojiCategoryTypeDisplayNames() {
+        assertEquals("Recent", EmojiCategoryType.RECENT.displayName)
         assertEquals("General", EmojiCategoryType.GENERAL.displayName)
         assertEquals("Activities", EmojiCategoryType.ACTIVITIES.displayName)
         assertEquals("Animals & Nature", EmojiCategoryType.ANIMAL_NATURE.displayName)
@@ -45,12 +47,12 @@ class EmojiKeyboardComposeTest {
     @Test
     fun testGetEmojiCategoryListMapping() {
         val categoryList = getEmojiCategory()
-        assertEquals(10, categoryList.size)
+        assertEquals(11, categoryList.size)
 
         val first = categoryList[0]
-        assertEquals("GENERAL", first.name)
+        assertEquals("RECENT", first.name)
         assertNotNull(first.icon)
-        assertEquals("media/_emoji_general.txt", first.path)
+        assertEquals("recent", first.path)
     }
 
     @Test
@@ -74,5 +76,29 @@ class EmojiKeyboardComposeTest {
 
         resetTrigger++
         assertEquals(2, resetTrigger)
+    }
+
+    @Test
+    fun testEmojiSearchEngineBilingual() {
+        val smileIndonesian = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("senyum")
+        assertTrue("Should find smile emoji for 'senyum'", smileIndonesian.contains("😀"))
+
+        val smileEnglish = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("smile")
+        assertTrue("Should find smile emoji for 'smile'", smileEnglish.contains("😀"))
+
+        val moneyIndonesian = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("uang")
+        assertTrue("Should find money emoji for 'uang'", moneyIndonesian.contains("💰"))
+
+        val packageIndonesian = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("paket")
+        assertTrue("Should find package emoji for 'paket'", packageIndonesian.contains("📦"))
+
+        val fireSearch = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("api")
+        assertTrue("Should find fire emoji for 'api'", fireSearch.contains("🔥"))
+
+        val thumbsSearch = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("jempol")
+        assertTrue("Should find thumbs up emoji for 'jempol'", thumbsSearch.contains("👍"))
+
+        val emptySearch = com.frogobox.libkeyboard.ui.emoji.EmojiSearchEngine.search("")
+        assertTrue("Empty search should return empty list", emptySearch.isEmpty())
     }
 }

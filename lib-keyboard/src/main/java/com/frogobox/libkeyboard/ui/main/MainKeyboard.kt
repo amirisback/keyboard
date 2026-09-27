@@ -72,6 +72,10 @@ class MainKeyboard @JvmOverloads constructor(
     private var mKeyTextSize = 0
 
     private var mTextColor = 0
+    private var mActionTextColor = 0
+    private var mCustomTextColor: Int? = null
+    private var mCustomActionTextColor: Int? = null
+    private var mIsDarkTheme = false
     private var mBackgroundColor = 0
 
     private var mPreviewText: TextView? = null
@@ -277,7 +281,7 @@ class MainKeyboard @JvmOverloads constructor(
             gravity = Gravity.CENTER
             includeFontPadding = false
             setPadding(padding, padding, padding, padding)
-            setTextColor(context.getColorExt(R.color.keypad_text))
+            setTextColor(if (mTextColor != 0) mTextColor else context.getColorExt(R.color.keypad_text))
             typeface = Typeface.DEFAULT_BOLD
             setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.preview_text_size))
         }
@@ -291,8 +295,35 @@ class MainKeyboard @JvmOverloads constructor(
         }
     }
 
+    fun isDarkTheme(): Boolean = mIsDarkTheme
+
+    fun setKeyboardTheme(
+        textColor: Int,
+        actionTextColor: Int = textColor,
+        keyColor: Int? = null,
+        actionKeyColor: Int? = null,
+        isDark: Boolean = false
+    ) {
+        mCustomTextColor = textColor
+        mCustomActionTextColor = actionTextColor
+        mTextColor = textColor
+        mActionTextColor = actionTextColor
+        mIsDarkTheme = isDark
+        mPaint.color = textColor
+        mSmallLetterPaint.apply {
+            set(mPaint)
+            color = textColor.adjustAlpha(0.8f)
+            textSize = mTopSmallNumberSize
+            typeface = Typeface.DEFAULT
+        }
+        initCachedDrawables()
+        invalidateAllKeys()
+        invalidate()
+    }
+
     fun initCachedDrawables() {
-        mKeypadDefaultDrawable = resources.getDrawable(R.drawable.keypad_default, context.theme)
+        val defaultDrawableRes = if (mIsDarkTheme) R.drawable.keypad_default_dark else R.drawable.keypad_default
+        mKeypadDefaultDrawable = resources.getDrawable(defaultDrawableRes, context.theme)
         mKeypadActionDrawable = resources.getDrawable(R.drawable.keypad_action, context.theme)
         mShiftOffDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_outline, null)
         mShiftOneCharDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps, null)
@@ -323,7 +354,8 @@ class MainKeyboard @JvmOverloads constructor(
         super.onVisibilityChanged(changedView, visibility)
 
         if (visibility == VISIBLE) {
-            mTextColor = context.getColorExt(R.color.keypad_text)
+            mTextColor = mCustomTextColor ?: if (mIsDarkTheme) context.getColorExt(R.color.keypad_text_dark) else context.getColorExt(R.color.keypad_text)
+            mActionTextColor = mCustomActionTextColor ?: mTextColor
             mBackgroundColor = context.getColorExt(R.color.keyboard_board)
             initCachedDrawables()
 
@@ -375,7 +407,12 @@ class MainKeyboard @JvmOverloads constructor(
 
     fun vibrateIfNeeded() {
         if (ItemMainKeyboard.VIBRATE_ON_KEYPRESS) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            val feedbackConstant = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                HapticFeedbackConstants.KEYBOARD_TAP
+            } else {
+                HapticFeedbackConstants.VIRTUAL_KEY
+            }
+            performHapticFeedback(feedbackConstant)
         }
     }
 
@@ -596,7 +633,7 @@ class MainKeyboard @JvmOverloads constructor(
                             code == KEYCODE_TAB || code == KEYCODE_ARROW_LEFT || code == KEYCODE_ARROW_RIGHT ||
                             code == KEYCODE_ARROW_UP || code == KEYCODE_ARROW_DOWN
                         ) {
-                            icon.applyColorFilter(mTextColor)
+                            icon.applyColorFilter(if (mActionTextColor != 0) mActionTextColor else mTextColor)
                         }
 
                         val drawableX = (key.width - icon.intrinsicWidth) / 2
@@ -790,7 +827,7 @@ class MainKeyboard @JvmOverloads constructor(
             val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 AccessibilityEvent(eventType)
             } else {
-                AccessibilityEvent.obtain(eventType)
+                AccessibilityEvent().apply { this.eventType = eventType }
             }
             onInitializeAccessibilityEvent(event)
             val text: String = when (code) {

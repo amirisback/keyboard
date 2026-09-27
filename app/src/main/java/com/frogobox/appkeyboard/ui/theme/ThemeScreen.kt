@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -73,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.model.KeyboardThemeModel
 import com.frogobox.appkeyboard.model.ThemeType
+import com.frogobox.appkeyboard.model.isThemeDark
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoPrimary
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusSuccess
@@ -311,6 +313,20 @@ private fun ThemePreviewHero(
     onApplyClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val isDark = remember(theme) { isThemeDark(context, theme) }
+    var typedPreviewText by remember(theme.name) { mutableStateOf("") }
+
+    val keyTextColor = if (isDark) Color.White else Color(0xFF0F172A)
+    val keyBgColor = if (isDark) Color.White.copy(alpha = 0.22f) else Color.White.copy(alpha = 0.90f)
+    val keyStrokeColor = if (isDark) Color.White.copy(alpha = 0.35f) else Color(0xFFCBD5E1)
+    val specialKeyBgColor = if (isDark) Color.Black.copy(alpha = 0.25f) else Color.Black.copy(alpha = 0.08f)
+    val specialKeyIconColor = if (isDark) Color.White else Color(0xFF0F172A)
+    val toolbarIconColor = if (isDark) Color.White.copy(alpha = 0.9f) else Color(0xFF0F172A).copy(alpha = 0.85f)
+    val brandTitleColor = if (isDark) Color.White.copy(alpha = 0.85f) else Color(0xFF0F172A).copy(alpha = 0.85f)
+    val spacebarBgColor = if (isDark) Color.White.copy(alpha = 0.28f) else Color.White.copy(alpha = 0.92f)
+    val spacebarTextColor = if (isDark) Color.White.copy(alpha = 0.9f) else Color(0xFF0F172A)
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -480,10 +496,10 @@ private fun ThemePreviewHero(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            MockToolIcon(Icons.Default.SentimentSatisfied)
-                            MockToolIcon(Icons.Default.TextFields)
-                            MockToolIcon(Icons.Default.Language)
-                            MockToolIcon(Icons.Default.Settings)
+                            MockToolIcon(Icons.Default.SentimentSatisfied, iconTint = toolbarIconColor)
+                            MockToolIcon(Icons.Default.TextFields, iconTint = toolbarIconColor)
+                            MockToolIcon(Icons.Default.Language, iconTint = toolbarIconColor)
+                            MockToolIcon(Icons.Default.Settings, iconTint = toolbarIconColor)
                         }
 
                         Text(
@@ -491,18 +507,73 @@ private fun ThemePreviewHero(
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 10.sp,
-                                color = Color.White.copy(alpha = 0.85f)
+                                color = brandTitleColor
                             )
                         )
                     }
 
+                    // Live Interactive Typing Test Bar (Enhancement)
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (isDark) Color.Black.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.88f),
+                        border = BorderStroke(1.dp, if (isDark) Color.White.copy(alpha = 0.2f) else Color(0xFFCBD5E1)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 2.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = if (typedPreviewText.isEmpty()) "Ketik di sini untuk uji coba tema..." else typedPreviewText,
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = if (typedPreviewText.isEmpty()) FontWeight.Normal else FontWeight.Medium,
+                                    fontSize = 12.sp
+                                ),
+                                color = if (typedPreviewText.isEmpty()) {
+                                    if (isDark) Color.White.copy(alpha = 0.5f) else Color(0xFF64748B)
+                                } else {
+                                    keyTextColor
+                                },
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (typedPreviewText.isNotEmpty()) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Backspace,
+                                    contentDescription = "Hapus teks",
+                                    tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color(0xFF64748B),
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .clip(CircleShape)
+                                        .clickable { typedPreviewText = "" }
+                                )
+                            }
+                        }
+                    }
+
                     // Keycap Row 1: Q W E R T Y U I O P (10 keys)
-                    MockKeyRow(keys = listOf("Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"))
+                    MockKeyRow(
+                        keys = listOf("Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"),
+                        textColor = keyTextColor,
+                        backgroundColor = keyBgColor,
+                        strokeColor = keyStrokeColor,
+                        onKeyClick = { letter -> typedPreviewText += letter }
+                    )
 
                     // Keycap Row 2: A S D F G H J K L (9 keys with inset margins)
                     MockKeyRow(
                         keys = listOf("A", "S", "D", "F", "G", "H", "J", "K", "L"),
-                        horizontalPadding = 12.dp
+                        horizontalPadding = 12.dp,
+                        textColor = keyTextColor,
+                        backgroundColor = keyBgColor,
+                        strokeColor = keyStrokeColor,
+                        onKeyClick = { letter -> typedPreviewText += letter }
                     )
 
                     // Keycap Row 3: Shift, Z X C V B N M, Backspace
@@ -513,17 +584,32 @@ private fun ThemePreviewHero(
                     ) {
                         MockTextKey(
                             text = "⇧",
-                            weight = 1.3f
+                            textColor = specialKeyIconColor,
+                            backgroundColor = specialKeyBgColor,
+                            strokeColor = keyStrokeColor,
+                            modifier = Modifier.weight(1.3f)
                         )
                         listOf("Z", "X", "C", "V", "B", "N", "M").forEach { letter ->
                             MockKey(
                                 text = letter,
-                                modifier = Modifier.weight(1f)
+                                textColor = keyTextColor,
+                                backgroundColor = keyBgColor,
+                                strokeColor = keyStrokeColor,
+                                modifier = Modifier.weight(1f),
+                                onClick = { typedPreviewText += letter }
                             )
                         }
                         MockSpecialKey(
                             icon = Icons.AutoMirrored.Filled.Backspace,
-                            weight = 1.3f
+                            iconTint = specialKeyIconColor,
+                            backgroundColor = specialKeyBgColor,
+                            strokeColor = keyStrokeColor,
+                            modifier = Modifier.weight(1.3f),
+                            onClick = {
+                                if (typedPreviewText.isNotEmpty()) {
+                                    typedPreviewText = typedPreviewText.dropLast(1)
+                                }
+                            }
                         )
                     }
 
@@ -533,10 +619,33 @@ private fun ThemePreviewHero(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        MockTextKey(text = "?123", weight = 1.4f)
-                        MockIconKey(icon = Icons.Default.Language, weight = 1f)
-                        MockSpacebarKey(text = "English", weight = 4.2f)
-                        MockActionKey(icon = Icons.AutoMirrored.Filled.KeyboardReturn, weight = 1.6f)
+                        MockTextKey(
+                            text = "?123",
+                            textColor = specialKeyIconColor,
+                            backgroundColor = specialKeyBgColor,
+                            strokeColor = keyStrokeColor,
+                            modifier = Modifier.weight(1.4f)
+                        )
+                        MockIconKey(
+                            icon = Icons.Default.Language,
+                            iconTint = specialKeyIconColor,
+                            backgroundColor = specialKeyBgColor,
+                            strokeColor = keyStrokeColor,
+                            modifier = Modifier.weight(1f)
+                        )
+                        MockSpacebarKey(
+                            text = "English",
+                            textColor = spacebarTextColor,
+                            backgroundColor = spacebarBgColor,
+                            strokeColor = keyStrokeColor,
+                            modifier = Modifier.weight(4.2f),
+                            onClick = { typedPreviewText += " " }
+                        )
+                        MockActionKey(
+                            icon = Icons.AutoMirrored.Filled.KeyboardReturn,
+                            modifier = Modifier.weight(1.6f),
+                            onClick = { typedPreviewText += " " }
+                        )
                     }
                 }
             }
@@ -634,6 +743,12 @@ private fun ThemeGridCard(
         label = "cardBorderColor"
     )
 
+    val context = LocalContext.current
+    val isDark = remember(theme) { isThemeDark(context, theme) }
+    val silhouetteColor = if (isDark) Color.White.copy(alpha = 0.28f) else Color(0xFF0F172A).copy(alpha = 0.15f)
+    val silhouetteSpecialColor = if (isDark) Color.White.copy(alpha = 0.35f) else Color(0xFF0F172A).copy(alpha = 0.22f)
+    val silhouetteSpaceColor = if (isDark) Color.White.copy(alpha = 0.38f) else Color(0xFF0F172A).copy(alpha = 0.25f)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -691,7 +806,7 @@ private fun ThemeGridCard(
                                     .weight(1f)
                                     .height(14.dp)
                                     .clip(RoundedCornerShape(2.dp))
-                                    .background(Color.White.copy(alpha = 0.28f))
+                                    .background(silhouetteColor)
                             )
                         }
                     }
@@ -708,7 +823,7 @@ private fun ThemeGridCard(
                                     .weight(1f)
                                     .height(14.dp)
                                     .clip(RoundedCornerShape(2.dp))
-                                    .background(Color.White.copy(alpha = 0.28f))
+                                    .background(silhouetteColor)
                             )
                         }
                     }
@@ -722,7 +837,7 @@ private fun ThemeGridCard(
                                 .weight(1.3f)
                                 .height(14.dp)
                                 .clip(RoundedCornerShape(2.dp))
-                                .background(Color.White.copy(alpha = 0.35f))
+                                .background(silhouetteSpecialColor)
                         )
                         repeat(7) {
                             Box(
@@ -730,7 +845,7 @@ private fun ThemeGridCard(
                                     .weight(1f)
                                     .height(14.dp)
                                     .clip(RoundedCornerShape(2.dp))
-                                    .background(Color.White.copy(alpha = 0.28f))
+                                    .background(silhouetteColor)
                             )
                         }
                         Box(
@@ -738,7 +853,7 @@ private fun ThemeGridCard(
                                 .weight(1.3f)
                                 .height(14.dp)
                                 .clip(RoundedCornerShape(2.dp))
-                                .background(Color.White.copy(alpha = 0.35f))
+                                .background(silhouetteSpecialColor)
                         )
                     }
 
@@ -751,14 +866,14 @@ private fun ThemeGridCard(
                                 .weight(1.5f)
                                 .height(14.dp)
                                 .clip(RoundedCornerShape(2.dp))
-                                .background(Color.White.copy(alpha = 0.28f))
+                                .background(silhouetteColor)
                         )
                         Box(
                             modifier = Modifier
                                 .weight(4.5f)
                                 .height(14.dp)
                                 .clip(RoundedCornerShape(2.dp))
-                                .background(Color.White.copy(alpha = 0.38f))
+                                .background(silhouetteSpaceColor)
                         )
                         Box(
                             modifier = Modifier
@@ -857,18 +972,23 @@ private fun ThemeGridCard(
 @Composable
 private fun MockToolIcon(
     icon: ImageVector,
+    iconTint: Color,
     modifier: Modifier = Modifier
 ) {
     Surface(
         shape = CircleShape,
-        color = Color.Black.copy(alpha = 0.25f),
+        color = if (iconTint == Color.White || (iconTint.red > 0.8f && iconTint.green > 0.8f && iconTint.blue > 0.8f)) {
+            Color.Black.copy(alpha = 0.25f)
+        } else {
+            Color.Black.copy(alpha = 0.08f)
+        },
         modifier = modifier.size(20.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.White.copy(alpha = 0.9f),
+                tint = iconTint,
                 modifier = Modifier.size(12.dp)
             )
         }
@@ -878,8 +998,12 @@ private fun MockToolIcon(
 @Composable
 private fun MockKeyRow(
     keys: List<String>,
+    textColor: Color,
+    backgroundColor: Color,
+    strokeColor: Color,
     horizontalPadding: androidx.compose.ui.unit.Dp = 0.dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onKeyClick: (String) -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -891,7 +1015,11 @@ private fun MockKeyRow(
         keys.forEach { letter ->
             MockKey(
                 text = letter,
-                modifier = Modifier.weight(1f)
+                textColor = textColor,
+                backgroundColor = backgroundColor,
+                strokeColor = strokeColor,
+                modifier = Modifier.weight(1f),
+                onClick = { onKeyClick(letter) }
             )
         }
     }
@@ -900,13 +1028,20 @@ private fun MockKeyRow(
 @Composable
 private fun MockKey(
     text: String,
-    modifier: Modifier = Modifier
+    textColor: Color,
+    backgroundColor: Color,
+    strokeColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(5.dp),
-        color = Color.White.copy(alpha = 0.22f),
-        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.35f)),
-        modifier = modifier.height(26.dp)
+        color = backgroundColor,
+        border = BorderStroke(0.5.dp, strokeColor),
+        modifier = modifier
+            .height(28.dp)
+            .clip(RoundedCornerShape(5.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
@@ -914,7 +1049,7 @@ private fun MockKey(
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 11.sp,
-                    color = Color.White
+                    color = textColor
                 )
             )
         }
@@ -924,16 +1059,20 @@ private fun MockKey(
 @Composable
 private fun MockSpecialKey(
     icon: ImageVector,
-    weight: Float,
-    modifier: Modifier = Modifier
+    iconTint: Color,
+    backgroundColor: Color,
+    strokeColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(5.dp),
-        color = Color.Black.copy(alpha = 0.25f),
-        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.3f)),
+        color = backgroundColor,
+        border = BorderStroke(0.5.dp, strokeColor),
         modifier = modifier
-            .height(26.dp)
-            .then(Modifier.run { this })
+            .height(28.dp)
+            .clip(RoundedCornerShape(5.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -942,7 +1081,7 @@ private fun MockSpecialKey(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.White,
+                tint = iconTint,
                 modifier = Modifier.size(14.dp)
             )
         }
@@ -952,14 +1091,20 @@ private fun MockSpecialKey(
 @Composable
 private fun MockTextKey(
     text: String,
-    weight: Float,
-    modifier: Modifier = Modifier
+    textColor: Color,
+    backgroundColor: Color,
+    strokeColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(5.dp),
-        color = Color.Black.copy(alpha = 0.25f),
-        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.3f)),
-        modifier = modifier.height(26.dp)
+        color = backgroundColor,
+        border = BorderStroke(0.5.dp, strokeColor),
+        modifier = modifier
+            .height(28.dp)
+            .clip(RoundedCornerShape(5.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -970,7 +1115,7 @@ private fun MockTextKey(
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = Color.White
+                    color = textColor
                 )
             )
         }
@@ -980,14 +1125,20 @@ private fun MockTextKey(
 @Composable
 private fun MockIconKey(
     icon: ImageVector,
-    weight: Float,
-    modifier: Modifier = Modifier
+    iconTint: Color,
+    backgroundColor: Color,
+    strokeColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(5.dp),
-        color = Color.Black.copy(alpha = 0.25f),
-        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.3f)),
-        modifier = modifier.height(26.dp)
+        color = backgroundColor,
+        border = BorderStroke(0.5.dp, strokeColor),
+        modifier = modifier
+            .height(28.dp)
+            .clip(RoundedCornerShape(5.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -996,7 +1147,7 @@ private fun MockIconKey(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.White,
+                tint = iconTint,
                 modifier = Modifier.size(13.dp)
             )
         }
@@ -1006,14 +1157,20 @@ private fun MockIconKey(
 @Composable
 private fun MockSpacebarKey(
     text: String,
-    weight: Float,
-    modifier: Modifier = Modifier
+    textColor: Color,
+    backgroundColor: Color,
+    strokeColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(5.dp),
-        color = Color.White.copy(alpha = 0.28f),
-        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.4f)),
-        modifier = modifier.height(26.dp)
+        color = backgroundColor,
+        border = BorderStroke(0.5.dp, strokeColor),
+        modifier = modifier
+            .height(28.dp)
+            .clip(RoundedCornerShape(5.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
@@ -1021,7 +1178,7 @@ private fun MockSpacebarKey(
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Medium,
                     fontSize = 10.sp,
-                    color = Color.White.copy(alpha = 0.9f)
+                    color = textColor
                 )
             )
         }
@@ -1031,13 +1188,16 @@ private fun MockSpacebarKey(
 @Composable
 private fun MockActionKey(
     icon: ImageVector,
-    weight: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(5.dp),
         color = FrogoPrimary,
-        modifier = modifier.height(26.dp)
+        modifier = modifier
+            .height(28.dp)
+            .clip(RoundedCornerShape(5.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(
             contentAlignment = Alignment.Center,

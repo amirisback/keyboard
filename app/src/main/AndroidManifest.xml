@@ -25,6 +25,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.productremote.ProductRemoteActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.autotext.AutoTextActivity"
             android:exported="false" />
 
@@ -34,6 +38,10 @@
 
         <activity
             android:name=".ui.autotext.AutoTextDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.templatetext.TemplateTextActivity"
             android:exported="false" />
 
         <activity

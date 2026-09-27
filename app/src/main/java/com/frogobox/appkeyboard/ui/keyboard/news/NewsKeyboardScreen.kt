@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,9 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frogobox.coreutil.news.model.Article
 import com.frogobox.appkeyboard.ui.keyboard.common.AsyncGlideImage
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
+import com.frogobox.coreutil.news.model.Article
 
 @Composable
 fun NewsKeyboardScreen(
@@ -42,7 +43,9 @@ fun NewsKeyboardScreen(
     isLoading: Boolean,
     onCommitText: (String) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAlwaysShow: Boolean = false,
+    onToggleAlwaysShow: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -52,7 +55,9 @@ fun NewsKeyboardScreen(
         KeyboardFeatureToolbar(
             title = "Top Headlines",
             subtitle = "Tap to share article & source link",
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            isAlwaysShow = isAlwaysShow,
+            onToggleAlwaysShow = onToggleAlwaysShow
         )
 
         if (isLoading) {
@@ -73,10 +78,10 @@ fun NewsKeyboardScreen(
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(
+                itemsIndexed(
                     items = articles,
-                    key = { it.url ?: it.title ?: "" }
-                ) { article ->
+                    key = { index, article -> "${article.url ?: article.title ?: "news"}_$index" }
+                ) { _, article ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

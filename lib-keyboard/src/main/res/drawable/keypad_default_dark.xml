@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item
+                android:bottom="@dimen/key_margin"
+                android:left="@dimen/key_margin"
+                android:right="@dimen/key_margin"
+                android:top="@dimen/key_margin">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/keypad_pressed_dark" />
+                    <corners android:radius="@dimen/key_normal_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item
+                android:id="@+id/keypad_background_shape"
+                android:bottom="@dimen/key_margin"
+                android:left="@dimen/key_margin"
+                android:right="@dimen/key_margin"
+                android:top="@dimen/key_margin">
+                <shape android:shape="rectangle">
+                    <stroke
+                        android:width="@dimen/frogo_dimen_1dp"
+                        android:color="@color/keypad_stroke_dark" />
+                    <solid android:color="@color/keypad_dark" />
+                    <corners android:radius="@dimen/key_normal_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

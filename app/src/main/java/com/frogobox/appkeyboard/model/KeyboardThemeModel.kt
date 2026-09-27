@@ -15,4 +15,5 @@ data class KeyboardThemeModel(
     val description: String,
     val themType: ThemeType,
     val background: Int,
+    val isDark: Boolean = false
 )

@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -88,6 +87,8 @@ fun MainScreen(
     onGoToSettings: () -> Unit,
     onChangeKeyboard: () -> Unit,
     onNavigateAutoText: () -> Unit,
+    onNavigateTemplateText: (String?) -> Unit,
+    onNavigateProductRemote: () -> Unit,
     onNavigateToggle: () -> Unit,
     onNavigateLanguage: () -> Unit,
     onNavigateTheme: () -> Unit,
@@ -248,10 +249,25 @@ fun MainScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 MainMenuItemCard(
+                    title = "Product Remote",
+                    subtitle = "Katalog data produk remote dari API server",
+                    iconRes = R.drawable.ic_menu_ps_sale,
+                    onClick = onNavigateProductRemote
+                )
+
+                MainMenuItemCard(
                     title = "Auto Text",
                     subtitle = "Template teks cepat dan pintasan ketikan berulang",
                     iconRes = R.drawable.ic_menu_auto_text,
                     onClick = onNavigateAutoText
+                )
+
+                TemplateTextMenuItemCard(
+                    title = "Template Teks",
+                    subtitle = "Kelola template cepat Game, App, Sale, Greeting, dan Love",
+                    iconRes = R.drawable.ic_menu_ps_game,
+                    onClick = { onNavigateTemplateText(null) },
+                    onCategoryClick = { cat -> onNavigateTemplateText(cat) }
                 )
 
                 MainMenuItemCard(
@@ -442,6 +458,116 @@ private fun MainMenuItemCard(
     }
 }
 
+@Composable
+private fun TemplateTextMenuItemCard(
+    title: String,
+    subtitle: String,
+    iconRes: Int,
+    onClick: () -> Unit,
+    onCategoryClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = title,
+                    modifier = Modifier.size(32.dp)
+                )
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Quick Category Chips
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                listOf(
+                    Pair("🎮", "Game"),
+                    Pair("📱", "App"),
+                    Pair("💰", "Sale"),
+                    Pair("👋", "Greeting"),
+                    Pair("❤️", "Love")
+                ).forEach { (icon, catName) ->
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        border = BorderStroke(0.8.dp, MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable { onCategoryClick(catName.uppercase()) }
+                    ) {
+                        Text(
+                            text = "$icon $catName",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Preview(name = "Light Mode - Active", showBackground = true)
 @Composable
 fun MainScreenActivePreview() {
@@ -451,6 +577,8 @@ fun MainScreenActivePreview() {
             onGoToSettings = {},
             onChangeKeyboard = {},
             onNavigateAutoText = {},
+            onNavigateTemplateText = {},
+            onNavigateProductRemote = {},
             onNavigateToggle = {},
             onNavigateLanguage = {},
             onNavigateTheme = {},
@@ -469,6 +597,8 @@ fun MainScreenInactiveDarkPreview() {
             onGoToSettings = {},
             onChangeKeyboard = {},
             onNavigateAutoText = {},
+            onNavigateTemplateText = {},
+            onNavigateProductRemote = {},
             onNavigateToggle = {},
             onNavigateLanguage = {},
             onNavigateTheme = {},

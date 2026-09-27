@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -32,6 +34,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +50,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.frogobox.libkeyboard.ui.main.ItemMainKeyboard
 import java.net.URLEncoder
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -54,7 +58,8 @@ import java.net.URLEncoder
 fun WebviewKeyboardScreen(
     onCommitText: (String) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRegisterKeyHandler: (((Int, Boolean) -> Boolean)?) -> Unit = {}
 ) {
     var urlInput by remember { mutableStateOf("https://www.google.com") }
     var currentWebUrl by remember { mutableStateOf("https://www.google.com") }
@@ -76,24 +81,66 @@ fun WebviewKeyboardScreen(
         focusManager.clearFocus()
     }
 
+    val handleKeyPress: (Int, Boolean) -> Boolean = { code, isShifted ->
+        when (code) {
+            ItemMainKeyboard.KEYCODE_DELETE -> {
+                if (urlInput.isNotEmpty()) {
+                    urlInput = urlInput.dropLast(1)
+                }
+                true
+            }
+            ItemMainKeyboard.KEYCODE_ENTER -> {
+                loadUrlOrSearch()
+                true
+            }
+            ItemMainKeyboard.KEYCODE_SPACE -> {
+                urlInput += " "
+                true
+            }
+            ItemMainKeyboard.KEYCODE_SHIFT,
+            ItemMainKeyboard.KEYCODE_MODE_CHANGE,
+            ItemMainKeyboard.KEYCODE_EMOJI -> {
+                false
+            }
+            else -> {
+                if (code > 0) {
+                    var ch = code.toChar()
+                    if (ch.isLetter() && isShifted) {
+                        ch = ch.uppercaseChar()
+                    }
+                    urlInput += ch
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+    }
+
+    DisposableEffect(handleKeyPress) {
+        onRegisterKeyHandler(handleKeyPress)
+        onDispose {
+            onRegisterKeyHandler(null)
+        }
+    }
+
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .height(270.dp)
+            .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
         // Web Navigation Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(46.dp)
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Back Button
             Box(
                 modifier = Modifier
-                    .size(34.dp)
+                    .size(32.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                     .clickable { onBackClick() }
@@ -103,7 +150,7 @@ fun WebviewKeyboardScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(16.dp),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -114,7 +161,7 @@ fun WebviewKeyboardScreen(
             Row(
                 modifier = Modifier
                     .weight(1f)
-                    .height(34.dp)
+                    .height(32.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
                     .padding(horizontal = 8.dp),
@@ -124,7 +171,7 @@ fun WebviewKeyboardScreen(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(15.dp)
                 )
 
                 Spacer(modifier = Modifier.width(4.dp))
@@ -142,6 +189,24 @@ fun WebviewKeyboardScreen(
                     keyboardActions = KeyboardActions(onSearch = { loadUrlOrSearch() }),
                     modifier = Modifier.weight(1f)
                 )
+
+                if (urlInput.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable { urlInput = "" }
+                            .padding(2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.width(6.dp))
@@ -149,7 +214,7 @@ fun WebviewKeyboardScreen(
             // Reload Button
             Box(
                 modifier = Modifier
-                    .size(34.dp)
+                    .size(32.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                     .clickable { webViewInstance?.reload() }
@@ -159,7 +224,7 @@ fun WebviewKeyboardScreen(
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "Reload",
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(16.dp),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -169,13 +234,14 @@ fun WebviewKeyboardScreen(
             // Paste URL Pill
             Row(
                 modifier = Modifier
-                    .height(30.dp)
-                    .clip(RoundedCornerShape(15.dp))
+                    .height(28.dp)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.primary)
                     .clickable {
                         val activeUrl = webViewInstance?.url ?: currentWebUrl
                         if (activeUrl.isNotBlank()) {
                             onCommitText(activeUrl)
+                            onBackClick()
                         }
                     }
                     .padding(horizontal = 8.dp),
@@ -190,7 +256,7 @@ fun WebviewKeyboardScreen(
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(
                     text = "Paste",
-                    fontSize = 11.sp,
+                    fontSize = 10.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -203,13 +269,13 @@ fun WebviewKeyboardScreen(
                 progress = { webProgress / 100f },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.5.dp),
+                    .height(2.dp),
                 color = MaterialTheme.colorScheme.primary
             )
         } else {
             HorizontalDivider(
                 thickness = 0.8.dp,
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
             )
         }
 
@@ -253,7 +319,13 @@ fun WebviewKeyboardScreen(
                     webViewInstance = this
                 }
             },
-            update = { webViewInstance = it }
+            update = { webViewInstance = it },
+            onRelease = { view ->
+                try {
+                    view.stopLoading()
+                    view.destroy()
+                } catch (_: Exception) {}
+            }
         )
     }
 }

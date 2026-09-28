@@ -22,12 +22,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Storage
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -94,6 +99,8 @@ fun MainScreen(
     onNavigateTheme: () -> Unit,
     onNavigateSound: () -> Unit,
     onNavigateTest: () -> Unit,
+    onExportBackup: () -> Unit = {},
+    onImportBackup: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -205,33 +212,16 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Activation Steps Row (Tactile Hardware Steps)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                ActivationCard(
-                    stepNumber = "1",
-                    title = "Aktifkan Keyboard",
-                    subtitle = "Pengaturan Sistem",
-                    iconRes = R.drawable.ic_menu_setting,
-                    onClick = onGoToSettings,
-                    modifier = Modifier.weight(1f)
-                )
+            // Interactive 3-Step Setup Wizard
+            KeyboardSetupWizardSection(
+                status = status,
+                onGoToSettings = onGoToSettings,
+                onChangeKeyboard = onChangeKeyboard
+            )
 
-                ActivationCard(
-                    stepNumber = "2",
-                    title = "Pilih Default",
-                    subtitle = "Ganti Input Aktif",
-                    iconRes = R.drawable.ic_menu_keyboard,
-                    onClick = onChangeKeyboard,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(22.dp))
-
-            // Section Header
+            // Section Header: Fitur dan Personalisasi
             Text(
                 text = "Fitur dan Personalisasi",
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -273,7 +263,7 @@ fun MainScreen(
                 MainMenuItemCard(
                     title = "Toggle Fitur",
                     subtitle = "Kustomisasi tombol pintas dan toolbar keyboard",
-                    iconRes = R.drawable.ic_menu_form,
+                    iconRes = R.drawable.ic_menu_setting,
                     onClick = onNavigateToggle
                 )
 
@@ -287,14 +277,14 @@ fun MainScreen(
                 MainMenuItemCard(
                     title = "Bahasa Keyboard",
                     subtitle = "Dukungan multibahasa dan layout QWERTY internasional",
-                    iconRes = R.drawable.ic_menu_website,
+                    iconRes = R.drawable.ic_menu_language,
                     onClick = onNavigateLanguage
                 )
 
                 MainMenuItemCard(
                     title = "Tema Keyboard",
                     subtitle = "Pilihan tema warna solid, wallpaper, dan preview interaktif",
-                    iconRes = R.drawable.ic_menu_ps_game,
+                    iconRes = R.drawable.ic_menu_theme,
                     onClick = onNavigateTheme
                 )
 
@@ -307,6 +297,25 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            // Section Header: Pencadangan dan Pemulihan (Bottom section as requested)
+            Text(
+                text = "Pencadangan dan Pemulihan",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            HomeBackupRestoreCard(
+                onExportBackup = onExportBackup,
+                onImportBackup = onImportBackup
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -392,7 +401,8 @@ private fun ActivationCard(
 private fun MainMenuItemCard(
     title: String,
     subtitle: String,
-    iconRes: Int,
+    iconRes: Int? = null,
+    iconVector: ImageVector? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -405,20 +415,37 @@ private fun MainMenuItemCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp),
+                .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = title,
-                modifier = Modifier.size(32.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)),
+                contentAlignment = Alignment.Center
+            ) {
+                if (iconRes != null) {
+                    Image(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = title,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else if (iconVector != null) {
+                    Icon(
+                        imageVector = iconVector,
+                        contentDescription = title,
+                        tint = FrogoPrimary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.width(14.dp))
 
@@ -476,7 +503,7 @@ private fun TemplateTextMenuItemCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -488,11 +515,19 @@ private fun TemplateTextMenuItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = title,
-                    modifier = Modifier.size(32.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = title,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(14.dp))
 
@@ -562,6 +597,124 @@ private fun TemplateTextMenuItemCard(
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeBackupRestoreCard(
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(FrogoPrimary.copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Storage,
+                        contentDescription = null,
+                        tint = FrogoPrimary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Cadangkan Data (JSON)",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Ekspor atau impor template teks dan data keyboard Anda dalam format JSON.",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onExportBackup,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(44.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Upload,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Ekspor JSON",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = onImportBackup,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(44.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Download,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Impor JSON",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }

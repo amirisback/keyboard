@@ -16,7 +16,7 @@ class ThemeTest {
     @Test
     fun testKeyboardThemeTypeMapping() {
         val themes = KeyboardThemeType.entries.map { it.mapToModel() }
-        assertEquals(11, themes.size)
+        assertEquals(12, themes.size)
 
         val defaultTheme = themes.first { it.name == "Default" }
         assertEquals(ThemeType.COLOR, defaultTheme.themType)
@@ -43,6 +43,7 @@ class ThemeTest {
         assertEquals(KeyboardThemeType.CYAN, KeyboardThemeType from "CYAN")
         assertEquals(KeyboardThemeType.PINK, KeyboardThemeType from "PINK")
         assertEquals(KeyboardThemeType.YELLOW, KeyboardThemeType from "YELLOW")
+        assertEquals(KeyboardThemeType.HIGH_CONTRAST, KeyboardThemeType from "HIGH_CONTRAST")
         assertEquals(KeyboardThemeType.IMAGE_BG_DARK, KeyboardThemeType from "IMAGE_BG_DARK")
         // Unknown fallback to DEFAULT
         assertEquals(KeyboardThemeType.DEFAULT, KeyboardThemeType from "UNKNOWN_THEME")
@@ -96,7 +97,7 @@ class ThemeTest {
     @Test
     fun testThemeIsDarkCategorization() {
         val mappedThemes = KeyboardThemeType.entries.map { it.mapToModel() }
-        assertEquals(11, mappedThemes.size)
+        assertEquals(12, mappedThemes.size)
 
         // Light themes must have isDark == false
         val defaultTheme = mappedThemes.first { it.name == "Default" }
@@ -115,6 +116,7 @@ class ThemeTest {
             "Sunset Orange",
             "Nordic Cyan",
             "Sakura Pink",
+            "High Contrast (WCAG AAA)",
             "Wallpaper"
         )
 

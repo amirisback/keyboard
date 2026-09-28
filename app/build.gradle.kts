@@ -131,6 +131,7 @@ dependencies {
     androidTestImplementation(composeBom)
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation("org.json:json:20240303")
     debugImplementation(libs.androidx.compose.ui.tooling)
 
 }

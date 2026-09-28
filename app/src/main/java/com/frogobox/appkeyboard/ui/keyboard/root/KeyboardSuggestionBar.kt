@@ -37,6 +37,8 @@ import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoStatusSuccess
 
+import com.frogobox.appkeyboard.util.InlineTextExpanderHelper
+
 /**
  * Candidate types corresponding to the 3 predictive word strip sections.
  */
@@ -59,7 +61,11 @@ fun KeyboardSuggestionBar(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     recentClip: String? = null,
-    onQuickPaste: ((String) -> Unit)? = null
+    onQuickPaste: ((String) -> Unit)? = null,
+    textExpansionMatch: InlineTextExpanderHelper.TextExpansionMatch? = null,
+    onExpansionSelected: ((InlineTextExpanderHelper.TextExpansionMatch) -> Unit)? = null,
+    mathCalculationResult: com.frogobox.appkeyboard.util.SmartCalculatorHelper.MathResult? = null,
+    onMathResultSelected: ((com.frogobox.appkeyboard.util.SmartCalculatorHelper.MathResult) -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -94,7 +100,77 @@ fun KeyboardSuggestionBar(
 
             Spacer(modifier = Modifier.width(2.dp))
 
-            if (!recentClip.isNullOrBlank() && !result.hasSuggestions()) {
+            if (mathCalculationResult != null) {
+                // Tier 5 Inline Smart Math Calculator Hero Chip
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(36.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .clickable { onMathResultSelected?.invoke(mathCalculationResult) },
+                    shape = RoundedCornerShape(18.dp),
+                    color = androidx.compose.ui.graphics.Color(0xFFFEF3C7),
+                    border = BorderStroke(1.2.dp, androidx.compose.ui.graphics.Color(0xFFD97706))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "📐",
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(end = 6.dp)
+                        )
+                        Text(
+                            text = "${mathCalculationResult.expression} ${mathCalculationResult.chipLabel}",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color(0xFF92400E),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            } else if (textExpansionMatch != null) {
+                // Tier 4 Inline Text Expansion Hero Chip
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(36.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .clickable { onExpansionSelected?.invoke(textExpansionMatch) },
+                    shape = RoundedCornerShape(18.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.primary)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_menu_auto_text),
+                            contentDescription = "Pintas Teks",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${textExpansionMatch.label.uppercase()} ➔ ${textExpansionMatch.expandedText.take(24)}${if (textExpansionMatch.expandedText.length > 24) "..." else ""}",
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            } else if (!recentClip.isNullOrBlank() && !result.hasSuggestions()) {
                 // Gboard-Style Quick Paste Chip
                 Surface(
                     modifier = Modifier

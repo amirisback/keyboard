@@ -35,6 +35,7 @@ enum class KeyboardThemeType(
     CYAN("Nordic Cyan", "Fresh & Clean", ThemeType.COLOR, R.color.color_bg_keyboard_cyan, isDark = true),
     PINK("Sakura Pink", "Aesthetic Pastel", ThemeType.COLOR, R.color.color_bg_keyboard_pink, isDark = true),
     YELLOW("Amber Gold", "Golden Accent", ThemeType.COLOR, R.color.color_bg_keyboard_yellow, isDark = false),
+    HIGH_CONTRAST("High Contrast (WCAG AAA)", "Ultra OLED Black & Canary Yellow", ThemeType.COLOR, R.color.color_bg_keyboard_high_contrast, isDark = true),
     IMAGE_BG_DARK("Wallpaper", "Sample Artwork", ThemeType.IMAGE, R.drawable.ic_wallpaper_dummy, isDark = true);
 
     fun mapToModel(): KeyboardThemeModel {

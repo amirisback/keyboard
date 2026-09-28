@@ -11,5 +11,8 @@
     <color name="color_bg_keyboard_cyan">#00838F</color>
     <color name="color_bg_keyboard_pink">#C2185B</color>
     <color name="color_bg_keyboard_yellow">#FBC02D</color>
+    <color name="color_bg_keyboard_high_contrast">#000000</color>
+    <color name="color_key_high_contrast_yellow">#FFE600</color>
+    <color name="color_key_high_contrast_cyan">#00E5FF</color>
 
 </resources>

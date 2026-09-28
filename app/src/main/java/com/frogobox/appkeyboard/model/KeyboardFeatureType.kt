@@ -24,7 +24,11 @@ enum class KeyboardFeatureType(val id: String, val text: String, val icon: Int) 
     CLIPBOARD("menu_clipboard", "Clipboard", R.drawable.ic_menu_clipboard),
     TEXT_EDIT("menu_text_edit", "Text Editing", R.drawable.ic_menu_text_edit),
     SUGGESTION("menu_suggestion", "Word Suggestion", R.drawable.ic_menu_suggestion),
+    NUMBER_ROW("menu_number_row", "Number Row", R.drawable.ic_menu_number_row),
+    ONE_HANDED("menu_one_handed", "One-Handed", R.drawable.ic_menu_one_handed),
     CHANGE_KEYBOARD("menu_change_keyboard", "Change Keyboard", R.drawable.ic_menu_keyboard),
+    AI_ASSISTANT("menu_ai_assistant", "AI Assistant", R.drawable.ic_menu_ai_assistant),
+    VOICE_TYPING("menu_voice_typing", "Voice Typing", R.drawable.ic_menu_voice_typing),
     SETTING("menu_setting", "Setting", R.drawable.ic_menu_setting);
 
     fun mapToModel(): KeyboardFeatureModel {

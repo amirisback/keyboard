@@ -20,7 +20,8 @@ enum class KeyboardPanelState {
     WEBVIEW,
     FORM,
     CLIPBOARD,
-    TEXT_EDIT;
+    TEXT_EDIT,
+    AI_ASSISTANT;
 
     val isTemplate: Boolean
         get() = this in TEMPLATE_STATES
@@ -55,11 +56,15 @@ enum class KeyboardPanelState {
                 KeyboardFeatureType.TEMPLATE_TEXT_GREETING -> TEMPLATE_TEXT_GREETING
                 KeyboardFeatureType.CLIPBOARD -> CLIPBOARD
                 KeyboardFeatureType.TEXT_EDIT -> TEXT_EDIT
+                KeyboardFeatureType.AI_ASSISTANT -> AI_ASSISTANT
                 KeyboardFeatureType.NEWS -> NEWS
                 KeyboardFeatureType.MOVIE -> MOVIE
                 KeyboardFeatureType.WEB -> WEBVIEW
                 KeyboardFeatureType.FORM -> FORM
+                KeyboardFeatureType.VOICE_TYPING,
                 KeyboardFeatureType.SUGGESTION,
+                KeyboardFeatureType.NUMBER_ROW,
+                KeyboardFeatureType.ONE_HANDED,
                 KeyboardFeatureType.CHANGE_KEYBOARD,
                 KeyboardFeatureType.SETTING -> null
             }

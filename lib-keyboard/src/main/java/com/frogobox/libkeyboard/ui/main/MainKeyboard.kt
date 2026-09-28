@@ -9,6 +9,7 @@ import android.graphics.Paint
 import android.graphics.Paint.Align
 import android.graphics.PorterDuff
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
 import android.media.AudioManager
@@ -528,9 +529,15 @@ class MainKeyboard @JvmOverloads constructor(
             return
         }
 
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+
         mCanvas!!.withSave {
             val canvas = mCanvas
             canvas!!.clipRect(mDirtyRect)
+            if (scaleX != 1.0f) {
+                canvas.scale(scaleX, 1.0f)
+            }
             val paint = mPaint
             val keys = mKeys
             paint.color = mTextColor
@@ -575,7 +582,12 @@ class MainKeyboard @JvmOverloads constructor(
                 }
 
                 // Switch the character to uppercase if shift is pressed
-                val label = adjustCase(key.label)?.toString()
+                val displayLabel = if (code == KEYCODE_SPACE && mIsSlidingSpace) {
+                    "‹ KURSOR TRACKPAD ›"
+                } else {
+                    adjustCase(key.label)?.toString()
+                }
+
                 val bounds = keyBackground.bounds
                 if (key.width != bounds.right || key.height != bounds.bottom) {
                     keyBackground.setBounds(0, 0, key.width, key.height)
@@ -589,10 +601,25 @@ class MainKeyboard @JvmOverloads constructor(
 
                 canvas.translate(key.x.toFloat(), key.y.toFloat())
                 keyBackground.draw(canvas)
-                if (label?.isNotEmpty() == true) {
-                    // For characters, use large font. For labels like "Done", use small font.
-                    if (label.length > 1) {
-                        paint.textSize = mLabelTextSize.toFloat()
+
+                if (code == KEYCODE_SPACE && mIsSlidingSpace) {
+                    val highlightPaint = Paint().apply {
+                        color = (if (mActionTextColor != 0) mActionTextColor else mTextColor).adjustAlpha(0.20f)
+                        style = Paint.Style.FILL
+                    }
+                    val cornerRadius = key.height * 0.18f
+                    val rect = RectF(0f, 0f, key.width.toFloat(), key.height.toFloat())
+                    canvas.drawRoundRect(rect, cornerRadius, cornerRadius, highlightPaint)
+                }
+
+                if (displayLabel?.isNotEmpty() == true) {
+                    // For characters, use large font. For labels like "Done" or "‹ KURSOR TRACKPAD ›", use small font.
+                    if (displayLabel.length > 1) {
+                        paint.textSize = if (code == KEYCODE_SPACE && mIsSlidingSpace) {
+                            (mLabelTextSize * 0.85f)
+                        } else {
+                            mLabelTextSize.toFloat()
+                        }
                         paint.typeface = Typeface.DEFAULT_BOLD
                     } else {
                         paint.textSize = mKeyTextSize.toFloat()
@@ -602,7 +629,7 @@ class MainKeyboard @JvmOverloads constructor(
                     paint.color = mTextColor
 
                     canvas.drawText(
-                        label,
+                        displayLabel,
                         (key.width / 2).toFloat(),
                         key.height / 2 + (paint.textSize - paint.descent()) / 2,
                         paint
@@ -660,8 +687,11 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     private fun getPressedKeyIndex(x: Int, y: Int): Int {
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+        val adjustedX = if (scaleX > 0f && scaleX != 1.0f) (x / scaleX).toInt() else x
         return mKeys.indexOfFirst {
-            it.isInside(x, y)
+            it.isInside(adjustedX, y)
         }
     }
 
@@ -765,18 +795,23 @@ class MainKeyboard @JvmOverloads constructor(
         val previewBackground = mPreviewText!!.background as LayerDrawable
         mPreviewText!!.background = previewBackground
 
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+        val scaledKeyX = (key.x * scaleX).toInt()
+        val scaledKeyWidth = (key.width * scaleX).toInt()
+
         mPreviewText!!.setTextColor(mTextColor)
         mPreviewText!!.measure(
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
         )
-        val popupWidth = Math.max(mPreviewText!!.measuredWidth, key.width)
+        val popupWidth = Math.max(mPreviewText!!.measuredWidth, scaledKeyWidth)
         val popupHeight = mPreviewHeight
         val lp = mPreviewText!!.layoutParams
         lp?.width = popupWidth
         lp?.height = popupHeight
 
-        mPopupPreviewX = key.x
+        mPopupPreviewX = scaledKeyX
         mPopupPreviewY = key.y - popupHeight
 
         mHandler!!.removeMessages(MSG_REMOVE_PREVIEW)
@@ -799,10 +834,10 @@ class MainKeyboard @JvmOverloads constructor(
         if (mPopupPreviewY + mCoordinates[1] < 0) {
             // If the key you're pressing is on the left side of the keyboard, show the popup on
             // the right, offset by enough to see at least one key to the left/right.
-            if (key.x + key.width <= width / 2) {
-                mPopupPreviewX += (key.width * 2.5).toInt()
+            if (scaledKeyX + scaledKeyWidth <= width / 2) {
+                mPopupPreviewX += (scaledKeyWidth * 2.5).toInt()
             } else {
-                mPopupPreviewX -= (key.width * 2.5).toInt()
+                mPopupPreviewX -= (scaledKeyWidth * 2.5).toInt()
             }
             mPopupPreviewY += popupHeight
         }
@@ -868,9 +903,13 @@ class MainKeyboard @JvmOverloads constructor(
         }
 
         val key = mKeys[keyIndex]
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+        val left = (key.x * scaleX).toInt()
+        val right = ((key.x + key.width) * scaleX).toInt() + 1
         mDirtyRect.union(
-            key.x, key.y,
-            key.x + key.width, key.y + key.height
+            left, key.y,
+            right, key.y + key.height
         )
         onBufferDraw()
         invalidate()
@@ -1223,6 +1262,7 @@ class MainKeyboard @JvmOverloads constructor(
                             mHandler?.removeMessages(MSG_REPEAT)
                             mHandler?.removeMessages(MSG_LONGPRESS)
                             showPreview(NOT_A_KEY)
+                            invalidateKey(mCurrentKey)
                         }
 
                         val diff = touchX - mLastSpaceMoveX
@@ -1312,6 +1352,9 @@ class MainKeyboard @JvmOverloads constructor(
 
                 if (wasSlidingSpace) {
                     // Sliding space gesture consumed - do not send space character
+                    if (mCurrentKey != NOT_A_KEY) {
+                        invalidateKey(mCurrentKey)
+                    }
                 } else if (wasSlidingDelete) {
                     // Sliding delete gesture consumed - delete words
                     val swipeLeftDist = mDeleteStartX - touchX
@@ -1335,9 +1378,13 @@ class MainKeyboard @JvmOverloads constructor(
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                val wasSlidingSpaceCancel = mIsSlidingSpace
                 mIsLongPressingSpace = false
                 mIsSlidingSpace = false
                 mIsSlidingDelete = false
+                if (wasSlidingSpaceCancel && mCurrentKey != NOT_A_KEY) {
+                    invalidateKey(mCurrentKey)
+                }
                 mLastSpaceMoveX = 0
                 removeMessages()
                 dismissPopupKeyboard()

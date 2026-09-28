@@ -49,7 +49,7 @@ class ItemMainKeyboard {
     private var mDisplayWidth = 0
 
     /** What icon should we show at Enter key  */
-    private var mEnterKeyType = IME_ACTION_NONE
+    var mEnterKeyType = IME_ACTION_NONE
 
     /** Keyboard rows  */
     private val mRows = ArrayList<Row>()
@@ -421,10 +421,14 @@ class ItemMainKeyboard {
                                     EditorInfo.IME_ACTION_SEARCH -> R.drawable.ic_keyboard_search
                                     EditorInfo.IME_ACTION_NEXT, EditorInfo.IME_ACTION_GO -> R.drawable.ic_keyboard_arrow_right
                                     EditorInfo.IME_ACTION_SEND -> R.drawable.ic_keyboard_send
+                                    EditorInfo.IME_ACTION_DONE -> R.drawable.ic_keyboard_done
                                     else -> R.drawable.ic_keyboard_enter
                                 }
-                                key.icon =
-                                    context.resources.getDrawable(enterResourceId, context.theme)
+                                key.icon = androidx.core.content.res.ResourcesCompat.getDrawable(
+                                    context.resources,
+                                    enterResourceId,
+                                    context.theme
+                                )
                             }
                             currentRow.mKeys.add(key)
                         }

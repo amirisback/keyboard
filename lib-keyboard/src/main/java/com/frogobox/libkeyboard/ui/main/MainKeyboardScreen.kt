@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,10 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -102,7 +105,11 @@ fun MainKeyboardComposable(
     onKeyPress: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onKeyActionUp: () -> Unit = {},
-    isDarkTheme: Boolean = false
+    isDarkTheme: Boolean = false,
+    onMoveCursorLeft: () -> Unit = {},
+    onMoveCursorRight: () -> Unit = {},
+    onDeleteWords: (Int) -> Unit = {},
+    isSplitMode: Boolean = false
 ) {
     val defaultKeyColor = if (isDarkTheme) KeypadDark else KeypadLight
     val actionKeyColor = if (isDarkTheme) KeypadActionDark else KeypadActionLight
@@ -125,13 +132,17 @@ fun MainKeyboardComposable(
                 for (rowY in rowYPositions) {
                     val rowKeys = keys.filter { it.y == rowY }.sortedBy { it.x }
                     val totalRowWidth = rowKeys.sumOf { it.width }.coerceAtLeast(1)
+                    val midpoint = rowKeys.size / 2
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(3.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        for (key in rowKeys) {
+                        for ((index, key) in rowKeys.withIndex()) {
+                            if (isSplitMode && index == midpoint) {
+                                androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(0.18f))
+                            }
                             val weight = (key.width.toFloat() / totalRowWidth.toFloat()).coerceAtLeast(0.01f)
                             val isActionKey = when (key.code) {
                                 ItemMainKeyboard.KEYCODE_SHIFT,
@@ -143,10 +154,19 @@ fun MainKeyboardComposable(
                             }
 
                             val keyBackground = if (isActionKey) actionKeyColor else defaultKeyColor
+                            val hint = when {
+                                key.topSmallNumber.isNotEmpty() -> key.topSmallNumber
+                                key.popupCharacters != null && key.popupCharacters!!.isNotEmpty() -> {
+                                    val firstChar = key.popupCharacters!!.first().toString()
+                                    if (firstChar.all { it.isLetterOrDigit() || it in "@#$%&*+-=()!\"':;/?.,~`" }) firstChar else null
+                                }
+                                else -> null
+                            }
 
                             KeyItemView(
                                 label = key.label.toString(),
                                 code = key.code,
+                                hintLabel = hint,
                                 backgroundColor = keyBackground,
                                 isActionKey = isActionKey,
                                 onClick = {
@@ -156,6 +176,9 @@ fun MainKeyboardComposable(
                                 onLongClick = if (key.popupCharacters != null && key.popupCharacters!!.isNotEmpty()) {
                                     { activePopupKey = key }
                                 } else null,
+                                onDragLeft = onMoveCursorLeft,
+                                onDragRight = onMoveCursorRight,
+                                onSwipeDelete = onDeleteWords,
                                 modifier = Modifier.weight(weight)
                             )
                         }
@@ -200,23 +223,93 @@ private fun KeyItemView(
     backgroundColor: Color,
     isActionKey: Boolean,
     onClick: () -> Unit,
+    hintLabel: String? = null,
     onLongClick: (() -> Unit)? = null,
+    onDragLeft: (() -> Unit)? = null,
+    onDragRight: (() -> Unit)? = null,
+    onSwipeDelete: ((Int) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    var isSlidingSpace by remember { mutableStateOf(false) }
+    var accumulatedSpaceDrag by remember { mutableFloatStateOf(0f) }
+    var accumulatedDeleteDrag by remember { mutableFloatStateOf(0f) }
+
+    val gestureModifier = when (code) {
+        ItemMainKeyboard.KEYCODE_SPACE -> {
+            Modifier.pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = {
+                        accumulatedSpaceDrag = 0f
+                        isSlidingSpace = false
+                    },
+                    onDragEnd = {
+                        isSlidingSpace = false
+                        accumulatedSpaceDrag = 0f
+                    },
+                    onDragCancel = {
+                        isSlidingSpace = false
+                        accumulatedSpaceDrag = 0f
+                    },
+                    onHorizontalDrag = { change, dragAmount ->
+                        change.consume()
+                        accumulatedSpaceDrag += dragAmount
+                        val threshold = 35f
+                        if (!isSlidingSpace && kotlin.math.abs(accumulatedSpaceDrag) > threshold) {
+                            isSlidingSpace = true
+                        }
+                        if (accumulatedSpaceDrag > threshold) {
+                            onDragRight?.invoke()
+                            accumulatedSpaceDrag -= threshold
+                        } else if (accumulatedSpaceDrag < -threshold) {
+                            onDragLeft?.invoke()
+                            accumulatedSpaceDrag += threshold
+                        }
+                    }
+                )
+            }
+        }
+        ItemMainKeyboard.KEYCODE_DELETE -> {
+            Modifier.pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { accumulatedDeleteDrag = 0f },
+                    onDragEnd = {
+                        if (accumulatedDeleteDrag < -60f) {
+                            val words = kotlin.math.max(1, ((-accumulatedDeleteDrag) / 90f).toInt())
+                            onSwipeDelete?.invoke(words)
+                        }
+                        accumulatedDeleteDrag = 0f
+                    },
+                    onDragCancel = { accumulatedDeleteDrag = 0f },
+                    onHorizontalDrag = { change, dragAmount ->
+                        change.consume()
+                        accumulatedDeleteDrag += dragAmount
+                    }
+                )
+            }
+        }
+        else -> Modifier
+    }
 
     Surface(
         modifier = modifier
             .height(46.dp)
             .clip(RoundedCornerShape(6.dp))
+            .then(gestureModifier)
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = ripple(bounded = true),
-                onClick = onClick,
+                onClick = {
+                    if (!isSlidingSpace) {
+                        onClick()
+                    }
+                },
                 onLongClick = onLongClick
             ),
         shape = RoundedCornerShape(6.dp),
-        color = backgroundColor,
+        color = if (code == ItemMainKeyboard.KEYCODE_SPACE && isSlidingSpace) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
+        } else backgroundColor,
         border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         shadowElevation = if (isActionKey) 1.dp else 1.5.dp
     ) {
@@ -224,24 +317,39 @@ private fun KeyItemView(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            val displayLabel = when (code) {
-                ItemMainKeyboard.KEYCODE_SHIFT -> "⇧"
-                ItemMainKeyboard.KEYCODE_DELETE -> "⌫"
-                ItemMainKeyboard.KEYCODE_ENTER -> "↵"
-                ItemMainKeyboard.KEYCODE_SPACE -> " "
-                ItemMainKeyboard.KEYCODE_MODE_CHANGE -> "?123"
-                ItemMainKeyboard.KEYCODE_EMOJI -> "🙂"
-                ItemMainKeyboard.KEYCODE_TAB -> "⇥"
+            val displayLabel = when {
+                code == ItemMainKeyboard.KEYCODE_SPACE && isSlidingSpace -> "‹ KURSOR TRACKPAD ›"
+                code == ItemMainKeyboard.KEYCODE_SHIFT -> "⇧"
+                code == ItemMainKeyboard.KEYCODE_DELETE -> "⌫"
+                code == ItemMainKeyboard.KEYCODE_ENTER -> "↵"
+                code == ItemMainKeyboard.KEYCODE_SPACE -> " "
+                code == ItemMainKeyboard.KEYCODE_MODE_CHANGE -> "?123"
+                code == ItemMainKeyboard.KEYCODE_EMOJI -> "🙂"
+                code == ItemMainKeyboard.KEYCODE_TAB -> "⇥"
                 else -> label
             }
 
             Text(
                 text = displayLabel,
-                fontSize = if (displayLabel.length > 2) 13.sp else 18.sp,
+                fontSize = if (displayLabel.length > 2) 12.sp else 18.sp,
                 fontWeight = if (displayLabel.length > 2 || isActionKey) FontWeight.SemiBold else FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (code == ItemMainKeyboard.KEYCODE_SPACE && isSlidingSpace) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
+
+            if (!hintLabel.isNullOrBlank() && !isActionKey && code != ItemMainKeyboard.KEYCODE_SPACE) {
+                Text(
+                    text = hintLabel,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 2.dp, end = 3.dp)
+                )
+            }
         }
     }
 }

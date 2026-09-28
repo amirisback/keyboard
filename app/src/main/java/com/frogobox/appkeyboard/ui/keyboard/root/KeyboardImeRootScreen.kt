@@ -11,15 +11,33 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +58,7 @@ import com.frogobox.appkeyboard.model.ClipboardItem
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.model.ThemeType
 import com.frogobox.appkeyboard.suggestion.SuggestionResult
+import com.frogobox.appkeyboard.ui.keyboard.ai.KeyboardAiAssistantScreen
 import com.frogobox.appkeyboard.ui.keyboard.autotext.AutoTextKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.clipboard.ClipboardKeyboardScreen
 import com.frogobox.appkeyboard.ui.keyboard.form.FormKeyboardScreen
@@ -111,6 +130,37 @@ fun KeyboardImeRootScreen(
     alwaysShowFeatureId: String? = null,
     onToggleAlwaysShowFeature: ((String) -> Unit)? = null,
     onDeleteEmoji: (() -> Unit)? = null,
+    isIncognitoMode: Boolean = false,
+    isNumberRowEnabled: Boolean = false,
+    onToggleNumberRow: () -> Unit = {},
+    oneHandedMode: String = "OFF",
+    onChangeOneHandedMode: (String) -> Unit = {},
+    isDynamicThemeEnabled: Boolean = false,
+    onNumberRowClick: ((Int) -> Unit)? = null,
+    aiAssistantInitialText: String = "",
+    onAiApplyText: (String) -> Unit = {},
+    onAiCopyText: (String) -> Unit = {},
+    isVoiceTypingActive: Boolean = false,
+    isVoiceListening: Boolean = false,
+    voiceAmplitude: Float = 0f,
+    voiceStatusText: String = "",
+    voiceErrorMessage: String? = null,
+    onStopVoiceTyping: () -> Unit = {},
+    onCloseVoiceTyping: () -> Unit = {},
+    textExpansionMatch: com.frogobox.appkeyboard.util.InlineTextExpanderHelper.TextExpansionMatch? = null,
+    onExpansionSelected: ((com.frogobox.appkeyboard.util.InlineTextExpanderHelper.TextExpansionMatch) -> Unit)? = null,
+    mathCalculationResult: com.frogobox.appkeyboard.util.SmartCalculatorHelper.MathResult? = null,
+    onMathResultSelected: ((com.frogobox.appkeyboard.util.SmartCalculatorHelper.MathResult) -> Unit)? = null,
+    isSplitModeEnabled: Boolean = false,
+    onToggleSplitMode: () -> Unit = {},
+    activeLanguage: String = "ID",
+    onToggleLanguage: () -> Unit = {},
+    isFloatingMode: Boolean = false,
+    onDockFloatingKeyboard: () -> Unit = {},
+    bottomChinOffsetDp: Int = 0,
+    hasImeError: Boolean = false,
+    imeErrorMessage: String? = null,
+    onResetImeError: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -138,46 +188,57 @@ fun KeyboardImeRootScreen(
         }
     }
 
-    Box(
+    ImeCrashGuard(
+        hasError = hasImeError,
+        errorMessage = imeErrorMessage,
+        onReset = onResetImeError,
         modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
     ) {
-        // 1. Background Layer (Adaptive Color or Image with Scrim)
-        if (themeType == ThemeType.IMAGE) {
-            Image(
-                painter = painterResource(id = themeBackgroundRes),
-                contentDescription = null,
-                modifier = Modifier.matchParentSize(),
-                contentScale = ContentScale.Crop
-            )
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.25f))
-            )
-        } else {
-            val backgroundColor = remember(themeBackgroundRes) {
-                try {
-                    Color(ContextCompat.getColor(context, themeBackgroundRes))
-                } catch (_: Exception) {
-                    Color(themeBackgroundRes)
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(backgroundColor)
-            )
-        }
-
-        // 2. Content Column Layer
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
+        KeyboardFloatingContainer(
+            isFloating = isFloatingMode,
+            onDockKeyboard = onDockFloatingKeyboard
         ) {
-            // Top Bar Area: Animated transition between Feature Header and Candidate Strip
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                // 1. Background Layer (Adaptive Color or Image with Scrim)
+                if (themeType == ThemeType.IMAGE) {
+                    Image(
+                        painter = painterResource(id = themeBackgroundRes),
+                        contentDescription = null,
+                        modifier = Modifier.matchParentSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Black.copy(alpha = 0.25f))
+                    )
+                } else {
+                    val backgroundColor = remember(themeBackgroundRes) {
+                        try {
+                            Color(ContextCompat.getColor(context, themeBackgroundRes))
+                        } catch (_: Exception) {
+                            Color(themeBackgroundRes)
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(backgroundColor)
+                    )
+                }
+
+                // 2. Content Column Layer
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(bottom = bottomChinOffsetDp.dp)
+                ) {
+                    // Top Bar Area: Animated transition between Feature Header and Candidate Strip
             // Rendered when in MAIN keyboard mode
             if (activePanelState == KeyboardPanelState.MAIN) {
                 Box(
@@ -185,35 +246,47 @@ fun KeyboardImeRootScreen(
                         .fillMaxWidth()
                         .height(56.dp)
                 ) {
-                    val isClipboardActive = features.any { it.id == com.frogobox.appkeyboard.model.KeyboardFeatureType.CLIPBOARD.id }
-                    val shouldShowRecentClip = !recentClip.isNullOrBlank() && isClipboardActive
-                    val showSuggestionsOrClip = (isSuggestionVisible && suggestionResult.hasSuggestions()) || shouldShowRecentClip
+                    if (isIncognitoMode) {
+                        KeyboardIncognitoBanner(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                        )
+                    } else {
+                        val isClipboardActive = features.any { it.id == com.frogobox.appkeyboard.model.KeyboardFeatureType.CLIPBOARD.id }
+                        val shouldShowRecentClip = !recentClip.isNullOrBlank() && isClipboardActive
+                        val showSuggestionsOrClip = (isSuggestionVisible && suggestionResult.hasSuggestions()) || shouldShowRecentClip || (textExpansionMatch != null) || (mathCalculationResult != null)
 
-                    AnimatedContent(
-                        targetState = showSuggestionsOrClip,
-                        transitionSpec = {
-                            fadeIn(
-                                animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
-                            ) togetherWith fadeOut(
-                                animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing)
-                            )
-                        },
-                        label = "TopBarTransition"
-                    ) { shouldShow ->
-                        if (shouldShow) {
-                            KeyboardSuggestionBar(
-                                result = suggestionResult,
-                                onCandidateSelected = onCandidateSelected,
-                                onSwitchMenu = onSwitchSuggestionMenu,
-                                onClose = onCloseSuggestion,
-                                recentClip = if (isClipboardActive) recentClip else null,
-                                onQuickPaste = onQuickPaste
-                            )
-                        } else if (features.isNotEmpty()) {
-                            KeyboardFeatureHeader(
-                                features = features,
-                                onFeatureClick = onFeatureClick
-                            )
+                        AnimatedContent(
+                            targetState = showSuggestionsOrClip,
+                            transitionSpec = {
+                                fadeIn(
+                                    animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+                                ) togetherWith fadeOut(
+                                    animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing)
+                                )
+                            },
+                            label = "TopBarTransition"
+                        ) { shouldShow ->
+                            if (shouldShow) {
+                                KeyboardSuggestionBar(
+                                    result = suggestionResult,
+                                    onCandidateSelected = onCandidateSelected,
+                                    onSwitchMenu = onSwitchSuggestionMenu,
+                                    onClose = onCloseSuggestion,
+                                    recentClip = if (isClipboardActive) recentClip else null,
+                                    onQuickPaste = onQuickPaste,
+                                    textExpansionMatch = textExpansionMatch,
+                                    onExpansionSelected = onExpansionSelected,
+                                    mathCalculationResult = mathCalculationResult,
+                                    onMathResultSelected = onMathResultSelected
+                                )
+                            } else if (features.isNotEmpty()) {
+                                KeyboardFeatureHeader(
+                                    features = features,
+                                    onFeatureClick = onFeatureClick
+                                )
+                            }
                         }
                     }
                 }
@@ -227,14 +300,100 @@ fun KeyboardImeRootScreen(
             ) { panel ->
                 when (panel) {
                     KeyboardPanelState.MAIN -> {
-                        MainKeyboardView(
-                            keyboard = currentKeyboard,
-                            onActionListener = onKeyboardActionListener,
-                            textColor = themeTextColor,
-                            actionTextColor = themeTextColor,
-                            isDarkTheme = isDarkTheme,
-                            onInit = onMainKeyboardInit
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            if (isNumberRowEnabled) {
+                                KeyboardNumberRow(
+                                    onNumberClick = { code ->
+                                        onNumberRowClick?.invoke(code) ?: onKeyboardActionListener?.onKey(code)
+                                    },
+                                    isDarkTheme = isDarkTheme,
+                                    textColor = Color(themeTextColor)
+                                )
+                            }
+
+                            if (oneHandedMode == "OFF") {
+                                val keyboardModifier = if (isSplitModeEnabled) {
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 24.dp)
+                                } else {
+                                    Modifier.fillMaxWidth()
+                                }
+                                MainKeyboardView(
+                                    keyboard = currentKeyboard,
+                                    onActionListener = onKeyboardActionListener,
+                                    textColor = themeTextColor,
+                                    actionTextColor = themeTextColor,
+                                    isDarkTheme = isDarkTheme,
+                                    onInit = onMainKeyboardInit,
+                                    modifier = keyboardModifier
+                                )
+                            } else if (oneHandedMode == "LEFT") {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(IntrinsicSize.Min),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(modifier = Modifier.weight(0.84f)) {
+                                        MainKeyboardView(
+                                            keyboard = currentKeyboard,
+                                            onActionListener = onKeyboardActionListener,
+                                            textColor = themeTextColor,
+                                            actionTextColor = themeTextColor,
+                                            isDarkTheme = isDarkTheme,
+                                            onInit = onMainKeyboardInit
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.16f)
+                                            .fillMaxHeight()
+                                    ) {
+                                        KeyboardOneHandedSideRail(
+                                            isDockedLeft = true,
+                                            onSwapSide = { onChangeOneHandedMode("RIGHT") },
+                                            onRestoreFullWidth = { onChangeOneHandedMode("OFF") },
+                                            onToggleNumberRow = onToggleNumberRow
+                                        )
+                                    }
+                                }
+                            } else {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(IntrinsicSize.Min),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.16f)
+                                            .fillMaxHeight()
+                                    ) {
+                                        KeyboardOneHandedSideRail(
+                                            isDockedLeft = false,
+                                            onSwapSide = { onChangeOneHandedMode("LEFT") },
+                                            onRestoreFullWidth = { onChangeOneHandedMode("OFF") },
+                                            onToggleNumberRow = onToggleNumberRow
+                                        )
+                                    }
+                                    Box(modifier = Modifier.weight(0.84f)) {
+                                        MainKeyboardView(
+                                            keyboard = currentKeyboard,
+                                            onActionListener = onKeyboardActionListener,
+                                            textColor = themeTextColor,
+                                            actionTextColor = themeTextColor,
+                                            isDarkTheme = isDarkTheme,
+                                            onInit = onMainKeyboardInit
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     KeyboardPanelState.EMOJI -> {
@@ -446,8 +605,79 @@ fun KeyboardImeRootScreen(
                             onToggleAlwaysShow = onToggleAlwaysShowFeature?.let { cb -> { cb(com.frogobox.appkeyboard.model.KeyboardFeatureType.TEXT_EDIT.id) } }
                         )
                     }
+
+                    KeyboardPanelState.AI_ASSISTANT -> {
+                        KeyboardAiAssistantScreen(
+                            initialText = aiAssistantInitialText,
+                            onApplyText = onAiApplyText,
+                            onCopyText = onAiCopyText,
+                            onBackClick = onBackToMain,
+                            isIncognito = isIncognitoMode
+                        )
+                    }
                 }
             }
+        }
+
+        // 3. Floating Voice Typing Listening Banner Overlay
+        AnimatedVisibility(
+            visible = isVoiceTypingActive,
+            enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 4.dp)
+        ) {
+            KeyboardVoiceListeningBanner(
+                isListening = isVoiceListening,
+                amplitude = voiceAmplitude,
+                statusText = voiceStatusText,
+                onStopClick = onStopVoiceTyping,
+                onCloseClick = onCloseVoiceTyping,
+                errorMessage = voiceErrorMessage
+            )
+        }
+    }
+}
+}
+}
+
+/**
+ * Reassuring Incognito / Privacy Guard banner displayed in the top bar when the active
+ * editor is a password field or in incognito / no-personalized-learning mode.
+ */
+@Composable
+fun KeyboardIncognitoBanner(
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Security,
+                contentDescription = "Mode Pribadi (Incognito)",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Mode Pribadi Aktif • Saran & Riwayat Dimatikan",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

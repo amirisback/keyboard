@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -37,19 +39,29 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.frogobox.appkeyboard.R
 import com.frogobox.appkeyboard.model.KeyboardFeatureModel
 import com.frogobox.appkeyboard.ui.theme.compose.FrogoKeyboardTheme
@@ -70,11 +82,18 @@ fun ToggleScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onMoveFeature: ((fromIndex: Int, toIndex: Int) -> Unit)? = null,
+    onSwapFeature: ((fromIndex: Int, toIndex: Int) -> Unit)? = null,
     onResetOrder: (() -> Unit)? = null,
     alwaysShowFeatureId: String? = null,
     onToggleAlwaysShow: ((String) -> Unit)? = null
 ) {
     var selectedTab by remember { mutableStateOf(ToggleFilterTab.ALL) }
+
+    var draggedFeatureId by remember { mutableStateOf<String?>(null) }
+    var dragOffset by remember { mutableStateOf(Offset.Zero) }
+    var hoveredFeatureId by remember { mutableStateOf<String?>(null) }
+    val itemBounds = remember { mutableStateMapOf<String, Rect>() }
+    val haptic = LocalHapticFeedback.current
 
     val activeCount = features.count { getToggleState(it.id) }
     val disabledCount = features.size - activeCount
@@ -164,6 +183,8 @@ fun ToggleScreen(
                     val currentIndex = features.indexOf(feature)
                     val canMoveUp = onMoveFeature != null && currentIndex > 0
                     val canMoveDown = onMoveFeature != null && currentIndex in 0 until (features.size - 1)
+                    val isBeingDragged = (draggedFeatureId == feature.id)
+                    val isHoveredTarget = (hoveredFeatureId == feature.id)
 
                     ToggleFeatureCard(
                         feature = feature,
@@ -180,7 +201,60 @@ fun ToggleScreen(
                             onMoveFeature?.invoke(currentIndex, currentIndex + 1)
                         },
                         isAlwaysShow = (alwaysShowFeatureId == feature.id),
-                        onToggleAlwaysShow = onToggleAlwaysShow?.let { cb -> { cb(feature.id) } }
+                        onToggleAlwaysShow = onToggleAlwaysShow?.let { cb -> { cb(feature.id) } },
+                        isBeingDragged = isBeingDragged,
+                        isHoveredTarget = isHoveredTarget,
+                        dragOffset = if (isBeingDragged) dragOffset else Offset.Zero,
+                        modifier = Modifier
+                            .onGloballyPositioned { coordinates ->
+                                itemBounds[feature.id] = coordinates.boundsInRoot()
+                            }
+                            .pointerInput(feature.id) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = {
+                                        draggedFeatureId = feature.id
+                                        dragOffset = Offset.Zero
+                                        hoveredFeatureId = null
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    },
+                                    onDrag = { change, dragAmount ->
+                                        change.consume()
+                                        dragOffset += dragAmount
+                                        val sourceBounds = itemBounds[feature.id]
+                                        if (sourceBounds != null) {
+                                            val dragCenter = sourceBounds.center + dragOffset
+                                            val target = itemBounds.entries.firstOrNull { (id, bounds) ->
+                                                id != feature.id && bounds.contains(dragCenter)
+                                            }?.key
+                                            hoveredFeatureId = target
+                                        }
+                                    },
+                                    onDragEnd = {
+                                        val sourceId = draggedFeatureId
+                                        val targetId = hoveredFeatureId
+                                        if (sourceId != null && targetId != null && sourceId != targetId) {
+                                            val fromIndex = features.indexOfFirst { it.id == sourceId }
+                                            val toIndex = features.indexOfFirst { it.id == targetId }
+                                            if (fromIndex != -1 && toIndex != -1 && fromIndex != toIndex) {
+                                                if (onSwapFeature != null) {
+                                                    onSwapFeature(fromIndex, toIndex)
+                                                } else {
+                                                    onMoveFeature?.invoke(fromIndex, toIndex)
+                                                }
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            }
+                                        }
+                                        draggedFeatureId = null
+                                        dragOffset = Offset.Zero
+                                        hoveredFeatureId = null
+                                    },
+                                    onDragCancel = {
+                                        draggedFeatureId = null
+                                        dragOffset = Offset.Zero
+                                        hoveredFeatureId = null
+                                    }
+                                )
+                            }
                     )
                 }
             }
@@ -194,8 +268,8 @@ private fun ToggleHeaderBanner(
     activeCount: Int,
     onEnableAll: () -> Unit,
     onDisableAll: () -> Unit,
-    onResetOrder: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onResetOrder: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -230,7 +304,7 @@ private fun ToggleHeaderBanner(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Manage shortcuts displayed on your keyboard",
+                        text = "Kelola dan seret (drag & drop) untuk ubah urutan shortcut keyboard",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontSize = 12.sp
                         ),
@@ -400,7 +474,10 @@ private fun ToggleFeatureCard(
     onMoveUp: () -> Unit = {},
     onMoveDown: () -> Unit = {},
     isAlwaysShow: Boolean = false,
-    onToggleAlwaysShow: (() -> Unit)? = null
+    onToggleAlwaysShow: (() -> Unit)? = null,
+    isBeingDragged: Boolean = false,
+    isHoveredTarget: Boolean = false,
+    dragOffset: Offset = Offset.Zero
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val surfaceColor = MaterialTheme.colorScheme.surface
@@ -408,24 +485,41 @@ private fun ToggleFeatureCard(
 
     Card(
         modifier = modifier
+            .zIndex(if (isBeingDragged) 10f else if (isHoveredTarget) 5f else 1f)
+            .graphicsLayer {
+                translationX = dragOffset.x
+                translationY = dragOffset.y
+                scaleX = if (isBeingDragged) 1.05f else 1.0f
+                scaleY = if (isBeingDragged) 1.05f else 1.0f
+                shadowElevation = if (isBeingDragged) 16f else 0f
+            }
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .clickable { onCheckedChange(!isChecked) },
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isBeingDragged) 8.dp else 0.dp
+        ),
         border = BorderStroke(
-            width = if (isChecked) 1.5.dp else 1.dp,
-            color = if (isChecked) {
-                primaryColor.copy(alpha = 0.5f)
-            } else {
-                outlineVariant
+            width = when {
+                isHoveredTarget -> 2.dp
+                isBeingDragged -> 2.dp
+                isChecked -> 1.5.dp
+                else -> 1.dp
+            },
+            color = when {
+                isHoveredTarget -> FrogoStatusSuccess
+                isBeingDragged -> primaryColor
+                isChecked -> primaryColor.copy(alpha = 0.5f)
+                else -> outlineVariant
             }
         ),
         colors = CardDefaults.cardColors(
-            containerColor = if (isChecked) {
-                primaryColor.copy(alpha = 0.06f)
-            } else {
-                surfaceColor
+            containerColor = when {
+                isHoveredTarget -> FrogoStatusSuccess.copy(alpha = 0.08f)
+                isBeingDragged -> primaryColor.copy(alpha = 0.12f)
+                isChecked -> primaryColor.copy(alpha = 0.06f)
+                else -> surfaceColor
             }
         )
     ) {
@@ -434,7 +528,7 @@ private fun ToggleFeatureCard(
                 .fillMaxWidth()
                 .padding(14.dp)
         ) {
-            // Top row with Icon Container and Switch
+            // Top row with Icon Container, Drag Indicator, and Switch
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -460,17 +554,29 @@ private fun ToggleFeatureCard(
                     )
                 }
 
-                Switch(
-                    checked = isChecked,
-                    onCheckedChange = onCheckedChange,
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                        checkedTrackColor = primaryColor,
-                        uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        uncheckedBorderColor = Color.Transparent
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DragIndicator,
+                        contentDescription = "Tahan & seret untuk tukar posisi",
+                        tint = if (isBeingDragged) primaryColor else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.size(20.dp)
                     )
-                )
+
+                    Switch(
+                        checked = isChecked,
+                        onCheckedChange = onCheckedChange,
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                            checkedTrackColor = primaryColor,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            uncheckedBorderColor = Color.Transparent
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))

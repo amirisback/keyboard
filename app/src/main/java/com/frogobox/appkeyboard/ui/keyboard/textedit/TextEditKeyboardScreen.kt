@@ -46,7 +46,9 @@ enum class TextEditAction {
     COPY,
     PASTE,
     DELETE,
-    ENTER
+    ENTER,
+    UNDO,
+    REDO
 }
 
 @Composable
@@ -263,34 +265,55 @@ fun TextEditKeyboardScreen(
                     )
                 }
 
-                // Column 3: Insertion & Deletion Controls
+                // Column 3: Insertion, Deletion, and Undo/Redo Controls
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        ControllerButton(
+                            label = "↩ Batal",
+                            onClick = { onAction(TextEditAction.UNDO) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
+                        ControllerButton(
+                            label = "↪ Ulang",
+                            onClick = { onAction(TextEditAction.REDO) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
+                    }
                     ControllerButton(
                         label = "Tempel",
                         onClick = { onAction(TextEditAction.PASTE) },
                         isActive = false,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1.3f)
+                            .weight(1f)
                     )
                     ControllerButton(
                         label = "⌫ Hapus",
                         onClick = { onAction(TextEditAction.DELETE) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1.3f)
+                            .weight(1f)
                     )
                     ControllerButton(
                         label = "↵ Enter",
                         onClick = { onAction(TextEditAction.ENTER) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1.4f)
+                            .weight(1.1f)
                     )
                 }
             }

@@ -148,7 +148,7 @@ class GboardCapabilitiesEnhancementTest {
     @Test
     fun testTextEditActionEnumCompleteness() {
         val actions = TextEditAction.entries
-        assertEquals(13, actions.size)
+        assertEquals(15, actions.size)
         assertTrue(actions.contains(TextEditAction.MOVE_LEFT))
         assertTrue(actions.contains(TextEditAction.MOVE_RIGHT))
         assertTrue(actions.contains(TextEditAction.MOVE_UP))
@@ -162,6 +162,8 @@ class GboardCapabilitiesEnhancementTest {
         assertTrue(actions.contains(TextEditAction.PASTE))
         assertTrue(actions.contains(TextEditAction.DELETE))
         assertTrue(actions.contains(TextEditAction.ENTER))
+        assertTrue(actions.contains(TextEditAction.UNDO))
+        assertTrue(actions.contains(TextEditAction.REDO))
     }
 
     @Test

@@ -9,6 +9,7 @@ import android.graphics.Paint
 import android.graphics.Paint.Align
 import android.graphics.PorterDuff
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
 import android.media.AudioManager
@@ -58,7 +59,6 @@ import kotlin.math.min
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.withSave
 
-@SuppressLint("UseCompatLoadingForDrawables", "ClickableViewAccessibility")
 class MainKeyboard @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet?,
@@ -138,6 +138,22 @@ class MainKeyboard @JvmOverloads constructor(
     private var mDeleteStartX = 0
     private var mIsSlidingDelete = false
 
+    // Gesture Glide Typing & Swipe Shortcuts
+    var isGestureTypingEnabled: Boolean = true
+    var isSwipeShortcutsEnabled: Boolean = true
+    private var mIsGestureTyping = false
+    private var mIsSwipingDown = false
+    private var mDownKeyCode = 0
+    private var mIsDownOnLetter = false
+    private var mGestureDownX = 0f
+    private var mGestureDownY = 0f
+    private var mGestureDragThreshold = 0f
+    private var mSwipeDownThreshold = 0f
+    private var mSwipeDownMaxHoriz = 0f
+    private val mGesturePoints = ArrayList<com.frogobox.libkeyboard.util.GestureTypingHelper.PathPoint>()
+    private val mGestureTrailPaint = Paint()
+    private val mGesturePath = android.graphics.Path()
+
     // Cached drawables for zero per-frame allocation
     private var mKeypadDefaultDrawable: android.graphics.drawable.Drawable? = null
     private var mKeypadActionDrawable: android.graphics.drawable.Drawable? = null
@@ -205,13 +221,13 @@ class MainKeyboard @JvmOverloads constructor(
         mKeyTextSize = defaultKeyTextSize
 
         val attributes =
-            context.obtainStyledAttributes(attrs, R.styleable.FrogoKeyboardView, 0, defStyleRes)
+            context.obtainStyledAttributes(attrs, R.styleable.MainKeyboard, 0, defStyleRes)
         val indexCnt = attributes.indexCount
 
         try {
             for (i in 0 until indexCnt) {
                 when (val attr = attributes.getIndex(i)) {
-                    R.styleable.FrogoKeyboardView_keyTextSize -> mKeyTextSize =
+                    R.styleable.MainKeyboard_keyTextSize -> mKeyTextSize =
                         attributes.getDimensionPixelSize(attr, defaultKeyTextSize)
                 }
             }
@@ -259,6 +275,21 @@ class MainKeyboard @JvmOverloads constructor(
         mTopSmallNumberSize = resources.getDimension(com.frogobox.ui.R.dimen.frogo_dimen_font_10sp)
         mTopSmallNumberMarginWidth = resources.getDimension(R.dimen.top_small_number_margin_width)
         mTopSmallNumberMarginHeight = resources.getDimension(R.dimen.top_small_number_margin_height)
+
+        mGestureDragThreshold = resources.getDimension(R.dimen.key_height) * 0.35f
+        mSwipeDownThreshold = resources.getDimension(R.dimen.key_height) * 0.85f
+        mSwipeDownMaxHoriz = resources.getDimension(R.dimen.key_height) * 0.5f
+
+        val trailColor = context.getColorExt(R.color.color_frogo_primary)
+        mGestureTrailPaint.apply {
+            isAntiAlias = true
+            style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.ROUND
+            strokeJoin = Paint.Join.ROUND
+            strokeWidth = resources.getDimension(R.dimen.key_height) * 0.16f
+            color = trailColor
+            alpha = 190
+        }
 
         initCachedDrawables()
     }
@@ -310,6 +341,12 @@ class MainKeyboard @JvmOverloads constructor(
         mActionTextColor = actionTextColor
         mIsDarkTheme = isDark
         mPaint.color = textColor
+        mGestureTrailPaint.color = if (isDark) {
+            context.getColorExt(R.color.color_frogo_primary)
+        } else {
+            textColor
+        }
+        mGestureTrailPaint.alpha = 190
         mSmallLetterPaint.apply {
             set(mPaint)
             color = textColor.adjustAlpha(0.8f)
@@ -323,8 +360,8 @@ class MainKeyboard @JvmOverloads constructor(
 
     fun initCachedDrawables() {
         val defaultDrawableRes = if (mIsDarkTheme) R.drawable.keypad_default_dark else R.drawable.keypad_default
-        mKeypadDefaultDrawable = resources.getDrawable(defaultDrawableRes, context.theme)
-        mKeypadActionDrawable = resources.getDrawable(R.drawable.keypad_action, context.theme)
+        mKeypadDefaultDrawable = ResourcesCompat.getDrawable(resources, defaultDrawableRes, context.theme)
+        mKeypadActionDrawable = ResourcesCompat.getDrawable(resources, R.drawable.keypad_action, context.theme)
         mShiftOffDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_outline, null)
         mShiftOneCharDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps, null)
         mShiftPermDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_underlined, null)
@@ -508,6 +545,31 @@ class MainKeyboard @JvmOverloads constructor(
             onBufferDraw()
         }
         canvas.drawBitmap(mBuffer!!, 0f, 0f, null)
+
+        if (mIsGestureTyping && mGesturePoints.size >= 2) {
+            drawGestureTrail(canvas)
+        }
+    }
+
+    private fun drawGestureTrail(canvas: Canvas) {
+        if (mGesturePoints.size < 2) return
+        val lastPoint = mGesturePoints.lastOrNull() ?: return
+        val recentPoints = mGesturePoints.filter { it.timestamp >= lastPoint.timestamp - 350L }
+        if (recentPoints.size < 2) return
+
+        mGesturePath.reset()
+        val first = recentPoints.first()
+        mGesturePath.moveTo(first.x, first.y)
+        for (i in 1 until recentPoints.size) {
+            val prev = recentPoints[i - 1]
+            val curr = recentPoints[i]
+            val midX = (prev.x + curr.x) / 2f
+            val midY = (prev.y + curr.y) / 2f
+            mGesturePath.quadTo(prev.x, prev.y, midX, midY)
+        }
+        val last = recentPoints.last()
+        mGesturePath.lineTo(last.x, last.y)
+        canvas.drawPath(mGesturePath, mGestureTrailPaint)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -528,9 +590,15 @@ class MainKeyboard @JvmOverloads constructor(
             return
         }
 
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+
         mCanvas!!.withSave {
             val canvas = mCanvas
             canvas!!.clipRect(mDirtyRect)
+            if (scaleX != 1.0f) {
+                canvas.scale(scaleX, 1.0f)
+            }
             val paint = mPaint
             val keys = mKeys
             paint.color = mTextColor
@@ -575,7 +643,12 @@ class MainKeyboard @JvmOverloads constructor(
                 }
 
                 // Switch the character to uppercase if shift is pressed
-                val label = adjustCase(key.label)?.toString()
+                val displayLabel = if (code == KEYCODE_SPACE && mIsSlidingSpace) {
+                    "‹ KURSOR TRACKPAD ›"
+                } else {
+                    adjustCase(key.label)?.toString()
+                }
+
                 val bounds = keyBackground.bounds
                 if (key.width != bounds.right || key.height != bounds.bottom) {
                     keyBackground.setBounds(0, 0, key.width, key.height)
@@ -589,10 +662,25 @@ class MainKeyboard @JvmOverloads constructor(
 
                 canvas.translate(key.x.toFloat(), key.y.toFloat())
                 keyBackground.draw(canvas)
-                if (label?.isNotEmpty() == true) {
-                    // For characters, use large font. For labels like "Done", use small font.
-                    if (label.length > 1) {
-                        paint.textSize = mLabelTextSize.toFloat()
+
+                if (code == KEYCODE_SPACE && mIsSlidingSpace) {
+                    val highlightPaint = Paint().apply {
+                        color = (if (mActionTextColor != 0) mActionTextColor else mTextColor).adjustAlpha(0.20f)
+                        style = Paint.Style.FILL
+                    }
+                    val cornerRadius = key.height * 0.18f
+                    val rect = RectF(0f, 0f, key.width.toFloat(), key.height.toFloat())
+                    canvas.drawRoundRect(rect, cornerRadius, cornerRadius, highlightPaint)
+                }
+
+                if (displayLabel?.isNotEmpty() == true) {
+                    // For characters, use large font. For labels like "Done" or "‹ KURSOR TRACKPAD ›", use small font.
+                    if (displayLabel.length > 1) {
+                        paint.textSize = if (code == KEYCODE_SPACE && mIsSlidingSpace) {
+                            (mLabelTextSize * 0.85f)
+                        } else {
+                            mLabelTextSize.toFloat()
+                        }
                         paint.typeface = Typeface.DEFAULT_BOLD
                     } else {
                         paint.textSize = mKeyTextSize.toFloat()
@@ -602,7 +690,7 @@ class MainKeyboard @JvmOverloads constructor(
                     paint.color = mTextColor
 
                     canvas.drawText(
-                        label,
+                        displayLabel,
                         (key.width / 2).toFloat(),
                         key.height / 2 + (paint.textSize - paint.descent()) / 2,
                         paint
@@ -660,8 +748,11 @@ class MainKeyboard @JvmOverloads constructor(
     }
 
     private fun getPressedKeyIndex(x: Int, y: Int): Int {
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+        val adjustedX = if (scaleX > 0f && scaleX != 1.0f) (x / scaleX).toInt() else x
         return mKeys.indexOfFirst {
-            it.isInside(x, y)
+            it.isInside(adjustedX, y)
         }
     }
 
@@ -765,18 +856,23 @@ class MainKeyboard @JvmOverloads constructor(
         val previewBackground = mPreviewText!!.background as LayerDrawable
         mPreviewText!!.background = previewBackground
 
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+        val scaledKeyX = (key.x * scaleX).toInt()
+        val scaledKeyWidth = (key.width * scaleX).toInt()
+
         mPreviewText!!.setTextColor(mTextColor)
         mPreviewText!!.measure(
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
         )
-        val popupWidth = Math.max(mPreviewText!!.measuredWidth, key.width)
+        val popupWidth = Math.max(mPreviewText!!.measuredWidth, scaledKeyWidth)
         val popupHeight = mPreviewHeight
         val lp = mPreviewText!!.layoutParams
         lp?.width = popupWidth
         lp?.height = popupHeight
 
-        mPopupPreviewX = key.x
+        mPopupPreviewX = scaledKeyX
         mPopupPreviewY = key.y - popupHeight
 
         mHandler!!.removeMessages(MSG_REMOVE_PREVIEW)
@@ -799,10 +895,10 @@ class MainKeyboard @JvmOverloads constructor(
         if (mPopupPreviewY + mCoordinates[1] < 0) {
             // If the key you're pressing is on the left side of the keyboard, show the popup on
             // the right, offset by enough to see at least one key to the left/right.
-            if (key.x + key.width <= width / 2) {
-                mPopupPreviewX += (key.width * 2.5).toInt()
+            if (scaledKeyX + scaledKeyWidth <= width / 2) {
+                mPopupPreviewX += (scaledKeyWidth * 2.5).toInt()
             } else {
-                mPopupPreviewX -= (key.width * 2.5).toInt()
+                mPopupPreviewX -= (scaledKeyWidth * 2.5).toInt()
             }
             mPopupPreviewY += popupHeight
         }
@@ -827,7 +923,7 @@ class MainKeyboard @JvmOverloads constructor(
             val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 AccessibilityEvent(eventType)
             } else {
-                AccessibilityEvent().apply { this.eventType = eventType }
+                AccessibilityEvent.obtain(eventType)
             }
             onInitializeAccessibilityEvent(event)
             val text: String = when (code) {
@@ -868,9 +964,13 @@ class MainKeyboard @JvmOverloads constructor(
         }
 
         val key = mKeys[keyIndex]
+        val kb = mKeyboard
+        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) width.toFloat() / kb.mMinWidth.toFloat() else 1.0f
+        val left = (key.x * scaleX).toInt()
+        val right = ((key.x + key.width) * scaleX).toInt() + 1
         mDirtyRect.union(
-            key.x, key.y,
-            key.x + key.width, key.y + key.height
+            left, key.y,
+            right, key.y + key.height
         )
         onBufferDraw()
         invalidate()
@@ -1143,8 +1243,19 @@ class MainKeyboard @JvmOverloads constructor(
                 mDownTime = me.eventTime
                 mLastMoveTime = mDownTime
 
-                val isSpaceKey = mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE
-                val isDeleteKey = mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_DELETE
+                mGestureDownX = me.x
+                mGestureDownY = me.y
+                mGesturePoints.clear()
+                mIsGestureTyping = false
+                mIsSwipingDown = false
+
+                val downKeyObj = mKeys.getOrNull(mCurrentKey)
+                mDownKeyCode = downKeyObj?.code ?: 0
+                val downChar = downKeyObj?.label?.firstOrNull()?.lowercaseChar() ?: (downKeyObj?.code?.toChar()?.lowercaseChar())
+                mIsDownOnLetter = downChar != null && downChar.isLetter()
+
+                val isSpaceKey = mDownKeyCode == KEYCODE_SPACE
+                val isDeleteKey = mDownKeyCode == KEYCODE_DELETE
 
                 if (isSpaceKey) {
                     mSpaceStartX = touchX
@@ -1214,8 +1325,43 @@ class MainKeyboard @JvmOverloads constructor(
                     }
                 }
 
-                // Instant Gboard spacebar swipe cursor control (without 400ms delay)
-                if (mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_SPACE) {
+                // Swipe down to dismiss keyboard (only allowed if touch did NOT begin on a letter key while gesture typing is active)
+                if (isSwipeShortcutsEnabled && !mIsGestureTyping && !mIsSlidingSpace && !mIsSlidingDelete && (!isGestureTypingEnabled || !mIsDownOnLetter)) {
+                    val dy = me.y - mGestureDownY
+                    val dx = kotlin.math.abs(me.x - mGestureDownX)
+                    if (mGestureDownY < height * 0.45f && dy > mSwipeDownThreshold && dx < mSwipeDownMaxHoriz) {
+                        mIsSwipingDown = true
+                        mHandler?.removeMessages(MSG_LONGPRESS)
+                        mHandler?.removeMessages(MSG_REPEAT)
+                        showPreview(NOT_A_KEY)
+                        mOnKeyboardActionListener?.onSwipeDown()
+                        vibrateIfNeeded()
+                        mAbortKey = true
+                        return true
+                    }
+                }
+
+                // Gesture glide typing across letter keys (anchored to touch onset on a letter)
+                if (isGestureTypingEnabled && mIsDownOnLetter && !mIsSlidingSpace && !mIsSlidingDelete && !mIsSwipingDown) {
+                    val distFromDown = kotlin.math.hypot(me.x - mGestureDownX, me.y - mGestureDownY)
+
+                    if (!mIsGestureTyping && distFromDown > mGestureDragThreshold) {
+                        mIsGestureTyping = true
+                        mHandler?.removeMessages(MSG_LONGPRESS)
+                        mHandler?.removeMessages(MSG_REPEAT)
+                        showPreview(NOT_A_KEY)
+                        mGesturePoints.clear()
+                        mGesturePoints.add(com.frogobox.libkeyboard.util.GestureTypingHelper.PathPoint(mGestureDownX, mGestureDownY, mDownTime))
+                    }
+
+                    if (mIsGestureTyping) {
+                        mGesturePoints.add(com.frogobox.libkeyboard.util.GestureTypingHelper.PathPoint(me.x, me.y, eventTime))
+                        invalidate()
+                    }
+                }
+
+                // Instant Gboard spacebar swipe cursor control (only when touch began on spacebar)
+                if (mDownKeyCode == KEYCODE_SPACE) {
                     val totalDiffX = touchX - mSpaceStartX
                     if (kotlin.math.abs(totalDiffX) > mSpaceMoveThreshold) {
                         if (!mIsSlidingSpace) {
@@ -1223,6 +1369,7 @@ class MainKeyboard @JvmOverloads constructor(
                             mHandler?.removeMessages(MSG_REPEAT)
                             mHandler?.removeMessages(MSG_LONGPRESS)
                             showPreview(NOT_A_KEY)
+                            invalidateKey(mCurrentKey)
                         }
 
                         val diff = touchX - mLastSpaceMoveX
@@ -1242,7 +1389,7 @@ class MainKeyboard @JvmOverloads constructor(
                             mLastSpaceMoveX += steps * mSpaceMoveThreshold
                         }
                     }
-                } else if (mCurrentKey >= 0 && mKeys.getOrNull(mCurrentKey)?.code == KEYCODE_DELETE) {
+                } else if (mDownKeyCode == KEYCODE_DELETE) {
                     val swipeLeftDist = mDeleteStartX - touchX
                     if (swipeLeftDist > mDeleteSwipeThreshold) {
                         if (!mIsSlidingDelete) {
@@ -1269,7 +1416,7 @@ class MainKeyboard @JvmOverloads constructor(
                         }
                         mLastSpaceMoveX = mLastX
                     }
-                } else if (!continueLongPress) {
+                } else if (!continueLongPress && !mIsGestureTyping) {
                     // Cancel old longpress
                     mHandler!!.removeMessages(MSG_LONGPRESS)
                     // Start new longpress if key has changed
@@ -1307,11 +1454,83 @@ class MainKeyboard @JvmOverloads constructor(
 
                 val wasSlidingSpace = mIsSlidingSpace
                 val wasSlidingDelete = mIsSlidingDelete
+                val wasGestureTyping = mIsGestureTyping
                 mIsSlidingSpace = false
                 mIsSlidingDelete = false
+                mIsGestureTyping = false
 
-                if (wasSlidingSpace) {
+                if (wasGestureTyping) {
+                    val pointsCopy = ArrayList(mGesturePoints)
+                    mGesturePoints.clear()
+                    invalidate()
+
+                    if (pointsCopy.size >= 2) {
+                        val kb = mKeyboard
+                        val scaleX = if (kb != null && kb.mMinWidth > 0 && width > 0) {
+                            width.toFloat() / kb.mMinWidth.toFloat()
+                        } else 1.0f
+
+                        val keyBoxes = mKeys.filter { key ->
+                            val ch = key.label.firstOrNull()?.lowercaseChar() ?: key.code.toChar().lowercaseChar()
+                            ch.isLetter()
+                        }.map { key ->
+                            val ch = key.label.firstOrNull()?.lowercaseChar() ?: key.code.toChar().lowercaseChar()
+                            com.frogobox.libkeyboard.util.GestureTypingHelper.KeyBoundingBox(
+                                char = ch,
+                                left = key.x.toFloat() * scaleX,
+                                top = key.y.toFloat(),
+                                right = (key.x + key.width).toFloat() * scaleX,
+                                bottom = (key.y + key.height).toFloat()
+                            )
+                        }
+
+                        val matches = com.frogobox.libkeyboard.util.GestureTypingHelper.resolveAndMatch(pointsCopy, keyBoxes)
+                        if (matches.isNotEmpty()) {
+                            val bestWord = matches.first()
+                            mOnKeyboardActionListener?.onGestureMatch(bestWord, matches)
+                            vibrateIfNeeded()
+                            showPreview(NOT_A_KEY)
+                            invalidateKey(keyIndex)
+                            mRepeatKeyIndex = NOT_A_KEY
+                            mOnKeyboardActionListener?.onActionUp()
+                            mIsLongPressingSpace = false
+                            return true
+                        } else {
+                            val rawChars = com.frogobox.libkeyboard.util.GestureTypingHelper.resolveTrajectoryToChars(pointsCopy, keyBoxes)
+                            if (rawChars.length >= 2) {
+                                mOnKeyboardActionListener?.onGestureMatch(rawChars, listOf(rawChars))
+                                vibrateIfNeeded()
+                                showPreview(NOT_A_KEY)
+                                invalidateKey(keyIndex)
+                                mRepeatKeyIndex = NOT_A_KEY
+                                mOnKeyboardActionListener?.onActionUp()
+                                mIsLongPressingSpace = false
+                                return true
+                            } else if (rawChars.length == 1) {
+                                val singleChar = rawChars.first()
+                                val targetCode = keyBoxes.firstOrNull { it.char == singleChar }?.char?.code ?: singleChar.code
+                                mOnKeyboardActionListener?.onKey(targetCode)
+                                vibrateIfNeeded()
+                                showPreview(NOT_A_KEY)
+                                invalidateKey(keyIndex)
+                                mRepeatKeyIndex = NOT_A_KEY
+                                mOnKeyboardActionListener?.onActionUp()
+                                mIsLongPressingSpace = false
+                                return true
+                            }
+                        }
+                    }
+                    showPreview(NOT_A_KEY)
+                    invalidateKey(keyIndex)
+                    mRepeatKeyIndex = NOT_A_KEY
+                    mOnKeyboardActionListener?.onActionUp()
+                    mIsLongPressingSpace = false
+                    return true
+                } else if (wasSlidingSpace) {
                     // Sliding space gesture consumed - do not send space character
+                    if (mCurrentKey != NOT_A_KEY) {
+                        invalidateKey(mCurrentKey)
+                    }
                 } else if (wasSlidingDelete) {
                     // Sliding delete gesture consumed - delete words
                     val swipeLeftDist = mDeleteStartX - touchX
@@ -1332,12 +1551,21 @@ class MainKeyboard @JvmOverloads constructor(
                 mRepeatKeyIndex = NOT_A_KEY
                 mOnKeyboardActionListener?.onActionUp()
                 mIsLongPressingSpace = false
+                performClick()
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                val wasSlidingSpaceCancel = mIsSlidingSpace
                 mIsLongPressingSpace = false
                 mIsSlidingSpace = false
                 mIsSlidingDelete = false
+                mIsGestureTyping = false
+                mIsSwipingDown = false
+                mGesturePoints.clear()
+                invalidate()
+                if (wasSlidingSpaceCancel && mCurrentKey != NOT_A_KEY) {
+                    invalidateKey(mCurrentKey)
+                }
                 mLastSpaceMoveX = 0
                 removeMessages()
                 dismissPopupKeyboard()
@@ -1387,6 +1615,11 @@ class MainKeyboard @JvmOverloads constructor(
     public override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         closing()
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
     }
 
     private fun dismissPopupKeyboard() {

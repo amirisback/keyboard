@@ -84,8 +84,8 @@ dependencies {
 
     androidTestImplementation(composeBom)
     testImplementation(libs.junit)
-    testImplementation("org.robolectric:robolectric:4.16.1")
-    testImplementation("androidx.test:core:1.7.0")
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
 

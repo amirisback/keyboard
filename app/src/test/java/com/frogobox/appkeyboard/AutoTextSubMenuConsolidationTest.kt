@@ -86,8 +86,8 @@ class AutoTextSubMenuConsolidationTest {
         val keyboardUtil = KeyboardUtil(fakePref)
         val menuList = keyboardUtil.menuToggle()
 
-        // 11 functional tools remain (Suggestion, AutoText, ProductRemote, Clipboard, TextEdit, News, Movie, Web, Form, ChangeKeyboard, Setting)
-        assertEquals(11, menuList.size)
+        // 16 functional tools remain (Suggestion, NumberRow, OneHanded, AIAssistant, VoiceTyping, GestureSwipe, AutoText, ProductRemote, Clipboard, TextEdit, News, Movie, Web, Form, ChangeKeyboard, Setting)
+        assertEquals(16, menuList.size)
 
         val menuIds = menuList.map { it.id }.toSet()
 
@@ -98,7 +98,10 @@ class AutoTextSubMenuConsolidationTest {
         assertFalse(menuIds.contains(KeyboardFeatureType.TEMPLATE_TEXT_GREETING.id))
         assertFalse(menuIds.contains(KeyboardFeatureType.TEMPLATE_TEXT_LOVE.id))
 
-        // Core AutoText must be present
+        // Core AutoText and Smart Tools must be present
+        assertTrue(menuIds.contains(KeyboardFeatureType.AI_ASSISTANT.id))
+        assertTrue(menuIds.contains(KeyboardFeatureType.VOICE_TYPING.id))
+        assertTrue(menuIds.contains(KeyboardFeatureType.GESTURE_SWIPE.id))
         assertTrue(menuIds.contains(KeyboardFeatureType.AUTO_TEXT.id))
         assertTrue(menuIds.contains(KeyboardFeatureType.PRODUCT_REMOTE.id))
         assertTrue(menuIds.contains(KeyboardFeatureType.CLIPBOARD.id))

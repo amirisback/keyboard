@@ -30,6 +30,10 @@ class ToggleViewModel @Inject constructor(
 
     fun switchToggle(key: String, value: Boolean) {
         pref.savePrefBoolean(key, value)
+        if (key == com.frogobox.appkeyboard.model.KeyboardFeatureType.GESTURE_SWIPE.id) {
+            keyboardUtil.setGestureTypingEnabled(value)
+            keyboardUtil.setGestureSwipeShortcutsEnabled(value)
+        }
     }
 
     fun getSwitchToggle(key: String): Boolean {

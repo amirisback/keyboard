@@ -8,10 +8,13 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.frogobox.appkeyboard.util.KeyboardPrivacyHelper
+import com.frogobox.appkeyboard.util.VoiceTypingHelper
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
@@ -114,6 +117,7 @@ class KeyboardIME : BaseKeyboardIME() {
     private val isSuggestionVisibleFlow = MutableStateFlow(false)
     private val suggestionResultFlow = MutableStateFlow(SuggestionResult.EMPTY)
     private val alwaysShowFeatureFlow = MutableStateFlow<String?>(null)
+    private val isIncognitoModeFlow = MutableStateFlow(false)
 
     // Sub-Screen Reactive Data Flows
     private val autoTextListFlow = MutableStateFlow<List<AutoTextEntity>>(emptyList())
@@ -134,6 +138,31 @@ class KeyboardIME : BaseKeyboardIME() {
     private val clipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
         checkAndCaptureClipboard()
     }
+
+    // Ergonomics & Theming State Flows
+    private val isNumberRowEnabledFlow = MutableStateFlow(false)
+    private val oneHandedModeFlow = MutableStateFlow("OFF")
+    private val isDynamicThemeEnabledFlow = MutableStateFlow(false)
+    private val isSplitModeEnabledFlow = MutableStateFlow(false)
+    private val activeLanguageFlow = MutableStateFlow("ID")
+    private val textExpansionMatchFlow = MutableStateFlow<com.frogobox.appkeyboard.util.InlineTextExpanderHelper.TextExpansionMatch?>(null)
+    private val mathCalculationResultFlow = MutableStateFlow<com.frogobox.appkeyboard.util.SmartCalculatorHelper.MathResult?>(null)
+    private val isFloatingModeFlow = MutableStateFlow(false)
+    private val heightScaleFlow = MutableStateFlow("NORMAL")
+    private val bottomChinOffsetFlow = MutableStateFlow("NONE")
+    private val hasImeErrorFlow = MutableStateFlow(false)
+    private val imeErrorMessageFlow = MutableStateFlow<String?>(null)
+    private val undoStack = mutableListOf<String>()
+    private val redoStack = mutableListOf<String>()
+
+    // AI Assistant & Voice Typing State Flows (Tier 3)
+    private val aiAssistantInitialTextFlow = MutableStateFlow("")
+    private var voiceTypingHelper: VoiceTypingHelper? = null
+    private val isVoiceTypingActiveFlow = MutableStateFlow(false)
+    private val isVoiceListeningFlow = MutableStateFlow(false)
+    private val voiceAmplitudeFlow = MutableStateFlow(0f)
+    private val voiceStatusTextFlow = MutableStateFlow("")
+    private val voiceErrorMessageFlow = MutableStateFlow<String?>(null)
 
     // Emoji State Flows
     private val emojisFlow = MutableStateFlow<List<String>>(emptyList())
@@ -156,6 +185,11 @@ class KeyboardIME : BaseKeyboardIME() {
     private val currentKeyboardFlow = MutableStateFlow<ItemMainKeyboard?>(null)
     private var keyConsumer: ((Int, Boolean) -> Boolean)? = null
 
+    // Gesture Glide Typing & Swipe Shortcuts State Flows
+    private val isGestureTypingEnabledFlow = MutableStateFlow(true)
+    private val isSwipeShortcutsEnabledFlow = MutableStateFlow(true)
+    private var lastGestureWord: String? = null
+
     override fun onCreate() {
         super.onCreate()
         imeLifecycleOwner.onCreate()
@@ -169,6 +203,13 @@ class KeyboardIME : BaseKeyboardIME() {
         applySoundAndHapticSettings()
         setupTheme()
         setupFeatureKeyboard()
+        isNumberRowEnabledFlow.value = keyboardUtil.isNumberRowEnabled()
+        oneHandedModeFlow.value = keyboardUtil.getOneHandedMode()
+        isDynamicThemeEnabledFlow.value = keyboardUtil.isDynamicThemeEnabled()
+        isSplitModeEnabledFlow.value = keyboardUtil.isSplitModeEnabled()
+        activeLanguageFlow.value = keyboardUtil.getActiveLanguage()
+        isGestureTypingEnabledFlow.value = keyboardUtil.isGestureTypingEnabled()
+        isSwipeShortcutsEnabledFlow.value = keyboardUtil.isGestureSwipeShortcutsEnabled()
         loadAutoText()
         loadProductRemote()
 
@@ -204,6 +245,7 @@ class KeyboardIME : BaseKeyboardIME() {
 
     override fun onWindowHidden() {
         super.onWindowHidden()
+        stopVoiceTyping()
         imeLifecycleOwner.onPause()
         imeLifecycleOwner.onStop()
         productRemoteJob?.cancel()
@@ -215,7 +257,54 @@ class KeyboardIME : BaseKeyboardIME() {
         } catch (_: Exception) {}
     }
 
+    override fun onEvaluateFullscreenMode(): Boolean = false
+
+    override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
+        super.onStartInput(attribute, restarting)
+        updateIncognitoState(attribute)
+    }
+
+    override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
+        super.onStartInputView(info, restarting)
+        updateIncognitoState(info)
+        isFloatingModeFlow.value = keyboardUtil.isFloatingModeEnabled()
+        heightScaleFlow.value = keyboardUtil.getHeightScale()
+        bottomChinOffsetFlow.value = keyboardUtil.getBottomChinOffset()
+        enterKeyType = info?.imeOptions?.and(EditorInfo.IME_MASK_ACTION or EditorInfo.IME_FLAG_NO_ENTER_ACTION) ?: 0
+        keyboard?.mEnterKeyType = enterKeyType
+        val enterResourceId = when (enterKeyType) {
+            EditorInfo.IME_ACTION_SEARCH -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_search
+            EditorInfo.IME_ACTION_NEXT, EditorInfo.IME_ACTION_GO -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_arrow_right
+            EditorInfo.IME_ACTION_SEND -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_send
+            EditorInfo.IME_ACTION_DONE -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_done
+            else -> com.frogobox.libkeyboard.R.drawable.ic_keyboard_enter
+        }
+        keyboard?.mKeys?.firstOrNull { it.code == ItemMainKeyboard.KEYCODE_ENTER }?.let { enterKey ->
+            enterKey.icon = androidx.core.content.res.ResourcesCompat.getDrawable(resources, enterResourceId, theme)
+            invalidateAllKeys()
+        }
+    }
+
+    override fun onFinishInputView(finishingInput: Boolean) {
+        super.onFinishInputView(finishingInput)
+        isIncognitoModeFlow.value = false
+        stopVoiceTyping()
+    }
+
+    private fun updateIncognitoState(info: EditorInfo?) {
+        val isIncognito = KeyboardPrivacyHelper.isIncognitoOrPassword(info)
+        isIncognitoModeFlow.value = isIncognito
+        if (isIncognito) {
+            suggestionJob?.cancel()
+            suggestionResultFlow.value = SuggestionResult.EMPTY
+            isSuggestionVisibleFlow.value = false
+            recentClipFlow.value = null
+        }
+    }
+
     override fun onDestroy() {
+        voiceTypingHelper?.destroy()
+        voiceTypingHelper = null
         super.onDestroy()
         productRemoteJob?.cancel()
         autoTextJob?.cancel()
@@ -268,6 +357,28 @@ class KeyboardIME : BaseKeyboardIME() {
                     val recentClip by recentClipFlow.collectAsState()
                     val isSelectionMode by isSelectionModeFlow.collectAsState()
                     val alwaysShowFeature by alwaysShowFeatureFlow.collectAsState()
+                    val isIncognitoMode by isIncognitoModeFlow.collectAsState()
+                    val isNumberRowEnabled by isNumberRowEnabledFlow.collectAsState()
+                    val currentOneHandedMode by oneHandedModeFlow.collectAsState()
+                    val isDynamicTheming by isDynamicThemeEnabledFlow.collectAsState()
+
+                    val aiInitialText by aiAssistantInitialTextFlow.collectAsState()
+                    val isVoiceActive by isVoiceTypingActiveFlow.collectAsState()
+                    val isVoiceListening by isVoiceListeningFlow.collectAsState()
+                    val voiceAmplitude by voiceAmplitudeFlow.collectAsState()
+                    val voiceStatusText by voiceStatusTextFlow.collectAsState()
+                    val voiceErrorMessage by voiceErrorMessageFlow.collectAsState()
+
+                    val isSplitMode by isSplitModeEnabledFlow.collectAsState()
+                    val activeLanguage by activeLanguageFlow.collectAsState()
+                    val textExpansionMatch by textExpansionMatchFlow.collectAsState()
+                    val mathResult by mathCalculationResultFlow.collectAsState()
+                    val isFloating by isFloatingModeFlow.collectAsState()
+                    val chinOffset by bottomChinOffsetFlow.collectAsState()
+                    val hasError by hasImeErrorFlow.collectAsState()
+                    val errorMsg by imeErrorMessageFlow.collectAsState()
+                    val isGestureTypingEnabled by isGestureTypingEnabledFlow.collectAsState()
+                    val isSwipeShortcutsEnabled by isSwipeShortcutsEnabledFlow.collectAsState()
 
                     KeyboardImeRootScreen(
                         activePanelState = activePanel,
@@ -278,6 +389,8 @@ class KeyboardIME : BaseKeyboardIME() {
                         isSuggestionVisible = isSuggestionVisible,
                         suggestionResult = suggestionResult,
                         onCandidateSelected = { word, _ -> handleCandidateSelected(word) },
+                        isGestureTypingEnabled = isGestureTypingEnabled,
+                        isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                         onSwitchSuggestionMenu = {
                             isSuggestionVisibleFlow.value = false
                         },
@@ -290,6 +403,8 @@ class KeyboardIME : BaseKeyboardIME() {
                         onKeyboardActionListener = this@KeyboardIME,
                         onMainKeyboardInit = { view ->
                             mainKeyboardInstance = view
+                            view.isGestureTypingEnabled = keyboardUtil.isGestureTypingEnabled()
+                            view.isSwipeShortcutsEnabled = keyboardUtil.isGestureSwipeShortcutsEnabled()
                             currentKeyboard?.let { view.setKeyboard(it) }
                         },
                         autoTextList = autoTextList,
@@ -362,6 +477,87 @@ class KeyboardIME : BaseKeyboardIME() {
                         },
                         onDeleteEmoji = {
                             onKey(ItemMainKeyboard.KEYCODE_DELETE)
+                        },
+                        isIncognitoMode = isIncognitoMode,
+                        isNumberRowEnabled = isNumberRowEnabled,
+                        onToggleNumberRow = {
+                            val newState = !isNumberRowEnabledFlow.value
+                            isNumberRowEnabledFlow.value = newState
+                            keyboardUtil.setNumberRowEnabled(newState)
+                        },
+                        oneHandedMode = currentOneHandedMode,
+                        onChangeOneHandedMode = { newMode ->
+                            oneHandedModeFlow.value = newMode
+                            keyboardUtil.setOneHandedMode(newMode)
+                        },
+                        isDynamicThemeEnabled = isDynamicTheming,
+                        onNumberRowClick = { code ->
+                            onKey(code)
+                        },
+                        aiAssistantInitialText = aiInitialText,
+                        onAiApplyText = { transformed ->
+                            val ic = getActiveInputConnection()
+                            if (ic != null) {
+                                val selectedText = ic.getSelectedText(0)?.toString().orEmpty()
+                                if (selectedText.isNotEmpty()) {
+                                    ic.commitText(transformed, 1)
+                                } else {
+                                    val before = aiAssistantInitialTextFlow.value
+                                    if (before.isNotEmpty()) {
+                                        ic.deleteSurroundingText(before.length, 0)
+                                    }
+                                    ic.commitText(transformed, 1)
+                                }
+                            }
+                            showMainKeyboard()
+                        },
+                        onAiCopyText = { transformed ->
+                            val clip = ClipData.newPlainText("AI Transformed Text", transformed)
+                            clipboardManager?.setPrimaryClip(clip)
+                        },
+                        isVoiceTypingActive = isVoiceActive,
+                        isVoiceListening = isVoiceListening,
+                        voiceAmplitude = voiceAmplitude,
+                        voiceStatusText = voiceStatusText,
+                        voiceErrorMessage = voiceErrorMessage,
+                        onStopVoiceTyping = {
+                            stopVoiceTyping()
+                        },
+                        onCloseVoiceTyping = {
+                            stopVoiceTyping()
+                        },
+                        textExpansionMatch = textExpansionMatch,
+                        onExpansionSelected = { match ->
+                            handleTextExpansionSelected(match)
+                        },
+                        isSplitModeEnabled = isSplitMode,
+                        onToggleSplitMode = {
+                            val next = !isSplitModeEnabledFlow.value
+                            isSplitModeEnabledFlow.value = next
+                            keyboardUtil.setSplitModeEnabled(next)
+                        },
+                        activeLanguage = activeLanguage,
+                        onToggleLanguage = {
+                            val nextLang = if (activeLanguageFlow.value == "ID") "EN" else "ID"
+                            activeLanguageFlow.value = nextLang
+                            keyboardUtil.setActiveLanguage(nextLang)
+                        },
+                        mathCalculationResult = mathResult,
+                        onMathResultSelected = { match ->
+                            handleMathResultSelected(match)
+                        },
+                        isFloatingMode = isFloating,
+                        onDockFloatingKeyboard = {
+                            keyboardUtil.setFloatingModeEnabled(false)
+                            isFloatingModeFlow.value = false
+                        },
+                        bottomChinOffsetDp = com.frogobox.appkeyboard.util.KeyboardHeightHelper.ChinOffset.fromString(chinOffset).offsetDp,
+                        hasImeError = hasError,
+                        imeErrorMessage = errorMsg,
+                        onResetImeError = {
+                            hasImeErrorFlow.value = false
+                            imeErrorMessageFlow.value = null
+                            activePanelStateFlow.value = KeyboardPanelState.MAIN
                         }
                     )
                 }
@@ -380,7 +576,13 @@ class KeyboardIME : BaseKeyboardIME() {
     override fun initialSetupKeyboard() {
         applySoundAndHapticSettings()
         currentKeyboardFlow.value = keyboard
+        val gestureTyping = keyboardUtil.isGestureTypingEnabled()
+        val swipeShortcuts = keyboardUtil.isGestureSwipeShortcutsEnabled()
+        isGestureTypingEnabledFlow.value = gestureTyping
+        isSwipeShortcutsEnabledFlow.value = swipeShortcuts
         mainKeyboardInstance?.let { view ->
+            view.isGestureTypingEnabled = gestureTyping
+            view.isSwipeShortcutsEnabled = swipeShortcuts
             keyboard?.let { view.setKeyboard(it) }
         }
     }
@@ -470,6 +672,7 @@ class KeyboardIME : BaseKeyboardIME() {
 
     override fun initView() {
         suggestionEngine.loadDictionaryFromAsset(this)
+        com.frogobox.libkeyboard.util.GestureTypingHelper.addVocabulary(suggestionEngine.getAllWords())
         setupTheme()
         setupFeatureKeyboard()
         loadAutoText()
@@ -498,6 +701,29 @@ class KeyboardIME : BaseKeyboardIME() {
 
         val ic = getActiveInputConnection() ?: return
 
+        // 0. Single-Tap Backspace Undo for Gesture Glide Typing (Gboard Parity)
+        if (code == ItemMainKeyboard.KEYCODE_DELETE) {
+            val gestureWord = lastGestureWord
+            if (gestureWord != null) {
+                val expectedWithSpace = "$gestureWord "
+                val textBefore = ic.getTextBeforeCursor(expectedWithSpace.length, 0)?.toString() ?: ""
+                if (textBefore == expectedWithSpace) {
+                    ic.deleteSurroundingText(expectedWithSpace.length, 0)
+                    lastGestureWord = null
+                    suggestionResultFlow.value = SuggestionResult.EMPTY
+                    isSuggestionVisibleFlow.value = false
+                    return
+                } else if (textBefore.endsWith(gestureWord)) {
+                    ic.deleteSurroundingText(gestureWord.length, 0)
+                    lastGestureWord = null
+                    suggestionResultFlow.value = SuggestionResult.EMPTY
+                    isSuggestionVisibleFlow.value = false
+                    return
+                }
+                lastGestureWord = null
+            }
+        }
+
         // 1. Single-Tap Backspace Undo for Auto-Correction (Gboard Parity)
         if (code == ItemMainKeyboard.KEYCODE_DELETE) {
             val record = lastAutoCorrection
@@ -508,7 +734,7 @@ class KeyboardIME : BaseKeyboardIME() {
                     ic.deleteSurroundingText(expectedSuffix.length, 0)
                     ic.commitText(record.original, 1)
                     lastAutoCorrection = null
-                    if (keyboardUtil.isSuggestionEnabled()) {
+                    if (keyboardUtil.isSuggestionEnabled() && !isIncognitoModeFlow.value) {
                         suggestionJob?.cancel()
                         suggestionJob = serviceScope.launch(Dispatchers.Default) {
                             val suggestions = suggestionEngine.getSuggestions(record.original)
@@ -524,13 +750,14 @@ class KeyboardIME : BaseKeyboardIME() {
             lastAutoCorrection = null
         }
 
-        // 2. Spacebar Auto-Correction (Gboard Parity)
+        // 2. Spacebar Auto-Correction & Smart Punctuation (Double-Space Period)
         if (code == ItemMainKeyboard.KEYCODE_SPACE) {
             val editorInfo = currentInputEditorInfo
             val inputType = editorInfo?.inputType ?: 0
             val inputClass = inputType and android.text.InputType.TYPE_MASK_CLASS
             val variation = inputType and android.text.InputType.TYPE_MASK_VARIATION
-            val isSensitiveOrNumeric = (inputClass == android.text.InputType.TYPE_CLASS_NUMBER) ||
+            val isSensitiveOrNumeric = isIncognitoModeFlow.value ||
+                    (inputClass == android.text.InputType.TYPE_CLASS_NUMBER) ||
                     (inputClass == android.text.InputType.TYPE_CLASS_PHONE) ||
                     (inputClass == android.text.InputType.TYPE_CLASS_DATETIME) ||
                     (inputClass == android.text.InputType.TYPE_CLASS_TEXT && (
@@ -541,7 +768,37 @@ class KeyboardIME : BaseKeyboardIME() {
                         variation == android.text.InputType.TYPE_TEXT_VARIATION_URI
                     ))
 
+            // Smart Punctuation: Double-Space Period
+            if (keyboardUtil.isSmartPunctuationEnabled() && !isSensitiveOrNumeric) {
+                val textBefore = ic.getTextBeforeCursor(3, 0)
+                val doubleSpaceResult = com.frogobox.appkeyboard.util.SmartPunctuationHelper.checkDoubleSpacePeriod(
+                    lastSpaceTime = lastSpacePressTS,
+                    currentTime = System.currentTimeMillis(),
+                    textBeforeCursor = textBefore
+                )
+                if (doubleSpaceResult.isHandled) {
+                    ic.deleteSurroundingText(doubleSpaceResult.textToDeleteLength, 0)
+                    ic.commitText(doubleSpaceResult.replacementText, 1)
+                    lastSpacePressTS = 0L
+                    if (doubleSpaceResult.shouldAutoShift && kb != null && kb.mShiftState == ItemMainKeyboard.SHIFT_OFF) {
+                        kb.mShiftState = ItemMainKeyboard.SHIFT_ON_ONE_CHAR
+                        invalidateAllKeys()
+                    }
+                    updateShiftKeyState()
+                    return
+                }
+            }
+
             val wordBefore = getWordBeforeCursor(ic)
+            if (keyboardUtil.isUserDictionaryLearningEnabled() && !isSensitiveOrNumeric && wordBefore.isNotEmpty()) {
+                com.frogobox.appkeyboard.util.UserDictionaryHelper.learnWord(
+                    this@KeyboardIME,
+                    wordBefore,
+                    isIncognito = isIncognitoModeFlow.value,
+                    isPassword = isSensitiveOrNumeric
+                )
+            }
+
             if (keyboardUtil.isSuggestionEnabled() && !isSensitiveOrNumeric && wordBefore.length >= 2) {
                 val replacement = suggestionEngine.getAutoCorrectReplacement(wordBefore)
                 if (replacement != null && !replacement.equals(wordBefore, ignoreCase = true)) {
@@ -549,6 +806,7 @@ class KeyboardIME : BaseKeyboardIME() {
                     ic.commitText("$replacement ", 1)
                     lastAutoCorrection = AutoCorrectionRecord(wordBefore, replacement, System.currentTimeMillis())
                     suggestionResultFlow.value = SuggestionResult.EMPTY
+                    textExpansionMatchFlow.value = null
                     isSuggestionVisibleFlow.value = false
                     updateShiftKeyState()
                     return
@@ -557,22 +815,63 @@ class KeyboardIME : BaseKeyboardIME() {
             lastAutoCorrection = null
         } else if (code != ItemMainKeyboard.KEYCODE_DELETE) {
             lastAutoCorrection = null
+            lastGestureWord = null
+        }
+
+        val currentBeforeCursor = ic.getTextBeforeCursor(80, 0)?.toString().orEmpty()
+        if (currentBeforeCursor.isNotEmpty() && code != ItemMainKeyboard.KEYCODE_SHIFT) {
+            undoStack.add(currentBeforeCursor)
+            if (undoStack.size > 25) undoStack.removeAt(0)
+            redoStack.clear()
         }
 
         onKeyExt(code, ic)
 
-        if (keyboardUtil.isSuggestionEnabled()) {
+        // Auto-Capitalization after sentence boundary
+        if (keyboardUtil.isSmartPunctuationEnabled() && kb != null && kb.mShiftState == ItemMainKeyboard.SHIFT_OFF) {
+            val textBefore = ic.getTextBeforeCursor(20, 0)
+            if (com.frogobox.appkeyboard.util.SmartPunctuationHelper.shouldAutoCapitalize(textBefore)) {
+                kb.mShiftState = ItemMainKeyboard.SHIFT_ON_ONE_CHAR
+                invalidateAllKeys()
+            }
+        }
+
+        if (keyboardUtil.isSuggestionEnabled() && !isIncognitoModeFlow.value) {
+            // Check Smart Math Calculator
+            if (keyboardUtil.isSmartCalculatorEnabled()) {
+                val textBeforeCursor = ic.getTextBeforeCursor(40, 0)?.toString()
+                val mathResult = com.frogobox.appkeyboard.util.SmartCalculatorHelper.evaluateMath(textBeforeCursor)
+                mathCalculationResultFlow.value = mathResult
+            } else {
+                mathCalculationResultFlow.value = null
+            }
+
             val word = getWordBeforeCursor(ic)
             if (word.isNotEmpty()) {
+                val expansion = com.frogobox.appkeyboard.util.InlineTextExpanderHelper.findExpansion(word, autoTextListFlow.value)
+                textExpansionMatchFlow.value = expansion
+
                 suggestionJob?.cancel()
                 suggestionJob = serviceScope.launch(Dispatchers.Default) {
-                    val suggestions = suggestionEngine.getSuggestions(word)
+                    val baseSuggestions = suggestionEngine.getSuggestions(word)
+                    val userSuggestions = if (keyboardUtil.isUserDictionaryLearningEnabled()) {
+                        com.frogobox.appkeyboard.util.UserDictionaryHelper.getSuggestions(this@KeyboardIME, word, limit = 2)
+                    } else emptyList()
+
+                    val mergedPredicted = if (userSuggestions.isNotEmpty()) {
+                        userSuggestions.first()
+                    } else {
+                        baseSuggestions.predictedWord
+                    }
+
+                    val finalResult = baseSuggestions.copy(predictedWord = mergedPredicted)
                     withContext(Dispatchers.Main) {
-                        suggestionResultFlow.value = suggestions
+                        suggestionResultFlow.value = finalResult
                         isSuggestionVisibleFlow.value = true
                     }
                 }
             } else {
+                textExpansionMatchFlow.value = null
                 suggestionJob?.cancel()
                 suggestionResultFlow.value = SuggestionResult.EMPTY
                 if (code == ItemMainKeyboard.KEYCODE_SPACE ||
@@ -581,6 +880,9 @@ class KeyboardIME : BaseKeyboardIME() {
                     isSuggestionVisibleFlow.value = false
                 }
             }
+        } else {
+            textExpansionMatchFlow.value = null
+            mathCalculationResultFlow.value = null
         }
     }
 
@@ -616,6 +918,78 @@ class KeyboardIME : BaseKeyboardIME() {
         }
     }
 
+    override fun onGestureMatch(word: String, suggestions: List<String>) {
+        val ic = getActiveInputConnection() ?: return
+        val kb = keyboard
+        val formattedWord = when (kb?.mShiftState) {
+            ItemMainKeyboard.SHIFT_ON_PERMANENT -> word.uppercase()
+            ItemMainKeyboard.SHIFT_ON_ONE_CHAR -> {
+                keyboard?.setShifted(ItemMainKeyboard.SHIFT_OFF)
+                invalidateAllKeys()
+                word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+            }
+            else -> word
+        }
+
+        ic.commitText("$formattedWord ", 1)
+        lastGestureWord = formattedWord
+
+        // Populate alternative candidate suggestions into the suggestion strip
+        if (keyboardUtil.isSuggestionEnabled() && suggestions.isNotEmpty()) {
+            val primary = suggestions.firstOrNull() ?: word
+            val secondary = suggestions.getOrNull(1) ?: ""
+            val tertiary = suggestions.getOrNull(2) ?: ""
+            suggestionResultFlow.value = SuggestionResult(
+                userWord = primary,
+                predictedWord = secondary,
+                autoCorrectWord = tertiary
+            )
+            isSuggestionVisibleFlow.value = true
+        }
+
+        // Learn the committed word if user dictionary learning is enabled
+        if (keyboardUtil.isUserDictionaryLearningEnabled() && !isIncognitoModeFlow.value) {
+            com.frogobox.appkeyboard.util.UserDictionaryHelper.learnWord(
+                this@KeyboardIME,
+                word,
+                isIncognito = false,
+                isPassword = false
+            )
+            com.frogobox.libkeyboard.util.GestureTypingHelper.registerWord(word)
+        }
+    }
+
+    override fun onSwipeDown() {
+        requestHideSelf(0)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (com.frogobox.appkeyboard.util.HardwareKeyboardHelper.handleHardwareKeyEvent(event, getActiveInputConnection())) {
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun handleTextExpansionSelected(match: com.frogobox.appkeyboard.util.InlineTextExpanderHelper.TextExpansionMatch) {
+        val ic = getActiveInputConnection() ?: return
+        ic.deleteSurroundingText(match.trigger.length, 0)
+        ic.commitText("${match.expandedText} ", 1)
+        textExpansionMatchFlow.value = null
+        suggestionResultFlow.value = SuggestionResult.EMPTY
+        isSuggestionVisibleFlow.value = false
+        updateShiftKeyState()
+    }
+
+    private fun handleMathResultSelected(result: com.frogobox.appkeyboard.util.SmartCalculatorHelper.MathResult) {
+        val ic = getActiveInputConnection() ?: return
+        ic.deleteSurroundingText(result.expression.length, 0)
+        ic.commitText("${result.evaluatedValue} ", 1)
+        mathCalculationResultFlow.value = null
+        suggestionResultFlow.value = SuggestionResult.EMPTY
+        isSuggestionVisibleFlow.value = false
+        updateShiftKeyState()
+    }
+
     override fun getKeyboardLayoutXML(): Int {
         return pref.getPrefInt(
             KeyboardUtil.KEYBOARD_TYPE, com.frogobox.libkeyboard.R.xml.keys_letters_qwerty
@@ -645,9 +1019,26 @@ class KeyboardIME : BaseKeyboardIME() {
     private fun handleCandidateSelected(selectedWord: String) {
         val ic = getActiveInputConnection()
         if (ic != null) {
-            val currentWord = getWordBeforeCursor(ic)
-            if (currentWord.isNotEmpty()) {
-                ic.deleteSurroundingText(currentWord.length, 0)
+            val gestureWord = lastGestureWord
+            if (gestureWord != null) {
+                val expectedWithSpace = "$gestureWord "
+                val textBefore = ic.getTextBeforeCursor(expectedWithSpace.length, 0)?.toString() ?: ""
+                if (textBefore == expectedWithSpace) {
+                    ic.deleteSurroundingText(expectedWithSpace.length, 0)
+                } else if (textBefore.endsWith(gestureWord)) {
+                    ic.deleteSurroundingText(gestureWord.length, 0)
+                } else {
+                    val currentWord = getWordBeforeCursor(ic)
+                    if (currentWord.isNotEmpty()) {
+                        ic.deleteSurroundingText(currentWord.length, 0)
+                    }
+                }
+                lastGestureWord = null
+            } else {
+                val currentWord = getWordBeforeCursor(ic)
+                if (currentWord.isNotEmpty()) {
+                    ic.deleteSurroundingText(currentWord.length, 0)
+                }
             }
             ic.commitText("$selectedWord ", 1)
             suggestionResultFlow.value = SuggestionResult.EMPTY
@@ -705,12 +1096,65 @@ class KeyboardIME : BaseKeyboardIME() {
                 activePanelStateFlow.value = KeyboardPanelState.TEXT_EDIT
             }
 
+            KeyboardFeatureType.AI_ASSISTANT -> {
+                val ic = getActiveInputConnection()
+                val selectedText = ic?.getSelectedText(0)?.toString().orEmpty()
+                val beforeCursor = ic?.getTextBeforeCursor(200, 0)?.toString().orEmpty()
+                val initialText = when {
+                    selectedText.isNotBlank() -> selectedText
+                    beforeCursor.isNotBlank() -> beforeCursor.trim()
+                    else -> recentClipFlow.value.orEmpty()
+                }
+                aiAssistantInitialTextFlow.value = initialText
+                activePanelStateFlow.value = KeyboardPanelState.AI_ASSISTANT
+            }
+
+            KeyboardFeatureType.VOICE_TYPING -> {
+                if (isVoiceTypingActiveFlow.value && isVoiceListeningFlow.value) {
+                    stopVoiceTyping()
+                } else {
+                    startVoiceTyping()
+                }
+            }
+
             KeyboardFeatureType.SUGGESTION -> {
                 isSuggestionVisibleFlow.value = !isSuggestionVisibleFlow.value
             }
 
+            KeyboardFeatureType.NUMBER_ROW -> {
+                val newState = !isNumberRowEnabledFlow.value
+                isNumberRowEnabledFlow.value = newState
+                keyboardUtil.setNumberRowEnabled(newState)
+            }
+
+            KeyboardFeatureType.ONE_HANDED -> {
+                val nextMode = when (oneHandedModeFlow.value) {
+                    "OFF" -> "RIGHT"
+                    "RIGHT" -> "LEFT"
+                    else -> "OFF"
+                }
+                oneHandedModeFlow.value = nextMode
+                keyboardUtil.setOneHandedMode(nextMode)
+            }
+
             KeyboardFeatureType.CHANGE_KEYBOARD -> {
-                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.showInputMethodPicker()
+            }
+
+            KeyboardFeatureType.GESTURE_SWIPE -> {
+                val current = isGestureTypingEnabledFlow.value
+                val next = !current
+                keyboardUtil.setGestureTypingEnabled(next)
+                keyboardUtil.setGestureSwipeShortcutsEnabled(next)
+                isGestureTypingEnabledFlow.value = next
+                isSwipeShortcutsEnabledFlow.value = next
+                mainKeyboardInstance?.isGestureTypingEnabled = next
+                mainKeyboardInstance?.isSwipeShortcutsEnabled = next
+                android.widget.Toast.makeText(
+                    this,
+                    if (next) "Gesture Swipe: Aktif" else "Gesture Swipe: Nonaktif",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
             }
 
             KeyboardFeatureType.SETTING -> {
@@ -719,6 +1163,59 @@ class KeyboardIME : BaseKeyboardIME() {
                 })
             }
         }
+    }
+
+    private fun initVoiceTypingHelper() {
+        if (voiceTypingHelper == null) {
+            voiceTypingHelper = VoiceTypingHelper(this).apply {
+                onTextReceived = { text, isFinal ->
+                    voiceStatusTextFlow.value = text
+                    if (isFinal) {
+                        getActiveInputConnection()?.commitText("$text ", 1)
+                        isVoiceListeningFlow.value = false
+                        isVoiceTypingActiveFlow.value = false
+                    }
+                }
+                onRmsChanged = { amplitude ->
+                    voiceAmplitudeFlow.value = amplitude
+                }
+                onStateChanged = { state ->
+                    isVoiceListeningFlow.value = (state == VoiceTypingHelper.State.LISTENING)
+                    if (state == VoiceTypingHelper.State.IDLE) {
+                        isVoiceTypingActiveFlow.value = false
+                    }
+                }
+                onErrorOccurred = { errorMsg ->
+                    voiceErrorMessageFlow.value = errorMsg
+                    isVoiceListeningFlow.value = false
+                }
+            }
+        }
+    }
+
+    private fun startVoiceTyping() {
+        if (isIncognitoModeFlow.value) {
+            voiceErrorMessageFlow.value = "Pengetikan suara dinonaktifkan dalam mode privat."
+            isVoiceTypingActiveFlow.value = true
+            return
+        }
+        initVoiceTypingHelper()
+        voiceErrorMessageFlow.value = null
+        voiceStatusTextFlow.value = "Mendengarkan..."
+        isVoiceTypingActiveFlow.value = true
+        val started = voiceTypingHelper?.startListening() ?: false
+        if (!started && voiceErrorMessageFlow.value == null) {
+            voiceErrorMessageFlow.value = "Gagal memulai pengetikan suara."
+        }
+    }
+
+    private fun stopVoiceTyping() {
+        voiceTypingHelper?.stopListening()
+        isVoiceListeningFlow.value = false
+        isVoiceTypingActiveFlow.value = false
+        voiceAmplitudeFlow.value = 0f
+        voiceErrorMessageFlow.value = null
+        voiceStatusTextFlow.value = ""
     }
 
     private fun loadAutoText() {
@@ -846,7 +1343,7 @@ class KeyboardIME : BaseKeyboardIME() {
     }
 
     private fun checkAndCaptureClipboard() {
-        if (!keyboardUtil.isClipboardEnabled()) {
+        if (!keyboardUtil.isClipboardEnabled() || isIncognitoModeFlow.value) {
             recentClipFlow.value = null
             return
         }
@@ -874,7 +1371,9 @@ class KeyboardIME : BaseKeyboardIME() {
         clipboardJob?.cancel()
         clipboardJob = serviceScope.launch {
             clipboardRepository.getClipboardItems().collect { items ->
-                clipboardItemsFlow.value = items
+                val now = System.currentTimeMillis()
+                val cleanItems = com.frogobox.appkeyboard.util.ClipboardSecurityGuard.filterExpiredClips(items, now)
+                clipboardItemsFlow.value = cleanItems
             }
         }
     }
@@ -977,7 +1476,9 @@ class KeyboardIME : BaseKeyboardIME() {
                         clipboardManager?.setPrimaryClip(ClipData.newPlainText("Cut", selectedText))
                     } catch (_: Exception) {}
                     ic.commitText("", 1)
-                    serviceScope.launch { clipboardRepository.addClip(selectedText) }
+                    if (!isIncognitoModeFlow.value) {
+                        serviceScope.launch { clipboardRepository.addClip(selectedText) }
+                    }
                     isSelectionModeFlow.value = false
                     selectionAnchor = -1
                 }
@@ -989,7 +1490,9 @@ class KeyboardIME : BaseKeyboardIME() {
                     try {
                         clipboardManager?.setPrimaryClip(ClipData.newPlainText("Copy", selectedText))
                     } catch (_: Exception) {}
-                    serviceScope.launch { clipboardRepository.addClip(selectedText) }
+                    if (!isIncognitoModeFlow.value) {
+                        serviceScope.launch { clipboardRepository.addClip(selectedText) }
+                    }
                 }
             }
 
@@ -1020,6 +1523,32 @@ class KeyboardIME : BaseKeyboardIME() {
             TextEditAction.ENTER -> {
                 ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
                 ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER))
+            }
+
+            TextEditAction.UNDO -> {
+                try {
+                    ic.performContextMenuAction(android.R.id.undo)
+                } catch (_: Exception) {}
+                if (undoStack.isNotEmpty()) {
+                    val prev = undoStack.removeAt(undoStack.size - 1)
+                    val curr = ic.getTextBeforeCursor(80, 0)?.toString() ?: ""
+                    redoStack.add(curr)
+                    ic.deleteSurroundingText(curr.length, 0)
+                    ic.commitText(prev, 1)
+                }
+            }
+
+            TextEditAction.REDO -> {
+                try {
+                    ic.performContextMenuAction(android.R.id.redo)
+                } catch (_: Exception) {}
+                if (redoStack.isNotEmpty()) {
+                    val next = redoStack.removeAt(redoStack.size - 1)
+                    val curr = ic.getTextBeforeCursor(80, 0)?.toString() ?: ""
+                    undoStack.add(curr)
+                    ic.deleteSurroundingText(curr.length, 0)
+                    ic.commitText(next, 1)
+                }
             }
         }
     }
@@ -1079,11 +1608,26 @@ class KeyboardIME : BaseKeyboardIME() {
         )
         val soundVolumeInt = pref.getPrefInt(MechanicalSoundManager.PREF_KEYBOARD_SOUND_VOLUME, 80)
         val vibrateEnabled = pref.getPrefBoolean(MechanicalSoundManager.PREF_KEYBOARD_VIBRATE_ENABLED, true)
+        val hapticIntensity = keyboardUtil.getHapticIntensity()
 
         ItemMainKeyboard.SOUND_ON_KEYPRESS = soundEnabled
         ItemMainKeyboard.MECHANICAL_SOUND_TYPE = soundType
         ItemMainKeyboard.SOUND_VOLUME = (soundVolumeInt / 100f).coerceIn(0.05f, 1.0f)
-        ItemMainKeyboard.VIBRATE_ON_KEYPRESS = vibrateEnabled
+        ItemMainKeyboard.VIBRATE_ON_KEYPRESS = vibrateEnabled && hapticIntensity != "OFF"
+    }
+
+    /**
+     * Commits rich media content (GIF, Sticker, Animated WebP) using Android InputConnectionCompat.
+     */
+    fun commitRichMedia(uri: android.net.Uri, mimeType: String, description: String = "Rich Content"): Boolean {
+        return com.frogobox.appkeyboard.util.KeyboardRichMediaHelper.commitRichContent(
+            context = this,
+            inputConnection = currentInputConnection,
+            editorInfo = currentInputEditorInfo,
+            contentUri = uri,
+            mimeType = mimeType,
+            label = description
+        )
     }
 
 }

@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Palette Board Body -->
+    <path
+        android:pathData="M12,2C6.49,2 2,6.49 2,12c0,4.96 3.6,9.08 8.35,9.88 0.65,0.11 1.15,-0.4 1.15,-1.05v-1.12c0,-1.66 1.34,-3 3,-3h1.72c2.64,0 4.78,-2.14 4.78,-4.78V11.5C21,6.26 16.97,2 12,2z"
+        android:fillColor="#FFA726"/>
+    <!-- Palette Shadow Accent -->
+    <path
+        android:pathData="M12,2c-0.34,0 -0.67,0.03 -1,0.07 4.96,0.64 8.79,4.86 8.79,9.93v0.43c0,2.64 -2.14,4.78 -4.78,4.78h-1.72c-1.66,0 -3,1.34 -3,3v0.62c0.35,0.05 0.7,0.08 1.06,0.08 0.65,0 1.15,-0.51 1.15,-1.16v-1.12c0,-1.66 1.34,-3 3,-3h1.72c2.64,0 4.78,-2.14 4.78,-4.78V11.5C21,6.26 16.97,2 12,2z"
+        android:fillColor="#FB8C00"/>
+    <!-- Outer Contour Stroke -->
+    <path
+        android:pathData="M12,2C6.49,2 2,6.49 2,12c0,4.96 3.6,9.08 8.35,9.88 0.65,0.11 1.15,-0.4 1.15,-1.05v-1.12c0,-1.66 1.34,-3 3,-3h1.72c2.64,0 4.78,-2.14 4.78,-4.78V11.5C21,6.26 16.97,2 12,2z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#E65100"
+        android:fillColor="#00000000"/>
+    <!-- Color Swatch 1: Pink -->
+    <path
+        android:pathData="M6.5,8m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="#E91E63"/>
+    <!-- Color Swatch 2: Amber Yellow -->
+    <path
+        android:pathData="M9.5,5.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="#FFEB3B"/>
+    <!-- Color Swatch 3: Green -->
+    <path
+        android:pathData="M14.5,5.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="#4CAF50"/>
+    <!-- Color Swatch 4: Blue -->
+    <path
+        android:pathData="M17.5,8m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="#2196F3"/>
+    <!-- Color Swatch 5: Purple -->
+    <path
+        android:pathData="M7.5,12.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="#9C27B0"/>
+    <!-- Thumb Grip Cutout -->
+    <path
+        android:pathData="M16.5,14.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="#FFFFFF"/>
+</vector>

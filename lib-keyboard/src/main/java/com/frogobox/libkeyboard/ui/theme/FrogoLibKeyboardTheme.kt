@@ -56,13 +56,30 @@ private val LightColorScheme = lightColorScheme(
     outlineVariant = Color(0xFFE2E8F0)
 )
 
+val HighContrastColorScheme = darkColorScheme(
+    primary = Color(0xFFFFE600), // Canary Yellow
+    onPrimary = Color(0xFF000000), // Pure Black
+    primaryContainer = Color(0xFF00E5FF), // Neon Cyan
+    onPrimaryContainer = Color(0xFF000000),
+    surface = Color(0xFF000000), // OLED Pure Black
+    onSurface = Color(0xFFFFFFFF),
+    surfaceVariant = Color(0xFF1A1A1A),
+    onSurfaceVariant = Color(0xFFFFE600),
+    background = Color(0xFF000000),
+    onBackground = Color(0xFFFFFFFF),
+    outline = Color(0xFFFFE600),
+    outlineVariant = Color(0xFF333333)
+)
+
 @Composable
 fun FrogoLibKeyboardTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    isHighContrast: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
+        isHighContrast -> HighContrastColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)

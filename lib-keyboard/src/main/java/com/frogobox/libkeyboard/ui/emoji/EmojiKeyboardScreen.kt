@@ -228,12 +228,12 @@ fun EmojiKeyboardScreen(
 @Composable
 fun EmojiHeaderToolbar(
     selectedCategory: EmojiCategoryType,
+    onBackClicked: () -> Unit,
+    modifier: Modifier = Modifier,
     isSearchActive: Boolean = false,
     searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit = {},
     onToggleSearch: () -> Unit = {},
-    onBackClicked: () -> Unit,
-    modifier: Modifier = Modifier,
     onDeleteClicked: () -> Unit = {}
 ) {
     Row(

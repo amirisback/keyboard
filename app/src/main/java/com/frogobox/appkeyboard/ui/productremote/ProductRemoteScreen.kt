@@ -32,7 +32,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.BugReport
@@ -58,7 +57,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -168,7 +166,6 @@ fun ProductRemoteScreen(
     searchQuery: String,
     statusFilter: DownloadStatusFilter,
     savedRemoteIds: Set<String>,
-    downloadStates: Map<String, DownloadProgressState> = emptyMap(),
     isLoading: Boolean,
     isSyncing: Boolean,
     errorMessage: String?,
@@ -179,11 +176,12 @@ fun ProductRemoteScreen(
     onCreateProduct: (ProductEntity) -> Unit,
     onUpdateProduct: (ProductEntity) -> Unit,
     onDeleteProduct: (DataItemResponse) -> Unit,
-    onNukeAllFavorites: () -> Unit = {},
-    onDownloadVideo: (DataItemResponse) -> Unit = {},
     onRefresh: () -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    downloadStates: Map<String, DownloadProgressState> = emptyMap(),
+    onNukeAllFavorites: () -> Unit = {},
+    onDownloadVideo: (DataItemResponse) -> Unit = {}
 ) {
     val context = LocalContext.current
 

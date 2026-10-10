@@ -4,8 +4,14 @@
         <attr name="state_long_pressable" format="boolean" />
     </declare-styleable>
 
+    <attr name="keyTextSize" format="dimension" />
+
     <declare-styleable name="FrogoKeyboardView">
-        <attr name="keyTextSize" format="dimension" />
+        <attr name="keyTextSize" />
+    </declare-styleable>
+
+    <declare-styleable name="MainKeyboard">
+        <attr name="keyTextSize" />
     </declare-styleable>
 
     <declare-styleable name="FrogoKeyboard">

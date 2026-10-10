@@ -36,10 +36,11 @@ class KeyboardImeComposeUnitTest {
             KeyboardPanelState.WEBVIEW,
             KeyboardPanelState.FORM,
             KeyboardPanelState.CLIPBOARD,
-            KeyboardPanelState.TEXT_EDIT
+            KeyboardPanelState.TEXT_EDIT,
+            KeyboardPanelState.AI_ASSISTANT
         )
 
-        assertEquals(15, KeyboardPanelState.entries.size)
+        assertEquals(16, KeyboardPanelState.entries.size)
         expectedPanels.forEach { panel ->
             assertTrue(KeyboardPanelState.entries.contains(panel))
         }
@@ -60,8 +61,10 @@ class KeyboardImeComposeUnitTest {
         assertEquals(KeyboardPanelState.FORM, KeyboardPanelState.fromFeature(KeyboardFeatureType.FORM))
         assertEquals(KeyboardPanelState.CLIPBOARD, KeyboardPanelState.fromFeature(KeyboardFeatureType.CLIPBOARD))
         assertEquals(KeyboardPanelState.TEXT_EDIT, KeyboardPanelState.fromFeature(KeyboardFeatureType.TEXT_EDIT))
+        assertEquals(KeyboardPanelState.AI_ASSISTANT, KeyboardPanelState.fromFeature(KeyboardFeatureType.AI_ASSISTANT))
 
         // Non-panel utility actions should map to null
+        assertNull(KeyboardPanelState.fromFeature(KeyboardFeatureType.VOICE_TYPING))
         assertNull(KeyboardPanelState.fromFeature(KeyboardFeatureType.SUGGESTION))
         assertNull(KeyboardPanelState.fromFeature(KeyboardFeatureType.CHANGE_KEYBOARD))
         assertNull(KeyboardPanelState.fromFeature(KeyboardFeatureType.SETTING))

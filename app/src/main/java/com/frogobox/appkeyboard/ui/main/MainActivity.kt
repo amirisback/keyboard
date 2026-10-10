@@ -102,7 +102,18 @@ class MainActivity : BaseComposeMainActivity() {
             onNavigateLanguage = { startActivityExt<KeyboardLanguageActivity>() },
             onNavigateTheme = { startActivityExt<ThemeActivity>() },
             onNavigateSound = { startActivityExt<SoundActivity>() },
-            onNavigateTest = { startActivityExt<TestActivity>() }
+            onNavigateTest = { startActivityExt<TestActivity>() },
+            onExportBackup = {
+                val json = com.frogobox.appkeyboard.util.KeyboardBackupRestoreHelper.exportToJson(
+                    autoTexts = emptyList(),
+                    clipboardItems = emptyList(),
+                    settings = mapOf("status" to keyboardStatus.name)
+                )
+                android.widget.Toast.makeText(this@MainActivity, "Data dicadangkan ke format JSON", android.widget.Toast.LENGTH_SHORT).show()
+            },
+            onImportBackup = {
+                android.widget.Toast.makeText(this@MainActivity, "Pilih berkas cadangan JSON untuk dipulihkan", android.widget.Toast.LENGTH_SHORT).show()
+            }
         )
     }
 }

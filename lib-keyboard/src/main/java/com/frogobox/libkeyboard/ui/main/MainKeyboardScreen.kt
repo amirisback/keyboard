@@ -50,6 +50,8 @@ fun MainKeyboardView(
     keyboard: ItemMainKeyboard?,
     onActionListener: OnKeyboardActionListener?,
     modifier: Modifier = Modifier,
+    isGestureTypingEnabled: Boolean = true,
+    isSwipeShortcutsEnabled: Boolean = true,
     textColor: Int? = null,
     actionTextColor: Int? = null,
     keyColor: Int? = null,
@@ -73,6 +75,8 @@ fun MainKeyboardView(
                         isDark = isDarkTheme
                     )
                 }
+                this.isGestureTypingEnabled = isGestureTypingEnabled
+                this.isSwipeShortcutsEnabled = isSwipeShortcutsEnabled
                 this.mOnKeyboardActionListener = onActionListener
                 keyboard?.let { setKeyboard(it) }
                 onInit(this)
@@ -80,6 +84,8 @@ fun MainKeyboardView(
         },
         update = { view ->
             view.mOnKeyboardActionListener = onActionListener
+            view.isGestureTypingEnabled = isGestureTypingEnabled
+            view.isSwipeShortcutsEnabled = isSwipeShortcutsEnabled
             if (textColor != null) {
                 view.setKeyboardTheme(
                     textColor = textColor,
@@ -109,7 +115,9 @@ fun MainKeyboardComposable(
     onMoveCursorLeft: () -> Unit = {},
     onMoveCursorRight: () -> Unit = {},
     onDeleteWords: (Int) -> Unit = {},
-    isSplitMode: Boolean = false
+    isSplitMode: Boolean = false,
+    onSwipeDown: (() -> Unit)? = null,
+    onGestureMatch: ((String, List<String>) -> Unit)? = null
 ) {
     val defaultKeyColor = if (isDarkTheme) KeypadDark else KeypadLight
     val actionKeyColor = if (isDarkTheme) KeypadActionDark else KeypadActionLight

@@ -161,6 +161,8 @@ fun KeyboardImeRootScreen(
     hasImeError: Boolean = false,
     imeErrorMessage: String? = null,
     onResetImeError: () -> Unit = {},
+    isGestureTypingEnabled: Boolean = true,
+    isSwipeShortcutsEnabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -326,6 +328,8 @@ fun KeyboardImeRootScreen(
                                 MainKeyboardView(
                                     keyboard = currentKeyboard,
                                     onActionListener = onKeyboardActionListener,
+                                    isGestureTypingEnabled = isGestureTypingEnabled,
+                                    isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                                     textColor = themeTextColor,
                                     actionTextColor = themeTextColor,
                                     isDarkTheme = isDarkTheme,
@@ -343,6 +347,8 @@ fun KeyboardImeRootScreen(
                                         MainKeyboardView(
                                             keyboard = currentKeyboard,
                                             onActionListener = onKeyboardActionListener,
+                                            isGestureTypingEnabled = isGestureTypingEnabled,
+                                            isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                                             textColor = themeTextColor,
                                             actionTextColor = themeTextColor,
                                             isDarkTheme = isDarkTheme,
@@ -385,6 +391,8 @@ fun KeyboardImeRootScreen(
                                         MainKeyboardView(
                                             keyboard = currentKeyboard,
                                             onActionListener = onKeyboardActionListener,
+                                            isGestureTypingEnabled = isGestureTypingEnabled,
+                                            isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                                             textColor = themeTextColor,
                                             actionTextColor = themeTextColor,
                                             isDarkTheme = isDarkTheme,
@@ -477,6 +485,8 @@ fun KeyboardImeRootScreen(
                                 MainKeyboardView(
                                     keyboard = currentKeyboard,
                                     onActionListener = onKeyboardActionListener,
+                                    isGestureTypingEnabled = isGestureTypingEnabled,
+                                    isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                                     textColor = themeTextColor,
                                     actionTextColor = themeTextColor,
                                     isDarkTheme = isDarkTheme,
@@ -552,6 +562,8 @@ fun KeyboardImeRootScreen(
                             MainKeyboardView(
                                 keyboard = currentKeyboard,
                                 onActionListener = onKeyboardActionListener,
+                                isGestureTypingEnabled = isGestureTypingEnabled,
+                                isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                                 onInit = onMainKeyboardInit
                             )
                         }
@@ -578,6 +590,8 @@ fun KeyboardImeRootScreen(
                             MainKeyboardView(
                                 keyboard = currentKeyboard,
                                 onActionListener = onKeyboardActionListener,
+                                isGestureTypingEnabled = isGestureTypingEnabled,
+                                isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                                 onInit = onMainKeyboardInit
                             )
                         }

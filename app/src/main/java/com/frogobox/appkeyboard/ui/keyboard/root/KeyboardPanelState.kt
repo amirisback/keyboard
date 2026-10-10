@@ -65,6 +65,7 @@ enum class KeyboardPanelState {
                 KeyboardFeatureType.SUGGESTION,
                 KeyboardFeatureType.NUMBER_ROW,
                 KeyboardFeatureType.ONE_HANDED,
+                KeyboardFeatureType.GESTURE_SWIPE,
                 KeyboardFeatureType.CHANGE_KEYBOARD,
                 KeyboardFeatureType.SETTING -> null
             }

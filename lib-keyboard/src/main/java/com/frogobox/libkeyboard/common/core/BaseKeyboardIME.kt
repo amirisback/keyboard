@@ -145,6 +145,14 @@ abstract class BaseKeyboardIME : InputMethodService(), OnKeyboardActionListener,
         currentInputConnection?.commitText(text, 1)
     }
 
+    override fun onGestureMatch(word: String, suggestions: List<String>) {
+        currentInputConnection?.commitText("$word ", 1)
+    }
+
+    override fun onSwipeDown() {
+        requestHideSelf(0)
+    }
+
     override fun initialSetupKeyboard() {}
 
     override fun setupTheme() {}

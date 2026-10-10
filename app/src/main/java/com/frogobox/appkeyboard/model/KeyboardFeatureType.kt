@@ -29,6 +29,7 @@ enum class KeyboardFeatureType(val id: String, val text: String, val icon: Int) 
     CHANGE_KEYBOARD("menu_change_keyboard", "Change Keyboard", R.drawable.ic_menu_keyboard),
     AI_ASSISTANT("menu_ai_assistant", "AI Assistant", R.drawable.ic_menu_ai_assistant),
     VOICE_TYPING("menu_voice_typing", "Voice Typing", R.drawable.ic_menu_voice_typing),
+    GESTURE_SWIPE("menu_gesture_swipe", "Gesture & Swipe", R.drawable.ic_menu_gesture_swipe),
     SETTING("menu_setting", "Setting", R.drawable.ic_menu_setting);
 
     fun mapToModel(): KeyboardFeatureModel {

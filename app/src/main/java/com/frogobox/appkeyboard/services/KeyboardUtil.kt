@@ -39,6 +39,7 @@ class KeyboardUtil @Inject constructor(
         const val KEY_HAPTIC_DURATION_MS = "KEY_HAPTIC_DURATION_MS"
         const val KEY_SOUND_VOLUME_PERCENT = "KEY_SOUND_VOLUME_PERCENT"
         const val KEY_GESTURE_TYPING_ENABLED = "KEY_GESTURE_TYPING_ENABLED"
+        const val KEY_GESTURE_SWIPE_SHORTCUTS_ENABLED = "KEY_GESTURE_SWIPE_SHORTCUTS_ENABLED"
         const val KEY_USER_DICTIONARY_LEARNING_ENABLED = "KEY_USER_DICTIONARY_LEARNING_ENABLED"
         const val KEY_SMART_CALCULATOR_ENABLED = "KEY_SMART_CALCULATOR_ENABLED"
 
@@ -48,6 +49,7 @@ class KeyboardUtil @Inject constructor(
             KeyboardFeatureType.ONE_HANDED,
             KeyboardFeatureType.AI_ASSISTANT,
             KeyboardFeatureType.VOICE_TYPING,
+            KeyboardFeatureType.GESTURE_SWIPE,
             KeyboardFeatureType.AUTO_TEXT,
             KeyboardFeatureType.PRODUCT_REMOTE,
             KeyboardFeatureType.CLIPBOARD,
@@ -175,6 +177,14 @@ class KeyboardUtil @Inject constructor(
 
     fun setGestureTypingEnabled(enabled: Boolean) {
         pref.savePrefBoolean(KEY_GESTURE_TYPING_ENABLED, enabled)
+    }
+
+    fun isGestureSwipeShortcutsEnabled(): Boolean {
+        return pref.getPrefBoolean(KEY_GESTURE_SWIPE_SHORTCUTS_ENABLED, true)
+    }
+
+    fun setGestureSwipeShortcutsEnabled(enabled: Boolean) {
+        pref.savePrefBoolean(KEY_GESTURE_SWIPE_SHORTCUTS_ENABLED, enabled)
     }
 
     fun isUserDictionaryLearningEnabled(): Boolean {

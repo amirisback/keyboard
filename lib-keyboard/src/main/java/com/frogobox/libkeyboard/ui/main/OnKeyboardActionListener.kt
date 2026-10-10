@@ -48,4 +48,14 @@ interface OnKeyboardActionListener {
      * Called when the user swipes left on Backspace to delete words
      */
     fun deleteWordsBeforeCursor(count: Int) {}
+
+    /**
+     * Called when the user performs a gesture swipe typing that matches words
+     */
+    fun onGestureMatch(word: String, suggestions: List<String>) {}
+
+    /**
+     * Called when the user swipes down on the keyboard to dismiss/hide it
+     */
+    fun onSwipeDown() {}
 }

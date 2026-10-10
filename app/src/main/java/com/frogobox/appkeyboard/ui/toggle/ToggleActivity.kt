@@ -44,6 +44,9 @@ class ToggleActivity : BaseComposeActivity() {
             onMoveFeature = { from, to ->
                 viewModel.moveFeature(from, to)
             },
+            onSwapFeature = { from, to ->
+                viewModel.swapFeatures(from, to)
+            },
             onResetOrder = {
                 viewModel.resetFeatureOrder()
             },

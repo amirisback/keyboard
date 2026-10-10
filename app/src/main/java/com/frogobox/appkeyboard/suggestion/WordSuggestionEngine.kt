@@ -183,6 +183,13 @@ class WordSuggestionEngine @Inject constructor() {
     }
 
     /**
+     * Returns full list of vocabulary words for gesture typing and prediction engines.
+     */
+    fun getAllWords(): List<String> {
+        return dictionaryList.toList()
+    }
+
+    /**
      * Core suggestion generation returning the 3 required sections:
      * - Section 1: User's verbatim word
      * - Section 2: Predicted completion / highest rank prediction

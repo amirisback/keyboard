@@ -6,6 +6,8 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="color_frogo_primary">#FF0D9488</color>
+    <color name="color_frogo_primary_dark">#FF2DD4BF</color>
 
     <!--  Default Color  -->
 

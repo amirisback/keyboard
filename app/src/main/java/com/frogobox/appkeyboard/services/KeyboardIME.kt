@@ -185,6 +185,11 @@ class KeyboardIME : BaseKeyboardIME() {
     private val currentKeyboardFlow = MutableStateFlow<ItemMainKeyboard?>(null)
     private var keyConsumer: ((Int, Boolean) -> Boolean)? = null
 
+    // Gesture Glide Typing & Swipe Shortcuts State Flows
+    private val isGestureTypingEnabledFlow = MutableStateFlow(true)
+    private val isSwipeShortcutsEnabledFlow = MutableStateFlow(true)
+    private var lastGestureWord: String? = null
+
     override fun onCreate() {
         super.onCreate()
         imeLifecycleOwner.onCreate()
@@ -203,6 +208,8 @@ class KeyboardIME : BaseKeyboardIME() {
         isDynamicThemeEnabledFlow.value = keyboardUtil.isDynamicThemeEnabled()
         isSplitModeEnabledFlow.value = keyboardUtil.isSplitModeEnabled()
         activeLanguageFlow.value = keyboardUtil.getActiveLanguage()
+        isGestureTypingEnabledFlow.value = keyboardUtil.isGestureTypingEnabled()
+        isSwipeShortcutsEnabledFlow.value = keyboardUtil.isGestureSwipeShortcutsEnabled()
         loadAutoText()
         loadProductRemote()
 
@@ -370,6 +377,8 @@ class KeyboardIME : BaseKeyboardIME() {
                     val chinOffset by bottomChinOffsetFlow.collectAsState()
                     val hasError by hasImeErrorFlow.collectAsState()
                     val errorMsg by imeErrorMessageFlow.collectAsState()
+                    val isGestureTypingEnabled by isGestureTypingEnabledFlow.collectAsState()
+                    val isSwipeShortcutsEnabled by isSwipeShortcutsEnabledFlow.collectAsState()
 
                     KeyboardImeRootScreen(
                         activePanelState = activePanel,
@@ -380,6 +389,8 @@ class KeyboardIME : BaseKeyboardIME() {
                         isSuggestionVisible = isSuggestionVisible,
                         suggestionResult = suggestionResult,
                         onCandidateSelected = { word, _ -> handleCandidateSelected(word) },
+                        isGestureTypingEnabled = isGestureTypingEnabled,
+                        isSwipeShortcutsEnabled = isSwipeShortcutsEnabled,
                         onSwitchSuggestionMenu = {
                             isSuggestionVisibleFlow.value = false
                         },
@@ -392,6 +403,8 @@ class KeyboardIME : BaseKeyboardIME() {
                         onKeyboardActionListener = this@KeyboardIME,
                         onMainKeyboardInit = { view ->
                             mainKeyboardInstance = view
+                            view.isGestureTypingEnabled = keyboardUtil.isGestureTypingEnabled()
+                            view.isSwipeShortcutsEnabled = keyboardUtil.isGestureSwipeShortcutsEnabled()
                             currentKeyboard?.let { view.setKeyboard(it) }
                         },
                         autoTextList = autoTextList,
@@ -563,7 +576,13 @@ class KeyboardIME : BaseKeyboardIME() {
     override fun initialSetupKeyboard() {
         applySoundAndHapticSettings()
         currentKeyboardFlow.value = keyboard
+        val gestureTyping = keyboardUtil.isGestureTypingEnabled()
+        val swipeShortcuts = keyboardUtil.isGestureSwipeShortcutsEnabled()
+        isGestureTypingEnabledFlow.value = gestureTyping
+        isSwipeShortcutsEnabledFlow.value = swipeShortcuts
         mainKeyboardInstance?.let { view ->
+            view.isGestureTypingEnabled = gestureTyping
+            view.isSwipeShortcutsEnabled = swipeShortcuts
             keyboard?.let { view.setKeyboard(it) }
         }
     }
@@ -653,6 +672,7 @@ class KeyboardIME : BaseKeyboardIME() {
 
     override fun initView() {
         suggestionEngine.loadDictionaryFromAsset(this)
+        com.frogobox.libkeyboard.util.GestureTypingHelper.addVocabulary(suggestionEngine.getAllWords())
         setupTheme()
         setupFeatureKeyboard()
         loadAutoText()
@@ -680,6 +700,29 @@ class KeyboardIME : BaseKeyboardIME() {
         }
 
         val ic = getActiveInputConnection() ?: return
+
+        // 0. Single-Tap Backspace Undo for Gesture Glide Typing (Gboard Parity)
+        if (code == ItemMainKeyboard.KEYCODE_DELETE) {
+            val gestureWord = lastGestureWord
+            if (gestureWord != null) {
+                val expectedWithSpace = "$gestureWord "
+                val textBefore = ic.getTextBeforeCursor(expectedWithSpace.length, 0)?.toString() ?: ""
+                if (textBefore == expectedWithSpace) {
+                    ic.deleteSurroundingText(expectedWithSpace.length, 0)
+                    lastGestureWord = null
+                    suggestionResultFlow.value = SuggestionResult.EMPTY
+                    isSuggestionVisibleFlow.value = false
+                    return
+                } else if (textBefore.endsWith(gestureWord)) {
+                    ic.deleteSurroundingText(gestureWord.length, 0)
+                    lastGestureWord = null
+                    suggestionResultFlow.value = SuggestionResult.EMPTY
+                    isSuggestionVisibleFlow.value = false
+                    return
+                }
+                lastGestureWord = null
+            }
+        }
 
         // 1. Single-Tap Backspace Undo for Auto-Correction (Gboard Parity)
         if (code == ItemMainKeyboard.KEYCODE_DELETE) {
@@ -772,6 +815,7 @@ class KeyboardIME : BaseKeyboardIME() {
             lastAutoCorrection = null
         } else if (code != ItemMainKeyboard.KEYCODE_DELETE) {
             lastAutoCorrection = null
+            lastGestureWord = null
         }
 
         val currentBeforeCursor = ic.getTextBeforeCursor(80, 0)?.toString().orEmpty()
@@ -874,6 +918,51 @@ class KeyboardIME : BaseKeyboardIME() {
         }
     }
 
+    override fun onGestureMatch(word: String, suggestions: List<String>) {
+        val ic = getActiveInputConnection() ?: return
+        val kb = keyboard
+        val formattedWord = when (kb?.mShiftState) {
+            ItemMainKeyboard.SHIFT_ON_PERMANENT -> word.uppercase()
+            ItemMainKeyboard.SHIFT_ON_ONE_CHAR -> {
+                keyboard?.setShifted(ItemMainKeyboard.SHIFT_OFF)
+                invalidateAllKeys()
+                word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+            }
+            else -> word
+        }
+
+        ic.commitText("$formattedWord ", 1)
+        lastGestureWord = formattedWord
+
+        // Populate alternative candidate suggestions into the suggestion strip
+        if (keyboardUtil.isSuggestionEnabled() && suggestions.isNotEmpty()) {
+            val primary = suggestions.firstOrNull() ?: word
+            val secondary = suggestions.getOrNull(1) ?: ""
+            val tertiary = suggestions.getOrNull(2) ?: ""
+            suggestionResultFlow.value = SuggestionResult(
+                userWord = primary,
+                predictedWord = secondary,
+                autoCorrectWord = tertiary
+            )
+            isSuggestionVisibleFlow.value = true
+        }
+
+        // Learn the committed word if user dictionary learning is enabled
+        if (keyboardUtil.isUserDictionaryLearningEnabled() && !isIncognitoModeFlow.value) {
+            com.frogobox.appkeyboard.util.UserDictionaryHelper.learnWord(
+                this@KeyboardIME,
+                word,
+                isIncognito = false,
+                isPassword = false
+            )
+            com.frogobox.libkeyboard.util.GestureTypingHelper.registerWord(word)
+        }
+    }
+
+    override fun onSwipeDown() {
+        requestHideSelf(0)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (com.frogobox.appkeyboard.util.HardwareKeyboardHelper.handleHardwareKeyEvent(event, getActiveInputConnection())) {
             return true
@@ -930,9 +1019,26 @@ class KeyboardIME : BaseKeyboardIME() {
     private fun handleCandidateSelected(selectedWord: String) {
         val ic = getActiveInputConnection()
         if (ic != null) {
-            val currentWord = getWordBeforeCursor(ic)
-            if (currentWord.isNotEmpty()) {
-                ic.deleteSurroundingText(currentWord.length, 0)
+            val gestureWord = lastGestureWord
+            if (gestureWord != null) {
+                val expectedWithSpace = "$gestureWord "
+                val textBefore = ic.getTextBeforeCursor(expectedWithSpace.length, 0)?.toString() ?: ""
+                if (textBefore == expectedWithSpace) {
+                    ic.deleteSurroundingText(expectedWithSpace.length, 0)
+                } else if (textBefore.endsWith(gestureWord)) {
+                    ic.deleteSurroundingText(gestureWord.length, 0)
+                } else {
+                    val currentWord = getWordBeforeCursor(ic)
+                    if (currentWord.isNotEmpty()) {
+                        ic.deleteSurroundingText(currentWord.length, 0)
+                    }
+                }
+                lastGestureWord = null
+            } else {
+                val currentWord = getWordBeforeCursor(ic)
+                if (currentWord.isNotEmpty()) {
+                    ic.deleteSurroundingText(currentWord.length, 0)
+                }
             }
             ic.commitText("$selectedWord ", 1)
             suggestionResultFlow.value = SuggestionResult.EMPTY
@@ -1033,6 +1139,22 @@ class KeyboardIME : BaseKeyboardIME() {
 
             KeyboardFeatureType.CHANGE_KEYBOARD -> {
                 (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+            }
+
+            KeyboardFeatureType.GESTURE_SWIPE -> {
+                val current = isGestureTypingEnabledFlow.value
+                val next = !current
+                keyboardUtil.setGestureTypingEnabled(next)
+                keyboardUtil.setGestureSwipeShortcutsEnabled(next)
+                isGestureTypingEnabledFlow.value = next
+                isSwipeShortcutsEnabledFlow.value = next
+                mainKeyboardInstance?.isGestureTypingEnabled = next
+                mainKeyboardInstance?.isSwipeShortcutsEnabled = next
+                android.widget.Toast.makeText(
+                    this,
+                    if (next) "Gesture Swipe: Aktif" else "Gesture Swipe: Nonaktif",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
             }
 
             KeyboardFeatureType.SETTING -> {

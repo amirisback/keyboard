@@ -1,0 +1,28 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Motion trail arc -->
+  <path
+      android:fillColor="#00000000"
+      android:strokeColor="#FF0D9488"
+      android:strokeWidth="2"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"
+      android:pathData="M2,18 C6,12 11,8 18,7"/>
+  <path
+      android:fillColor="#00000000"
+      android:strokeColor="#FF14B8A6"
+      android:strokeWidth="1.5"
+      android:strokeLineCap="round"
+      android:pathData="M5,20 C8,15 13,11 20,10"/>
+  <!-- Pointing finger icon -->
+  <path
+      android:fillColor="#FF0D9488"
+      android:pathData="M18,3.5c-0.83,0 -1.5,0.67 -1.5,1.5v6.5l-1.38,-0.28c-0.34,-0.07 -0.69,0.03 -0.94,0.27l-0.88,0.85 4.62,4.62c0.37,0.37 0.88,0.58 1.41,0.58h5.67c0.97,0 1.77,-0.71 1.95,-1.67l0.85,-4.43c0.16,-0.83 -0.4,-1.62 -1.24,-1.74l-4.56,-0.69V5c0,-0.83 -0.67,-1.5 -1.5,-1.5z"/>
+  <!-- Motion sparkles/dots -->
+  <path
+      android:fillColor="#FF14B8A6"
+      android:pathData="M3,11a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0zM8,7a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0z"/>
+</vector>

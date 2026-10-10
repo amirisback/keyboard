@@ -1,0 +1,50 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Globe Base Ocean -->
+    <path
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2z"
+        android:fillColor="#42A5F5"/>
+    <!-- Shading Hemisphere Accent -->
+    <path
+        android:pathData="M12,2c-0.34,0 -0.67,0.03 -1,0.07 5.16,0.67 9.15,5.07 9.15,10.43s-3.99,9.76 -9.15,10.43c0.33,0.04 0.66,0.07 1,0.07 5.52,0 10,-4.48 10,-10S17.52,2 12,2z"
+        android:fillColor="#1E88E5"/>
+    <!-- Central Meridian Line -->
+    <path
+        android:pathData="M12,2.2v19.6"
+        android:strokeWidth="1.4"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000"/>
+    <!-- Equator Line -->
+    <path
+        android:pathData="M2.2,12h19.6"
+        android:strokeWidth="1.4"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000"/>
+    <!-- Upper Latitude Parallel -->
+    <path
+        android:pathData="M4.5,7h15"
+        android:strokeWidth="1.1"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000"/>
+    <!-- Lower Latitude Parallel -->
+    <path
+        android:pathData="M4.5,17h15"
+        android:strokeWidth="1.1"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000"/>
+    <!-- Elliptical Meridians -->
+    <path
+        android:pathData="M12,2.2C15,5 17,8.3 17,12s-2,7 -5,9.8C9,19 7,15.7 7,12S9,5 12,2.2z"
+        android:strokeWidth="1.2"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000"/>
+    <!-- Globe Outer Border -->
+    <path
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#1565C0"
+        android:fillColor="#00000000"/>
+</vector>

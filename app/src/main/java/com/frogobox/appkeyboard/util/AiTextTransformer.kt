@@ -102,6 +102,31 @@ object AiTextTransformer {
         "in fact"
     )
 
+    private val PRECOMPILED_TYPO_MAP = TYPO_NORMALIZATION_MAP.map { (pattern, replacement) ->
+        Regex(pattern, RegexOption.IGNORE_CASE) to replacement
+    }
+
+    private val PRECOMPILED_FORMAL_MAP = FORMAL_DICTIONARY.map { (pattern, replacement) ->
+        Regex(pattern, RegexOption.IGNORE_CASE) to replacement
+    }
+
+    private val PRECOMPILED_CASUAL_MAP = CASUAL_DICTIONARY.map { (pattern, replacement) ->
+        Regex(pattern, RegexOption.IGNORE_CASE) to replacement
+    }
+
+    private val PRECOMPILED_SLANG_MAP = SLANG_DICTIONARY.map { (pattern, replacement) ->
+        Regex(pattern, RegexOption.IGNORE_CASE) to replacement
+    }
+
+    private val PRECOMPILED_FILLER_REGEXES = FILLER_WORDS.map { filler ->
+        Regex("\\b$filler\\b,?\\s*", RegexOption.IGNORE_CASE)
+    }
+
+    private val REGEX_MULTIPLE_SPACES = Regex("\\s+")
+    private val REGEX_SPACE_BEFORE_PUNCT = Regex("\\s+([,.!?:;])")
+    private val REGEX_PUNCT_WITHOUT_SPACE = Regex("([,.!?:;])([^\\s0-9])")
+    private val REGEX_SENTENCE_BOUNDARY = Regex("(?<=[.!?])\\s+")
+
     /**
      * Transforms input text based on the requested [AiToneStyle].
      */
@@ -121,16 +146,16 @@ object AiTextTransformer {
 
     private fun polishText(text: String): String {
         var result = normalizeSpacingAndPunctuation(text)
-        for ((pattern, replacement) in TYPO_NORMALIZATION_MAP) {
-            result = result.replace(Regex(pattern, RegexOption.IGNORE_CASE), replacement)
+        for ((regex, replacement) in PRECOMPILED_TYPO_MAP) {
+            result = result.replace(regex, replacement)
         }
         return capitalizeSentences(result)
     }
 
     private fun formalizeText(text: String): String {
         var result = polishText(text)
-        for ((pattern, replacement) in FORMAL_DICTIONARY) {
-            result = result.replace(Regex(pattern, RegexOption.IGNORE_CASE), replacement)
+        for ((regex, replacement) in PRECOMPILED_FORMAL_MAP) {
+            result = result.replace(regex, replacement)
         }
         val capitalized = capitalizeSentences(result)
         return if (!capitalized.endsWith(".") && !capitalized.endsWith("!") && !capitalized.endsWith("?")) {
@@ -157,8 +182,8 @@ object AiTextTransformer {
 
     private fun casualizeText(text: String): String {
         var result = normalizeSpacingAndPunctuation(text)
-        for ((pattern, replacement) in CASUAL_DICTIONARY) {
-            result = result.replace(Regex(pattern, RegexOption.IGNORE_CASE), replacement)
+        for ((regex, replacement) in PRECOMPILED_CASUAL_MAP) {
+            result = result.replace(regex, replacement)
         }
         val capitalized = capitalizeSentences(result)
         return if (!capitalized.endsWith("!") && !capitalized.endsWith("?") && !capitalized.endsWith(".")) {
@@ -170,8 +195,8 @@ object AiTextTransformer {
 
     private fun slangText(text: String): String {
         var result = normalizeSpacingAndPunctuation(text)
-        for ((pattern, replacement) in SLANG_DICTIONARY) {
-            result = result.replace(Regex(pattern, RegexOption.IGNORE_CASE), replacement)
+        for ((regex, replacement) in PRECOMPILED_SLANG_MAP) {
+            result = result.replace(regex, replacement)
         }
         val capitalized = capitalizeSentences(result)
         return if (!capitalized.endsWith("🔥") && !capitalized.endsWith("!")) {
@@ -183,10 +208,10 @@ object AiTextTransformer {
 
     private fun summarizeText(text: String): String {
         var cleaned = text
-        for (filler in FILLER_WORDS) {
-            cleaned = cleaned.replace(Regex("\\b$filler\\b,?\\s*", RegexOption.IGNORE_CASE), "")
+        for (fillerRegex in PRECOMPILED_FILLER_REGEXES) {
+            cleaned = cleaned.replace(fillerRegex, "")
         }
-        val sentences = cleaned.split(Regex("(?<=[.!?])\\s+"))
+        val sentences = cleaned.split(REGEX_SENTENCE_BOUNDARY)
             .map { it.trim() }
             .filter { it.isNotEmpty() }
 
@@ -198,15 +223,15 @@ object AiTextTransformer {
     }
 
     private fun normalizeSpacingAndPunctuation(text: String): String {
-        var result = text.replace(Regex("\\s+"), " ")
-        result = result.replace(Regex("\\s+([,.!?:;])"), "$1")
-        result = result.replace(Regex("([,.!?:;])([^\\s0-9])"), "$1 $2")
+        var result = text.replace(REGEX_MULTIPLE_SPACES, " ")
+        result = result.replace(REGEX_SPACE_BEFORE_PUNCT, "$1")
+        result = result.replace(REGEX_PUNCT_WITHOUT_SPACE, "$1 $2")
         return result.trim()
     }
 
     private fun capitalizeSentences(text: String): String {
         if (text.isEmpty()) return text
-        val sentences = text.split(Regex("(?<=[.!?])\\s+"))
+        val sentences = text.split(REGEX_SENTENCE_BOUNDARY)
         return sentences.joinToString(" ") { sentence ->
             if (sentence.isNotEmpty()) {
                 sentence.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }

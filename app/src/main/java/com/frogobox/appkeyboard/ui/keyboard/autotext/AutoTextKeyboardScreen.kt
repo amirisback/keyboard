@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frogobox.appkeyboard.model.AutoTextEntity
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
-import com.frogobox.appkeyboard.model.TemplateText
 import com.frogobox.appkeyboard.ui.keyboard.common.KeyboardFeatureToolbar
 import com.frogobox.appkeyboard.ui.keyboard.templatetext.TemplateTextUtils
 import com.frogobox.appkeyboard.ui.templatetext.TemplateTextActivity

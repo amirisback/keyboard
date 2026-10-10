@@ -231,12 +231,12 @@ private fun KeyItemView(
     backgroundColor: Color,
     isActionKey: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     hintLabel: String? = null,
     onLongClick: (() -> Unit)? = null,
     onDragLeft: (() -> Unit)? = null,
     onDragRight: (() -> Unit)? = null,
-    onSwipeDelete: ((Int) -> Unit)? = null,
-    modifier: Modifier = Modifier
+    onSwipeDelete: ((Int) -> Unit)? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     var isSlidingSpace by remember { mutableStateOf(false) }

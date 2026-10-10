@@ -6,7 +6,6 @@ import com.frogobox.appkeyboard.data.remote.model.DataApiResponse
 import com.frogobox.appkeyboard.data.remote.model.DataItemResponse
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.repository.data.DataApiRepositoryImpl
-import com.frogobox.appkeyboard.model.ProductEntity
 import com.frogobox.appkeyboard.model.toProductEntity
 import com.frogobox.appkeyboard.ui.keyboard.productremote.ProductRemoteOutputMode
 import com.frogobox.appkeyboard.ui.keyboard.productremote.matchesSearchQuery

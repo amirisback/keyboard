@@ -10,7 +10,6 @@ import com.frogobox.appkeyboard.util.AiTextTransformer.AiToneStyle
 import com.frogobox.appkeyboard.util.VoiceTypingHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test

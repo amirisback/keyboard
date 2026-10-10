@@ -33,8 +33,12 @@ object HapticFeedbackHelper {
 
         if (!vibrator.hasVibrator()) return
 
-        val effect = VibrationEffect.createOneShot(intensity.durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
-        vibrator.vibrate(effect)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val effect = VibrationEffect.createOneShot(intensity.durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
+            vibrator.vibrate(effect)
+        } else {
+            vibrator.vibrate(intensity.durationMs)
+        }
     }
 
     /**
@@ -50,8 +54,12 @@ object HapticFeedbackHelper {
 
         if (!vibrator.hasVibrator()) return
 
-        val effect = VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
-        vibrator.vibrate(effect)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val effect = VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
+            vibrator.vibrate(effect)
+        } else {
+            vibrator.vibrate(durationMs)
+        }
     }
 
     fun fromString(value: String): HapticIntensity {

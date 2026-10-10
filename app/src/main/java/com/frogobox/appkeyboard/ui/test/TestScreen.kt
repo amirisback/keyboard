@@ -94,7 +94,6 @@ fun TestScreen(
     activeTab: Int,
     autoTextList: List<AutoTextEntity>,
     isKeyboardActive: Boolean,
-    dummyOptions: List<String> = emptyList(),
     onTextChanged: (String) -> Unit,
     onInsertText: (String) -> Unit,
     onClearText: () -> Unit,
@@ -102,8 +101,9 @@ fun TestScreen(
     onTabSelected: (Int) -> Unit,
     onChangeKeyboard: () -> Unit,
     onGoToSettings: () -> Unit,
-    onBackClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dummyOptions: List<String> = emptyList(),
+    onBackClick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -390,8 +390,8 @@ private fun LiveMetricsCard(
 private fun MetricItem(
     label: String,
     value: String,
-    highlight: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    highlight: Boolean = false
 ) {
     Column(
         modifier = modifier,

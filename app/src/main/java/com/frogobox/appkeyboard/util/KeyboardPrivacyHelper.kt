@@ -2,6 +2,7 @@ package com.frogobox.appkeyboard.util
 
 import android.text.InputType
 import android.view.inputmethod.EditorInfo
+import androidx.core.view.inputmethod.EditorInfoCompat
 
 /**
  * Utility helper for detecting password fields, incognito mode, and private browsing sessions.
@@ -36,7 +37,7 @@ object KeyboardPrivacyHelper {
      */
     fun isNoPersonalizedLearning(info: EditorInfo?): Boolean {
         if (info == null) return false
-        return (info.imeOptions and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) != 0
+        return (info.imeOptions and EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING) != 0
     }
 
     /**

@@ -49,3 +49,8 @@ class WebiewKeyboard @JvmOverloads constructor(
     }
 
 }
+
+/**
+ * Typealias for [WebiewKeyboard] fixing the spelling typo.
+ */
+typealias WebviewKeyboard = WebiewKeyboard

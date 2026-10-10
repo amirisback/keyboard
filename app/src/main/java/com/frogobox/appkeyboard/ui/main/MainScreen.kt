@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -99,9 +98,9 @@ fun MainScreen(
     onNavigateTheme: () -> Unit,
     onNavigateSound: () -> Unit,
     onNavigateTest: () -> Unit,
+    modifier: Modifier = Modifier,
     onExportBackup: () -> Unit = {},
-    onImportBackup: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onImportBackup: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 

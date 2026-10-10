@@ -21,6 +21,12 @@ object SmartCalculatorHelper {
 
     private val decimalFormat = DecimalFormat("#.######", DecimalFormatSymbols(Locale.US))
 
+    private fun formatNumber(value: Double): String {
+        return synchronized(decimalFormat) {
+            decimalFormat.format(value)
+        }
+    }
+
     /**
      * Evaluates text before cursor to detect if an arithmetic expression ending in '=' is present.
      * Returns [MathResult] if valid, or null otherwise.
@@ -33,7 +39,7 @@ object SmartCalculatorHelper {
         val fullMatch = match.value
 
         val computed = calculateExpression(formula) ?: return null
-        val formattedResult = decimalFormat.format(computed)
+        val formattedResult = formatNumber(computed)
 
         return MathResult(
             expression = fullMatch,

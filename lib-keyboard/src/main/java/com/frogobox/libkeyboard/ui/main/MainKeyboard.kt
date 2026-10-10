@@ -59,7 +59,6 @@ import kotlin.math.min
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.withSave
 
-@SuppressLint("UseCompatLoadingForDrawables", "ClickableViewAccessibility")
 class MainKeyboard @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet?,
@@ -222,13 +221,13 @@ class MainKeyboard @JvmOverloads constructor(
         mKeyTextSize = defaultKeyTextSize
 
         val attributes =
-            context.obtainStyledAttributes(attrs, R.styleable.FrogoKeyboardView, 0, defStyleRes)
+            context.obtainStyledAttributes(attrs, R.styleable.MainKeyboard, 0, defStyleRes)
         val indexCnt = attributes.indexCount
 
         try {
             for (i in 0 until indexCnt) {
                 when (val attr = attributes.getIndex(i)) {
-                    R.styleable.FrogoKeyboardView_keyTextSize -> mKeyTextSize =
+                    R.styleable.MainKeyboard_keyTextSize -> mKeyTextSize =
                         attributes.getDimensionPixelSize(attr, defaultKeyTextSize)
                 }
             }
@@ -361,8 +360,8 @@ class MainKeyboard @JvmOverloads constructor(
 
     fun initCachedDrawables() {
         val defaultDrawableRes = if (mIsDarkTheme) R.drawable.keypad_default_dark else R.drawable.keypad_default
-        mKeypadDefaultDrawable = resources.getDrawable(defaultDrawableRes, context.theme)
-        mKeypadActionDrawable = resources.getDrawable(R.drawable.keypad_action, context.theme)
+        mKeypadDefaultDrawable = ResourcesCompat.getDrawable(resources, defaultDrawableRes, context.theme)
+        mKeypadActionDrawable = ResourcesCompat.getDrawable(resources, R.drawable.keypad_action, context.theme)
         mShiftOffDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_outline, null)
         mShiftOneCharDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps, null)
         mShiftPermDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_caps_underlined, null)
@@ -924,7 +923,7 @@ class MainKeyboard @JvmOverloads constructor(
             val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 AccessibilityEvent(eventType)
             } else {
-                AccessibilityEvent().apply { this.eventType = eventType }
+                AccessibilityEvent.obtain(eventType)
             }
             onInitializeAccessibilityEvent(event)
             val text: String = when (code) {
@@ -1552,6 +1551,7 @@ class MainKeyboard @JvmOverloads constructor(
                 mRepeatKeyIndex = NOT_A_KEY
                 mOnKeyboardActionListener?.onActionUp()
                 mIsLongPressingSpace = false
+                performClick()
             }
 
             MotionEvent.ACTION_CANCEL -> {
@@ -1615,6 +1615,11 @@ class MainKeyboard @JvmOverloads constructor(
     public override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         closing()
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
     }
 
     private fun dismissPopupKeyboard() {

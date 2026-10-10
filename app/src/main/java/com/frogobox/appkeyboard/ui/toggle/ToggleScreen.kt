@@ -268,8 +268,8 @@ private fun ToggleHeaderBanner(
     activeCount: Int,
     onEnableAll: () -> Unit,
     onDisableAll: () -> Unit,
-    onResetOrder: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onResetOrder: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

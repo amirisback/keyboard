@@ -34,7 +34,7 @@ object GestureTypingHelper {
         }
     }
 
-    private val dynamicVocabulary = mutableSetOf<String>()
+    private val dynamicVocabulary = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
 
     val DEFAULT_VOCABULARY = listOf(
         // Indonesian Common Words
@@ -61,14 +61,22 @@ object GestureTypingHelper {
      * Add custom or learned words to the dynamic vocabulary.
      */
     fun addVocabulary(words: Collection<String>) {
-        dynamicVocabulary.addAll(words.map { it.lowercase().trim() }.filter { it.isNotBlank() })
+        words.forEach { word ->
+            val clean = word.lowercase().trim()
+            if (clean.isNotBlank()) {
+                dynamicVocabulary.add(clean)
+            }
+        }
     }
 
     /**
      * Register a single custom or learned word to dynamic vocabulary.
      */
     fun registerWord(word: String) {
-        addVocabulary(listOf(word))
+        val clean = word.lowercase().trim()
+        if (clean.isNotBlank()) {
+            dynamicVocabulary.add(clean)
+        }
     }
 
     /**

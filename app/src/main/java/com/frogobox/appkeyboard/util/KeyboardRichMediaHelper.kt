@@ -72,10 +72,7 @@ object KeyboardRichMediaHelper {
         val description = ClipDescription(label, arrayOf(mimeType))
         val inputContentInfo = InputContentInfoCompat(contentUri, description, linkUri)
 
-        var flags = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            flags = flags or InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION
-        }
+        val flags = InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION
 
         val opts = Bundle()
         val committed = InputConnectionCompat.commitContent(

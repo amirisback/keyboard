@@ -1,14 +1,12 @@
 package com.frogobox.appkeyboard
 
 import android.view.inputmethod.EditorInfo
-import androidx.core.view.inputmethod.EditorInfoCompat
 import com.frogobox.appkeyboard.model.KeyboardFeatureType
 import com.frogobox.appkeyboard.services.KeyboardUtil
 import com.frogobox.appkeyboard.ui.keyboard.root.KeyboardPanelState
 import com.frogobox.appkeyboard.util.KeyboardRichMediaHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test

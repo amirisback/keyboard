@@ -101,11 +101,6 @@ fun KeyboardImeRootScreen(
     onMainKeyboardInit: (MainKeyboard) -> Unit,
     autoTextList: List<AutoTextEntity>,
     onManageAutoText: () -> Unit,
-    productRemoteItems: List<DataItemResponse> = emptyList(),
-    isProductRemoteLoading: Boolean = false,
-    productRemoteError: String? = null,
-    onRefreshProductRemote: () -> Unit = {},
-    onManageProductRemote: () -> Unit = {},
     newsArticles: List<Article>,
     isNewsLoading: Boolean,
     movieList: List<TrendingMovie>,
@@ -118,6 +113,12 @@ fun KeyboardImeRootScreen(
     onEmojiClicked: (String) -> Unit,
     onCommitText: (String) -> Unit,
     onBackToMain: () -> Unit,
+    modifier: Modifier = Modifier,
+    productRemoteItems: List<DataItemResponse> = emptyList(),
+    isProductRemoteLoading: Boolean = false,
+    productRemoteError: String? = null,
+    onRefreshProductRemote: () -> Unit = {},
+    onManageProductRemote: () -> Unit = {},
     onRegisterKeyConsumer: (((Int, Boolean) -> Boolean)?) -> Unit = {},
     clipboardItems: List<ClipboardItem> = emptyList(),
     onTogglePinClipboardItem: (String) -> Unit = {},
@@ -162,8 +163,7 @@ fun KeyboardImeRootScreen(
     imeErrorMessage: String? = null,
     onResetImeError: () -> Unit = {},
     isGestureTypingEnabled: Boolean = true,
-    isSwipeShortcutsEnabled: Boolean = true,
-    modifier: Modifier = Modifier
+    isSwipeShortcutsEnabled: Boolean = true
 ) {
     val context = LocalContext.current
     val isDarkTheme = remember(themeType, themeBackgroundRes) {

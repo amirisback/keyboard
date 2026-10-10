@@ -130,8 +130,8 @@ dependencies {
 
     androidTestImplementation(composeBom)
     testImplementation(libs.junit)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
-    testImplementation("org.json:json:20240303")
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.json)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
 }

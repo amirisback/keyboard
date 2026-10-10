@@ -1138,7 +1138,7 @@ class KeyboardIME : BaseKeyboardIME() {
             }
 
             KeyboardFeatureType.CHANGE_KEYBOARD -> {
-                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.showInputMethodPicker()
             }
 
             KeyboardFeatureType.GESTURE_SWIPE -> {
@@ -1169,9 +1169,9 @@ class KeyboardIME : BaseKeyboardIME() {
         if (voiceTypingHelper == null) {
             voiceTypingHelper = VoiceTypingHelper(this).apply {
                 onTextReceived = { text, isFinal ->
-                    getActiveInputConnection()?.commitText("$text ", 1)
                     voiceStatusTextFlow.value = text
                     if (isFinal) {
+                        getActiveInputConnection()?.commitText("$text ", 1)
                         isVoiceListeningFlow.value = false
                         isVoiceTypingActiveFlow.value = false
                     }
@@ -1531,7 +1531,7 @@ class KeyboardIME : BaseKeyboardIME() {
                 } catch (_: Exception) {}
                 if (undoStack.isNotEmpty()) {
                     val prev = undoStack.removeAt(undoStack.size - 1)
-                    val curr = ic.getTextBeforeCursor(100, 0)?.toString() ?: ""
+                    val curr = ic.getTextBeforeCursor(80, 0)?.toString() ?: ""
                     redoStack.add(curr)
                     ic.deleteSurroundingText(curr.length, 0)
                     ic.commitText(prev, 1)
@@ -1544,7 +1544,7 @@ class KeyboardIME : BaseKeyboardIME() {
                 } catch (_: Exception) {}
                 if (redoStack.isNotEmpty()) {
                     val next = redoStack.removeAt(redoStack.size - 1)
-                    val curr = ic.getTextBeforeCursor(100, 0)?.toString() ?: ""
+                    val curr = ic.getTextBeforeCursor(80, 0)?.toString() ?: ""
                     undoStack.add(curr)
                     ic.deleteSurroundingText(curr.length, 0)
                     ic.commitText(next, 1)

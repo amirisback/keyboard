@@ -1001,8 +1001,8 @@ private fun MockKeyRow(
     textColor: Color,
     backgroundColor: Color,
     strokeColor: Color,
-    horizontalPadding: androidx.compose.ui.unit.Dp = 0.dp,
     modifier: Modifier = Modifier,
+    horizontalPadding: androidx.compose.ui.unit.Dp = 0.dp,
     onKeyClick: (String) -> Unit = {}
 ) {
     Row(
